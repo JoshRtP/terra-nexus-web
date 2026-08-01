@@ -14,7 +14,40 @@
 * **Skill created**: `.github/skills/terra-nexus-content/SKILL.md` and `.agents/skills/terra-nexus-content/SKILL.md` — OKF-conformant (type: Skill added to fix validation).
 * **OKF validation**: Passes with no errors.
 
-## 2026-08-01 (Phase 1A)
+## 2026-08-01 (Phase 1A.2 — Repository Hardening)
+
+* **Monorepo boundary established**: All OKF bundle files moved to `knowledge/` via `git mv` (preserving history). Scripts moved to `scripts/`. New directories: `schemas/`, `tests/`, `plans/`.
+* **Scripts updated**:
+  - `scripts/validate_okf.py`: accepts explicit `bundle` argument; default `knowledge`.
+  - `scripts/okf_cli.py`: accepts `--bundle` argument; default `knowledge`; root no longer inferred from script location.
+  - `scripts/tnx_validate.py` (new): Terra Nexus domain validator enforcing publication, lifecycle, relationship, provenance, C&ES gate, and company-claim rules.
+  - `scripts/generate_inventory.py` (new): deterministic inventory and TREE generation with `--check` mode.
+  - `scripts/sync_skills.py` (new): syncs canonical `.github/skills/` to `.agents/skills/` copy; detects drift.
+* **Schemas created**: `schemas/service-families.yml`, `schemas/expertise-topics.yml`, `schemas/audience-segments.yml`, `schemas/engagement-models.yml`, `schemas/proof-record-types.yml`, `schemas/publication-fields.yml`.
+* **Stable/draft content split**:
+  - All 5 service family overviews restored to source-derived stable content; `[agent-draft]` sections moved to `services/*/website-brief.md` (5 new files, `status: draft`).
+  - All 9 expertise topic files restored to `content_depth: title-and-classification`; draft briefs moved to `expertise/briefs/*-brief.md` (9 new files, `status: draft`).
+* **Publication metadata migrated**: All 7 Carbon & Ecosystem Services offering files, proof schema, and intake templates migrated from deprecated `publication_status` / `publication_permission` to canonical `publication:` block. Zero deprecated fields remain in `knowledge/`.
+* **Relationship identifiers**: C&ES offering `service_family` fields updated from display name to bundle-relative path ID.
+* **Tests created**: `tests/test_okf_validate.py` (10 tests), `tests/test_tnx_validate.py` (11 tests) — 21/21 pass.
+* **CI workflow created**: `.github/workflows/knowledge-checks.yml` runs OKF validator, TNX validator, tests, inventory freshness check, and skill sync check on every push/PR to `main`.
+* **Repository safeguards created**: `.github/pull_request_template.md`, `.github/CODEOWNERS`, `CONTRIBUTING.md`, `pyproject.toml`, expanded `.gitignore`.
+* **Skill consolidated**: `.github/skills/terra-nexus-content/SKILL.md` is canonical; `.agents/skills/` is generated copy. Skill updated with correct source count (3 mirrors + 1 decision), correct C&ES gate rule, correct command syntax.
+* **Documentation updated**: `README.md`, `AGENTS.md`, `knowledge/codex/start-here.md`.
+* **Inventory regenerated**: `knowledge/bundle-inventory.json` (102 concepts), `knowledge/TREE.txt`.
+* **OKF validation**: passes.
+* **Terra Nexus domain validation**: passes.
+* **Tests**: 21/21 pass.
+* **UTF-8 BOM**: stripped from 29 files written by PowerShell `Set-Content`.
+
+### Intentionally Unresolved Internal Links
+
+The following links within `knowledge/` use bundle-relative paths starting with `/` which resolve correctly when the bundle root is `knowledge/`. They would appear broken if viewed raw on GitHub outside the CLI — this is expected and intentional:
+
+- `resource:` fields in `sources:` blocks across all OKF files (e.g. `/references/source-documents/service-architecture.md`)
+- Cross-links within Markdown bodies (e.g. `[source-precedence](/governance/source-precedence.md)`)
+- The `knowledge/codex/start-here.md` link to `AGENTS.md` using `../../AGENTS.md` is non-standard and should be updated to an absolute path in a future pass.
+
 
 * **ExecPlan updated** (`plans/website-foundation.md` v0.3): Decision log reclassified with phase, status, provisional handling, owner input, and affected concepts per all 10 decisions. Phase 1B recommendation added.
 * **Brand worksheets created**: `brand/narrative-decision-worksheet.md` (5 narrative options compared), `brand/tagline-comparison.md` (4 tagline options compared). No selection made.

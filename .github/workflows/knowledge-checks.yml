@@ -1,0 +1,55 @@
+name: Knowledge Checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'knowledge/**'
+      - 'scripts/**'
+      - 'schemas/**'
+      - 'tests/**'
+      - '.github/skills/**'
+      - '.agents/skills/**'
+      - 'pyproject.toml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'knowledge/**'
+      - 'scripts/**'
+      - 'schemas/**'
+      - 'tests/**'
+      - '.github/skills/**'
+      - '.agents/skills/**'
+      - 'pyproject.toml'
+
+jobs:
+  knowledge-checks:
+    name: OKF + Domain Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: OKF structural validation
+        run: python scripts/validate_okf.py knowledge
+
+      - name: Terra Nexus domain validation
+        run: python scripts/tnx_validate.py knowledge
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+      - name: Inventory freshness check
+        run: python scripts/generate_inventory.py knowledge --check --tree
+
+      - name: Skill sync check
+        run: python scripts/sync_skills.py --check

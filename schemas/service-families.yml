@@ -1,0 +1,60 @@
+# Canonical Service Family Identifiers
+# Use the path_id as the relational key in all OKF frontmatter fields.
+# Never use display_name as a relational key.
+
+service_families:
+  - path_id: services/strategy-and-innovation
+    display_name: Strategy & Innovation
+    decision_owners:
+      - P&L owners
+      - business unit leaders
+      - corporate strategy
+      - innovation leaders
+      - commercial leaders
+    core_question: Where should we play and how do we win at the intersection of food and climate?
+
+  - path_id: services/financial-investments-and-new-venture-development
+    display_name: Financial Investments & New Venture Development
+    decision_owners:
+      - finance
+      - corporate venture
+      - corporate development
+      - strategy
+      - investment committees
+      - private equity, venture, and impact investors
+    core_question: Which food-and-climate ideas, ventures, investments, assets, partnerships, or facilities should be screened, funded, incubated, acquired, or scaled?
+
+  - path_id: services/sustainable-supply-chain-and-operations
+    display_name: Sustainable Supply Chain & Operations
+    decision_owners:
+      - procurement
+      - sourcing
+      - supply chain
+      - operations
+      - category management
+      - logistics
+      - manufacturing
+    core_question: How can impacts, risk, cost, and volatility be reduced by changing what is bought, who it is bought from, how it is produced, moved, processed, used, or recovered?
+
+  - path_id: services/corporate-sustainability
+    display_name: Corporate Sustainability
+    decision_owners:
+      - chief sustainability officers
+      - ESG teams
+      - climate teams
+      - compliance leaders
+      - reporting and disclosure teams
+    core_question: How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?
+
+  - path_id: services/carbon-and-ecosystem-services
+    display_name: Carbon & Ecosystem Services
+    decision_owners:
+      - environmental markets teams
+      - carbon desks
+      - trade desks
+      - P&L owners
+      - program owners
+      - project developers
+      - portfolio managers
+    core_question: How are environmental assets, attributes, credits, insets, offsets, and claims created, accessed, valued, verified, accounted for, managed, and monetized?
+    publication_gate: true  # C&ES offering descriptions require explicit owner approval before publication

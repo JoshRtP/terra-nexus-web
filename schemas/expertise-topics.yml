@@ -1,0 +1,39 @@
+# Canonical Expertise Topic Identifiers
+# Use the path_id as the relational key in all OKF frontmatter fields.
+
+expertise_topics:
+  - path_id: expertise/regenerative-agriculture
+    display_name: Regenerative Agriculture
+    category: cultivated-on-land
+
+  - path_id: expertise/regenerative-rangeland
+    display_name: Regenerative Rangeland
+    category: cultivated-on-land
+
+  - path_id: expertise/agroforestry
+    display_name: Agroforestry
+    category: cultivated-on-land
+
+  - path_id: expertise/aquaculture
+    display_name: Aquaculture
+    category: below-water
+
+  - path_id: expertise/biodiversity-and-ecosystem-resilience
+    display_name: Biodiversity & Ecosystem Resilience
+    category: across-communities-and-ecosystems
+
+  - path_id: expertise/sustainable-supply-chains
+    display_name: Sustainable Supply Chains
+    category: purchased-moved-stored-processed-sold-delivered
+
+  - path_id: expertise/low-carbon-energy-and-biofuels
+    display_name: Low Carbon Energy & Biofuels
+    category: transformed-into-energy-or-fuel
+
+  - path_id: expertise/purpose-driven-food-brands-and-retailers
+    display_name: Purpose Driven Food Brands & Retailers
+    category: transformed-into-food-or-feed
+
+  - path_id: expertise/food-waste-prevention-diversion-recovery
+    display_name: Food Waste (Prevention, Diversion, Recovery)
+    category: circular-value-chains

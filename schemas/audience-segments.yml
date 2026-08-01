@@ -1,0 +1,39 @@
+# Canonical Audience Segment Identifiers
+# Use the path_id as the relational key in all OKF frontmatter fields.
+# All listed example companies are illustrative and must not be presented as clients.
+
+audience_segments:
+  food_and_agribusiness_value_chain:
+    - path_id: audiences/food-and-agribusiness-value-chain/inputs-companies
+      display_name: Inputs Companies
+
+    - path_id: audiences/food-and-agribusiness-value-chain/agricultural-producers-and-integrated-protein-companies
+      display_name: Agricultural Producers & Integrated Protein Companies
+
+    - path_id: audiences/food-and-agribusiness-value-chain/commodity-traders
+      display_name: Commodity Traders
+
+    - path_id: audiences/food-and-agribusiness-value-chain/ingredient-and-feed-processors
+      display_name: Ingredient & Feed Processors
+
+    - path_id: audiences/food-and-agribusiness-value-chain/energy-and-biofuels-refiners
+      display_name: Energy & Biofuels Refiners
+
+    - path_id: audiences/food-and-agribusiness-value-chain/food-and-beverage-companies
+      display_name: Food & Beverage Companies
+
+    - path_id: audiences/food-and-agribusiness-value-chain/food-retail-and-distribution
+      display_name: Food Retail & Distribution
+
+    - path_id: audiences/food-and-agribusiness-value-chain/food-waste-prevention-diversion-and-recovery
+      display_name: Food Waste Prevention, Diversion & Recovery
+
+  enabling_markets_technology_and_capital:
+    - path_id: audiences/enabling-markets-technology-and-capital/environmental-markets-and-ecosystem-services
+      display_name: Environmental Markets & Ecosystem Services
+
+    - path_id: audiences/enabling-markets-technology-and-capital/enabling-tech-and-solution-providers
+      display_name: Enabling Tech & Solution Providers
+
+    - path_id: audiences/enabling-markets-technology-and-capital/private-equity-venture-capital-and-impact-investors
+      display_name: Private Equity, Venture Capital & Impact Investors

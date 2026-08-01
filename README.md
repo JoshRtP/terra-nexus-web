@@ -1,61 +1,78 @@
----
+﻿---
 type: Repository Guide
-title: Terra Nexus Website Knowledge Bundle
-description: OKF v0.2 knowledge bundle for planning, writing, and building the Terra
-  Nexus website.
+title: Terra Nexus Website Repository
+description: Monorepo containing the OKF knowledge bundle and future website application.
 tags:
+- repository
 - okf
 - terra-nexus
 - website
-- codex
 status: stable
 generated:
-  by: openai/gpt-5.6-thinking
-  at: '2026-08-01T20:48:00Z'
+  by: github-copilot/claude-sonnet-4-6
+  at: '2026-08-01T00:00:00Z'
 sources:
-- id: service-architecture
-  resource: /references/source-documents/service-architecture.md
-  title: Terra Nexus Service Architecture
-  author: human:terra-nexus-owner
-- id: topics-value-chains
-  resource: /references/source-documents/topics-and-value-chains.md
-  title: Terra Nexus Topics and Value Chains
-  author: human:terra-nexus-owner
-- id: core-branding
-  resource: /references/source-documents/core-messaging-and-branding.md
-  title: Terra Nexus Core Messaging and Branding
-  author: human:terra-nexus-owner
 - id: confirmed-architecture
-  resource: /references/decisions/confirmed-knowledge-architecture.md
+  resource: knowledge/references/decisions/confirmed-knowledge-architecture.md
   title: Confirmed Terra Nexus Knowledge Architecture
   author: human:terra-nexus-owner
 ---
 
-# Terra Nexus Website Knowledge Bundle
+# Terra Nexus Website Repository
 
-This repository is an Open Knowledge Format (OKF) v0.2 bundle for Codex, other AI agents, designers, developers, marketers, and Terra Nexus team members.
+This monorepo contains the Terra Nexus OKF knowledge bundle and will house the future website application.
 
-It converts three approved background documents into a linked, source-aware knowledge system:
-
-* Terra Nexus Service Architecture
-* Terra Nexus Topics and Value Chains
-* Terra Nexus Core Messaging and Branding
-
-# Quick Start
+## Quick Start
 
 ```bash
-python validate_okf.py .
-python okf_cli.py index
-python okf_cli.py find "regenerative agriculture"
-python okf_cli.py read brand/brand-platform
+pip install -e ".[dev]"
+python scripts/validate_okf.py knowledge
+python scripts/tnx_validate.py knowledge
+python scripts/okf_cli.py --bundle knowledge index
+python scripts/okf_cli.py --bundle knowledge find "regenerative agriculture"
+python -m pytest tests/ -v
+python scripts/generate_inventory.py knowledge --tree
 ```
 
-For Codex, begin with [Codex Start Here](/codex/start-here.md).
+## Repository Layout
 
-# Important
+| Path | Contents |
+|---|---|
+| `knowledge/` | OKF v0.2 knowledge bundle (governed content source of truth) |
+| `scripts/` | Validators, CLI navigator, inventory generator, skill sync |
+| `schemas/` | Canonical allowed-value registries |
+| `tests/` | Validator tests |
+| `plans/` | Project execution plans |
+| `.github/skills/` | Canonical agent skill (terra-nexus-content) |
+| `apps/web/` | Future website application (not yet created) |
 
-* Stable source-derived concepts can be used as background.
-* Draft concepts are planning recommendations and require review.
-* Illustrative company examples are not client claims.
-* The bundle contains known content gaps; see [Open Issues and Required Inputs](/website/open-issues-and-required-inputs.md).
-* The original DOCX files are preserved under `references/source-documents/originals/`.
+## Content Governance
+
+All new content defaults to `publication.audience: internal, publication.state: blocked`. Nothing becomes public without a named approver in `publication.approved_by`. See CONTRIBUTING.md for the full workflow.
+
+### What Must Never Be Published
+
+- Illustrative company examples presented as Terra Nexus clients
+- Invented case studies, credentials, or market claims
+- Carbon & Ecosystem Services offering descriptions without individual owner approval
+- Content with `publication.state` other than `approved`
+- Original `.docx` source documents
+
+## Validation
+
+```bash
+python scripts/validate_okf.py knowledge     # OKF structural conformance
+python scripts/tnx_validate.py knowledge     # Terra Nexus domain rules
+```
+
+## For AI Agents
+
+Start at `knowledge/codex/start-here.md`. Use the `terra-nexus-content` skill. See `AGENTS.md`.
+
+## Important
+
+- Stable source-derived concepts must not contain `[agent-draft]` body sections.
+- Draft concepts are planning recommendations requiring owner review before publication.
+- Illustrative company examples in audience files are not client claims.
+- Known content gaps: `knowledge/website/open-issues-and-required-inputs.md`
+- Framework selection for `apps/web/` is Phase 2 and requires owner approval.

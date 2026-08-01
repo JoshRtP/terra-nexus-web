@@ -1,0 +1,53 @@
+# Publication Block Schema
+# Canonical field values for the publication: block used in all OKF concept files.
+
+publication_fields:
+  audience:
+    - internal        # for internal knowledge use only
+    - proposal-only   # may appear in client proposals; not on public website
+    - public          # approved for public website
+
+  state:
+    - blocked         # depends on an unresolved owner decision
+    - preview         # content drafted; pending final approval
+    - approved        # explicitly approved by a named owner
+
+  attribution:
+    - none            # no attribution constraints
+    - anonymized      # may be used without naming the client or program
+    - named           # client or program name explicitly approved for use
+
+  approved_by:
+    description: |
+      null when not yet approved. Use format 'human:<identifier>' for human
+      approvals, e.g. 'human:terra-nexus-owner'.
+
+  approved_at:
+    description: |
+      null when not yet approved. ISO 8601 UTC timestamp when approved.
+
+confidentiality_values:
+  - unconfirmed      # default for all new proof records; do not use publicly
+  - confidential     # internal only; never disclosed
+  - anonymized       # can be described without naming the client
+  - public           # client and details may be disclosed; requires approved_by
+
+# Default for all new records
+defaults:
+  status: draft
+  publication:
+    audience: internal
+    state: blocked
+    attribution: none
+    approved_by: null
+    approved_at: null
+  confidentiality: unconfirmed  # for proof records only
+
+# Migration from deprecated fields
+deprecated_fields:
+  publication_status:
+    was: do-not-publish-without-review
+    now: "publication: { audience: internal, state: blocked }"
+  publication_permission:
+    was: "{ public: false, proposal_only: false, internal_only: true }"
+    now: "publication: { audience: internal, state: blocked }"

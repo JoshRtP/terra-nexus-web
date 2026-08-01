@@ -1,0 +1,30 @@
+# Engagement Model Definitions
+# Advise, Manage, and Operate are Terra Nexus's three lines of business.
+# They describe how Terra Nexus engages, not what service is delivered.
+# They are NOT service categories and must not replace the five service families.
+
+engagement_models:
+  - id: advise
+    display_name: Advise
+    definition: >
+      Terra Nexus serves as an advisor, helping clients evaluate decisions and
+      apply relevant service-line capabilities. The client retains operational
+      ownership.
+
+  - id: manage
+    display_name: Manage
+    definition: >
+      Terra Nexus manages another organization's program or defined program
+      workstreams as an operating partner. Operational accountability is shared
+      or delegated.
+
+  - id: operate
+    display_name: Operate
+    definition: >
+      Terra Nexus develops and operates its own solutions or programs. Terra
+      Nexus holds full operational accountability.
+
+governance_rule: >
+  Advise, Manage, and Operate must be described separately from the five service
+  families. Never use them as substitutes for service-family names or as the
+  primary taxonomy for organizing service offerings.

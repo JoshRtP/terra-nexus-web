@@ -1,0 +1,33 @@
+# CODEOWNERS — Terra Nexus Repository
+#
+# This file defines the required reviewers for different parts of the repository.
+# GitHub uses this file for automatic review assignment.
+#
+# IMPORTANT: Replace placeholder identifiers with actual GitHub usernames
+# before enabling branch protection. Do NOT merge without updating these.
+#
+# Recommended GitHub branch protection settings (apply to main):
+#   - Require pull request reviews before merging: YES (minimum 1)
+#   - Require status checks to pass before merging: YES
+#     Status checks: knowledge-checks / OKF + Domain Validation
+#   - Require branches to be up to date before merging: YES
+#   - Restrict who can push to matching branches: YES (owner only)
+#   - Do not allow force pushes: YES
+#   - Do not allow deletions: YES
+
+# Default owner for everything not matched below
+*                                          @OWNER_GITHUB_USERNAME
+
+# Approved source document mirrors — require owner review for any change
+knowledge/references/source-documents/     @OWNER_GITHUB_USERNAME
+
+# Approved decision records — require owner review for any change
+knowledge/references/decisions/            @OWNER_GITHUB_USERNAME
+
+# Publication approval — require owner review for any publication state change
+knowledge/case-studies/                    @OWNER_GITHUB_USERNAME
+
+# Agent and CI configuration
+.github/                                   @OWNER_GITHUB_USERNAME
+scripts/                                   @OWNER_GITHUB_USERNAME
+schemas/                                   @OWNER_GITHUB_USERNAME

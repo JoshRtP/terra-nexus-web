@@ -1,0 +1,35 @@
+# Proof Record Type Definitions
+# Use as the value of the `type:` field in proof record OKF files.
+
+proof_record_types:
+  - type: Case Study
+    description: Full narrative of a client engagement including context, work, and outcome.
+    default_confidentiality: unconfirmed
+
+  - type: Qualification Module
+    description: Short-form reusable proof unit for service pages, proposals, and bios.
+    default_confidentiality: unconfirmed
+
+  - type: Representative Engagement
+    description: Anonymized or paraphrased description of an engagement type.
+    default_confidentiality: anonymized
+
+  - type: Standards & Methodology Experience
+    description: Documented experience with a standard, methodology, or framework.
+    default_confidentiality: unconfirmed
+
+  - type: Commodity Experience
+    description: Documented experience with a specific commodity or crop system.
+    default_confidentiality: unconfirmed
+
+  - type: Geographic Experience
+    description: Documented experience in a specific geography.
+    default_confidentiality: unconfirmed
+
+  - type: Tools & Data Capability
+    description: Documented experience with a specific tool or data platform.
+    default_confidentiality: unconfirmed
+
+  - type: Partner & Provider Experience
+    description: Documented relationship type with a specific organization.
+    default_confidentiality: unconfirmed
