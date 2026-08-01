@@ -928,6 +928,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 | E-8 | No single brand narrative option has been selected as the final homepage hero. | `brand/messaging-options.md` |
 | E-9 | Existing public website at terra.nexus; future site is a replacement project. | Owner confirmation 2026-08-01 |
 | E-10 | Phase 0 ExecPlan approved with amendments. Phase 1A authorized to proceed. | Owner confirmation 2026-08-01 |
+| E-11 | Public website build eligibility rule established: status=stable, publication.audience=public, publication.state=approved, approved_by non-null, approved_at non-null. Proof records also require confidentiality=anonymized or public. | `knowledge/references/decisions/website-build-eligibility.md` |
 
 ### Owner Decisions — Classification
 

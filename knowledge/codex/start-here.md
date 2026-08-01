@@ -32,7 +32,7 @@ sources:
 
 # Required Reading Order
 
-1. [Root AGENTS.md](/../../AGENTS.md) — mandatory governance rules
+1. [Root AGENTS.md](https://github.com/JoshRtP/Webservices/blob/main/AGENTS.md) — mandatory governance rules
 2. [Source precedence](/governance/source-precedence.md)
 3. [Confirmed knowledge architecture](/references/decisions/confirmed-knowledge-architecture.md)
 4. [Brand platform](/brand/brand-platform.md)

@@ -14,7 +14,15 @@
 * **Skill created**: `.github/skills/terra-nexus-content/SKILL.md` and `.agents/skills/terra-nexus-content/SKILL.md` — OKF-conformant (type: Skill added to fix validation).
 * **OKF validation**: Passes with no errors.
 
-## 2026-08-01 (Phase 1A.2 — Repository Hardening)
+## 2026-08-01 (Phase 1A.2 closeout — corrections)
+
+* **AGENTS.md link fixed**: `knowledge/codex/start-here.md` reference updated from non-standard `/../../AGENTS.md` to `https://github.com/JoshRtP/Webservices/blob/main/AGENTS.md`.
+* **CODEOWNERS updated**: All `@OWNER_GITHUB_USERNAME` placeholders replaced with `@JoshRtP`.
+* **Decision record created**: `knowledge/references/decisions/website-build-eligibility.md` — stable, verified by owner. Defines the five conditions for public production build eligibility plus the proof-record confidentiality requirement.
+* **Publication schema updated**: `schemas/publication-fields.yml` now includes `production_eligibility` block cross-referencing the decision record.
+* **Decisions index updated**: `knowledge/references/decisions/index.md` now lists the build eligibility decision.
+* **ExecPlan updated**: `plans/website-foundation.md` E-11 added for the build eligibility decision.
+* **Validation**: OKF pass | TNX pass | tests 21/21 | inventory current | skills in sync.
 
 * **Monorepo boundary established**: All OKF bundle files moved to `knowledge/` via `git mv` (preserving history). Scripts moved to `scripts/`. New directories: `schemas/`, `tests/`, `plans/`.
 * **Scripts updated**:

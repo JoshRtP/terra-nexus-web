@@ -16,18 +16,18 @@
 #   - Do not allow deletions: YES
 
 # Default owner for everything not matched below
-*                                          @OWNER_GITHUB_USERNAME
+*                                          @JoshRtP
 
 # Approved source document mirrors — require owner review for any change
-knowledge/references/source-documents/     @OWNER_GITHUB_USERNAME
+knowledge/references/source-documents/     @JoshRtP
 
 # Approved decision records — require owner review for any change
-knowledge/references/decisions/            @OWNER_GITHUB_USERNAME
+knowledge/references/decisions/            @JoshRtP
 
 # Publication approval — require owner review for any publication state change
-knowledge/case-studies/                    @OWNER_GITHUB_USERNAME
+knowledge/case-studies/                    @JoshRtP
 
 # Agent and CI configuration
-.github/                                   @OWNER_GITHUB_USERNAME
-scripts/                                   @OWNER_GITHUB_USERNAME
-schemas/                                   @OWNER_GITHUB_USERNAME
+.github/                                   @JoshRtP
+scripts/                                   @JoshRtP
+schemas/                                   @JoshRtP

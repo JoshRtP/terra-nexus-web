@@ -70,7 +70,8 @@ knowledge/
 ├── references
 │   ├── decisions
 │   │   ├── confirmed-knowledge-architecture.md
-│   │   └── index.md
+│   │   ├── index.md
+│   │   └── website-build-eligibility.md
 │   ├── images
 │   │   ├── food-agribusiness-value-chain.png
 │   │   ├── index.md

@@ -1,7 +1,7 @@
 {
   "okf_version": "0.2",
-  "generated_at": "2026-08-01T22:30:44Z",
-  "concept_count": 102,
+  "generated_at": "2026-08-01T22:36:34Z",
+  "concept_count": 103,
   "by_type": {
     "Agent Instructions": 1,
     "Audience Segment": 11,
@@ -14,7 +14,7 @@
     "Content Schema": 3,
     "Content Template": 7,
     "Decision Matrix": 1,
-    "Decision Record": 1,
+    "Decision Record": 2,
     "Editorial Rule": 3,
     "Expertise Topic": 9,
     "Gap Analysis": 1,
@@ -29,14 +29,14 @@
   },
   "by_status": {
     "draft": 37,
-    "stable": 65
+    "stable": 66
   },
   "by_publication_audience": {
-    "None": 80,
+    "None": 81,
     "internal": 22
   },
   "by_publication_state": {
-    "None": 80,
+    "None": 81,
     "blocked": 22
   },
   "by_confidentiality": {
@@ -440,6 +440,14 @@
       "path": "references/decisions/confirmed-knowledge-architecture.md",
       "type": "Decision Record",
       "title": "Confirmed Terra Nexus Knowledge Architecture",
+      "status": "stable",
+      "pub_audience": "None",
+      "pub_state": "None"
+    },
+    {
+      "path": "references/decisions/website-build-eligibility.md",
+      "type": "Decision Record",
+      "title": "Public Website Build Eligibility",
       "status": "stable",
       "pub_audience": "None",
       "pub_state": "None"

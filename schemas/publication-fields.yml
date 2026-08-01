@@ -32,6 +32,16 @@ confidentiality_values:
   - anonymized       # can be described without naming the client
   - public           # client and details may be disclosed; requires approved_by
 
+# Production build eligibility (see knowledge/references/decisions/website-build-eligibility.md)
+production_eligibility:
+  required_status: stable
+  required_publication_audience: public
+  required_publication_state: approved
+  required_publication_approved_by: non-null
+  required_publication_approved_at: non-null
+  proof_records_also_require:
+    confidentiality: anonymized or public
+
 # Default for all new records
 defaults:
   status: draft
