@@ -42,7 +42,8 @@ sources:
 
 # Website Foundation ExecPlan
 
-> **Status: draft — requires owner review and approval before Phase 1 begins.**
+> **Status: draft — Phase 2A technical decision approved pending PR merge;
+> Phase 2B is next.**
 >
 > This plan is a structured proposal, not a build directive. Agent-generated
 > interpretations are labeled [agent-draft] throughout. Source-derived content
@@ -64,7 +65,7 @@ When the website foundation is complete, Terra Nexus will have:
 
 **Verification criteria for "foundation complete":**
 
-- `python validate_okf.py .` exits with code 0 and no errors.
+- `python scripts/validate_okf.py knowledge` exits with code 0 and no errors.
 - All service family overview pages have status `approved` or `stable`.
 - All expertise topic pages have status `approved` or `stable`.
 - All audience pages have status `approved` or `stable`.
@@ -84,12 +85,12 @@ This is a **pure knowledge repository** — an OKF v0.2 bundle. There is no appl
 | Category | Files / Notes |
 |---|---|
 | OKF knowledge files | ~100 Markdown files across `services/`, `expertise/`, `audiences/`, `brand/`, `governance/`, `website/`, `case-studies/`, `references/`, `codex/` |
-| Python tooling | `okf_cli.py` (search, read, index), `validate_okf.py` (OKF structural validation) |
+| Python tooling | `okf_cli.py`, `validate_okf.py`, `tnx_validate.py`, inventory/skill scripts, `pyproject.toml`, and Python tests |
 | Python dependency | `requirements.txt` — `PyYAML>=6.0` only |
 | Agent configuration | `AGENTS.md` (root), `.github/skills/terra-nexus-content/SKILL.md`, `.agents/skills/terra-nexus-content/SKILL.md` |
 | Reference originals | `references/source-documents/originals/` — three `.docx` source files |
 | Reference images | `references/images/` — two `.png` value-chain diagrams |
-| Version control | `.gitignore` present; no remote or CI/CD configuration visible |
+| Version control and checks | Git remote `JoshRtP/Webservices`; `.github/workflows/knowledge-checks.yml` runs repository checks on `main` pushes and pull requests |
 
 ### 2b. Missing Infrastructure
 
@@ -98,12 +99,12 @@ The following categories have **zero existing files**:
 | Missing Category | Detail |
 |---|---|
 | Web framework | No Next.js, Astro, Vite, React, Vue, Svelte, or any other framework |
-| Package manifests | No `package.json`, `pnpm-workspace.yaml`, `pyproject.toml`, or equivalent |
+| Node package manifests | No `package.json`, `pnpm-workspace.yaml`, or equivalent web-application manifest |
 | Application code | No `.js`, `.ts`, `.jsx`, `.tsx`, `.css`, `.scss`, `.html` files |
 | Design system | No color tokens, type scales, component specs, or accessibility baseline |
 | CMS configuration | No Sanity, Contentful, or similar schema |
-| Deployment config | No `vercel.json`, `netlify.toml`, Dockerfile, or CI/CD workflow |
-| Testing config | No unit, integration, or E2E test setup |
+| Website deployment config | No `vercel.json`, `netlify.toml`, Dockerfile, or equivalent website deployment configuration |
+| Website testing config | No website unit, integration, end-to-end, accessibility, or performance test setup (knowledge-validator tests do exist) |
 | Analytics / SEO | No sitemap, robots.txt, analytics integration, or tag manager config |
 
 ---
@@ -472,7 +473,8 @@ The source provides one directional sentence: offerings "revolve around assessin
 
 1. Owner provides a one-paragraph directional description for each of the seven offerings.
 2. Agent normalizes into OKF `type: Service Offering` format.
-3. Owner reviews and approves each description before `publication_status` is changed from `do-not-publish-without-review`.
+3. Owner reviews and approves each description before its canonical
+   `publication` block is eligible for public output.
 4. External regulatory and market facts are cited at time of drafting using current sources — not agent memory.
 
 ---
@@ -636,7 +638,7 @@ Approval status:
 
 ---
 
-## 7. Technical Architecture Assessment
+## 7. Technical Architecture Assessment and Phase 2A Build Contract [agent-draft]
 
 ### 7a. What Currently Exists
 
@@ -655,7 +657,7 @@ Approval status:
 | CRM / Contact | HubSpot, Salesforce, or plain email for contact forms? |
 | Forms | Serverless function, Netlify Forms, Formspree, or other? |
 | SEO | Sitemap generation, canonical URL strategy, structured data (JSON-LD)? |
-| Accessibility | WCAG 2.1 AA minimum? WCAG 2.2? |
+| Accessibility | WCAG 2.2 Level AA (approved in D-4) |
 | Security | Content Security Policy, HTTPS-only, form spam protection? |
 | Testing | Unit tests for components? Playwright E2E? Visual regression? |
 | Deployment | Git-triggered CI/CD? Manual? Preview deployments? |
@@ -712,6 +714,315 @@ Approach C should be deferred until content volume and non-developer editing nee
 
 *This recommendation is [agent-draft] and requires owner decision before any scaffolding begins.*
 
+### 7e. Phase 2A decision context [agent-draft]
+
+> **Proposal only.** This section selects no software and creates no framework,
+> application, deployment configuration, or website copy. It is the proposed
+> technical decision and build contract to be approved before implementation.
+
+The contract uses the confirmed five-dimension architecture, the approved public
+build-eligibility decision, the website relationship model, the proof schema,
+and the canonical service, expertise, audience, engagement, and publication
+registries. It preserves Service Lines, Areas of Expertise, Who We Work With,
+Advise/Manage/Operate, and proof as independent many-to-many dimensions.
+
+`knowledge/` is the governed source of truth. It is Markdown with YAML
+frontmatter, presently validated by the repository's Python tooling. There is no
+web application, Node package manifest, framework, or deployment configuration
+in this repository. The recommendation below is therefore a future application
+boundary, not a change to the knowledge source.
+
+### 7f. Expanded comparison matrix [agent-draft]
+
+The existing ExecPlan already named Astro, Next.js, and an immediate headless
+CMS. This matrix develops those approaches without creating a new technology
+list. A custom, framework-independent OKF compiler is required in either
+framework; neither native Markdown feature is a substitute for the governed
+publication and relationship rules.
+
+| Criterion | Astro + OKF compiler | Next.js + OKF compiler | Immediate headless CMS benchmark |
+|---|---|---|---|
+| 1. Markdown/frontmatter | Build-time loaders directly suit Markdown/YAML. | Requires custom parsing; MDX is optional, not OKF. | Requires migration and a synchronization contract. |
+| 2. Many-to-many model | Build a path-ID content graph and reverse indexes. | Same capability and same compiler requirement. | Possible, but duplicates relationships and approval states. |
+| 3. Static generation | Static-first by default. | Strong static generation, more runtime choices to constrain. | Depends on renderer and CMS API. |
+| 4. Draft previews | Host protection plus a preview graph. | Same. | Preview state must be reconciled across systems. |
+| 5. Production filter | One compiler provides a hard build boundary. | One compiler provides the same boundary. | Must enforce in CMS queries and application code. |
+| 6. Proposal isolation | Reject before the framework sees a record. | Same. | Role/query leakage is an extra risk. |
+| 7. Case-study pages | Static routes only from eligible proof. | Same. | Feasible, but proof governance duplicates. |
+| 8. Related content | Deterministic reverse indexes. | Same. | CMS references do not replace validation. |
+| 9. SEO/metadata | Static metadata and sitemap integration. | Mature metadata conventions. | Renderer-dependent. |
+| 10. Sitemap/canonical URLs | Public graph is the sole source. | Public graph is the sole source. | Requires an equally strict filtered query. |
+| 11. Legacy redirects | Host rules generated from a reviewed map. | Native redirects plus host rules. | Still requires a reviewed map. |
+| 12. Accessibility | Semantic server HTML; test all islands. | Fully capable; needs same discipline. | Unchanged by the CMS. |
+| 13. Performance | Smallest default client runtime. | Good if kept static; easier to add unnecessary runtime. | Adds API and preview dependencies. |
+| 14. Images | Built-in local/authorized-remote optimization. | Mature image tooling. | DAM benefits add a system of record. |
+| 15. Forms/CRM | Small endpoint or approved service later. | More server patterns than launch needs. | Not a CMS advantage. |
+| 16. Analytics/consent | Approved consent-aware client code only. | Same. | No material advantage. |
+| 17. Testing | Compiler tests + Playwright, axe, Lighthouse. | Same stack. | Adds CMS integration/migration tests. |
+| 18. Deployment complexity | Thin static deployment. | Static is possible; server features raise complexity. | Adds webhooks and CMS credentials. |
+| 19. Maintenance | One source model and small runtime surface. | Larger framework surface for this launch. | Two systems and recurring operations. |
+| 20. Git/agent editing | Direct reviewed PR workflow. | Same workflow with more app code. | Visual editing competes with Git governance. |
+| 21. CMS compatibility | Add a controlled adapter later. | Same. | Immediate, but prematurely costly. |
+| 22. Calculators/tools | Islands or separate applications. | Best if application scope dominates. | Does not solve tool architecture. |
+| 23. App separation | Static site stays independent. | Possible, but an all-in-one app invites coupling. | Does not prevent coupling. |
+| 24. Lock-in | Low; static output is portable. | Moderate if server/host features become central. | High; data and workflow are vendor-dependent. |
+| 25. Cost/operations | Lowest initial operational surface. | Moderate. | Highest: subscription, migration, and operations. |
+
+**Recommendation:** choose **Astro** for the initial public marketing site,
+with TypeScript and static output as the normal mode. Astro's current Content
+Loader API supports local Markdown/YAML content from anywhere on the filesystem
+and custom build-time loaders, which fits a read-only OKF compiler. Its current
+image tooling also supports optimized local and authorized remote images. Next.js
+is the reconsideration choice only if an approved launch scope becomes primarily
+authenticated, stateful, and application-like rather than content-led.
+
+The owner-approved selections and preview boundaries are recorded in
+[D-4 approved technical decision](#d-4-approved-technical-decision-agent-draft).
+
+### 7g. Decisive technical recommendations [agent-draft]
+
+| Decision | Recommendation | Tradeoff accepted | Reconsider when |
+|---|---|---|---|
+| Framework | **Astro**, at the supported version current when implementation starts. | Fewer integrated full-stack application conventions than Next.js. | Approved launch scope is dominated by stateful/authenticated tooling. |
+| Hosting | **Vercel** for production and previews. | Preview review uses Vercel identity/shareable-link workflow. | Cloudflare is the established operational platform or SSO/Access controls are required. |
+| Content ingestion | One read-only **OKF content compiler** called by an Astro build-time loader. | Bespoke compiler needs strong tests. | An approved CMS adapter can produce the identical validated graph. |
+| Initial CMS | **Git and governed OKF Markdown; defer a headless CMS.** | Editors use reviewed Git changes initially. | Evidence shows non-technical editing is a sustained delivery bottleneck. |
+| Preview security | Vercel Deployment Protection using **Vercel Authentication** on every non-production deployment; revocable shareable links only for external review. | Reviewers may use a Vercel account/access flow. | Owner requires external IdP, email OTP, or IP policies. |
+| Proposal-only handling | A future separately authenticated proposal renderer/export process, outside `apps/web`. | Proposal rendering is deliberately deferred. | Owner approves its client-access, retention, and disclosure rules. |
+
+Vercel is recommended because its Git integration produces preview deployments
+for branch/PR changes and production deployments from the designated production
+branch, with rollback through Git/redeploy. Standard Deployment Protection can
+protect preview deployments with Vercel Authentication. Confirm current pricing
+and plan limits at procurement; they are not a stable architectural fact.
+
+### 7h. Content ingestion contract [agent-draft]
+
+#### Source and output rules [agent-draft]
+
+`knowledge/` remains the only governed source. The future application must read
+it without editing, normalizing, or copying source records back to the bundle.
+Any generated application data is reproducible from the committed `knowledge/`,
+`schemas/`, and compiler version. Transient graphs and audit reports are
+gitignored build artifacts; they are not new sources of truth.
+
+#### Required compiler behavior [agent-draft]
+
+At build time the compiler must:
+
+1. Parse permitted Markdown records and their YAML frontmatter, retaining each
+   source path and bundle-relative path ID.
+2. Load the canonical allowed-value and relationship registries from `schemas/`.
+3. Validate lifecycle/publication values, timestamps, proof confidentiality,
+   duplicate slugs, and all relationship IDs before rendering a page.
+4. Resolve forward and reverse links for services, expertise, audiences,
+   engagement models, proof, and insights using path IDs only.
+5. Assign canonical URLs from a centrally reviewed route map and reject a slug
+   collision; never infer a relation from a display name or company example.
+6. Select the production or preview graph before any route, card, sitemap,
+   search index, RSS item, canonical URL, JSON-LD block, or related index exists.
+7. Write a machine-readable audit that gives every excluded record a
+   deterministic reason. Broken references, invalid metadata, invalid proof
+   disclosure, or URL collisions fail the build after this audit is emitted.
+
+The existing Python validators remain required knowledge-layer gates. The
+compiler is an additional website build gate, never a replacement for them.
+
+#### Production filter (non-negotiable) [agent-draft]
+
+Include a record in the public production graph only when all conditions are
+true:
+
+```text
+status == stable
+publication.audience == public
+publication.state == approved
+publication.approved_by is non-null
+publication.approved_at is a valid ISO 8601 UTC timestamp
+```
+
+For proof records, `confidentiality` must also be `anonymized` or `public`.
+Every other record is rejected and logged. Rejected content must have no public
+route, related-content card, page-count trace, metadata, search record,
+structured data, feed entry, sitemap entry, canonical URL, or public asset.
+
+#### Protected preview filter [agent-draft]
+
+A protected preview is not a lenient production build. It contains all
+production-eligible records plus only explicitly preview-state website
+candidates where:
+
+```text
+status is draft or stable
+publication.audience == internal
+publication.state == preview
+```
+
+This combination honors the existing domain validator, which rejects `public`
+audience paired with a `preview` state. Every non-production page and card must
+show an explicit Draft / Unpublished label, and every preview has a protected
+preview banner. Preview builds reject `proposal-only`, `blocked`, and deprecated
+records, and proof whose confidentiality is `confidential` or `unconfirmed`.
+
+All non-production deployments require Vercel Deployment Protection. The site
+also emits noindex/nofollow metadata and a disallowing `robots.txt`; the future
+deployment config sends `X-Robots-Tag: noindex`. Authentication and noindex are
+independent controls and both are required. Preview visibility never constitutes
+publication approval.
+
+#### Proposal-only rule [agent-draft]
+
+Proposal-only content is excluded from every `apps/web` build, including the
+protected preview. It is reserved for a future separately authenticated proposal
+workspace or export renderer outside the public website application. That future
+system requires its own approved access, retention, client-specific disclosure,
+and review model. This adopts option **(c)** from the Phase 2A handoff and avoids
+turning the public-site deployment into a proposal-content store.
+
+### 7i. Page generation and relationship rules [agent-draft]
+
+The future site generates its homepage, service-family and offering pages,
+expertise pages, audience pages, case-study pages, qualification modules,
+insight indexes/articles, and About/team pages only from the selected graph.
+Service pages preserve decision owners; expertise remains topic-led; audiences
+remain value-chain-led; and Advise/Manage/Operate is separately rendered.
+
+Eligible case studies are generated as canonical pages and placed via reverse
+indexes on every related service, expertise, and audience page. No content is
+copied between those pages. When no eligible proof exists, the proof section is
+hidden rather than rendered empty. The absence of proof also creates no case
+study route, count, or placeholder claim.
+
+### 7j. Future repository boundary [agent-draft]
+
+No directory below is created in Phase 2A. It is the implementation boundary
+after owner approval:
+
+```text
+knowledge/                 governed Markdown source; never app output
+schemas/                   canonical publication and relationship registries
+scripts/                   existing Python checks plus framework-neutral checks
+apps/web/                  future Astro presentation and read-only compiler
+apps/web/.generated/       ignored graph/audit artifacts
+apps/web/public/           deliberately public, approved static assets only
+apps/web/src/              routes, layouts, components, styles, and test helpers
+.github/workflows/         current checks plus future website CI gates
+deployment configuration/  future application/host configuration only
+```
+
+Reference assets remain in `knowledge/references/` until an owner-approved asset
+strategy selects what is public. Do not publish all repository images merely
+because they can be read by the build.
+
+### 7k. CMS and future application strategy [agent-draft]
+
+Git plus OKF Markdown is the initial editorial system. It already supplies
+provenance, reviewable history, schemas, and validation. An immediate headless
+CMS would introduce competing authoring and publication states before there is
+evidence that Git review is the bottleneck.
+
+A visual CMS may later be a controlled editing adapter: it creates a reviewed
+change on a protected Git branch or pull request; existing validators and the
+website compiler pass before merge; and production continues to build from the
+merged knowledge bundle. A direct CMS-to-production path is not compatible with
+the current approval contract.
+
+Keep future calculators, client portals, and authenticated tools separate from
+the marketing site. A small public interaction may be an Astro island; a tool
+with client data, accounts, or sensitive inputs must have its own application,
+authentication, data store, threat model, deployment, and release cadence. It
+may share approved design tokens and public data contracts, but not deployment
+or access control with the public site.
+
+### 7l. Hosting comparison and migration approach [agent-draft]
+
+| Option | Production/preview fit | Security and noindex | Assessment |
+|---|---|---|---|
+| **Vercel (recommended)** | Git-connected `main` production plus branch/PR previews, environment scopes, logs, and Git-based rollback. | Vercel Authentication through Deployment Protection; application and host configuration enforce noindex independently. | Lowest-configuration fit for this Astro launch. |
+| **Cloudflare Pages + Access (fallback)** | Git branch previews and static deployment. | Pages adds noindex headers to previews by default; Cloudflare Access protects preview access. | Strong fallback when Cloudflare/DNS and Access are already operated; adds policy/DNS administration. |
+| **Netlify (not selected)** | Git Deploy Previews, redirects, logs, and Astro support. | Preview noindex is automatic; non-production-only team/login protection is plan-dependent. | Technically viable but a weaker fit for the selected access approach. |
+
+Build Vercel from `apps/web/`; only `main` is production. Scope environment
+variables independently for production and preview, never expose secrets to the
+client bundle, and use a non-secret build-mode variable to select the compiler
+filter. GitHub Actions remain the independent pre-merge gate for knowledge and
+future website tests.
+
+Before the domain cutover, produce a human-reviewed inventory of every current
+`terra.nexus` URL, a destination/status map, tests for query preservation and
+loops, and a rollback plan. Do not infer redirects from unapproved titles or
+content. Confirm canonical HTTPS URLs, sitemap membership, and search-console
+coverage after cutover.
+
+### 7m. Implementation-ready acceptance tests [agent-draft]
+
+1. Production includes only records satisfying all five approved eligibility fields.
+2. Internal records have no production route, card, metadata, search, feed, or static-data trace.
+3. Proposal-only records are rejected by every `apps/web` build mode.
+4. Draft, deprecated, blocked, and preview-state records have no production trace.
+5. Confidential/unconfirmed proof has no production trace; eligible proof is only `anonymized` or `public`.
+6. Every preview sends noindex metadata, disallowing `robots.txt`, and `X-Robots-Tag: noindex`.
+7. Preview access fails without the selected authentication policy.
+8. Every unpublished preview page/card visibly identifies its status.
+9. A valid public case study generates its canonical page and approved structured data.
+10. A new valid case study appears on all directly related service, expertise, and audience pages without copied content.
+11. Invalid IDs, dangling references, invalid proof, and duplicate URLs write an audit then fail the build.
+12. Every rejected record is logged with a clear, deterministic reason.
+13. Pages with no eligible proof omit their proof sections.
+14. Sitemap, search data, feeds, canonicals, and JSON-LD contain only eligible public content.
+15. Redirect tests cover every reviewed legacy URL, status, destination, query, and loop outcome.
+16. Keyboard, semantic HTML, contrast, focus, reduced-motion, and automated axe checks meet the approved accessibility baseline.
+17. Representative mobile pages reach Lighthouse Performance 90, Accessibility 100, Best Practices 95, and SEO 95; exceptions require approval.
+18. Image tests verify dimensions, alt text, approved source, and optimized delivery where applicable.
+19. OKF, Terra Nexus, inventory, skill-sync, and Python test checks continue to pass.
+20. A clean-build/diff test proves website compilation never modifies `knowledge/`.
+
+### 7n. Recommended implementation phases [agent-draft]
+
+1. Implement the compiler, fixtures, production/preview filters, audit, and
+   negative tests before page code.
+2. Create the approved Astro application, design tokens, route map, layouts,
+   SEO primitives, and CI gates.
+3. Configure protected preview, authentication, noindex headers, and deployment
+   tests.
+4. Add reusable service, expertise, audience, proof, and supporting templates
+   driven exclusively by the compiled graph.
+5. Complete legacy redirects, approved assets, domain migration, forms/CRM,
+   analytics/consent, accessibility, and performance work.
+6. Add proof, insights, CMS editing, calculators, or authenticated applications
+   only through separately approved scopes.
+
+### 7o. Risks and owner decisions [agent-draft]
+
+| Risk | Mitigation |
+|---|---|
+| Unapproved content reaches public output. | Central filter, negative tests, production-only indexes, and exclusion audit. |
+| A preview is indexed or shared too broadly. | Authentication plus independent noindex controls and response-header tests. |
+| Proposal/confidential proof leaks through preview. | Hard reject it from the public application compiler. |
+| A CMS becomes a competing source. | Defer it; later require a Git-PR editing adapter. |
+| Legacy URLs lose traffic or equity. | Owner-reviewed inventory, redirect tests, and post-cutover monitoring. |
+| Future tools overcomplicate marketing delivery. | Keep the site static and isolate authenticated tools. |
+
+Remaining owner inputs for Phase 2B and later:
+
+1. Supply one internal case study for the pilot checkpoint and set its canonical
+   publication and confidentiality fields.
+2. Authorize/supply the legacy URL, analytics, and redirect-inventory access
+   needed for migration planning.
+3. Select launch form/CRM and analytics/consent services, or explicitly defer
+   them.
+
+### 7p. Official technical sources consulted [agent-draft]
+
+Current official documentation informing this proposal (reconfirm product limits
+and pricing at procurement/implementation):
+
+- [Astro Content Loader API](https://docs.astro.build/en/reference/content-loader-reference/), [images](https://docs.astro.build/en/guides/images/), and [sitemap integration](https://docs.astro.build/en/guides/integrations-guide/sitemap/).
+- [Next.js `generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params), [sitemap metadata](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap), and [redirects](https://nextjs.org/docs/app/api-reference/config/next-config-js/redirects).
+- [Vercel Git deployments](https://vercel.com/docs/git) and [Deployment Protection](https://vercel.com/docs/deployment-protection).
+- [Cloudflare Pages preview deployments](https://developers.cloudflare.com/pages/configuration/preview-deployments/).
+- [Netlify deploy overview](https://docs.netlify.com/deploy/deploy-overview/) and [Password Protection](https://docs.netlify.com/manage/security/secure-access-to-sites/password-protection/).
+
 ---
 
 ## 8. Design-System Requirements
@@ -731,7 +1042,7 @@ Approach C should be deferred until content volume and non-developer editing nee
 | Imagery | Photography style; illustration vs. photography; sourcing (licensed stock, original, client-provided) |
 | Charts and diagrams | Chart library; color mapping; accessibility (alt text, ARIA roles) |
 | Responsive behavior | Mobile-first or desktop-first; breakpoint definitions |
-| Accessibility | WCAG level (2.1 AA minimum recommended); focus states; color contrast ratios; skip-nav |
+| Accessibility | WCAG 2.2 Level AA; focus states, color contrast ratios, skip navigation, and required manual checks |
 | Motion and interaction | Animation duration/easing; reduced-motion support |
 
 **Note on existing reference images:** Two PNG value-chain diagrams exist in `references/images/`. These are reference assets, not design-system components. They may inform the diagram style but do not constitute a design specification.
@@ -740,7 +1051,41 @@ Approach C should be deferred until content volume and non-developer editing nee
 
 ## 9. Implementation Milestones
 
-### Phase 0 — Repository and Knowledge Foundation *(current phase)*
+### Current approved sequence [agent-draft]
+
+This sequence supersedes the historical Phase 0–6 detail below. It does not
+make all page copy or all case studies prerequisites for Phase 2B.
+
+**Current status:** Phase 1A and Phase 1A.2 are complete. Phase 2A is approved
+pending PR merge. Phase 2B is next. Phase 1B content interviews may proceed in
+parallel.
+
+1. **Phase 2B — Astro foundation.** Create the Astro foundation, read-only
+   OKF compiler, publication filters, relationship graph, authoring helper,
+   status reporting, tests, and a minimal application shell.
+2. **Pilot checkpoint (after the Phase 2B foundation).** Add one
+   owner-supplied internal case study and prove ingestion, authenticated preview,
+   relationship placement, and production exclusion.
+3. **Reusable page system.** Add service, expertise, audience, case-study, and
+   related-content templates.
+4. **Progressive content completion and launch preparation.** Complete and
+   approve content in governed batches while preparing launch requirements.
+
+The historical notes are retained for provenance only. Where they conflict with
+this sequence, this sequence controls.
+
+**Repository checks for these milestones:**
+
+```bash
+python scripts/validate_okf.py knowledge
+python scripts/tnx_validate.py knowledge
+python scripts/okf_cli.py --bundle knowledge ...
+python -m pytest tests/ -v
+python scripts/generate_inventory.py knowledge --check --tree
+python scripts/sync_skills.py --check
+```
+
+### Historical Phase 0 — Repository and Knowledge Foundation *(superseded)*
 
 **What will be created:**
 - `plans/website-foundation.md` (this document)
@@ -752,7 +1097,7 @@ Approach C should be deferred until content volume and non-developer editing nee
 
 **Completion test:**
 ```bash
-python validate_okf.py .   # exits 0, no errors
+python scripts/validate_okf.py knowledge   # exits 0, no errors
 ```
 - This ExecPlan file exists at `plans/website-foundation.md`.
 - Blocking owner questions in Section 10 have been reviewed.
@@ -762,7 +1107,7 @@ python validate_okf.py .   # exits 0, no errors
 
 ---
 
-### Phase 1 — Approved Content Architecture and Missing-Content Completion
+### Historical Phase 1 — Content Architecture and Completion *(superseded)*
 
 **What will be created:**
 - Decision records for: narrative selection, tagline selection, Carbon & Ecosystem Services approval.
@@ -783,8 +1128,8 @@ python validate_okf.py .   # exits 0, no errors
 
 **Completion test:**
 ```bash
-python validate_okf.py .   # still passes
-python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft descriptions
+python scripts/validate_okf.py knowledge   # still passes
+python scripts/okf_cli.py --bundle knowledge find "carbon ecosystem"  # all 7 offerings show non-draft descriptions
 ```
 - All pages listed in Section 4 have `content_depth: approved-brief` or better.
 
@@ -793,7 +1138,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 ---
 
-### Phase 2 — Technical and Design-System Foundation
+### Historical Phase 2 — Technical and Design-System Foundation *(superseded)*
 
 **What will be created:**
 - Decision record for technical stack (framework, CMS, hosting).
@@ -803,7 +1148,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 - CI/CD pipeline skeleton.
 
 **Approvals required:**
-- Technical stack decision.
+- Technical stack decision recorded in D-4; implementation remains out of scope for Phase 2A.
 - Design-system tokens reviewed by owner or designer.
 - Accessibility standard confirmed.
 
@@ -817,7 +1162,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 ---
 
-### Phase 3 — Reusable Page Templates and Components
+### Historical Phase 3 — Reusable Page Templates and Components *(superseded)*
 
 **What will be created:**
 - Component library: `ServiceFamilyCard`, `ExpertiseTopicCard`, `AudienceCard`, `QualificationModule`, `AdviseManagedOperateBlock`, `CallToAction`, `RelatedContent`.
@@ -830,15 +1175,15 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 **Completion test:**
 - Each component renders without errors in isolation.
-- All components pass WCAG 2.1 AA color contrast checks.
-- OKF index JSON generates correctly from `python okf_cli.py index`.
+- All components pass WCAG 2.2 Level AA color contrast checks.
+- OKF index JSON generates correctly from `python scripts/okf_cli.py --bundle knowledge index`.
 
 **Must remain unimplemented until approval:**
 - Production pages with approved content.
 
 ---
 
-### Phase 4 — Priority Pages
+### Historical Phase 4 — Priority Pages *(superseded)*
 
 **What will be created:**
 - Homepage (with approved narrative).
@@ -854,7 +1199,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 **Completion test:**
 - All pages render without errors.
 - All internal cross-links resolve.
-- `python validate_okf.py .` still passes on the knowledge bundle.
+- `python scripts/validate_okf.py knowledge` still passes on the knowledge bundle.
 - Lighthouse accessibility score ≥ 90 on each page.
 
 **Must remain unimplemented until approval:**
@@ -864,7 +1209,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 ---
 
-### Phase 5 — Case Studies, Insights, SEO, Analytics, and Integrations
+### Historical Phase 5 — Case Studies, Insights, SEO, Analytics, and Integrations *(superseded)*
 
 **What will be created:**
 - Case study index and individual module pages (using approved proof).
@@ -889,10 +1234,10 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 ---
 
-### Phase 6 — Quality Assurance, Accessibility, Performance, and Deployment
+### Historical Phase 6 — Quality Assurance, Accessibility, Performance, and Deployment *(superseded)*
 
 **What will be created:**
-- Full accessibility audit and remediation (WCAG 2.1 AA target).
+- Full accessibility audit and remediation (WCAG 2.2 Level AA target).
 - Performance optimization (Core Web Vitals: LCP, CLS, FID/INP).
 - Cross-browser and device testing.
 - Security hardening (CSP headers, HTTPS enforcement, form spam protection).
@@ -907,7 +1252,7 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 
 **Completion test:**
 - Lighthouse performance ≥ 80 on all priority pages.
-- WCAG 2.1 AA automated scan passes on all pages (manual audit complete for critical paths).
+- WCAG 2.2 Level AA automated scan passes on all pages (manual audit complete for critical paths).
 - Production deployment verified: all pages load, all forms submit, all analytics fire.
 
 ---
@@ -939,27 +1284,62 @@ python okf_cli.py find "carbon ecosystem"  # all 7 offerings show non-draft desc
 |---|---|---|---|---|---|---|
 | D-1 | Homepage narrative selection | Phase 4 | Deferred — not blocking Phase 1A | Preserve all five options in `brand/narrative-decision-worksheet.md`; do not select or draft final copy | Owner selects or revises one narrative option before Phase 4 | Homepage, About, brand usage rules |
 | D-2 | Tagline selection | Phase 4 | Deferred — not blocking Phase 1A | Preserve all four options in `brand/tagline-comparison.md`; do not use any single option in templates | Owner selects or approves a tagline before Phase 4 | All page headers, meta titles, og:title, masthead |
-| D-3 | Carbon & Ecosystem Services offering descriptions | Phase 1A | **Unblocked for draft development** | Draft descriptions using approved sources and confirmed business logic; all must carry `status: draft`, no `verified` block; `publication_status: do-not-publish-without-review` | Owner reviews and approves each draft before publication | All C&ES offering pages; `services/carbon-and-ecosystem-services/` |
-| D-4 | Technical stack (framework, CMS, hosting) | Phase 2 | Deferred — not blocking Phase 1A | Retain three approaches in ExecPlan Section 7; do not install or scaffold | Owner selects approach before Phase 2 | All application code, deployment config, component library |
+| D-3 | Carbon & Ecosystem Services offering descriptions | Phase 1A | **Unblocked for draft development** | Draft descriptions using approved sources and confirmed business logic; all must carry `status: draft` and the canonical `publication` block with `audience: internal`, `state: blocked`, `attribution: none`, `approved_by: null`, and `approved_at: null` | Owner reviews and approves each draft before publication | All C&ES offering pages; `services/carbon-and-ecosystem-services/` |
+| D-4 | Technical stack (framework, CMS, hosting) | Phase 2A | **Approved — pending PR merge** | Astro, static-first; Vercel; Git plus governed OKF Markdown; custom read-only OKF compiler; CMS deferred; Vercel Authentication for preview. Do not scaffold in Phase 2A. | No further technical-stack selection is required; Phase 2B begins after PR merge. | All application code, deployment config, component library |
 | D-5 | Design system (visual identity, tokens, components) | Phase 2–3 | Deferred — not blocking Phase 1A | Create design-input inventory and missing-assets list only; do not generate or infer a visual identity | Owner provides brand asset package or commissions designer before Phase 3 | All templates, components, responsive behavior |
-| D-6 | Case studies and qualifications disclosure | Phase 5 | Internal structuring proceeds | Create schema and intake template; default all records to `status: draft`, `publication_status: internal`, `confidentiality: confidential-or-unconfirmed` | Owner specifies disclosure level per engagement before Phase 5 | Case Studies section, proof modules, qualification modules |
+| D-6 | Case studies and qualifications disclosure | Pilot checkpoint | Internal structuring proceeds | Create schema and intake template; default all records to `status: draft`, `publication.audience: internal`, `publication.state: blocked`, `publication.attribution: none`, `publication.approved_by: null`, `publication.approved_at: null`, and `confidentiality: unconfirmed` | Owner supplies the pilot record and specifies disclosure level per engagement | Case Studies section, proof modules, qualification modules |
 | D-7 | Team profiles and biographical detail | Phase 4 | Deferred — not blocking Phase 1A | Create intake templates only; do not draft public bios without source material | Owner provides biography inputs before Phase 4 | About / Team section |
-| D-8 | Tools, data providers, partners, and standards disclosure | Phase 4–5 | Internal knowledge development proceeds | Each record must include `relationship_type`, `experience_type`, `publication_permission`, `attribution_required`, `source`, `approval_status`; do not imply partnership or client status | Owner specifies disclosure level per entity | Tools & Data section, partner sections, topic and service pages |
+| D-8 | Tools, data providers, partners, and standards disclosure | Reusable page system | Internal knowledge development proceeds | Each record must include `relationship_type`, `experience_type`, the canonical `publication` block, `confidentiality`, and source/approval evidence; do not imply partnership or client status | Owner specifies disclosure level per entity | Tools & Data section, partner sections, topic and service pages |
 | D-9 | Service architecture wording | Phase 1A | **In progress — layered approach** | Layer 1: source wording unchanged in reference files. Layer 2: normalized draft concepts in OKF knowledge layer. Layer 3: agent recommendations clearly identified. Do not overwrite source wording. | Owner reviews proposed changes in `content-audits/service-architecture-audit.md` | All service offering pages, service family overviews |
 | D-10 | Existing website migration (terra.nexus) | Phase 6 | Deferred — not blocking Phase 1A | Note existence of terra.nexus; plan content inventory, URL/redirect map, SEO baseline, analytics migration, and launch plan for Phase 6 | Owner provides access or inventory of existing site before Phase 6 | Phase 6 milestones, redirect map, analytics migration |
 
 ---
 
+### D-4 Approved Technical Decision [agent-draft]
+
+This owner approval selects the future implementation direction. It does not
+approve website content, scaffolding, deployment configuration, or implementation
+work in this Phase 2A planning document.
+
+| Decision area | Owner-approved choice |
+|---|---|
+| Framework | Astro, static-first. |
+| Hosting | Vercel. |
+| Content system | Git plus governed OKF Markdown. |
+| Content ingestion | Custom read-only OKF compiler. |
+| CMS | Deferred. |
+| Preview protection | Vercel Authentication. |
+| Proposal-only content | Excluded from `apps/web`; reserved for a separate future authenticated renderer or export system. |
+| Accessibility target | WCAG 2.2 Level AA. |
+| Performance targets | LCP <= 2.5 seconds, INP <= 200 milliseconds, and CLS <= 0.1, each at the 75th percentile. |
+
+**Owner-approved preview boundary:** confidential, internal, and client-sensitive
+material requires authenticated user access. Shareable-link previews may be used
+only for non-confidential external review. Proposal-only records must not enter
+`apps/web` or any website preview bundle.
+
+#### Canonical publication and confidentiality fields [agent-draft]
+
+```yaml
+publication:
+  audience: internal | proposal-only | public
+  state: blocked | preview | approved
+  attribution: none | anonymized | named
+  approved_by: null | human:<identifier>
+  approved_at: null | <ISO 8601 timestamp>
+confidentiality: unconfirmed | confidential | anonymized | public
+```
+
 ## 11. Phase 1B Recommendation
 
-> [agent-draft] — Proposed Phase 1B sequence based on Phase 1A findings.
-> Requires owner approval before implementation begins.
+> [agent-draft] — Phase 1B content interviews may proceed in parallel with
+> Phase 2B. They are not a prerequisite for the Phase 2B foundation.
 
 ### Phase 1B Goal
 
-Complete and approve all content required for Phase 4 (priority page production).
-By the end of Phase 1B, every page listed in the site map should have an
-`approved-brief` or `approved-copy` status in the content-readiness dashboard.
+Progressively complete and approve content needed for reusable templates and
+launch preparation. Phase 2B may begin without all page copy or all case studies
+being complete.
 
 ### Highest-Priority Owner Interviews
 
@@ -985,11 +1365,12 @@ In order of content availability and market value:
 6. All remaining expertise topic pages (in parallel once external research is commissioned)
 7. Audience pages — after topic and service briefs are approved
 
-### Missing Proof (Critical Path)
+### Pilot Proof Checkpoint
 
-No proof exists in this bundle. Before Phase 4, at minimum:
-- One approved qualification module per service family (5 total)
-- One approved qualification module per high-priority expertise topic (at minimum: Regenerative Agriculture, Sustainable Supply Chains, Carbon & Ecosystem Services)
+After the Phase 2B foundation, use one owner-supplied internal case study to
+prove governed ingestion, authenticated preview, relationship placement, and
+production exclusion. It is not a public-content approval or a requirement to
+complete all case studies.
 
 ### External Research Required Before Copy Development
 
@@ -1011,7 +1392,7 @@ These can be reviewed and approved in single working sessions once briefs are re
 - All 11 audience page briefs (one review session)
 - Five service family overviews (one review session)
 
-### Content to Defer Until Technical Stack is Selected (D-4)
+### Content to Defer Until the Reusable Page System
 
 - Page-specific metadata and structured data formats
 - Component content field specifications
@@ -1021,4 +1402,6 @@ These can be reviewed and approved in single working sessions once briefs are re
 ---
 
 *End of ExecPlan — version 0.3, status: draft.*
-*Phase 0 approved 2026-08-01. Phase 1A complete 2026-08-01. Phase 1B pending owner approval.*
+*Phase 1A and Phase 1A.2 complete. Phase 2A approved pending PR merge. Phase
+2B is next; Phase 1B content interviews may proceed in parallel. The pilot
+case-study checkpoint occurs after the Phase 2B foundation.*

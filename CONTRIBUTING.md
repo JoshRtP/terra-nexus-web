@@ -10,7 +10,7 @@
 
 ```bash
 # Requires Python 3.10+
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
 ```
 
 ## Running Validators Locally

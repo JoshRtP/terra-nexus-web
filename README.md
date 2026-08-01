@@ -25,7 +25,7 @@ This monorepo contains the Terra Nexus OKF knowledge bundle and will house the f
 ## Quick Start
 
 ```bash
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
 python scripts/validate_okf.py knowledge
 python scripts/tnx_validate.py knowledge
 python scripts/okf_cli.py --bundle knowledge index
