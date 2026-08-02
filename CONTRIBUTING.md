@@ -11,7 +11,10 @@
 ```bash
 # Requires Python 3.10+
 python -m pip install -e ".[dev]"
+npm ci
 ```
+
+For owner-oriented content workflow instructions, see [HOW_TO_ADD_CONTENT.md](HOW_TO_ADD_CONTENT.md).
 
 ## Running Validators Locally
 
@@ -23,7 +26,13 @@ python scripts/tnx_validate.py knowledge     # Terra Nexus domain rules
 python -m pytest tests/ -v                   # Unit tests
 python scripts/generate_inventory.py knowledge --check --tree   # Inventory freshness
 python scripts/sync_skills.py --check        # Skill sync check
+npm run content:validate                      # Read-only production and preview compiler checks
+npm run web:test                              # Compiler, CLI, and Astro foundation tests
+npm run web:build                             # Static production foundation build
+npm run check                                 # Complete non-mutating repository check (all commands above plus type checking)
 ```
+
+After adding or changing a knowledge record, use `npm run content:finalize`. It refreshes `knowledge/bundle-inventory.json` and `knowledge/TREE.txt`, reports those changes, and then runs `npm run check`. See [HOW_TO_ADD_CONTENT.md](HOW_TO_ADD_CONTENT.md) for the owner workflow.
 
 ## Adding Knowledge Content
 
@@ -45,10 +54,12 @@ python scripts/sync_skills.py --check        # Skill sync check
 
 ### New Proof Record (Case Study, Qualification)
 
-1. Copy `knowledge/case-studies/intake-templates/universal-proof-intake.md`.
-2. Fill in all fields. Leave `publication.approved_by: null` and `confidentiality: unconfirmed`.
-3. Submit as a PR — owner must review and confirm disclosure before merge.
-4. Owner sets `publication.audience`, `approved_by`, and `approved_at`.
+1. For a case study, use `npm run content:new -- --type case-study`; use the universal proof intake for owner-supplied facts.
+2. For a qualification, use `knowledge/case-studies/qualification-template.md` and the universal proof intake.
+3. Fill in all fields. Leave `publication.approved_by: null` and `confidentiality: unconfirmed`.
+4. Run `npm run content:affected -- case-studies/<slug>`, then `npm run content:finalize`.
+5. Review `git diff` (including the case-study file, inventory, and tree) before submitting a PR for owner disclosure review.
+6. Owner sets `publication.audience`, `approved_by`, and `approved_at` only with explicit approval.
 
 ## Publication Approval
 
@@ -67,13 +78,13 @@ All seven C&ES offering descriptions (`knowledge/services/carbon-and-ecosystem-s
 
 ## Updating Inventory After Changes
 
-After adding or modifying OKF files, regenerate the inventory:
+After adding or modifying OKF files, use the owner finalization command:
 
 ```bash
-python scripts/generate_inventory.py knowledge --tree
+npm run content:finalize
 ```
 
-Commit the updated `knowledge/bundle-inventory.json` and `knowledge/TREE.txt` with your changes.
+It regenerates the inventory and tree before running the complete non-mutating check. Review and commit the updated `knowledge/bundle-inventory.json` and `knowledge/TREE.txt` with your changes.
 
 ## Updating the Skill
 

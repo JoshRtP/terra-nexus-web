@@ -44,7 +44,7 @@ python scripts/generate_inventory.py knowledge --tree
 | `tests/` | Validator tests |
 | `plans/` | Project execution plans |
 | `.github/skills/` | Canonical agent skill (terra-nexus-content) |
-| `apps/web/` | Future website application (not yet created) |
+| `apps/web/` | Static Astro foundation and read-only OKF compiler |
 
 ## Content Governance
 
@@ -65,6 +65,27 @@ python scripts/validate_okf.py knowledge     # OKF structural conformance
 python scripts/tnx_validate.py knowledge     # Terra Nexus domain rules
 ```
 
+## Website Foundation Commands
+
+The workspace uses Astro 6.4.6 and the Node 24.18.0 LTS version recorded in `.nvmrc` (Astro 6 requires Node 22.12.0 or later). See [HOW_TO_ADD_CONTENT.md](HOW_TO_ADD_CONTENT.md) for plain-language guidance.
+
+```powershell
+npm ci
+npm run content:new -- --type case-study
+npm run content:status
+npm run content:affected -- services/strategy-and-innovation
+npm run content:validate
+npm run content:finalize
+npm run web:dev
+npm run web:build
+npm run web:test
+npm run check
+```
+
+`npm run check` is the complete non-mutating repository check: it runs the OKF and Terra Nexus validators, Python tests, inventory freshness, skill sync, compiler validation, website tests, production build, and type checking. After changing a knowledge record, use `npm run content:finalize` to regenerate `knowledge/bundle-inventory.json` and `knowledge/TREE.txt` before it runs that same complete check. See [HOW_TO_ADD_CONTENT.md](HOW_TO_ADD_CONTENT.md) for the standard owner workflow.
+
+The compiler is read-only for `knowledge/` and `schemas/`. It writes reproducible graph and safe-audit artifacts only to `apps/web/.generated/`, which Git ignores. Sensitive audit records use opaque diagnostic references rather than original confidential or proposal-only IDs. Phase 2B creates no governed-content routes, production deployment, Vercel project, CMS, analytics, or real case study.
+
 ## For AI Agents
 
 Start at `knowledge/codex/start-here.md`. Use the `terra-nexus-content` skill. See `AGENTS.md`.
@@ -75,4 +96,4 @@ Start at `knowledge/codex/start-here.md`. Use the `terra-nexus-content` skill. S
 - Draft concepts are planning recommendations requiring owner review before publication.
 - Illustrative company examples in audience files are not client claims.
 - Known content gaps: `knowledge/website/open-issues-and-required-inputs.md`
-- Framework selection for `apps/web/` is Phase 2 and requires owner approval.
+- See `HOW_TO_ADD_CONTENT.md` before adding proof or changing publication state.

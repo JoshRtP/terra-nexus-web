@@ -1,0 +1,12 @@
+[
+  {
+    "conceptId": "insights/duplicate-fixture",
+    "type": "Insight",
+    "sourcePath": "apps/web/test/fixtures/duplicate-concept-id/first.md"
+  },
+  {
+    "conceptId": "insights/duplicate-fixture",
+    "type": "Insight",
+    "sourcePath": "apps/web/test/fixtures/duplicate-concept-id/second.md"
+  }
+]

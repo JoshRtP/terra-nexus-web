@@ -8,6 +8,21 @@
 * **Gap Tracking**: Marked missing Carbon & Ecosystem Services descriptions, topic-page narratives, case studies, bios, design-system inputs, and technical requirements.
 * **Tooling**: Added dependency-free navigation/search and OKF conformance validation scripts.
 
+## 2026-08-01 (Phase 2B implementation)
+
+* **Astro foundation**: Added the npm workspace, Astro static application shell, strict TypeScript, Node LTS selection, and generic development-only foundation route.
+* **Read-only compiler**: Added production and preview eligibility filters, proposal-only hard exclusion, safe audits, relationship/reverse indexes, and a route-candidate contract.
+* **Owner workflow**: Added case-study scaffolding, content-status reporting, affected-content queries, root npm commands, and `HOW_TO_ADD_CONTENT.md`.
+* **Safety tests**: Added synthetic fixtures outside `knowledge/`, compiler/CLI/Astro tests, no-mutation checks, preview noindex behavior, and workflow checks.
+* **Scope retained**: No real case study, governed-content page templates, Vercel configuration, preview authentication, production deployment, or visual design was added.
+
+## 2026-08-01 (Phase 2B hardening)
+
+* **Safe audits corrected**: Confidential, unconfirmed, and proposal-only records now receive deterministic opaque diagnostic references in generated audit output; original IDs, slugs, filenames, titles, descriptions, and body text remain out of generated diagnostics.
+* **Complete owner finalization**: Added `npm run content:finalize` to regenerate the bundle inventory and tree, report derived-file changes, and run the complete repository check without committing or pushing.
+* **Authoritative check**: `npm run check` now runs the Python validators and tests, inventory freshness, skill sync, compiler validation, website tests, production build, and type check without modifying governed files.
+* **Integration proof**: The case-study scaffolder is now tested against both repository Python validators. No real case study was added; the owner-supplied pilot checkpoint remains next.
+
 ## 2026-08-01 (Phase 0)
 
 * **ExecPlan created**: `plans/website-foundation.md` — self-contained Website Foundation ExecPlan (v0.1).
@@ -69,4 +84,3 @@ The following links within `knowledge/` use bundle-relative paths starting with 
 * **Content-readiness dashboard created**: `website/content-readiness.md` — per-page status for all proposed pages.
 * **Terminology correction**: "Diary" corrected to "Dairy" in trading company intake (provenance note preserved). No source documents altered.
 * **OKF validation**: Passes with no errors.
-

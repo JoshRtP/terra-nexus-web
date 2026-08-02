@@ -32,6 +32,9 @@ node_modules/
 .nuxt/
 dist/
 .output/
+apps/web/.generated/
+apps/web/.test-tmp/
+apps/web/.astro/
 
 # Deployment / environment (never commit real secrets)
 .env.local

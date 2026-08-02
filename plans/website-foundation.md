@@ -1060,6 +1060,28 @@ make all page copy or all case studies prerequisites for Phase 2B.
 pending PR merge. Phase 2B is next. Phase 1B content interviews may proceed in
 parallel.
 
+### Phase 2B implementation status [agent-draft]
+
+**Status: implemented on the Phase 2B content-engine branch; awaiting owner review.**
+
+Delivered foundation capabilities:
+
+* npm workspace with Astro 6.4.6, strict TypeScript, static output, Node 24.18.0 LTS selection, and a generic semantic foundation page.
+* Framework-independent, read-only OKF compiler with deterministic production and preview filters, safe machine-readable audits, relationship and reverse indexes, and future route candidates.
+* Hard exclusion of proposal-only records from every application graph. Confidential, unconfirmed, and proposal-only diagnostics use deterministic opaque references and redact original IDs, filenames, source paths, titles, descriptions, and bodies.
+* Owner commands: `content:new`, `content:status`, `content:affected`, `content:validate`, `content:finalize`, `web:dev`, `web:build`, `web:test`, and `check`. `content:finalize` refreshes inventory and tree before the complete repository check; `check` is non-mutating for governed files.
+* Case-study scaffolding with restrictive defaults, relationship-ID validation, no-overwrite protection, interactive confirmation, and noninteractive `--yes` support.
+* Fixtures and automated compiler, workflow, no-mutation, static-build, preview-noindex, and scaffold-to-Python-validator integration tests.
+
+Limitations retained deliberately:
+
+* Vercel is not configured and Vercel Authentication is not active.
+* No real pilot case study was added.
+* The reusable service, expertise, audience, case-study, insight, and team page system has not begun.
+* Visual design, production domain, analytics, forms, CMS, and deployment configuration remain out of scope.
+
+**Next checkpoint:** the owner supplies one internal pilot case study with actual engagement facts, approved relationship IDs, disclosure constraints, and a named internal approver. The pilot then proves protected-preview ingestion and relationship placement before page-system work begins.
+
 1. **Phase 2B — Astro foundation.** Create the Astro foundation, read-only
    OKF compiler, publication filters, relationship graph, authoring helper,
    status reporting, tests, and a minimal application shell.

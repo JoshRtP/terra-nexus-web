@@ -172,7 +172,7 @@ def test_valid_timestamp(tmp_path):
         status: stable
         generated:
           by: test
-          at: '2026-08-01T00:00:00Z'
+          at: '2026-08-01T00:00:00.000Z'
         ---
         Body
     """)

@@ -1,0 +1,28 @@
+{
+  "name": "terra-nexus-website",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Terra Nexus governed website workspace",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0 <25",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "content:new": "tsx apps/web/scripts/content-cli.ts new",
+    "content:status": "tsx apps/web/scripts/content-cli.ts status",
+    "content:affected": "tsx apps/web/scripts/content-cli.ts affected",
+    "content:validate": "tsx apps/web/scripts/content-cli.ts validate",
+    "content:finalize": "tsx apps/web/scripts/content-cli.ts finalize",
+    "check:python": "tsx apps/web/scripts/repository-check.ts python",
+    "check:web": "tsx apps/web/scripts/repository-check.ts web",
+    "inventory:update": "tsx apps/web/scripts/repository-check.ts inventory",
+    "web:dev": "npm run dev --workspace=@terra-nexus/web",
+    "web:build": "npm run build --workspace=@terra-nexus/web",
+    "web:test": "npm run test --workspace=@terra-nexus/web",
+    "web:typecheck": "npm run typecheck --workspace=@terra-nexus/web",
+    "check": "tsx apps/web/scripts/repository-check.ts complete"
+  }
+}
