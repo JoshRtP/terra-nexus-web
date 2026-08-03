@@ -1,0 +1,136 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const relatedCapabilities = [
+  { title: 'Corporate Sustainability', slug: 'corporate-sustainability' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services' },
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
+];
+---
+
+<SiteLayout
+  title="Biodiversity & Ecosystem Resilience | Terra Nexus"
+  description="Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/expertise/">Expertise</a></li>
+        <li aria-current="page">Biodiversity &amp; Ecosystem Resilience</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="page-hero" aria-labelledby="page-title">
+    <div class="container">
+      <span class="eyebrow">AREA OF EXPERTISE</span>
+      <h1 id="page-title">Biodiversity &amp; Ecosystem Resilience</h1>
+      <p class="hero-lead">Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.</p>
+    </div>
+  </section>
+
+  <!-- How Terra Nexus Works in This Space -->
+  <section class="section" aria-labelledby="how-section">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
+      </header>
+      <div class="detail-content">
+        <p>Terra Nexus helps clients understand and act on the biodiversity and ecosystem dimensions of their food and agriculture operations. We translate nature-related dependencies, impacts, risks, and opportunities into strategies that protect business value while advancing landscape-level resilience.</p>
+        <p>Engagements may address nature-risk assessment and disclosure, biodiversity measurement and monitoring frameworks, ecosystem-service valuation, landscape-partnership design, nature-positive strategy development, or the integration of biodiversity outcomes into existing carbon and sustainability programs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Capabilities -->
+  <section class="section section-alt" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="capabilities-heading">Related Capabilities</h2>
+        <p>Terra Nexus applies these capability families when working in biodiversity and ecosystem resilience.</p>
+      </header>
+      <div class="card-grid card-grid-3">
+        {relatedCapabilities.map((cap) => (
+          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
+            <article class="card">
+              <h3>{cap.title}</h3>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" aria-labelledby="cta-heading">
+    <div class="container cta-section">
+      <h2 id="cta-heading">Discuss Your Challenge</h2>
+      <p>Tell us how biodiversity and ecosystem resilience connect to your business or landscape objectives.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: 1rem 0;
+  }
+
+  .breadcrumb ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: 0.5rem;
+    opacity: 0.5;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .breadcrumb a:hover {
+    opacity: 1;
+  }
+
+  .detail-content {
+    max-width: 72ch;
+    margin: 0 auto;
+  }
+
+  .detail-content p {
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .cta-section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    margin-bottom: 2rem;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>

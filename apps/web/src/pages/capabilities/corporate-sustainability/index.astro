@@ -1,0 +1,160 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const offerings = [
+  {
+    id: 'sustainability-strategy',
+    title: 'Sustainability Strategy',
+    description: 'Define ambition, material priorities, goals, policies, governance, resources, roadmaps, and the connection between sustainability and business value.',
+  },
+  {
+    id: 'measurement-disclosure',
+    title: 'Measurement, Impact & Disclosure',
+    description: 'Build the accounting, measurement, risk, data, control, and reporting systems needed to understand and communicate performance.',
+  },
+  {
+    id: 'stakeholder-engagement',
+    title: 'Stakeholder Engagement',
+    description: 'Align the internal and external people whose decisions, support, data, and participation determine delivery.',
+  },
+  {
+    id: 'purpose-driven-products',
+    title: 'Building Purpose-Driven Products & Services',
+    description: 'Connect sustainability priorities to products, services, customers, growth, and commercial value.',
+  },
+  {
+    id: 'supply-chain-operations',
+    title: 'Sustainable Supply Chain & Operations',
+    description: 'Translate enterprise commitments into sourcing, supplier, logistics, operations, efficiency, traceability, and circularity action.',
+  },
+];
+---
+
+<SiteLayout
+  title="Corporate Sustainability — Capabilities — Terra Nexus"
+  description="Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/capabilities/">Capabilities</a></li>
+        <li aria-current="page">Corporate Sustainability</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">CORPORATE SUSTAINABILITY</span>
+      <h1>Turn Enterprise Sustainability Commitments into Governed Action</h1>
+      <p class="hero-lead">Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain.</p>
+    </div>
+  </section>
+
+  <!-- Decision Owners -->
+  <section class="section" aria-labelledby="decision-owners-heading">
+    <div class="container">
+      <h2 id="decision-owners-heading">Decision Owners</h2>
+      <p>Chief sustainability officers; climate and ESG teams; reporting, disclosure, compliance, risk, and program leaders; executive teams and boards.</p>
+    </div>
+  </section>
+
+  <!-- Offering Modules -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <h2 id="offerings-heading">Offering Modules</h2>
+
+      <div class="accordion">
+        {offerings.map((offering) => (
+          <div class="accordion-item">
+            <button
+              class="accordion-trigger"
+              aria-expanded="false"
+              aria-controls={`content-${offering.id}`}
+              id={`trigger-${offering.id}`}
+            >
+              {offering.title}
+            </button>
+            <div
+              class="accordion-content"
+              id={`content-${offering.id}`}
+              role="region"
+              aria-labelledby={`trigger-${offering.id}`}
+              hidden
+            >
+              <p>{offering.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="section" aria-labelledby="closing-heading">
+    <div class="container">
+      <h2 id="closing-heading">Integration</h2>
+      <p>Corporate Sustainability integrates related workstreams into enterprise ambition, governance, performance, and disclosure.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-dark" aria-labelledby="cta-heading">
+    <div class="container section-header">
+      <h2 id="cta-heading">Ready to Get Started?</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Sustainability Priorities</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+  .breadcrumb ol {
+    display: flex;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .breadcrumb li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+    color: var(--color-neutral-400);
+  }
+  .breadcrumb a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-neutral-600);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      const contentId = trigger.getAttribute('aria-controls');
+      if (!contentId) return;
+      const content = document.getElementById(contentId);
+      if (content) {
+        content.hidden = expanded;
+      }
+    });
+  });
+</script>

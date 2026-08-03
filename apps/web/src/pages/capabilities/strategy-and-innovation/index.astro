@@ -1,0 +1,165 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const offerings = [
+  {
+    id: 'corporate-strategy',
+    title: 'Corporate & Business Unit Strategy',
+    description: 'Define strategic direction and align aspiration, portfolio choices, resources, capabilities, governance, and execution priorities.',
+  },
+  {
+    id: 'market-entry',
+    title: 'Market Entry & Competitive Strategy',
+    description: 'Evaluate markets, customers, competitors, barriers, positioning, pricing, and routes to market.',
+  },
+  {
+    id: 'business-model',
+    title: 'Business Model & Growth Strategy',
+    description: 'Design how an organization creates, delivers, and captures value.',
+  },
+  {
+    id: 'customer-experience',
+    title: 'Customer Experience',
+    description: 'Understand how customers perceive, select, use, and value products, programs, services, and claims.',
+  },
+  {
+    id: 'product-innovation',
+    title: 'Product, Innovation & Design',
+    description: 'Move products, services, programs, and processes from opportunity through concept, testing, launch, and scale.',
+  },
+  {
+    id: 'sustainability-climate-strategy',
+    title: 'Sustainability & Climate Change Strategy',
+    description: 'Define sustainability and climate strategy when the decision is owned by strategy, a business unit, innovation, or commercial leadership.',
+  },
+];
+---
+
+<SiteLayout
+  title="Strategy & Innovation — Capabilities — Terra Nexus"
+  description="Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/capabilities/">Capabilities</a></li>
+        <li aria-current="page">Strategy & Innovation</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">STRATEGY & INNOVATION</span>
+      <h1>Find the Right Place to Play—and Build a Credible Path to Win</h1>
+      <p class="hero-lead">Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.</p>
+    </div>
+  </section>
+
+  <!-- Decision Owners -->
+  <section class="section" aria-labelledby="decision-owners-heading">
+    <div class="container">
+      <h2 id="decision-owners-heading">Decision Owners</h2>
+      <p>P&L and business-unit leaders; corporate strategy; innovation and R&D; commercial, growth, product, and customer leaders.</p>
+    </div>
+  </section>
+
+  <!-- Offering Modules -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <h2 id="offerings-heading">Offering Modules</h2>
+
+      <div class="accordion">
+        {offerings.map((offering) => (
+          <div class="accordion-item">
+            <button
+              class="accordion-trigger"
+              aria-expanded="false"
+              aria-controls={`content-${offering.id}`}
+              id={`trigger-${offering.id}`}
+            >
+              {offering.title}
+            </button>
+            <div
+              class="accordion-content"
+              id={`content-${offering.id}`}
+              role="region"
+              aria-labelledby={`trigger-${offering.id}`}
+              hidden
+            >
+              <p>{offering.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Boundary Note -->
+  <section class="section" aria-labelledby="boundary-heading">
+    <div class="container">
+      <h2 id="boundary-heading">Boundary</h2>
+      <p>Strategy & Innovation focuses on where the business should play and how it can win. Corporate Sustainability focuses on enterprise targets, accounting, governance, disclosure, and formal performance management.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-dark" aria-labelledby="cta-heading">
+    <div class="container section-header">
+      <h2 id="cta-heading">Ready to Get Started?</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Strategy or Growth Opportunity</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+  .breadcrumb ol {
+    display: flex;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .breadcrumb li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+    color: var(--color-neutral-400);
+  }
+  .breadcrumb a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-neutral-600);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      const contentId = trigger.getAttribute('aria-controls');
+      if (!contentId) return;
+      const content = document.getElementById(contentId);
+      if (content) {
+        content.hidden = expanded;
+      }
+    });
+  });
+</script>

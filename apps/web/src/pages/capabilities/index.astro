@@ -1,0 +1,99 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const capabilities = [
+  {
+    title: 'Strategy & Innovation',
+    slug: 'strategy-and-innovation',
+    question: 'Where should we play, and how do we win at the intersection of food and climate?',
+  },
+  {
+    title: 'Financial Investments & New Venture Development',
+    slug: 'financial-investments-and-new-venture-development',
+    question: 'Which ideas, ventures, investments, assets, partnerships, or facilities should be screened, funded, incubated, acquired, or scaled?',
+  },
+  {
+    title: 'Sustainable Supply Chain & Operations',
+    slug: 'sustainable-supply-chain-and-operations',
+    question: 'How can impact, risk, cost, and volatility be reduced by changing what is bought and how it is produced, moved, processed, used, or recovered?',
+  },
+  {
+    title: 'Corporate Sustainability',
+    slug: 'corporate-sustainability',
+    question: 'How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?',
+  },
+  {
+    title: 'Carbon & Ecosystem Services',
+    slug: 'carbon-and-ecosystem-services',
+    question: 'How are environmental assets, attributes, credits, insets, offsets, and claims created, accessed, valued, verified, accounted for, managed, and monetized?',
+  },
+];
+---
+
+<SiteLayout
+  title="Capabilities — Terra Nexus"
+  description="Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="CAPABILITIES"
+    title="Connect Strategy, Investment, Operations, Sustainability, and Market Value"
+    description="Food-and-climate opportunities rarely fit inside one business function. Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
+  />
+
+  <!-- Capability Cards -->
+  <section class="section" aria-labelledby="capabilities-list-heading">
+    <div class="container">
+      <h2 id="capabilities-list-heading" class="sr-only">Our Capabilities</h2>
+
+      <div class="card-grid">
+        {capabilities.map((cap) => (
+          <a href={`/capabilities/${cap.slug}/`} class="card-link">
+            <article class="card">
+              <h3>{cap.title}</h3>
+              <p>{cap.question}</p>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities Work Together -->
+  <section class="section section-alt" aria-labelledby="integration-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="integration-heading">Capabilities Work Together</h2>
+        <p>A single engagement may require several capability families. Terra Nexus organizes the work around the client functions that own each decision while integrating the complete path to value.</p>
+      </header>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-dark" aria-labelledby="cta-heading">
+    <div class="container section-header">
+      <h2 id="cta-heading">Ready to Get Started?</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

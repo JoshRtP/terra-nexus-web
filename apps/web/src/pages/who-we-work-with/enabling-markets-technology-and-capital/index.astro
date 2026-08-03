@@ -1,0 +1,160 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const segments = [
+  {
+    title: 'Environmental Markets & Ecosystem Services',
+    description: 'Terra Nexus supports market and methodology assessment; program, MRV, traceability, and claims design; commercialization; asset and portfolio diligence; partner and verifier selection; audit readiness; program governance; managed operations; and reconciliation across project, product, inventory, and disclosure systems.',
+    note: 'Terra Nexus does not represent itself as an accredited validator or verifier.',
+  },
+  {
+    title: 'Enabling Tech & Solution Providers',
+    description: 'Terra Nexus supports market entry, customer discovery, product and business-model strategy, technical and data diligence, pilot design, partner selection, integration into real workflows, commercialization, channel partnerships, and investor or buyer diligence.',
+    note: 'Treat vendor performance claims as self-reported until supported by appropriate evidence.',
+  },
+  {
+    title: 'Private Equity, Venture Capital & Impact Investors',
+    description: 'Terra Nexus supports market and ecosystem analysis, investment thesis, opportunity screening, financial and commercial diligence, technical and environmental assessment, value-creation planning, portfolio strategy, and corporate-venture design.',
+    note: 'Terra Nexus provides diligence and decision support, not regulated investment advice.',
+  },
+];
+---
+
+<SiteLayout
+  title="Enabling Markets, Technology & Capital — Who We Work With — Terra Nexus"
+  description="Terra Nexus works with environmental markets, technology providers, assurance organizations, and capital partners that enable food-system change."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/who-we-work-with/">Who We Work With</a></li>
+        <li aria-current="page">Enabling Markets, Technology & Capital</li>
+      </ol>
+    </div>
+  </nav>
+
+  <PageHero
+    eyebrow="ENABLING MARKETS, TECHNOLOGY & CAPITAL"
+    title="Build the Infrastructure That Enables Food-System Change"
+    lead="Food and agribusiness transformation also depends on the markets, technology, assurance, and capital that make performance measurable, financeable, credible, and commercially actionable."
+  />
+
+  <!-- Audience Segments -->
+  <section class="section" aria-labelledby="segments-heading">
+    <div class="container">
+      <h2 id="segments-heading" class="visually-hidden">Audience Segments</h2>
+
+      <div class="segments-list">
+        {segments.map((segment) => (
+          <article class="segment-card">
+            <h3>{segment.title}</h3>
+            <p class="segment-description">{segment.description}</p>
+            <p class="segment-note"><em>{segment.note}</em></p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-alt" aria-labelledby="cta-heading">
+    <div class="container cta-section">
+      <h2 id="cta-heading" class="visually-hidden">Get in Touch</h2>
+      <div class="section-cta">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Platform, Program, or Investment</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: var(--space-2);
+    color: var(--color-neutral-400);
+  }
+
+  .breadcrumb a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-neutral-600);
+  }
+
+  .segments-list {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .segment-card {
+    padding: var(--space-8);
+    background: var(--color-neutral-50);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-lg);
+  }
+
+  .segment-card h3 {
+    margin-bottom: var(--space-4);
+    color: var(--color-neutral-900);
+  }
+
+  .segment-description {
+    color: var(--color-neutral-700);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-4);
+  }
+
+  .segment-note {
+    font-size: var(--text-sm);
+    color: var(--color-neutral-500);
+    border-top: 1px solid var(--color-neutral-200);
+    padding-top: var(--space-4);
+  }
+
+  .cta-section {
+    text-align: center;
+  }
+
+  .section-cta {
+    margin-top: var(--space-4);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

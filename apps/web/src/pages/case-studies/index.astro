@@ -1,6 +1,6 @@
 ---
 import CaseStudyCard from '../../components/CaseStudyCard.astro';
-import FoundationLayout from '../../layouts/FoundationLayout.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import { compileForBuild } from '../../lib/okf/build.js';
 import { selectCaseStudyPages } from '../../lib/okf/case-study-pages.js';
@@ -10,20 +10,28 @@ const compilation = await compileForBuild(mode);
 const pages = selectCaseStudyPages(compilation);
 ---
 
-<FoundationLayout
+<SiteLayout
   title="Case Studies | Terra Nexus"
-  description="Approved Terra Nexus case studies."
+  description="Evidence of commercial and environmental value from Terra Nexus engagements."
   preview={mode === 'preview'}
 >
-  <header class="page-header">
-    <p class="eyebrow">Case Studies</p>
-    <h1>Case Studies</h1>
-  </header>
-  {pages.length ? (
-    <section class="case-study-list" aria-label="Case studies">
-      {pages.map((page) => <CaseStudyCard page={page} />)}
-    </section>
-  ) : (
-    <p>No approved case studies are available in this build.</p>
-  )}
-</FoundationLayout>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Case Studies</span>
+      <h1>Evidence of Commercial and Environmental Value</h1>
+      <p class="hero-description">Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Case studies">
+    <div class="container">
+      {pages.length ? (
+        <div class="case-study-list">
+          {pages.map((page) => <CaseStudyCard page={page} />)}
+        </div>
+      ) : (
+        <p>No approved case studies are available in this build.</p>
+      )}
+    </div>
+  </section>
+</SiteLayout>

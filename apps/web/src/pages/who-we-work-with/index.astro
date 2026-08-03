@@ -1,0 +1,151 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+---
+
+<SiteLayout
+  title="Who We Work With — Terra Nexus"
+  description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="WHO WE WORK WITH"
+    title="Shared Value Requires the Whole System"
+    lead="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it."
+    description="A client may hire Terra Nexus at one node. Terra Nexus still evaluates the actions, evidence, economics, incentives, and collaboration required across every participant needed to make the solution work."
+  />
+
+  <!-- Value Chain Diagram (accessible text representation) -->
+  <section class="section" aria-labelledby="value-chain-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="value-chain-heading">The Food & Agribusiness Value Chain</h2>
+      </header>
+
+      <div class="value-chain-diagram" role="figure" aria-label="Food and agribusiness value chain showing the flow from inputs through recovery, supported by enabling markets, technology, and capital">
+        <ol class="value-chain-flow" aria-label="Value chain flow from inputs to recovery">
+          <li class="chain-node">
+            <span class="node-label">Inputs</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Agricultural Production</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Commodity Trading</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Ingredient & Feed Processing</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Food & Beverage</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Food Retail & Distribution</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Energy & Biofuels</span>
+          </li>
+          <li class="chain-node">
+            <span class="node-label">Food Waste Recovery</span>
+          </li>
+        </ol>
+        <div class="chain-enablers" aria-label="Enabling infrastructure supporting the entire value chain">
+          <span class="enablers-label">Enabling Markets, Technology & Capital</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audience Group Cards -->
+  <section class="section section-alt" aria-labelledby="groups-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="groups-heading">Explore by Group</h2>
+      </header>
+
+      <div class="card-grid">
+        <a href="/who-we-work-with/food-and-agribusiness-value-chain/" class="card-link">
+          <article class="card">
+            <h3>Food & Agribusiness Value Chain</h3>
+            <p>Work with the organizations that produce, move, transform, sell, distribute, and recover food and agricultural materials.</p>
+          </article>
+        </a>
+        <a href="/who-we-work-with/enabling-markets-technology-and-capital/" class="card-link">
+          <article class="card">
+            <h3>Enabling Markets, Technology & Capital</h3>
+            <p>Work with the organizations that provide environmental markets, data, technology, assurance, partnerships, and investment.</p>
+          </article>
+        </a>
+      </div>
+
+      <div class="section-cta">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Value-Chain Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .value-chain-diagram {
+    margin-top: var(--space-8);
+  }
+
+  .value-chain-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chain-node {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .chain-node:not(:last-child)::after {
+    content: '→';
+    color: var(--color-primary-500);
+    font-weight: 700;
+    font-size: var(--text-lg);
+  }
+
+  .node-label {
+    display: inline-block;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-neutral-100);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-neutral-800);
+    text-align: center;
+  }
+
+  .chain-enablers {
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-primary-50);
+    border: 2px dashed var(--color-primary-300);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+
+  .enablers-label {
+    font-weight: 600;
+    color: var(--color-primary-700);
+    font-size: var(--text-base);
+  }
+
+  .section-cta {
+    margin-top: var(--space-10);
+    text-align: center;
+  }
+</style>

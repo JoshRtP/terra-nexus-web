@@ -1,0 +1,155 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const offerings = [
+  {
+    id: 'financial-planning',
+    title: 'Financial Planning & Analysis',
+    description: 'Translate market, operating, environmental, and program assumptions into budgets, forecasts, profitability, margin, cash needs, and scenarios.',
+  },
+  {
+    id: 'business-case',
+    title: 'Business Case & Initiative Prioritization',
+    description: 'Compare initiatives using strategic fit, value, impact, risk, feasibility, timing, and capital requirements.',
+  },
+  {
+    id: 'corporate-ventures',
+    title: 'Corporate Ventures',
+    description: 'Design corporate venture activity around strategic markets, technologies, and partnerships.',
+  },
+  {
+    id: 'investor-due-diligence',
+    title: 'Investor Due Diligence',
+    description: 'Evaluate companies, technologies, projects, programs, assets, and environmental claims across financial, commercial, technical, strategic, operational, and sustainability dimensions.',
+  },
+];
+---
+
+<SiteLayout
+  title="Financial Investments & New Venture Development — Capabilities — Terra Nexus"
+  description="Terra Nexus connects strategic opportunity with economics, capital allocation, venture development, transaction diligence, and the operating realities of food, agriculture, climate, nature, and circularity."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/capabilities/">Capabilities</a></li>
+        <li aria-current="page">Financial Investments & New Venture Development</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">FINANCIAL INVESTMENTS & NEW VENTURE DEVELOPMENT</span>
+      <h1>Put Capital Behind the Food-and-Climate Opportunities That Can Deliver</h1>
+      <p class="hero-lead">Terra Nexus connects strategic opportunity with economics, capital allocation, venture development, transaction diligence, and the operating realities of food, agriculture, climate, nature, and circularity.</p>
+    </div>
+  </section>
+
+  <!-- Decision Owners -->
+  <section class="section" aria-labelledby="decision-owners-heading">
+    <div class="container">
+      <h2 id="decision-owners-heading">Decision Owners</h2>
+      <p>Finance; corporate development; corporate venture; strategy; investment committees; private equity, venture, impact, infrastructure, and institutional investors.</p>
+    </div>
+  </section>
+
+  <!-- Offering Modules -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <h2 id="offerings-heading">Offering Modules</h2>
+
+      <div class="accordion">
+        {offerings.map((offering) => (
+          <div class="accordion-item">
+            <button
+              class="accordion-trigger"
+              aria-expanded="false"
+              aria-controls={`content-${offering.id}`}
+              id={`trigger-${offering.id}`}
+            >
+              {offering.title}
+            </button>
+            <div
+              class="accordion-content"
+              id={`content-${offering.id}`}
+              role="region"
+              aria-labelledby={`trigger-${offering.id}`}
+              hidden
+            >
+              <p>{offering.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="section" aria-labelledby="closing-heading">
+    <div class="container">
+      <h2 id="closing-heading">Integrated Diligence</h2>
+      <p>Terra Nexus evaluates biological systems, fragmented supply chains, commodity markets, policy, environmental claims, technology adoption, and participant incentives together rather than treating impact as a separate diligence stream.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-dark" aria-labelledby="cta-heading">
+    <div class="container section-header">
+      <h2 id="cta-heading">Ready to Get Started?</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss an Investment, Venture, or Business Case</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+  .breadcrumb ol {
+    display: flex;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .breadcrumb li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+    color: var(--color-neutral-400);
+  }
+  .breadcrumb a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-neutral-600);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      const contentId = trigger.getAttribute('aria-controls');
+      if (!contentId) return;
+      const content = document.getElementById(contentId);
+      if (content) {
+        content.hidden = expanded;
+      }
+    });
+  });
+</script>

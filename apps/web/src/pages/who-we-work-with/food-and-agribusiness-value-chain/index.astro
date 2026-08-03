@@ -1,0 +1,169 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const segments = [
+  {
+    title: 'Inputs Companies',
+    description: 'Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, partnerships, claims, and commercialization for agricultural and animal-production solutions.',
+  },
+  {
+    title: 'Agricultural Producers & Integrated Protein Companies',
+    description: 'Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, commercialization, and buyer requirements.',
+  },
+  {
+    title: 'Commodity Traders',
+    description: 'Market and program strategy, sourcing, producer engagement, traceability, data systems, environmental programs, commercialization, claims controls, managed operations, and diligence.',
+  },
+  {
+    title: 'Ingredient & Feed Processors',
+    description: 'Sourcing, feed and ingredient strategy, process improvement, footprinting, traceability, low-emissions products, byproduct value, commercialization, and claims.',
+  },
+  {
+    title: 'Food & Beverage Companies',
+    description: 'Product and portfolio strategy, supplier programs, traceability, Scope 3 and insetting, footprinting, certification, claims, pricing, commercialization, and managed value-chain programs.',
+  },
+  {
+    title: 'Food Retail & Distribution',
+    description: 'Responsible sourcing, category and supplier strategy, private-label propositions, traceability, customer insight, logistics, food-waste programs, claims, and collaboration.',
+  },
+  {
+    title: 'Energy & Biofuels Refiners',
+    description: 'Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.',
+  },
+  {
+    title: 'Food Waste Prevention, Diversion & Recovery',
+    description: 'Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.',
+  },
+];
+---
+
+<SiteLayout
+  title="Food & Agribusiness Value Chain — Who We Work With — Terra Nexus"
+  description="Terra Nexus works with organizations across the physical value chain, from inputs through food waste recovery."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/who-we-work-with/">Who We Work With</a></li>
+        <li aria-current="page">Food & Agribusiness Value Chain</li>
+      </ol>
+    </div>
+  </nav>
+
+  <PageHero
+    eyebrow="FOOD & AGRIBUSINESS VALUE CHAIN"
+    title="Create Value from Inputs Through Recovery"
+    lead="Terra Nexus works with organizations across the physical value chain and understands that a change made by one participant often depends on data, incentives, operations, and demand controlled by another."
+  />
+
+  <!-- Audience Segments -->
+  <section class="section" aria-labelledby="segments-heading">
+    <div class="container">
+      <h2 id="segments-heading" class="visually-hidden">Audience Segments</h2>
+
+      <div class="card-grid card-grid-2">
+        {segments.map((segment) => (
+          <article class="card">
+            <h3>{segment.title}</h3>
+            <p>{segment.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing Statement -->
+  <section class="section section-alt" aria-labelledby="closing-heading">
+    <div class="container closing-section">
+      <h2 id="closing-heading" class="visually-hidden">Our Approach</h2>
+      <blockquote class="closing-statement">
+        <p>The objective is not to maximize value for one node by shifting cost or risk to another. It is to build a workable path that rewards the participants whose actions make the outcome possible.</p>
+      </blockquote>
+
+      <div class="section-cta">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Food or Agribusiness Opportunity</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: var(--space-2);
+    color: var(--color-neutral-400);
+  }
+
+  .breadcrumb a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-neutral-600);
+  }
+
+  .card-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .closing-section {
+    text-align: center;
+    max-width: var(--max-width-text);
+    margin-inline: auto;
+  }
+
+  .closing-statement {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .closing-statement p {
+    font-size: var(--text-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-neutral-700);
+    font-style: italic;
+  }
+
+  .section-cta {
+    margin-top: var(--space-10);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

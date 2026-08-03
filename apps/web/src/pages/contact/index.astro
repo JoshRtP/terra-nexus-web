@@ -1,0 +1,156 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const routingOptions = [
+  'Strategy, market, product, or growth',
+  'Investment, venture, or diligence',
+  'Sourcing, supply chain, or operations',
+  'Corporate sustainability, accounting, or reporting',
+  'Carbon, ecosystem services, claims, or verification readiness',
+  'Other',
+];
+---
+
+<SiteLayout
+  title="Contact — Terra Nexus"
+  description="Tell us what you are evaluating, building, operating, investing in, or trying to improve. Terra Nexus will help determine the next step that fits the challenge."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="CONTACT"
+    title="Start with the Decision That Matters"
+    lead="Tell us what you are evaluating, building, operating, investing in, or trying to improve. Terra Nexus will help determine the expertise, capabilities, participants, and next step that fit the challenge."
+  />
+
+  <!-- Contact Form (Visual Prototype) -->
+  <!--
+    Contact form is a visual prototype. Form processing, CRM integration,
+    privacy language, and contact details require implementation approval.
+  -->
+  <section class="section" aria-labelledby="form-heading">
+    <div class="container form-container">
+      <h2 id="form-heading" class="visually-hidden">Contact Form</h2>
+
+      <form class="contact-form" aria-label="Contact form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="contact-name">Name <span class="required" aria-label="required">*</span></label>
+          <input type="text" id="contact-name" name="name" required autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="contact-email">Work Email <span class="required" aria-label="required">*</span></label>
+          <input type="email" id="contact-email" name="email" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="contact-org">Organization</label>
+          <input type="text" id="contact-org" name="organization" autocomplete="organization" />
+        </div>
+
+        <div class="form-group">
+          <label for="contact-role">Role</label>
+          <input type="text" id="contact-role" name="role" autocomplete="organization-title" />
+        </div>
+
+        <div class="form-group">
+          <label for="contact-routing">How can we help? <span class="optional">(optional)</span></label>
+          <select id="contact-routing" name="routing">
+            <option value="">Select an area…</option>
+            {routingOptions.map((option) => (
+              <option value={option}>{option}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-challenge">Challenge or Objective <span class="required" aria-label="required">*</span></label>
+          <textarea id="contact-challenge" name="challenge" rows="5" required></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Discuss Your Challenge</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .form-container {
+    max-width: 640px;
+    margin-inline: auto;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-group label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--color-neutral-800);
+  }
+
+  .required {
+    color: var(--color-primary-600);
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--color-neutral-500);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-neutral-300);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-family: inherit;
+    background: var(--color-neutral-0);
+    color: var(--color-neutral-900);
+    transition: border-color 0.2s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 1px;
+    border-color: var(--color-primary-500);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .form-actions {
+    margin-top: var(--space-4);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

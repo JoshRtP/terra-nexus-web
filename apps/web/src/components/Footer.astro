@@ -1,0 +1,123 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner container">
+    <div class="footer-brand">
+      <span class="footer-logo">Terra Nexus</span>
+      <p class="footer-tagline">An innovation and insights studio at the intersection of food and climate.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div class="footer-nav-group">
+        <h3>Explore</h3>
+        <ul role="list">
+          <li><a href="/expertise/">Areas of Expertise</a></li>
+          <li><a href="/capabilities/">Capabilities</a></li>
+          <li><a href="/who-we-work-with/">Who We Work With</a></li>
+          <li><a href="/case-studies/">Case Studies</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-group">
+        <h3>Company</h3>
+        <ul role="list">
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="footer-bottom">
+      <small>&copy; {currentYear} Terra Nexus. All rights reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-neutral-950);
+    color: var(--color-neutral-300);
+    padding-block: var(--space-16) var(--space-8);
+    margin-top: auto;
+  }
+
+  .footer-inner {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .footer-brand {
+    max-width: 24rem;
+  }
+
+  .footer-logo {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-neutral-0);
+  }
+
+  .footer-tagline {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-neutral-400);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-12);
+  }
+
+  .footer-nav-group h3 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-neutral-0);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-nav-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-nav-group li {
+    margin-bottom: var(--space-2);
+  }
+
+  .footer-nav-group a {
+    color: var(--color-neutral-400);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer-nav-group a:hover {
+    color: var(--color-neutral-100);
+  }
+
+  .footer-bottom {
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-neutral-800);
+  }
+
+  .footer-bottom small {
+    font-size: var(--text-sm);
+    color: var(--color-neutral-500);
+  }
+
+  @media (min-width: 48rem) {
+    .footer-inner {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+    }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

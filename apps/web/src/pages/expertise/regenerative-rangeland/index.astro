@@ -1,0 +1,136 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const relatedCapabilities = [
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
+  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services' },
+];
+---
+
+<SiteLayout
+  title="Regenerative Rangeland | Terra Nexus"
+  description="Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities."
+  preview={mode === 'preview'}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/expertise/">Expertise</a></li>
+        <li aria-current="page">Regenerative Rangeland</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="page-hero" aria-labelledby="page-title">
+    <div class="container">
+      <span class="eyebrow">AREA OF EXPERTISE</span>
+      <h1 id="page-title">Regenerative Rangeland</h1>
+      <p class="hero-lead">Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.</p>
+    </div>
+  </section>
+
+  <!-- How Terra Nexus Works in This Space -->
+  <section class="section" aria-labelledby="how-section">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
+      </header>
+      <div class="detail-content">
+        <p>Terra Nexus helps clients design and scale grazing and livestock systems where land stewardship, animal welfare, producer economics, and downstream market value reinforce one another. We work with ranchers, aggregators, processors, brands, and investors to connect rangeland outcomes with commercial opportunity.</p>
+        <p>Engagements may address adaptive grazing program design, livestock-to-market pathways, environmental-attribute creation and verification, rangeland carbon and biodiversity strategies, or the brand and claims architecture that communicates rangeland value to customers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Capabilities -->
+  <section class="section section-alt" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="capabilities-heading">Related Capabilities</h2>
+        <p>Terra Nexus applies these capability families when working in regenerative rangeland.</p>
+      </header>
+      <div class="card-grid card-grid-3">
+        {relatedCapabilities.map((cap) => (
+          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
+            <article class="card">
+              <h3>{cap.title}</h3>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" aria-labelledby="cta-heading">
+    <div class="container cta-section">
+      <h2 id="cta-heading">Discuss Your Challenge</h2>
+      <p>Tell us how rangeland and livestock systems connect to your business objectives.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .breadcrumb {
+    padding: 1rem 0;
+  }
+
+  .breadcrumb ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin-left: 0.5rem;
+    opacity: 0.5;
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .breadcrumb a:hover {
+    opacity: 1;
+  }
+
+  .detail-content {
+    max-width: 72ch;
+    margin: 0 auto;
+  }
+
+  .detail-content p {
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .cta-section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    margin-bottom: 2rem;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>

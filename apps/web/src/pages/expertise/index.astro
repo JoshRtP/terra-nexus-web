@@ -1,0 +1,112 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+
+const expertiseAreas = [
+  { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.' },
+  { title: 'Regenerative Rangeland', slug: 'regenerative-rangeland', description: 'Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.' },
+  { title: 'Agroforestry', slug: 'agroforestry', description: 'Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.' },
+  { title: 'Aquaculture', slug: 'aquaculture', description: 'Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.' },
+  { title: 'Biodiversity & Ecosystem Resilience', slug: 'biodiversity-and-ecosystem-resilience', description: 'Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.' },
+  { title: 'Sustainable Supply Chains', slug: 'sustainable-supply-chains', description: 'Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.' },
+  { title: 'Low Carbon Energy & Biofuels', slug: 'low-carbon-energy-and-biofuels', description: 'Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.' },
+  { title: 'Purpose-Driven Food Brands & Retailers', slug: 'purpose-driven-food-brands-and-retailers', description: 'Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.' },
+  { title: 'Food Waste: Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.' },
+];
+---
+
+<SiteLayout
+  title="Areas of Expertise | Terra Nexus"
+  description="Terra Nexus brings specialized knowledge to the production systems, supply chains, markets, products, and recovery pathways where food-and-climate performance can create commercial and environmental value."
+  preview={mode === 'preview'}
+>
+  <!-- Hero -->
+  <section class="page-hero" aria-labelledby="expertise-hero-title">
+    <div class="container">
+      <span class="eyebrow">AREAS OF EXPERTISE</span>
+      <h1 id="expertise-hero-title">Expertise Across the Food and Agriculture System</h1>
+      <p class="hero-lead">Terra Nexus brings specialized knowledge to the production systems, supply chains, markets, products, and recovery pathways where food-and-climate performance can create commercial and environmental value.</p>
+      <p class="hero-description">Each Area of Expertise can stand on its own. A client play may also combine several topics and several value-chain participants.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expertise Grid -->
+  <section class="section" aria-labelledby="expertise-grid-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="expertise-grid-heading">Nine Areas of Expertise</h2>
+      </header>
+
+      <div class="card-grid card-grid-3">
+        {expertiseAreas.map((area) => (
+          <a href={`/expertise/${area.slug}/`} class="card-link" aria-label={`Learn more about ${area.title}`}>
+            <article class="card">
+              <h3>{area.title}</h3>
+              <p>{area.description}</p>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What Connects the Topics -->
+  <section class="section section-alt" aria-labelledby="connects-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="connects-heading">What Connects the Topics</h2>
+      </header>
+      <div class="connects-content">
+        <p>Every area of expertise sits within the same food-and-climate system. Production decisions ripple through supply chains, shape product strategies, and determine what can be recovered or regenerated at end of life. Terra Nexus works across these connections so that improvements in one area reinforce outcomes in others.</p>
+        <p>The model means a client can engage Terra Nexus on a single topic—or combine several areas and several value-chain participants—to address challenges that span the system.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section" aria-labelledby="cta-heading">
+    <div class="container cta-section">
+      <h2 id="cta-heading">Ready to Get Started?</h2>
+      <p>Tell us about your challenge and we will identify the expertise and capabilities that fit.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .connects-content {
+    max-width: 72ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .connects-content p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .cta-section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    margin-bottom: 2rem;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>

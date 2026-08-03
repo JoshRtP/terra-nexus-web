@@ -1,13 +1,261 @@
 ---
-import FoundationLayout from '../layouts/FoundationLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import { compileForBuild } from '../lib/okf/build.js';
+import { selectCaseStudyPages } from '../lib/okf/case-study-pages.js';
 
 const mode = getBuildMode();
-await compileForBuild(mode);
+const compilation = await compileForBuild(mode);
+const caseStudies = selectCaseStudyPages(compilation);
+const hasCaseStudy = caseStudies.length > 0;
+
+const expertiseAreas = [
+  { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.' },
+  { title: 'Regenerative Rangeland', slug: 'regenerative-rangeland', description: 'Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.' },
+  { title: 'Agroforestry', slug: 'agroforestry', description: 'Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.' },
+  { title: 'Aquaculture', slug: 'aquaculture', description: 'Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.' },
+  { title: 'Biodiversity & Ecosystem Resilience', slug: 'biodiversity-and-ecosystem-resilience', description: 'Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.' },
+  { title: 'Sustainable Supply Chains', slug: 'sustainable-supply-chains', description: 'Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.' },
+  { title: 'Low Carbon Energy & Biofuels', slug: 'low-carbon-energy-and-biofuels', description: 'Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.' },
+  { title: 'Purpose-Driven Food Brands & Retailers', slug: 'purpose-driven-food-brands-and-retailers', description: 'Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.' },
+  { title: 'Food Waste: Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.' },
+];
+
+const capabilities = [
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.' },
+  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.' },
+  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
+  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
+];
 ---
 
-<FoundationLayout title="Terra Nexus website foundation" preview={mode === 'preview'}>
-  <h1>Website foundation</h1>
-  <p>This development foundation includes the governed Case Studies page system. Other page families are not yet implemented.</p>
-</FoundationLayout>
+<SiteLayout
+  title="Terra Nexus — Impact at the Intersection of Food & Climate"
+  description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
+  preview={mode === 'preview'}
+>
+  <!-- Hero -->
+  <PageHero
+    eyebrow="An Innovation & Insights Studio"
+    title="Impact at the Intersection of Food & Climate"
+    lead="We advise and manage commercial sustainability programs at scale."
+    description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
+  />
+
+  <!-- Expertise Section -->
+  <section class="section" aria-labelledby="expertise-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">What We Are Known For</span>
+        <h2 id="expertise-heading">Expertise Across the Food and Agriculture System</h2>
+        <p>We bring specialized food-and-climate knowledge to the production systems, supply chains, markets, products, and recovery pathways where change can create the greatest value.</p>
+      </header>
+
+      <div class="card-grid card-grid-3">
+        {expertiseAreas.map((area) => (
+          <a href={`/expertise/${area.slug}/`} class="card-link">
+            <article class="card">
+              <h3>{area.title}</h3>
+              <p>{area.description}</p>
+            </article>
+          </a>
+        ))}
+      </div>
+
+      <div class="section-cta">
+        <a href="/expertise/" class="btn btn-secondary">Explore All Areas of Expertise</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities Section -->
+  <section class="section section-alt" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Capabilities</span>
+        <h2 id="capabilities-heading">Capabilities from Strategy Through Execution</h2>
+        <p>Terra Nexus combines five capability families so clients can move from an opportunity or challenge to an operating, supportable, and commercially valuable solution.</p>
+      </header>
+
+      <div class="card-grid">
+        {capabilities.map((cap) => (
+          <a href={`/capabilities/${cap.slug}/`} class="card-link">
+            <article class="card">
+              <h3>{cap.title}</h3>
+              <p>{cap.description}</p>
+            </article>
+          </a>
+        ))}
+      </div>
+
+      <div class="section-cta">
+        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who We Work With Section -->
+  <section class="section" aria-labelledby="audiences-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Who We Work With</span>
+        <h2 id="audiences-heading">We Work Across the Food and Agribusiness System</h2>
+        <p>Lasting change rarely belongs to one company or one function. Terra Nexus works with every node of the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable the system to change.</p>
+      </header>
+
+      <div class="card-grid">
+        <a href="/who-we-work-with/food-and-agribusiness-value-chain/" class="card-link">
+          <article class="card">
+            <h3>Food & Agribusiness Value Chain</h3>
+            <p>Work with the organizations that produce, move, transform, sell, distribute, and recover food and agricultural materials.</p>
+          </article>
+        </a>
+        <a href="/who-we-work-with/enabling-markets-technology-and-capital/" class="card-link">
+          <article class="card">
+            <h3>Enabling Markets, Technology & Capital</h3>
+            <p>Work with the organizations that provide environmental markets, data, technology, assurance, partnerships, and investment.</p>
+          </article>
+        </a>
+      </div>
+
+      <div class="section-cta">
+        <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shared Value Section -->
+  <section class="section section-dark" aria-labelledby="value-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="value-heading">From Improved Performance to the Right Market Value</h2>
+        <p>Improving performance does not automatically create value. Terra Nexus helps clients connect fit-for-purpose changes with the evidence, collaboration, operating model, and market mechanisms required to create the highest-value supportable outcome.</p>
+      </header>
+
+      <div class="card-grid card-grid-3">
+        <article class="value-pillar">
+          <h3>Transparency</h3>
+          <p>Clarify the performance, evidence, costs, ownership, risks, and value available to each participant.</p>
+        </article>
+        <article class="value-pillar">
+          <h3>Collaboration</h3>
+          <p>Align the producers, suppliers, traders, processors, brands, retailers, technology providers, investors, and market partners required to make the solution work.</p>
+        </article>
+        <article class="value-pillar">
+          <h3>Market Mechanisms</h3>
+          <p>Design incentives, commercial structures, claims, attributes, and routes to market that reward the participants whose actions create the value.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engagement Models Section -->
+  <section class="section section-alt" aria-labelledby="engage-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">How We Engage</span>
+        <h2 id="engage-heading">From Advisory to Embedded Management</h2>
+      </header>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Evaluate decisions, opportunities, risks, markets, economics, technologies, partners, programs, and claims.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Embed as an operating partner to coordinate client-owned programs, workstreams, data, evidence, partners, reporting, and continuous improvement.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof Section -->
+  {hasCaseStudy && (
+    <section class="section" aria-labelledby="proof-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">Proven Commercial Impact</span>
+          <h2 id="proof-heading">Evaluating Commercial Pathways for Lower-Emissions Beef</h2>
+          <p>For a global agricultural trading company, Terra Nexus connected methodology, claims, market readiness, competitive positioning, and commercialization strategy for a proprietary feed-optimization solution.</p>
+        </header>
+
+        <div class="stat-group">
+          <div class="stat">
+            <p class="stat-value">$12.5M</p>
+            <p class="stat-label">Annual recurring contract value</p>
+          </div>
+          <div class="stat">
+            <p class="stat-value">8.25%</p>
+            <p class="stat-label">Normalized margin improvement</p>
+          </div>
+        </div>
+
+        <p class="proof-note">Both results were modeled and subsequently achieved.</p>
+
+        <div class="section-cta">
+          <a href={caseStudies[0]?.route ?? '/case-studies/'} class="btn btn-primary">Read the Case Study</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Final CTA Section -->
+  <section class="section section-dark" aria-labelledby="final-cta-heading">
+    <div class="container cta-section">
+      <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
+      <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next and how the participants required to deliver it can share in the value.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .section-cta {
+    margin-top: var(--space-10);
+  }
+
+  .value-pillar h3 {
+    color: var(--color-primary-300);
+    margin-bottom: var(--space-3);
+  }
+
+  .value-pillar p {
+    color: var(--color-neutral-300);
+  }
+
+  .proof-note {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-neutral-600);
+    font-style: italic;
+  }
+
+  .cta-section {
+    text-align: center;
+    max-width: var(--max-width-text);
+    margin-inline: auto;
+  }
+
+  .cta-section h2 {
+    color: var(--color-neutral-0);
+  }
+
+  .cta-description {
+    margin-top: var(--space-4);
+    color: var(--color-neutral-300);
+    font-size: var(--text-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .cta-section .hero-actions {
+    justify-content: center;
+    margin-top: var(--space-8);
+  }
+</style>

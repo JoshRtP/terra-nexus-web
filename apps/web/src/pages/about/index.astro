@@ -1,0 +1,106 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+---
+
+<SiteLayout
+  title="About — Terra Nexus"
+  description="Terra Nexus is an innovation and insights studio for food and climate, accelerating the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="ABOUT TERRA NEXUS"
+    title="An Innovation & Insights Studio for Food & Climate"
+  />
+
+  <!-- Purpose -->
+  <section class="section" aria-labelledby="purpose-heading">
+    <div class="container content-section">
+      <h2 id="purpose-heading">Purpose</h2>
+      <p>Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain.</p>
+    </div>
+  </section>
+
+  <!-- What Makes Us Different -->
+  <section class="section section-alt" aria-labelledby="different-heading">
+    <div class="container content-section">
+      <h2 id="different-heading">What Makes Terra Nexus Different</h2>
+      <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
+      <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
+    </div>
+  </section>
+
+  <!-- How We Engage -->
+  <section class="section" aria-labelledby="engage-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="engage-heading">How We Engage</h2>
+      </header>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Support decisions, strategy, diligence, design, business cases, programs, and commercialization pathways.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Embed as an operating partner for client-owned programs and workstreams.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-alt" aria-labelledby="cta-heading">
+    <div class="container cta-section">
+      <h2 id="cta-heading" class="visually-hidden">Get in Touch</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Start a Conversation</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .content-section {
+    max-width: var(--max-width-text);
+    margin-inline: auto;
+  }
+
+  .content-section h2 {
+    margin-bottom: var(--space-6);
+  }
+
+  .content-section p {
+    font-size: var(--text-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-neutral-700);
+  }
+
+  .content-section p + p {
+    margin-top: var(--space-4);
+  }
+
+  .cta-section {
+    text-align: center;
+  }
+
+  .cta-section .hero-actions {
+    justify-content: center;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

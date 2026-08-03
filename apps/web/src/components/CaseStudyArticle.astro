@@ -9,12 +9,107 @@ interface Props {
 const { page, renderedBody } = Astro.props;
 ---
 
-<article class="case-study-article">
-  <header class="page-header">
-    <p class="eyebrow">{page.label}</p>
-    <h1>{page.title}</h1>
-    {page.description && <p class="lede">{page.description}</p>}
-  </header>
-  <div class="markdown-body" set:html={renderedBody}></div>
-  <p class="return-link"><a href="/case-studies/">Back to Case Studies</a></p>
-</article>
+<section class="section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/case-studies/">Case Studies</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{page.title}</span>
+    </nav>
+
+    <article class="case-study-article">
+      <header class="page-header">
+        <p class="eyebrow">{page.label}</p>
+        <h1>{page.title}</h1>
+        {page.description && <p class="hero-description">{page.description}</p>}
+      </header>
+      <div class="markdown-body" set:html={renderedBody}></div>
+      <p class="return-link"><a href="/case-studies/" class="btn btn-secondary">Back to Case Studies</a></p>
+    </article>
+  </div>
+</section>
+
+<style>
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-neutral-500);
+    margin-bottom: var(--space-8);
+  }
+
+  .breadcrumb a {
+    color: var(--color-primary-600);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header .eyebrow {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary-600);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .markdown-body > :first-child {
+    margin-top: 0;
+  }
+
+  .markdown-body h2 {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-4);
+  }
+
+  .markdown-body h3 {
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+  }
+
+  .markdown-body p {
+    margin-bottom: var(--space-4);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .markdown-body ul,
+  .markdown-body ol {
+    margin-bottom: var(--space-4);
+    padding-left: var(--space-6);
+  }
+
+  .markdown-body li {
+    margin-bottom: var(--space-2);
+  }
+
+  .markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-block: var(--space-6);
+  }
+
+  .markdown-body th,
+  .markdown-body td {
+    padding: var(--space-3);
+    text-align: left;
+    vertical-align: top;
+    border: 1px solid var(--color-neutral-300);
+  }
+
+  .markdown-body th {
+    background: var(--color-neutral-50);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .return-link {
+    margin-top: var(--space-12);
+  }
+</style>

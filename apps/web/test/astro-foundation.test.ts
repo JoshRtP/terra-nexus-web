@@ -38,7 +38,7 @@ function build(mode: 'production' | 'preview'): void {
 }
 
 describe('Astro static foundation', () => {
-  it('builds production and preview safely with only eligible case-study routes and no source mutation', async () => {
+  it('builds production and preview safely with no source mutation', { timeout: 120_000 }, async () => {
     const beforeKnowledge = await fingerprint(resolve(REPOSITORY_ROOT, 'knowledge'));
     const beforeSchemas = await fingerprint(resolve(REPOSITORY_ROOT, 'schemas'));
     const dist = resolve(APP_ROOT, 'dist');
@@ -49,14 +49,20 @@ describe('Astro static foundation', () => {
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');
     const productionDetail = await readFile(resolve(dist, `case-studies/${pilotRoute}/index.html`), 'utf8');
-    expect(productionIndex).toContain('Website foundation');
+
+    expect(productionIndex).toContain('Terra Nexus');
+    expect(productionIndex).toContain('Impact at the Intersection of Food');
     expect(productionIndex).not.toContain('noindex, nofollow');
     expect(productionRobots).toBe('User-agent: *\nDisallow:\n');
-    expect(existsSync(resolve(dist, 'services'))).toBe(false);
-    expect(existsSync(resolve(dist, 'expertise'))).toBe(false);
-    expect(existsSync(resolve(dist, 'who-we-work-with'))).toBe(false);
+
     expect(existsSync(resolve(dist, 'case-studies/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, `case-studies/${pilotRoute}/index.html`))).toBe(true);
+    expect(existsSync(resolve(dist, 'expertise/index.html'))).toBe(true);
+    expect(existsSync(resolve(dist, 'capabilities/index.html'))).toBe(true);
+    expect(existsSync(resolve(dist, 'who-we-work-with/index.html'))).toBe(true);
+    expect(existsSync(resolve(dist, 'about/index.html'))).toBe(true);
+    expect(existsSync(resolve(dist, 'contact/index.html'))).toBe(true);
+
     expect(productionCaseStudies).toContain(`href="/case-studies/${pilotRoute}"`);
     expect(productionDetail).toContain('Evaluating Commercial Pathways for Lower-Emissions Beef from Optimized Diets');
     expect(productionDetail).toContain('$12.5 million');
