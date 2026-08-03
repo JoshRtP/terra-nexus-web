@@ -1,4 +1,4 @@
-﻿---
+---
 type: Repository Guide
 title: Terra Nexus Website Repository
 description: Monorepo containing the OKF knowledge bundle and future website application.

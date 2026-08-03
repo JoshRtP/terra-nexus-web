@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Validate the structural conformance of an OKF v0.2 bundle.
 
 Usage:
