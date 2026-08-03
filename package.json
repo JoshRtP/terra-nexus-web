@@ -11,6 +11,8 @@
     "npm": ">=10"
   },
   "scripts": {
+    "dev": "cd apps/web && node scripts/run-astro.mjs dev --host",
+    "build": "npm run build --workspace=@terra-nexus/web",
     "content:new": "tsx apps/web/scripts/content-cli.ts new",
     "content:status": "tsx apps/web/scripts/content-cli.ts status",
     "content:affected": "tsx apps/web/scripts/content-cli.ts affected",

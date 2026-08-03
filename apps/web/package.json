@@ -8,7 +8,7 @@
     "node": ">=22.12.0 <25"
   },
   "scripts": {
-    "dev": "node scripts/run-astro.mjs dev",
+    "dev": "node scripts/run-astro.mjs dev --host",
     "build": "node scripts/run-astro.mjs build",
     "typecheck": "node scripts/run-astro.mjs check",
     "test": "vitest run",
