@@ -1,0 +1,29 @@
+---
+import CaseStudyCard from '../../components/CaseStudyCard.astro';
+import FoundationLayout from '../../layouts/FoundationLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import { compileForBuild } from '../../lib/okf/build.js';
+import { selectCaseStudyPages } from '../../lib/okf/case-study-pages.js';
+
+const mode = getBuildMode();
+const compilation = await compileForBuild(mode);
+const pages = selectCaseStudyPages(compilation);
+---
+
+<FoundationLayout
+  title="Case Studies | Terra Nexus"
+  description="Approved Terra Nexus case studies."
+  preview={mode === 'preview'}
+>
+  <header class="page-header">
+    <p class="eyebrow">Case Studies</p>
+    <h1>Case Studies</h1>
+  </header>
+  {pages.length ? (
+    <section class="case-study-list" aria-label="Case studies">
+      {pages.map((page) => <CaseStudyCard page={page} />)}
+    </section>
+  ) : (
+    <p>No approved case studies are available in this build.</p>
+  )}
+</FoundationLayout>

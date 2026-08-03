@@ -1,0 +1,30 @@
+---
+import CaseStudyArticle from '../../components/CaseStudyArticle.astro';
+import FoundationLayout from '../../layouts/FoundationLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import { compileForBuild } from '../../lib/okf/build.js';
+import { renderCaseStudyMarkdown } from '../../lib/okf/case-study-markdown.js';
+import { selectCaseStudyPages, type CaseStudyPageModel } from '../../lib/okf/case-study-pages.js';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const compilation = await compileForBuild(getBuildMode());
+  return selectCaseStudyPages(compilation).map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: CaseStudyPageModel;
+}
+
+const { page } = Astro.props;
+const mode = getBuildMode();
+const renderedBody = await renderCaseStudyMarkdown(page.body, page.title);
+---
+
+<FoundationLayout title={`${page.title} | Terra Nexus`} description={page.description} preview={mode === 'preview'}>
+  <CaseStudyArticle page={page} renderedBody={renderedBody} />
+</FoundationLayout>

@@ -3,10 +3,11 @@ import '../styles/foundation.css';
 
 interface Props {
   title: string;
+  description?: string;
   preview: boolean;
 }
 
-const { title, preview } = Astro.props;
+const { title, description, preview } = Astro.props;
 ---
 
 <!doctype html>
@@ -14,10 +15,23 @@ const { title, preview } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    {description && <meta name="description" content={description} />}
     {preview && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <nav aria-label="Primary navigation">
+        <a class="site-name" href="/">Terra Nexus</a>
+        <a href="/case-studies/">Case Studies</a>
+      </nav>
+    </header>
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <small>Terra Nexus development foundation</small>
+    </footer>
   </body>
 </html>

@@ -38,29 +38,51 @@ function build(mode: 'production' | 'preview'): void {
 }
 
 describe('Astro static foundation', () => {
-  it('builds production and preview safely without governed routes or source mutation', async () => {
+  it('builds production and preview safely with only eligible case-study routes and no source mutation', async () => {
     const beforeKnowledge = await fingerprint(resolve(REPOSITORY_ROOT, 'knowledge'));
     const beforeSchemas = await fingerprint(resolve(REPOSITORY_ROOT, 'schemas'));
     const dist = resolve(APP_ROOT, 'dist');
+    const pilotRoute = 'commercial-pathways-lower-emissions-beef-2025';
 
     build('production');
     const productionIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
+    const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');
+    const productionDetail = await readFile(resolve(dist, `case-studies/${pilotRoute}/index.html`), 'utf8');
     expect(productionIndex).toContain('Website foundation');
     expect(productionIndex).not.toContain('noindex, nofollow');
     expect(productionRobots).toBe('User-agent: *\nDisallow:\n');
     expect(existsSync(resolve(dist, 'services'))).toBe(false);
-    expect(existsSync(resolve(dist, 'case-studies'))).toBe(false);
+    expect(existsSync(resolve(dist, 'expertise'))).toBe(false);
+    expect(existsSync(resolve(dist, 'who-we-work-with'))).toBe(false);
+    expect(existsSync(resolve(dist, 'case-studies/index.html'))).toBe(true);
+    expect(existsSync(resolve(dist, `case-studies/${pilotRoute}/index.html`))).toBe(true);
+    expect(productionCaseStudies).toContain(`href="/case-studies/${pilotRoute}"`);
+    expect(productionDetail).toContain('Evaluating Commercial Pathways for Lower-Emissions Beef from Optimized Diets');
+    expect(productionDetail).toContain('$12.5 million');
+    expect(productionDetail).toContain('8.25%');
+    expect(productionDetail).toContain('<table>');
+    expect(productionDetail.match(/<h1(?:\s[^>]*)?>/g) ?? []).toHaveLength(1);
+    for (const confidentialIdentifier of [
+      ['Car', 'gill'].join(''),
+      ['Beef', 'Max'].join(''),
+    ]) {
+      expect(productionDetail).not.toContain(confidentialIdentifier);
+    }
 
     build('preview');
     const previewIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const previewRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
+    const previewCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');
+    const previewDetail = await readFile(resolve(dist, `case-studies/${pilotRoute}/index.html`), 'utf8');
     const previewGraph = await readFile(resolve(APP_ROOT, '.generated/content-graph.preview.json'), 'utf8');
     const previewGraphData = JSON.parse(previewGraph) as {
       mode: string;
       records: Array<{ body: unknown }>;
     };
     expect(previewIndex).toContain('noindex, nofollow');
+    expect(previewCaseStudies).toContain('noindex, nofollow');
+    expect(previewDetail).toContain('noindex, nofollow');
     expect(previewRobots).toBe('User-agent: *\nDisallow: /\n');
     expect(previewGraphData.mode).toBe('preview');
     expect(Array.isArray(previewGraphData.records)).toBe(true);
