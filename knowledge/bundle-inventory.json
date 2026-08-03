@@ -1,7 +1,7 @@
 {
   "okf_version": "0.2",
-  "generated_at": "2026-08-01T22:36:34Z",
-  "concept_count": 103,
+  "generated_at": "2026-08-03T03:52:58Z",
+  "concept_count": 104,
   "by_type": {
     "Agent Instructions": 1,
     "Audience Segment": 11,
@@ -9,6 +9,7 @@
     "Brand Narrative": 1,
     "Brand Narrative Set": 2,
     "Brand Platform": 1,
+    "Case Study": 1,
     "Content Audit": 1,
     "Content Dashboard": 1,
     "Content Schema": 3,
@@ -29,17 +30,20 @@
   },
   "by_status": {
     "draft": 37,
-    "stable": 66
+    "stable": 67
   },
   "by_publication_audience": {
     "None": 81,
-    "internal": 22
+    "internal": 22,
+    "public": 1
   },
   "by_publication_state": {
     "None": 81,
+    "approved": 1,
     "blocked": 22
   },
   "by_confidentiality": {
+    "anonymized": 1,
     "unconfirmed": 8
   },
   "concepts": [
@@ -186,6 +190,15 @@
       "status": "stable",
       "pub_audience": "None",
       "pub_state": "None"
+    },
+    {
+      "path": "case-studies/commercial-pathways-lower-emissions-beef-2025.md",
+      "type": "Case Study",
+      "title": "Evaluating Commercial Pathways for Lower-Emissions Beef from Optimized Diets",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
+      "confidentiality": "anonymized"
     },
     {
       "path": "case-studies/intake-templates/trading-company-qualification-intake.md",

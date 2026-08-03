@@ -29,6 +29,7 @@ knowledge/
 │   ├── intake-templates
 │   │   ├── trading-company-qualification-intake.md
 │   │   └── universal-proof-intake.md
+│   ├── commercial-pathways-lower-emissions-beef-2025.md
 │   ├── index.md
 │   ├── proof-schema.md
 │   ├── qualification-template.md

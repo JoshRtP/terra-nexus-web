@@ -56,9 +56,17 @@ describe('Astro static foundation', () => {
     const previewIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const previewRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const previewGraph = await readFile(resolve(APP_ROOT, '.generated/content-graph.preview.json'), 'utf8');
+    const previewGraphData = JSON.parse(previewGraph) as {
+      mode: string;
+      records: Array<{ body: unknown }>;
+    };
     expect(previewIndex).toContain('noindex, nofollow');
     expect(previewRobots).toBe('User-agent: *\nDisallow: /\n');
-    expect(previewGraph).not.toContain('body');
+    expect(previewGraphData.mode).toBe('preview');
+    expect(Array.isArray(previewGraphData.records)).toBe(true);
+    expect(
+      previewGraphData.records.every((record) => typeof record.body === 'string'),
+    ).toBe(true);
     expect(previewGraph).not.toContain('proposal-only');
 
     expect(await fingerprint(resolve(REPOSITORY_ROOT, 'knowledge'))).toBe(beforeKnowledge);
