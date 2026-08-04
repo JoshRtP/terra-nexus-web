@@ -33,6 +33,12 @@ export interface ValuePathway {
   label: string;
 }
 
+export interface ValidationRow {
+  category: string;
+  pitfall: string;
+  validation: string;
+}
+
 export interface ExpertisePageData {
   eyebrow: string;
   title: string;
@@ -48,7 +54,7 @@ export interface ExpertisePageData {
   decisionGroups: DecisionGroup[];
   workstreams: Workstream[];
   valuePathways: ValuePathway[];
-  pitfalls: string[];
+  validationRows: ValidationRow[];
   ctaHeading: string;
   ctaBody: string;
   ctaButton: { label: string; href: string };
@@ -141,13 +147,13 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- Market Validation (DVFS) -->
+  <!-- Market Validation & Decisions -->
   <section class="section" aria-labelledby="decisions-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Market Validation</span>
         <h2 id="decisions-heading">Market Validation</h2>
-        <p class="section-lead">We apply the BCG DVFS framework &mdash; Desirability, Viability, Feasibility, and Strategic Fit &mdash; to pressure-test each opportunity before capital is committed. The right questions differ by stakeholder, but every program must clear all four gates.</p>
+        <p class="section-lead">We pressure-test every opportunity across desirability, viability, feasibility, and strategic fit before capital is committed. The right questions differ by stakeholder, but every program must clear all four gates.</p>
       </header>
       <div class="decisions-grid">
         {data.decisionGroups.map((group) => (
@@ -182,21 +188,40 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- Common Pitfalls -->
+  <!-- Avoiding Common Pitfalls: Market Validation Comparison -->
   <section class="section section-alt" aria-labelledby="pitfalls-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Experience</span>
         <h2 id="pitfalls-heading">Avoiding Common Pitfalls</h2>
+        <p class="section-lead">A customer-centric approach &mdash; starting with desirability, then validating viability, feasibility, and strategic fit &mdash; prevents the most common reasons programs struggle. Each row pairs a frequent pitfall with the market-validation discipline that prevents it.</p>
       </header>
-      <ul class="pitfall-list" role="list">
-        {data.pitfalls.map((pitfall) => (
-          <li class="pitfall-item">
-            <span class="pitfall-icon" aria-hidden="true">&times;</span>
-            <span>{pitfall}</span>
-          </li>
-        ))}
-      </ul>
+      <div class="validation-table-wrap">
+        <table class="validation-table">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col" class="col-pitfall">
+                <span class="col-icon col-icon-x" aria-hidden="true">&times;</span>
+                Common Pitfall
+              </th>
+              <th scope="col" class="col-validation">
+                <span class="col-icon col-icon-check" aria-hidden="true">&check;</span>
+                Market Validation
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.validationRows.map((row) => (
+              <tr>
+                <td class="cell-category">{row.category}</td>
+                <td class="cell-pitfall">{row.pitfall}</td>
+                <td class="cell-validation">{row.validation}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -323,43 +348,107 @@ const mode = getBuildMode();
     margin-bottom: var(--space-4);
   }
 
-  /* Pitfalls */
-  .pitfall-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: var(--space-4);
-  }
-  @media (min-width: 40rem) {
-    .pitfall-list { grid-template-columns: repeat(2, 1fr); }
-  }
-  .pitfall-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    background: var(--color-surface-elevated);
+  /* Validation Comparison Table */
+  .validation-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--line-normal);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-elevated);
   }
-  .pitfall-icon {
-    flex-shrink: 0;
+  .validation-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 48rem;
+  }
+  .validation-table thead th {
+    text-align: left;
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border-bottom: 2px solid var(--color-border);
+    white-space: nowrap;
+  }
+  .validation-table .col-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
     border-radius: 50%;
-    background: var(--c-error-50);
-    color: var(--c-error-500);
     font-size: var(--text-xs);
     font-weight: var(--font-bold);
     line-height: 1;
-    margin-top: 0.1em;
+    margin-right: 0.3em;
+  }
+  .col-icon-x { background: var(--c-error-50); color: var(--c-error-500); }
+  .col-icon-check { background: var(--c-success-50); color: var(--c-success-600); }
+  .validation-table tbody td {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-sm);
+    line-height: var(--line-normal);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+  .validation-table tbody tr:last-child td { border-bottom: 0; }
+  .validation-table tbody tr:nth-child(even) td { background: var(--color-surface); }
+  .cell-category {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+  .cell-pitfall { color: var(--color-text-secondary); }
+  .cell-validation { color: var(--color-text-secondary); }
+  @media (max-width: 48rem) {
+    .validation-table { min-width: 0; }
+    .validation-table thead { display: none; }
+    .validation-table, .validation-table tbody, .validation-table tr, .validation-table td {
+      display: block;
+      width: 100%;
+    }
+    .validation-table tr {
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .validation-table tr:last-child { border-bottom: 0; }
+    .validation-table td {
+      padding: var(--space-2) var(--space-4);
+      border: 0;
+    }
+    .cell-category::before {
+      content: 'Category';
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-1);
+    }
+    .cell-pitfall::before {
+      content: '\2715  Common Pitfall';
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--c-error-500);
+      margin-bottom: var(--space-1);
+      margin-top: var(--space-2);
+    }
+    .cell-validation::before {
+      content: '\2713  Market Validation';
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--c-success-600);
+      margin-bottom: var(--space-1);
+      margin-top: var(--space-2);
+    }
   }
 
 
