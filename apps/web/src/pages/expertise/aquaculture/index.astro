@@ -4,19 +4,45 @@ import { getBuildMode } from '../../../lib/build-mode.js';
 
 const mode = getBuildMode();
 
-const relatedCapabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability' },
+const capabilities = [
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Market, growth, business-model, product, program, and partner strategy; opportunity assessment, segmentation, positioning, and commercialization; pilot design and build-buy-partner decisions.' },
+  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Business cases, scenario analysis, value allocation, and initiative prioritization; investor, technology, project, program, and transaction diligence; capital, partnership, and portfolio decisions.' },
+  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Sourcing, supplier, producer, traceability, and chain-of-custody design; operating models, governance, systems, controls, and implementation; recurring program management.' },
+  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Impact measurement, inventory and target alignment, disclosure, and governance; product, value-chain, climate, nature, resilience, and claims integration; stakeholder communication.' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Market-mechanism and methodology assessment; environmental-program design, MRV, valuation, commercialization, and management; verification readiness, evidence, and claims translation.' },
+];
+
+const audiences = [
+  { title: 'Agricultural Producers & Integrated Protein Companies', lead: true, description: 'Primary audience. Own aquatic production systems where performance and environmental outcomes are created.' },
+  { title: 'Ingredient & Feed Processors', lead: false, description: 'Supply and optimize feed ingredients that drive cost, conversion, and footprint.' },
+  { title: 'Food & Beverage Companies', lead: false, description: 'Source aquatic protein and build product claims around responsible production.' },
+  { title: 'Food Retail & Distribution', lead: false, description: 'Connect farmed products to customers and verify sourcing and certification.' },
+  { title: 'Commodity Traders', lead: false, description: 'Move aquatic commodities and manage price, supply, and origin risk.' },
+  { title: 'Enabling Tech & Solution Providers', lead: false, description: 'Provide farm-management, monitoring, traceability, and data-validation tools.' },
+];
+
+const decisionGroups = [
+  { heading: 'Strategic Fit & Feed Strategy', items: ['Which species, systems, geographies, and products offer the strongest strategic fit?', 'How to manage feed cost, feed conversion, ingredient availability, and feed footprint?'] },
+  { heading: 'Performance Indicators & Frameworks', items: ['Which farm-performance, water, welfare, biodiversity, and GHG indicators matter to customers and regulators?', 'Which certification, sourcing, food-safety, and chain-of-custody frameworks apply?'] },
+  { heading: 'Data Validation & Market Positioning', items: ['How to validate technology claims and production data?', 'What route to market and product positioning fits the system and the customer?'] },
+  { heading: 'Impact Allocation & Diligence Risk', items: ['How to allocate upstream feed and downstream processing impacts?', 'What risks arise in investment, partner, or acquisition diligence?'] },
+];
+
+const pathwayTags = [
+  'responsible-production participation and certification claims',
+  'product differentiation and customer qualification',
+  'GHG/feed/water/welfare/ecosystem performance claims',
+  'corporate reporting and procurement value',
+  'resilience and supply-security value',
+  'new ingredient/product/market-access value',
 ];
 ---
 
 <SiteLayout
   title="Aquaculture | Terra Nexus"
-  description="Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access."
+  description="Terra Nexus helps aquaculture producers, feed and ingredient companies, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access."
   preview={mode === 'preview'}
 >
-  <!-- Breadcrumb -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <div class="container">
       <ol>
@@ -26,111 +52,185 @@ const relatedCapabilities = [
     </div>
   </nav>
 
-  <!-- Hero -->
   <section class="page-hero" aria-labelledby="page-title">
     <div class="container">
-      <span class="eyebrow">AREA OF EXPERTISE</span>
-      <h1 id="page-title">Aquaculture</h1>
-      <p class="hero-lead">Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.</p>
+      <span class="eyebrow">CULTIVATED BELOW WATER</span>
+      <h1 id="page-title">Build More Resilient Aquatic Food Systems</h1>
+      <p class="hero-lead">Terra Nexus helps aquaculture producers, feed and ingredient companies, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.</p>
     </div>
   </section>
 
-  <!-- How Terra Nexus Works in This Space -->
-  <section class="section" aria-labelledby="how-section">
+  <section class="section" aria-labelledby="scope-heading">
     <div class="container">
       <header class="section-header">
-        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
+        <h2 id="scope-heading">Definition and Scope</h2>
       </header>
       <div class="detail-content">
-        <p>Terra Nexus helps clients improve the environmental and commercial performance of aquatic production systems—from feed sourcing and farm operations through processing, traceability, product positioning, and market access. We work with producers, feed companies, processors, retailers, and investors across finfish, shellfish, and seaweed value chains.</p>
-        <p>Engagements may address production-system improvement, feed strategy and sustainability, traceability and chain-of-custody design, environmental-attribute creation, certification and claims strategy, or product and market development for responsibly produced aquaculture.</p>
+        <p>This area of expertise focuses on changing aquatic production, feed, health, water, operating, traceability, and market systems to improve performance, resilience, environmental outcomes, and product value.</p>
+        <p>Adjacent areas of expertise cover related topics:</p>
+        <ul class="topic-boundaries">
+          <li>Regenerative Agriculture and Regenerative Rangeland cover land-based production.</li>
+          <li>Agroforestry covers systems where trees are an intentional production component.</li>
+          <li>Biodiversity &amp; Ecosystem Resilience addresses broader ecological context.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- Related Capabilities -->
-  <section class="section section-alt" aria-labelledby="capabilities-heading">
+  <section class="section section-alt" aria-labelledby="thesis-heading">
     <div class="container">
       <header class="section-header">
-        <h2 id="capabilities-heading">Related Capabilities</h2>
-        <p>Terra Nexus applies these capability families when working in aquaculture.</p>
+        <h2 id="thesis-heading">Why This Topic Matters</h2>
       </header>
-      <div class="card-grid card-grid-3">
-        {relatedCapabilities.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
-            <article class="card">
-              <h3>{cap.title}</h3>
-            </article>
-          </a>
+      <div class="detail-content">
+        <blockquote class="market-thesis">
+          Aquaculture creates durable value when biology, feed, farm operations, water and ecosystem impacts, animal health, processing, traceability, certification, customer demand, and investment decisions are managed as one value chain.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="valuechain-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="valuechain-heading">Primary Value-Chain Position</h2>
+      </header>
+      <div class="detail-content">
+        <p><strong>Agricultural Production</strong> — aquatic production of animals, plants, and related inputs, with Ingredient &amp; Feed Processing, Food &amp; Beverage, Retail &amp; Distribution, and technology providers as important adjacent nodes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="audiences-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="audiences-heading">Primary Audiences</h2>
+        <p class="section-lead">The lead audience holds the production-side decisions. Adjacent audiences shape feed, demand, distribution, and measurement.</p>
+      </header>
+      <div class="audience-grid">
+        {audiences.map((audience) => (
+          <article class="audience-card">
+            <h3>{audience.title}</h3>
+            <p>{audience.lead ? <strong>Primary audience. </strong> : null}{audience.description}</p>
+          </article>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section" aria-labelledby="cta-heading">
-    <div class="container cta-section">
-      <h2 id="cta-heading">Discuss Your Challenge</h2>
-      <p>Tell us how aquaculture connects to your production, sourcing, or market objectives.</p>
+  <section class="section" aria-labelledby="decisions-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="decisions-heading">Decisions Clients Face</h2>
+      </header>
+      <div class="decisions-grid">
+        {decisionGroups.map((group) => (
+          <article>
+            <h3>{group.heading}</h3>
+            <ul>
+              {group.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="pathways-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="pathways-heading">Representative Value Pathways</h2>
+      </header>
+      <div class="detail-content">
+        <div class="pathway-tags">
+          {pathwayTags.map((tag) => <span class="pathway-tag">{tag}</span>)}
+        </div>
+        <p class="pathway-note">These pathways are illustrative, not exhaustive. Which apply depends on the program, the frameworks selected, and the evidence available.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="capabilities-heading">How Terra Nexus Capabilities Apply</h2>
+        <p class="section-lead">Terra Nexus brings five capability families to aquaculture work, from species and product strategy through feed and sourcing, corporate reporting, and environmental performance.</p>
+      </header>
+      <div class="capability-mapping">
+        {capabilities.map((cap) => (
+          <article>
+            <h3><a href={`/capabilities/${cap.slug}/`}>{cap.title}</a></h3>
+            <p>{cap.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="engage-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="engage-heading">How We Engage</h2>
+        <p class="section-lead">Terra Nexus engages in two complementary modes.</p>
+      </header>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Evaluate opportunities, perform diligence, model economics, define strategy, select frameworks and partners, and design programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Embed within client-owned programs to coordinate recurring evidence, data, calculations, ledgers, partners, exceptions, reporting, and verification readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Connect Aquaculture Performance to Market Value</h2>
+      <p class="cta-description">Tell us how aquatic production connects to your performance and market objectives.</p>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/contact/" class="btn btn-primary">Discuss Your Aquaculture Strategy</a>
       </div>
     </div>
   </section>
 </SiteLayout>
 
 <style>
-  .breadcrumb {
-    padding: 1rem 0;
-  }
-
-  .breadcrumb ol {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.875rem;
-  }
-
-  .breadcrumb li:not(:last-child)::after {
-    content: '/';
-    margin-left: 0.5rem;
-    opacity: 0.5;
-  }
-
-  .breadcrumb a {
-    color: inherit;
-    opacity: 0.7;
-  }
-
-  .breadcrumb a:hover {
-    opacity: 1;
-  }
-
-  .detail-content {
-    max-width: 72ch;
-    margin: 0 auto;
-  }
-
-  .detail-content p {
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .cta-section h2 {
-    margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    margin-bottom: 2rem;
-    max-width: 60ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .breadcrumb { padding: 1rem 0; }
+  .breadcrumb ol { display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; font-size: 0.875rem; }
+  .breadcrumb li:not(:last-child)::after { content: '/'; margin-left: 0.5rem; opacity: 0.5; }
+  .breadcrumb a { color: inherit; opacity: 0.7; }
+  .breadcrumb a:hover { opacity: 1; }
+  .detail-content { max-width: 72ch; margin: 0 auto; }
+  .detail-content p { margin-bottom: 1.25rem; line-height: 1.7; }
+  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
+  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
+  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .topic-boundaries li:last-child { border-bottom: 0; }
+  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
+  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
+  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
+  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .decisions-grid ul { padding-left: var(--space-5); }
+  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
+  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .capability-mapping h3 a { color: var(--color-accent); }
+  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

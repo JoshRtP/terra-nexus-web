@@ -1,45 +1,73 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import PageHero from '../../components/PageHero.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
-
 const mode = getBuildMode();
 ---
 
 <SiteLayout
-  title="About — Terra Nexus"
-  description="Terra Nexus is an innovation and insights studio for food and climate, accelerating the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment."
+  title="About | Terra Nexus"
+  description="Terra Nexus is an innovation and insights studio for food and climate. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value."
   preview={mode === 'preview'}
 >
-  <PageHero
-    eyebrow="ABOUT TERRA NEXUS"
-    title="An Innovation & Insights Studio for Food & Climate"
-  />
-
-  <!-- Purpose -->
-  <section class="section" aria-labelledby="purpose-heading">
-    <div class="container content-section">
-      <h2 id="purpose-heading">Purpose</h2>
-      <p>Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain.</p>
-    </div>
-  </section>
-
-  <!-- What Makes Us Different -->
-  <section class="section section-alt" aria-labelledby="different-heading">
-    <div class="container content-section">
-      <h2 id="different-heading">What Makes Terra Nexus Different</h2>
-      <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
-      <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
-    </div>
-  </section>
-
-  <!-- How We Engage -->
-  <section class="section" aria-labelledby="engage-heading">
+  <section class="page-hero">
     <div class="container">
-      <header class="section-header">
-        <h2 id="engage-heading">How We Engage</h2>
-      </header>
+      <span class="eyebrow">About Terra Nexus</span>
+      <h1>An Innovation &amp; Insights Studio for Food &amp; Climate</h1>
+      <p class="hero-lead">Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system.</p>
+      <p class="hero-lead">We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain.</p>
+    </div>
+  </section>
 
+  <section class="section">
+    <div class="container text-container">
+      <h2>Why We Exist</h2>
+      <p>To build a more resilient, sustainable, and prosperous food system by accelerating adoption of proven solutions that create impact at the intersection of food and climate.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container text-container">
+      <h2>How We Work</h2>
+      <p>We work with food and agribusinesses across the value chain to:</p>
+      <ul class="how-list">
+        <li>Enhance transparency</li>
+        <li>Facilitate collaboration</li>
+        <li>Establish market mechanisms</li>
+        <li>Unlock shared value</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container text-container">
+      <h2>What We Provide</h2>
+      <p>We provide the insights, tools, and management expertise needed to deliver the right solution, in the right place, with the right partners, and capture the largest supportable sources of value for commercial sustainability and climate programs.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2>What Makes Terra Nexus Different</h2>
+      <div class="different-content">
+        <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
+        <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
+      </div>
+      <div class="not-list">
+        <h3>What Terra Nexus Is Not</h3>
+        <ul>
+          <li>Not generic ESG consulting</li>
+          <li>Not simply a software company</li>
+          <li>Not only a carbon-credit firm</li>
+          <li>Not an accredited verifier</li>
+        </ul>
+        <p class="not-summary">Terra Nexus is an innovation and insights studio integrating commercial strategy, food systems, value-chain operations, technical evidence, environmental accounting, market mechanisms, and program management.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>How We Engage</h2>
       <div class="card-grid">
         <article class="card">
           <h3>Advise</h3>
@@ -53,10 +81,9 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section section-alt" aria-labelledby="cta-heading">
-    <div class="container cta-section">
-      <h2 id="cta-heading" class="visually-hidden">Get in Touch</h2>
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Start a Conversation</h2>
       <div class="hero-actions">
         <a href="/contact/" class="btn btn-primary">Start a Conversation</a>
       </div>
@@ -65,42 +92,17 @@ const mode = getBuildMode();
 </SiteLayout>
 
 <style>
-  .content-section {
-    max-width: var(--max-width-text);
-    margin-inline: auto;
-  }
-
-  .content-section h2 {
-    margin-bottom: var(--space-6);
-  }
-
-  .content-section p {
-    font-size: var(--text-lg);
-    line-height: var(--line-height-relaxed);
-    color: var(--color-neutral-700);
-  }
-
-  .content-section p + p {
-    margin-top: var(--space-4);
-  }
-
-  .cta-section {
-    text-align: center;
-  }
-
-  .cta-section .hero-actions {
-    justify-content: center;
-  }
-
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
+  .how-list { margin-top: var(--space-4); padding-left: var(--space-5); }
+  .how-list li { margin-bottom: var(--space-2); font-size: var(--text-lg); color: var(--color-text); }
+  .different-content { max-width: 72ch; margin-bottom: var(--space-8); }
+  .different-content p { margin-bottom: var(--space-4); line-height: var(--line-relaxed); }
+  .not-list { padding: var(--space-6); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .not-list h3 { margin-bottom: var(--space-3); }
+  .not-list ul { padding-left: var(--space-5); margin-bottom: var(--space-4); }
+  .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
+  .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

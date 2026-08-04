@@ -19,7 +19,7 @@ const pages = selectCaseStudyPages(compilation);
     <div class="container">
       <span class="eyebrow">Case Studies</span>
       <h1>Evidence of Commercial and Environmental Value</h1>
-      <p class="hero-description">Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements.</p>
+      <p class="hero-lead">Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements.</p>
     </div>
   </section>
 
@@ -30,8 +30,13 @@ const pages = selectCaseStudyPages(compilation);
           {pages.map((page) => <CaseStudyCard page={page} />)}
         </div>
       ) : (
-        <p>No approved case studies are available in this build.</p>
+        <p class="empty-state">No approved case studies are available in this build.</p>
       )}
     </div>
   </section>
 </SiteLayout>
+
+<style>
+  .case-study-list { display: flex; flex-direction: column; gap: var(--space-6); }
+  .empty-state { color: var(--color-text-muted); font-style: italic; }
+</style>

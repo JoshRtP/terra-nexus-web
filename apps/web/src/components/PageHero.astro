@@ -3,12 +3,11 @@ interface Props {
   eyebrow?: string;
   title: string;
   lead?: string;
-  description?: string;
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
 }
 
-const { eyebrow, title, lead, description, primaryCta, secondaryCta } = Astro.props;
+const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
 ---
 
 <section class="page-hero">
@@ -16,7 +15,6 @@ const { eyebrow, title, lead, description, primaryCta, secondaryCta } = Astro.pr
     {eyebrow && <span class="eyebrow">{eyebrow}</span>}
     <h1>{title}</h1>
     {lead && <p class="hero-lead">{lead}</p>}
-    {description && <p class="hero-description">{description}</p>}
     {(primaryCta || secondaryCta) && (
       <div class="hero-actions">
         {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}

@@ -3,134 +3,227 @@ import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
 
 const mode = getBuildMode();
-
-const relatedCapabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services' },
-];
 ---
 
 <SiteLayout
   title="Regenerative Agriculture | Terra Nexus"
-  description="Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value."
+  description="Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims."
   preview={mode === 'preview'}
 >
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <div class="container">
-      <ol>
-        <li><a href="/expertise/">Expertise</a></li>
-        <li aria-current="page">Regenerative Agriculture</li>
-      </ol>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="page-hero" aria-labelledby="page-title">
-    <div class="container">
-      <span class="eyebrow">AREA OF EXPERTISE</span>
-      <h1 id="page-title">Regenerative Agriculture</h1>
-      <p class="hero-lead">Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.</p>
+  <section class="page-hero">
+    <p class="eyebrow">AGRICULTURAL PRODUCTION</p>
+    <h1>Scale Regenerative Agriculture from Field to Market</h1>
+    <p class="hero-lead">Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/contact/">Discuss Your Program</a>
+      <a class="btn btn-secondary" href="/capabilities/">Explore Our Capabilities</a>
     </div>
   </section>
 
-  <!-- How Terra Nexus Works in This Space -->
-  <section class="section" aria-labelledby="how-section">
+  <section class="section">
     <div class="container">
-      <header class="section-header">
-        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
-      </header>
-      <div class="detail-content">
-        <p>Terra Nexus helps clients bridge the gap between regenerative crop-production practices and the commercial systems that must reward them. We work across the value chain—from producers adopting soil-health practices to the supply-chain buyers, brands, and investors who need credible evidence that those practices deliver results.</p>
-        <p>Engagements may address practice-change economics, measurement and verification frameworks, supply-chain program design, environmental-attribute strategies, or the product and claims architecture that brings regenerative value to market.</p>
+      <h2>Definition and Scope</h2>
+      <p>Regenerative Agriculture focuses on changing how annual and perennial crops are produced on agricultural land — including row crops, specialty crops, and permanent crops — so that farm performance, environmental outcomes, resilience, and downstream value can improve.</p>
+      <h3>Topic Boundaries</h3>
+      <ul class="topic-boundaries">
+        <li>Regenerative Rangeland covers grazing systems</li>
+        <li>Agroforestry covers systems where trees are an intentional production component</li>
+        <li>Aquaculture covers production below water</li>
+        <li>Biodiversity &amp; Ecosystem Resilience addresses broader ecological and community context</li>
+        <li>Sustainable Supply Chains connects production to procurement, movement, processing, sale, delivery, and claims</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>Why This Topic Matters Commercially</h2>
+      <blockquote class="market-thesis">Regenerative agriculture creates durable value when field-level change, producer economics, commodity sourcing, measurement, commercial incentives, program operations, and credible claims are designed to work together.</blockquote>
+      <p>A practice list alone does not create a scalable program. The commercial and operating model must answer where the opportunity exists, which producers and supply sheds can participate, which practices or outcomes are appropriate, how transition costs and risks are shared, what data and evidence are required, how physical commodities and environmental attributes move, how impacts are quantified and accounted for, which claims can be supported, and how the program will be managed and independently reviewed.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Primary Value-Chain Position</h2>
+      <p><strong>Agricultural Production</strong> — land-based crop production, with Inputs and Commodity Trading as important adjacent nodes.</p>
+      <p>The page is globally relevant. U.S. examples, programs, and market mechanisms may be used where they are most relevant, but the topic is not U.S.-only.</p>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>Primary Audiences</h2>
+      <div class="audience-grid">
+        <article class="audience-card">
+          <h3>Commodity Traders &amp; Originators</h3>
+          <p>The primary audience. Traders sit between producers and downstream buyers and can connect producer relationships, practices and evidence, origination and aggregation, customer demand and commercial contracts, environmental attributes and value allocation, traceability, chain of custody, and claims.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Food &amp; Beverage Companies</h3>
+          <p>Connect regenerative sourcing to product strategy, Scope 3, insetting, certification, claims, and customer value.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Agricultural Producers &amp; Integrated Companies</h3>
+          <p>Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, and buyer requirements.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Inputs Companies</h3>
+          <p>Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, and commercialization.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Enabling Tech &amp; Solution Providers</h3>
+          <p>Market entry, product strategy, technical diligence, pilot design, partner selection, and integration into real workflows.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Ingredient &amp; Feed Processors</h3>
+          <p>Sourcing, footprinting, traceability, low-emissions products, byproduct value, and claims.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Related Capabilities -->
-  <section class="section section-alt" aria-labelledby="capabilities-heading">
+  <section class="section">
     <div class="container">
-      <header class="section-header">
-        <h2 id="capabilities-heading">Related Capabilities</h2>
-        <p>Terra Nexus applies these capability families when working in regenerative agriculture.</p>
-      </header>
-      <div class="card-grid card-grid-3">
-        {relatedCapabilities.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
-            <article class="card">
-              <h3>{cap.title}</h3>
-            </article>
-          </a>
-        ))}
+      <h2>Decisions Clients Face</h2>
+      <div class="decisions-grid">
+        <div>
+          <h3>Strategy &amp; P&amp;L Owners</h3>
+          <ul>
+            <li>Which opportunities fit the strategy?</li>
+            <li>Which crops, supply sheds, customers, outcomes offer a credible business case?</li>
+            <li>Build, buy, partner, or participate?</li>
+            <li>How to allocate commercial value, transition costs, and risk?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Origination, Merchandising &amp; Procurement</h3>
+          <ul>
+            <li>Which producers are ready?</li>
+            <li>How to source, aggregate, price, contract regenerative volumes?</li>
+            <li>How to handle existing adopters vs new adoption?</li>
+            <li>What evidence must move with the commodity?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Sustainability &amp; Environmental-Market Teams</h3>
+          <ul>
+            <li>Scope 3, insetting, carbon credits, product claims, or combination?</li>
+            <li>Which framework applies?</li>
+            <li>How to separate outcomes, removals, reductions, claims?</li>
+            <li>What assurance level?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Program, Operations &amp; Technology Teams</h3>
+          <ul>
+            <li>Which data to collect directly vs model?</li>
+            <li>How do systems, vendors, models, field evidence, ledgers connect?</li>
+            <li>Data quality, changes, exceptions, versioning?</li>
+            <li>What to internal/outsource/managed service?</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section" aria-labelledby="cta-heading">
-    <div class="container cta-section">
-      <h2 id="cta-heading">Discuss Your Challenge</h2>
-      <p>Tell us how regenerative agriculture connects to your business objectives.</p>
+  <section class="section-alt">
+    <div class="container">
+      <h2>Representative Value Pathways</h2>
+      <p>The same underlying performance improvement may support different claims with different levels of rigor, cost, commercial reach, and value. The best pathway is not always the claim with the highest nominal price.</p>
+      <div class="pathway-tags">
+        <span class="pathway-tag">Regenerative sourcing or participation claims</span>
+        <span class="pathway-tag">Certification and product-differentiation claims</span>
+        <span class="pathway-tag">Scope 3 reductions and insets</span>
+        <span class="pathway-tag">Carbon or ecosystem-service credits</span>
+        <span class="pathway-tag">Low-carbon feedstock or regulatory value</span>
+        <span class="pathway-tag">Procurement qualification and customer reporting</span>
+        <span class="pathway-tag">Resilience/supply-security/risk-reduction value</span>
+      </div>
+      <p class="pathway-note">These are categories of potential value, not promises that every pathway is available, stackable, transferable, or commercially superior. Detailed pathway analysis remains client-specific.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>How Terra Nexus Capabilities Apply</h2>
+      <div class="capability-mapping">
+        <article>
+          <h3><a href="/capabilities/strategy-and-innovation/">Strategy &amp; Innovation</a></h3>
+          <p>Regenerative market and sourcing strategy, business-model and commercialization design, product and program design, customer and competitive strategy, build-buy-partner decisions.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/financial-investments-and-new-venture-development/">Financial Investments &amp; New Venture Development</a></h3>
+          <p>Business cases and scenario modeling, incentive and value-allocation models, pilot prioritization, technology and transaction diligence, investment and portfolio assessment.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/sustainable-supply-chain-and-operations/">Sustainable Supply Chain &amp; Operations</a></h3>
+          <p>Producer and supplier program design, origination and sourcing models, traceability and chain-of-custody controls, operating models, implementation planning, managed operations.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/corporate-sustainability/">Corporate Sustainability</a></h3>
+          <p>GHG inventory and target alignment, Scope 3 and land-sector accounting, claims boundaries and reporting, climate and nature integration, governance and stakeholder communication.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/carbon-and-ecosystem-services/">Carbon &amp; Ecosystem Services</a></h3>
+          <p>Methodology and market-mechanism assessment, carbon and insetting program design, MRV and data-system requirements, impact verification and claims translation, audit readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>How Terra Nexus Engages</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, including producer and evidence workflows, calculations, data reviews, ledgers, partner coordination, exception management, reporting, and verification readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-dark">
+    <div class="container text-center">
+      <h2>Build Regenerative Agriculture That Works from Field to Market</h2>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a class="btn btn-primary" href="/contact/">Discuss Your Program</a>
       </div>
     </div>
   </section>
 </SiteLayout>
 
 <style>
-  .breadcrumb {
-    padding: 1rem 0;
-  }
-
-  .breadcrumb ol {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.875rem;
-  }
-
-  .breadcrumb li:not(:last-child)::after {
-    content: '/';
-    margin-left: 0.5rem;
-    opacity: 0.5;
-  }
-
-  .breadcrumb a {
-    color: inherit;
-    opacity: 0.7;
-  }
-
-  .breadcrumb a:hover {
-    opacity: 1;
-  }
-
-  .detail-content {
-    max-width: 72ch;
-    margin: 0 auto;
-  }
-
-  .detail-content p {
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .cta-section h2 {
-    margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    margin-bottom: 2rem;
-    max-width: 60ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
+  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .topic-boundaries li:last-child { border-bottom: 0; }
+  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
+  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
+  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
+  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .decisions-grid ul { padding-left: var(--space-5); }
+  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
+  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .capability-mapping h3 a { color: var(--color-accent); }
+  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

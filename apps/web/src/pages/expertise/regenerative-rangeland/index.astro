@@ -4,19 +4,46 @@ import { getBuildMode } from '../../../lib/build-mode.js';
 
 const mode = getBuildMode();
 
-const relatedCapabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services' },
+const capabilities = [
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Market, growth, business-model, product, program, and partner strategy; opportunity assessment, segmentation, positioning, and commercialization; pilot design and build-buy-partner decisions.' },
+  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Business cases, scenario analysis, value allocation, and initiative prioritization; investor, technology, project, program, and transaction diligence; capital, partnership, and portfolio decisions.' },
+  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Sourcing, supplier, producer, traceability, and chain-of-custody design; operating models, governance, systems, controls, and implementation; recurring program management.' },
+  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Impact measurement, inventory and target alignment, disclosure, and governance; product, value-chain, climate, nature, resilience, and claims integration; stakeholder communication.' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Market-mechanism and methodology assessment; environmental-program design, MRV, valuation, commercialization, and management; verification readiness, evidence, and claims translation.' },
+];
+
+const audiences = [
+  { title: 'Agricultural Producers & Integrated Protein Companies', lead: true, description: 'Primary audience. Own the grazing systems, livestock performance, and land management where rangeland outcomes are created.' },
+  { title: 'Commodity Traders', lead: false, description: 'Aggregate, finance, and move livestock and protein, linking production to downstream demand.' },
+  { title: 'Food & Beverage Companies', lead: false, description: 'Source protein and build brand claims that depend on credible rangeland outcomes.' },
+  { title: 'Ingredient & Feed Processors', lead: false, description: 'Connect feed inputs and processed protein to rangeland attributes and supply-chain requirements.' },
+  { title: 'Enabling Tech & Solution Providers', lead: false, description: 'Supply measurement, monitoring, data, and verification tools that make outcomes credible.' },
+  { title: 'Environmental Markets & Ecosystem Services', lead: false, description: 'Create demand for soil-carbon, biodiversity, and ecosystem-service attributes generated on rangeland.' },
+];
+
+const decisionGroups = [
+  { heading: 'Program Design & Producer Participation', items: ['Which ranches, geographies, grazing systems, and interventions fit the program objective?', 'How to structure producer participation, transition support, incentives, and performance risk?'] },
+  { heading: 'Measurement & Outcome Integration', items: ['Which outcomes to measure directly, model, remotely sense, or monitor through proxies?', 'How to consider livestock performance and environmental outcomes together?'] },
+  { heading: 'Value-Chain Flow & Frameworks', items: ['How will animals, products, environmental attributes, and claims move through the value chain?', 'Which carbon, nature, certification, sourcing, and corporate-accounting frameworks apply?'] },
+  { heading: 'Risk, Integrity & Scale', items: ['How to manage permanence, leakage, uncertainty, additionality, and non-verifiable claims?', 'What operating model handles ranch-level variability at commercial scale?'] },
+];
+
+const pathwayTags = [
+  'regenerative or sustainable-beef participation and certification claims',
+  'premium product and branded differentiation',
+  'Scope 3 reductions and insets',
+  'soil-carbon or ecosystem-service credits',
+  'biodiversity/habitat/water/resilience claims',
+  'procurement qualification and customer reporting',
+  'supply-security and producer-resilience value',
 ];
 ---
 
 <SiteLayout
   title="Regenerative Rangeland | Terra Nexus"
-  description="Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities."
+  description="Terra Nexus helps livestock producers, protein companies, traders, and buyers design and manage regenerative rangeland programs that connect grazing practice, producer economics, environmental outcomes, supply-chain value, and credible claims."
   preview={mode === 'preview'}
 >
-  <!-- Breadcrumb -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <div class="container">
       <ol>
@@ -26,111 +53,187 @@ const relatedCapabilities = [
     </div>
   </nav>
 
-  <!-- Hero -->
   <section class="page-hero" aria-labelledby="page-title">
     <div class="container">
-      <span class="eyebrow">AREA OF EXPERTISE</span>
-      <h1 id="page-title">Regenerative Rangeland</h1>
-      <p class="hero-lead">Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.</p>
+      <span class="eyebrow">CULTIVATED ON LAND</span>
+      <h1 id="page-title">Create More Value from Resilient Grazing Systems</h1>
+      <p class="hero-lead">Terra Nexus helps livestock producers, protein companies, traders, and buyers design and manage regenerative rangeland programs that connect grazing practice, producer economics, environmental outcomes, supply-chain value, and credible claims.</p>
     </div>
   </section>
 
-  <!-- How Terra Nexus Works in This Space -->
-  <section class="section" aria-labelledby="how-section">
+  <section class="section" aria-labelledby="scope-heading">
     <div class="container">
       <header class="section-header">
-        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
+        <h2 id="scope-heading">Definition and Scope</h2>
       </header>
       <div class="detail-content">
-        <p>Terra Nexus helps clients design and scale grazing and livestock systems where land stewardship, animal welfare, producer economics, and downstream market value reinforce one another. We work with ranchers, aggregators, processors, brands, and investors to connect rangeland outcomes with commercial opportunity.</p>
-        <p>Engagements may address adaptive grazing program design, livestock-to-market pathways, environmental-attribute creation and verification, rangeland carbon and biodiversity strategies, or the brand and claims architecture that communicates rangeland value to customers.</p>
+        <p>This area of expertise focuses on changing how ranching and grazing are managed so that livestock production, rangeland condition, producer economics, environmental performance, and market value can improve together rather than in tension.</p>
+        <p>Adjacent areas of expertise cover related topics:</p>
+        <ul class="topic-boundaries">
+          <li>Regenerative Agriculture covers crop production.</li>
+          <li>Agroforestry covers systems where trees are an intentional production component.</li>
+          <li>Aquaculture covers production below water.</li>
+          <li>Biodiversity &amp; Ecosystem Resilience addresses broader ecological context.</li>
+          <li>Sustainable Supply Chains connects production to procurement and claims.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- Related Capabilities -->
-  <section class="section section-alt" aria-labelledby="capabilities-heading">
+  <section class="section section-alt" aria-labelledby="thesis-heading">
     <div class="container">
       <header class="section-header">
-        <h2 id="capabilities-heading">Related Capabilities</h2>
-        <p>Terra Nexus applies these capability families when working in regenerative rangeland.</p>
+        <h2 id="thesis-heading">Why This Topic Matters</h2>
       </header>
-      <div class="card-grid card-grid-3">
-        {relatedCapabilities.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
-            <article class="card">
-              <h3>{cap.title}</h3>
-            </article>
-          </a>
+      <div class="detail-content">
+        <blockquote class="market-thesis">
+          Regenerative rangeland creates durable value when grazing management, herd performance, land condition, producer economics, measurement, commercial incentives, and downstream market requirements are designed as one operating system.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="valuechain-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="valuechain-heading">Primary Value-Chain Position</h2>
+      </header>
+      <div class="detail-content">
+        <p><strong>Agricultural Production</strong> — land-based livestock and grazing production, with Commodity Trading, Ingredient &amp; Feed Processing, Food &amp; Beverage, and Retail &amp; Distribution as downstream nodes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="audiences-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="audiences-heading">Primary Audiences</h2>
+        <p class="section-lead">The lead audience holds the production-side decisions. Adjacent audiences shape demand, financing, measurement, and market pathways.</p>
+      </header>
+      <div class="audience-grid">
+        {audiences.map((audience) => (
+          <article class="audience-card">
+            <h3>{audience.title}</h3>
+            <p>{audience.lead ? <strong>Primary audience. </strong> : null}{audience.description}</p>
+          </article>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section" aria-labelledby="cta-heading">
-    <div class="container cta-section">
-      <h2 id="cta-heading">Discuss Your Challenge</h2>
-      <p>Tell us how rangeland and livestock systems connect to your business objectives.</p>
+  <section class="section" aria-labelledby="decisions-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="decisions-heading">Decisions Clients Face</h2>
+      </header>
+      <div class="decisions-grid">
+        {decisionGroups.map((group) => (
+          <article>
+            <h3>{group.heading}</h3>
+            <ul>
+              {group.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="pathways-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="pathways-heading">Representative Value Pathways</h2>
+      </header>
+      <div class="detail-content">
+        <div class="pathway-tags">
+          {pathwayTags.map((tag) => <span class="pathway-tag">{tag}</span>)}
+        </div>
+        <p class="pathway-note">These pathways are illustrative, not exhaustive. Which apply depends on the program, the frameworks selected, and the evidence available.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="capabilities-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="capabilities-heading">How Terra Nexus Capabilities Apply</h2>
+        <p class="section-lead">Terra Nexus brings five capability families to regenerative rangeland work, from program and producer strategy through sourcing, corporate reporting, and environmental-attribute commercialization.</p>
+      </header>
+      <div class="capability-mapping">
+        {capabilities.map((cap) => (
+          <article>
+            <h3><a href={`/capabilities/${cap.slug}/`}>{cap.title}</a></h3>
+            <p>{cap.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="engage-heading">
+    <div class="container">
+      <header class="section-header">
+        <h2 id="engage-heading">How We Engage</h2>
+        <p class="section-lead">Terra Nexus engages in two complementary modes.</p>
+      </header>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Evaluate opportunities, perform diligence, model economics, define strategy, select frameworks and partners, and design programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Embed within client-owned programs to coordinate recurring evidence, data, calculations, ledgers, partners, exceptions, reporting, and verification readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Build a Rangeland Program That Works for Producers and Markets</h2>
+      <p class="cta-description">Tell us how rangeland and livestock systems connect to your business objectives.</p>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/contact/" class="btn btn-primary">Discuss Your Rangeland Program</a>
       </div>
     </div>
   </section>
 </SiteLayout>
 
 <style>
-  .breadcrumb {
-    padding: 1rem 0;
-  }
-
-  .breadcrumb ol {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.875rem;
-  }
-
-  .breadcrumb li:not(:last-child)::after {
-    content: '/';
-    margin-left: 0.5rem;
-    opacity: 0.5;
-  }
-
-  .breadcrumb a {
-    color: inherit;
-    opacity: 0.7;
-  }
-
-  .breadcrumb a:hover {
-    opacity: 1;
-  }
-
-  .detail-content {
-    max-width: 72ch;
-    margin: 0 auto;
-  }
-
-  .detail-content p {
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .cta-section h2 {
-    margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    margin-bottom: 2rem;
-    max-width: 60ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .breadcrumb { padding: 1rem 0; }
+  .breadcrumb ol { display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; font-size: 0.875rem; }
+  .breadcrumb li:not(:last-child)::after { content: '/'; margin-left: 0.5rem; opacity: 0.5; }
+  .breadcrumb a { color: inherit; opacity: 0.7; }
+  .breadcrumb a:hover { opacity: 1; }
+  .detail-content { max-width: 72ch; margin: 0 auto; }
+  .detail-content p { margin-bottom: 1.25rem; line-height: 1.7; }
+  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
+  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
+  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .topic-boundaries li:last-child { border-bottom: 0; }
+  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
+  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
+  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
+  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .decisions-grid ul { padding-left: var(--space-5); }
+  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
+  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .capability-mapping h3 a { color: var(--color-accent); }
+  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

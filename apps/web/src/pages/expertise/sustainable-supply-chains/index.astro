@@ -3,134 +3,220 @@ import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
 
 const mode = getBuildMode();
-
-const relatedCapabilities = [
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability' },
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation' },
-];
 ---
 
 <SiteLayout
   title="Sustainable Supply Chains | Terra Nexus"
-  description="Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims."
+  description="Terra Nexus helps food and agribusinesses design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations."
   preview={mode === 'preview'}
 >
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <div class="container">
-      <ol>
-        <li><a href="/expertise/">Expertise</a></li>
-        <li aria-current="page">Sustainable Supply Chains</li>
-      </ol>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="page-hero" aria-labelledby="page-title">
-    <div class="container">
-      <span class="eyebrow">AREA OF EXPERTISE</span>
-      <h1 id="page-title">Sustainable Supply Chains</h1>
-      <p class="hero-lead">Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.</p>
+  <section class="page-hero">
+    <p class="eyebrow">FROM SOURCE TO DELIVERY</p>
+    <h1>Connect Responsible Production to Credible Products and Claims</h1>
+    <p class="hero-lead">Terra Nexus helps food and agribusinesses design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/contact/">Discuss Your Supply Chain</a>
+      <a class="btn btn-secondary" href="/capabilities/">Explore Our Capabilities</a>
     </div>
   </section>
 
-  <!-- How Terra Nexus Works in This Space -->
-  <section class="section" aria-labelledby="how-section">
+  <section class="section">
     <div class="container">
-      <header class="section-header">
-        <h2 id="how-section">How Terra Nexus Works in This Space</h2>
-      </header>
-      <div class="detail-content">
-        <p>Terra Nexus helps clients build supply chains that connect responsible production practices to credible market claims—while managing cost, risk, and complexity. We work across sourcing, traceability, operations, environmental-attribute management, and the product strategies that turn supply-chain improvements into customer value.</p>
-        <p>Engagements may address responsible-sourcing program design, traceability architecture, supplier engagement and capacity building, environmental-attribute chain-of-custody, supply-chain decarbonization, or the claims frameworks that communicate sustainability performance to customers and stakeholders.</p>
+      <h2>Definition and Scope</h2>
+      <p>A sustainable supply chain is the operating system that connects upstream change, physical product, commercial terms, environmental attributes, processing, delivery, and claims. It is not a data layer or supplier questionnaire.</p>
+      <h3>Topic Boundaries</h3>
+      <ul class="topic-boundaries">
+        <li>This topic connects production to procurement, movement, processing, sale, delivery, and claims</li>
+        <li>Other Areas of Expertise address specific production systems</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>Why This Topic Matters</h2>
+      <blockquote class="market-thesis">A sustainable supply chain is not a data layer or supplier questionnaire. It is an operating system that connects upstream change, physical product, commercial terms, environmental attributes, processing, delivery, and claims.</blockquote>
+      <p>When sourcing, supplier engagement, traceability, and commercial terms are treated as separate workstreams, the supply chain cannot consistently deliver or substantiate the value it promises. Customers, auditors, regulators, and certification bodies increasingly require evidence that connects practice to product to claim — and the operating model must be designed to produce that evidence as a byproduct of doing business, not as a parallel reporting exercise.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Primary Value-Chain Position</h2>
+      <p><strong>Commodity Trading; Ingredient &amp; Feed Processing; Food &amp; Beverage; Retail &amp; Distribution.</strong> The sustainable supply chain is the connector that operationalizes plays across production, transformation, energy, nature, and recovery topics.</p>
+      <p>It sits at the center of the value chain, translating upstream production change into downstream commercial and environmental value. Without a coherent supply-chain operating model, production improvements, environmental programs, and product claims cannot be reliably linked, verified, or monetized.</p>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>Primary Audiences</h2>
+      <div class="audience-grid">
+        <article class="audience-card">
+          <h3>Commodity Traders</h3>
+          <p>The lead audience. Traders connect producer relationships, practices and evidence, origination and aggregation, customer demand and commercial contracts, environmental attributes and value allocation, traceability, chain of custody, and claims.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Food &amp; Beverage Companies</h3>
+          <p>Connect responsible sourcing to product strategy, Scope 3, insetting, certification, claims, and customer value.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Food Retail &amp; Distribution</h3>
+          <p>Category and supplier standards, product and sourcing claims, traceability, customer-facing assurance, and supply-chain risk management.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Ingredient &amp; Feed Processors</h3>
+          <p>Sourcing, footprinting, traceability, low-emissions products, byproduct value, and claims.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Agricultural Producers &amp; Integrated Protein Companies</h3>
+          <p>Buyer requirements, program participation, evidence and traceability, producer economics, and downstream commercial alignment.</p>
+        </article>
+        <article class="audience-card">
+          <h3>Enabling Tech &amp; Solution Providers</h3>
+          <p>Market entry, product strategy, technical diligence, pilot design, partner selection, and integration into real supply-chain workflows.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Related Capabilities -->
-  <section class="section section-alt" aria-labelledby="capabilities-heading">
+  <section class="section">
     <div class="container">
-      <header class="section-header">
-        <h2 id="capabilities-heading">Related Capabilities</h2>
-        <p>Terra Nexus applies these capability families when working in sustainable supply chains.</p>
-      </header>
-      <div class="card-grid card-grid-3">
-        {relatedCapabilities.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link" aria-label={`Learn more about ${cap.title}`}>
-            <article class="card">
-              <h3>{cap.title}</h3>
-            </article>
-          </a>
-        ))}
+      <h2>Decisions Clients Face</h2>
+      <div class="decisions-grid">
+        <div>
+          <h3>Strategy &amp; Commercial Owners</h3>
+          <ul>
+            <li>Which sourcing regions, suppliers, products, and impacts to prioritize?</li>
+            <li>What level of traceability is required for the intended decision or claim?</li>
+            <li>How to select and control chain-of-custody models?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Procurement &amp; Origination</h3>
+          <ul>
+            <li>How to source, aggregate, price, and contract responsible volumes?</li>
+            <li>How to handle existing adopters versus new adoption?</li>
+            <li>What evidence must move with the commodity?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Sustainability &amp; Environmental-Market Teams</h3>
+          <ul>
+            <li>How to allocate environmental attributes, costs, premiums, and benefits?</li>
+            <li>Scope 3, insetting, carbon credits, product claims, or combination?</li>
+            <li>Which framework applies and what assurance level is required?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Program, Operations &amp; Technology Teams</h3>
+          <ul>
+            <li>What evidence and controls are required for customer, auditor, certification, and regulatory scrutiny?</li>
+            <li>How do systems, vendors, models, field evidence, and ledgers connect?</li>
+            <li>What to internalize, outsource, or run as a managed service?</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section" aria-labelledby="cta-heading">
-    <div class="container cta-section">
-      <h2 id="cta-heading">Discuss Your Challenge</h2>
-      <p>Tell us how sustainable supply chains connect to your sourcing, operations, or market objectives.</p>
+  <section class="section-alt">
+    <div class="container">
+      <h2>Representative Value Pathways</h2>
+      <p>The same underlying supply-chain performance improvement may support different claims with different levels of rigor, cost, commercial reach, and value. The best pathway is not always the claim with the highest nominal price.</p>
+      <div class="pathway-tags">
+        <span class="pathway-tag">Responsible sourcing and procurement qualification</span>
+        <span class="pathway-tag">Certification and product-differentiation claims</span>
+        <span class="pathway-tag">Scope 3 reductions and insets</span>
+        <span class="pathway-tag">Carbon or ecosystem-service credits</span>
+        <span class="pathway-tag">Low-carbon feedstock or regulatory value</span>
+        <span class="pathway-tag">Product and customer claims</span>
+        <span class="pathway-tag">Supply-resilience and risk-reduction value</span>
+      </div>
+      <p class="pathway-note">These are categories of potential value, not promises that every pathway is available, stackable, transferable, or commercially superior. Detailed pathway analysis remains client-specific.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>How Terra Nexus Capabilities Apply</h2>
+      <div class="capability-mapping">
+        <article>
+          <h3><a href="/capabilities/strategy-and-innovation/">Strategy &amp; Innovation</a></h3>
+          <p>Market, growth, business-model, product, program, and partner strategy; opportunity assessment, segmentation, positioning, and commercialization; pilot design and build-buy-partner decisions.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/financial-investments-and-new-venture-development/">Financial Investments &amp; New Venture Development</a></h3>
+          <p>Business cases, scenario analysis, value allocation, and initiative prioritization; investor, technology, project, program, and transaction diligence; capital, partnership, and portfolio decisions.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/sustainable-supply-chain-and-operations/">Sustainable Supply Chain &amp; Operations</a></h3>
+          <p>Sourcing, supplier, producer, traceability, and chain-of-custody design; operating models, governance, systems, controls, and implementation; recurring program management.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/corporate-sustainability/">Corporate Sustainability</a></h3>
+          <p>Impact measurement, inventory and target alignment, disclosure, and governance; product, value-chain, climate, nature, resilience, and claims integration; stakeholder communication.</p>
+        </article>
+        <article>
+          <h3><a href="/capabilities/carbon-and-ecosystem-services/">Carbon &amp; Ecosystem Services</a></h3>
+          <p>Market-mechanism and methodology assessment; environmental-program design, MRV, valuation, commercialization, and management; verification readiness, evidence, and claims translation.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <h2>How Terra Nexus Engages</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, defines strategy, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Terra Nexus embeds within client-owned programs to coordinate recurring evidence, data, calculations, ledgers, partners, exceptions, reporting, and verification readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-dark">
+    <div class="container text-center">
+      <h2>Build a Supply Chain That Can Deliver and Substantiate Value</h2>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a class="btn btn-primary" href="/contact/">Discuss Your Supply Chain</a>
       </div>
     </div>
   </section>
 </SiteLayout>
 
 <style>
-  .breadcrumb {
-    padding: 1rem 0;
-  }
-
-  .breadcrumb ol {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.875rem;
-  }
-
-  .breadcrumb li:not(:last-child)::after {
-    content: '/';
-    margin-left: 0.5rem;
-    opacity: 0.5;
-  }
-
-  .breadcrumb a {
-    color: inherit;
-    opacity: 0.7;
-  }
-
-  .breadcrumb a:hover {
-    opacity: 1;
-  }
-
-  .detail-content {
-    max-width: 72ch;
-    margin: 0 auto;
-  }
-
-  .detail-content p {
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .cta-section h2 {
-    margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    margin-bottom: 2rem;
-    max-width: 60ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
+  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .topic-boundaries li:last-child { border-bottom: 0; }
+  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
+  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
+  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
+  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .decisions-grid ul { padding-left: var(--space-5); }
+  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
+  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
+  .capability-mapping h3 a { color: var(--color-accent); }
+  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

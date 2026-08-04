@@ -1,94 +1,120 @@
 ---
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
-
 const mode = getBuildMode();
 
 const offerings = [
   {
-    id: 'sustainability-strategy',
-    title: 'Sustainability Strategy',
-    description: 'Define ambition, material priorities, goals, policies, governance, resources, roadmaps, and the connection between sustainability and business value.',
+    id: 'cs-strategy',
+    name: 'Sustainability Strategy',
+    definition: 'Define ambition, material priorities, goals, policies, governance, resources, roadmaps, and the connection between sustainability and business value.',
+    activities: [],
   },
   {
-    id: 'measurement-disclosure',
-    title: 'Measurement, Impact & Disclosure',
-    description: 'Build the accounting, measurement, risk, data, control, and reporting systems needed to understand and communicate performance.',
+    id: 'cs-measurement',
+    name: 'Measurement, Impact & Disclosure',
+    definition: 'Build the accounting, measurement, risk, data, control, and reporting systems needed to understand and communicate performance.',
+    activities: [
+      'Climate risk',
+      'GHG inventories',
+      'Product footprints',
+      'Environmental-asset procurement',
+      'Reporting',
+      'Disclosure response',
+    ],
   },
   {
-    id: 'stakeholder-engagement',
-    title: 'Stakeholder Engagement',
-    description: 'Align the internal and external people whose decisions, support, data, and participation determine delivery.',
+    id: 'cs-stakeholders',
+    name: 'Stakeholder Engagement',
+    definition: 'Align the internal and external people whose decisions, support, data, and participation determine delivery.',
+    activities: [
+      'Ecosystem engagement',
+      'Supplier and partner engagement',
+      'Employee activation',
+      'Leadership or board education',
+    ],
   },
   {
-    id: 'purpose-driven-products',
-    title: 'Building Purpose-Driven Products & Services',
-    description: 'Connect sustainability priorities to products, services, customers, growth, and commercial value.',
+    id: 'cs-products',
+    name: 'Building Purpose-Driven Products & Services',
+    definition: 'Connect sustainability priorities to products, services, customers, growth, and commercial value.',
+    activities: [
+      'Market strategy',
+      'Purpose-led models',
+      'Product development',
+      'Claims',
+      'Certification',
+      'Commercialization',
+    ],
   },
   {
-    id: 'supply-chain-operations',
-    title: 'Sustainable Supply Chain & Operations',
-    description: 'Translate enterprise commitments into sourcing, supplier, logistics, operations, efficiency, traceability, and circularity action.',
+    id: 'cs-supply-chain',
+    name: 'Sustainable Supply Chain & Operations',
+    definition: 'Translate enterprise commitments into sourcing, supplier, logistics, operations, efficiency, traceability, and circularity action. Corporate Sustainability integrates related workstreams into enterprise ambition, governance, performance, and disclosure.',
+    activities: [],
   },
 ];
 ---
 
 <SiteLayout
-  title="Corporate Sustainability — Capabilities — Terra Nexus"
+  title="Corporate Sustainability | Terra Nexus"
   description="Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain."
   preview={mode === 'preview'}
 >
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <div class="container">
-      <ol>
-        <li><a href="/capabilities/">Capabilities</a></li>
-        <li aria-current="page">Corporate Sustainability</li>
-      </ol>
-    </div>
-  </nav>
-
-  <!-- Hero -->
   <section class="page-hero">
     <div class="container">
-      <span class="eyebrow">CORPORATE SUSTAINABILITY</span>
+      <span class="eyebrow">Capabilities</span>
       <h1>Turn Enterprise Sustainability Commitments into Governed Action</h1>
       <p class="hero-lead">Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Sustainability Priorities</a>
+        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
+      </div>
     </div>
   </section>
 
-  <!-- Decision Owners -->
-  <section class="section" aria-labelledby="decision-owners-heading">
+  <section class="section">
     <div class="container">
-      <h2 id="decision-owners-heading">Decision Owners</h2>
-      <p>Chief sustainability officers; climate and ESG teams; reporting, disclosure, compliance, risk, and program leaders; executive teams and boards.</p>
+      <header class="section-header">
+        <h2>Who This Capability Supports</h2>
+      </header>
+      <ul class="audience-list">
+        <li>Chief sustainability officers</li>
+        <li>Climate and ESG teams</li>
+        <li>Reporting, disclosure, compliance, risk, and program leaders</li>
+        <li>Executive teams and boards</li>
+      </ul>
     </div>
   </section>
 
-  <!-- Offering Modules -->
-  <section class="section section-alt" aria-labelledby="offerings-heading">
+  <section class="section section-alt">
     <div class="container">
-      <h2 id="offerings-heading">Offering Modules</h2>
+      <header class="section-header">
+        <h2>Decisions We Help Resolve</h2>
+      </header>
+      <ul class="decisions-list">
+        <li>How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?</li>
+      </ul>
+    </div>
+  </section>
 
+  <section class="section">
+    <div class="container">
+      <header class="section-header">
+        <h2>How We Help</h2>
+        <p class="section-lead">Corporate Sustainability is organized around five offering modules that can be combined to match the decision at hand.</p>
+      </header>
       <div class="accordion">
-        {offerings.map((offering) => (
+        {offerings.map((o) => (
           <div class="accordion-item">
-            <button
-              class="accordion-trigger"
-              aria-expanded="false"
-              aria-controls={`content-${offering.id}`}
-              id={`trigger-${offering.id}`}
-            >
-              {offering.title}
-            </button>
-            <div
-              class="accordion-content"
-              id={`content-${offering.id}`}
-              role="region"
-              aria-labelledby={`trigger-${offering.id}`}
-              hidden
-            >
-              <p>{offering.description}</p>
+            <button class="accordion-trigger" aria-expanded="false" aria-controls={`acc-${o.id}`}>{o.name}</button>
+            <div class="accordion-content" id={`acc-${o.id}`} hidden>
+              <p>{o.definition}</p>
+              {o.activities.length > 0 && (
+                <ul>
+                  {o.activities.map((a) => <li>{a}</li>)}
+                </ul>
+              )}
             </div>
           </div>
         ))}
@@ -96,18 +122,49 @@ const offerings = [
     </div>
   </section>
 
-  <!-- Closing -->
-  <section class="section" aria-labelledby="closing-heading">
+  <section class="section section-alt">
     <div class="container">
-      <h2 id="closing-heading">Integration</h2>
-      <p>Corporate Sustainability integrates related workstreams into enterprise ambition, governance, performance, and disclosure.</p>
+      <header class="section-header">
+        <h2>Related Expertise</h2>
+      </header>
+      <p>All nine Areas of Expertise connect to Corporate Sustainability.</p>
+      <div class="tag-row">
+        <a href="/expertise/regenerative-agriculture/" class="segment-tag">Regenerative Agriculture</a>
+        <a href="/expertise/regenerative-rangeland/" class="segment-tag">Regenerative Rangeland</a>
+        <a href="/expertise/agroforestry/" class="segment-tag">Agroforestry</a>
+        <a href="/expertise/aquaculture/" class="segment-tag">Aquaculture</a>
+        <a href="/expertise/biodiversity-and-ecosystem-resilience/" class="segment-tag">Biodiversity &amp; Ecosystem Resilience</a>
+        <a href="/expertise/low-carbon-energy-and-biofuels/" class="segment-tag">Low Carbon Energy &amp; Biofuels</a>
+        <a href="/expertise/sustainable-supply-chains/" class="segment-tag">Sustainable Supply Chains</a>
+        <a href="/expertise/food-waste-prevention-diversion-recovery/" class="segment-tag">Food Waste Prevention, Diversion &amp; Recovery</a>
+        <a href="/expertise/purpose-driven-food-brands-and-retailers/" class="segment-tag">Purpose-Driven Food Brands &amp; Retailers</a>
+      </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section section-dark" aria-labelledby="cta-heading">
-    <div class="container section-header">
-      <h2 id="cta-heading">Ready to Get Started?</h2>
+  <section class="section">
+    <div class="container">
+      <header class="section-header">
+        <h2>How We Engage</h2>
+        <p class="section-lead">Terra Nexus engages with clients through two complementary models.</p>
+      </header>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Advise</h3>
+          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="card">
+          <h3>Manage</h3>
+          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, data, partners, reporting, and continuous improvement.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Discuss Your Sustainability Priorities</h2>
+      <p class="cta-description">Tell us what commitments you are governing or reporting against.</p>
       <div class="hero-actions">
         <a href="/contact/" class="btn btn-primary">Discuss Your Sustainability Priorities</a>
       </div>
@@ -115,46 +172,29 @@ const offerings = [
   </section>
 </SiteLayout>
 
-<style>
-  .breadcrumb {
-    padding: var(--space-4) 0;
-    font-size: var(--text-sm);
-  }
-  .breadcrumb ol {
-    display: flex;
-    gap: var(--space-2);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .breadcrumb li + li::before {
-    content: '/';
-    margin-right: var(--space-2);
-    color: var(--color-neutral-400);
-  }
-  .breadcrumb a {
-    color: var(--color-primary-600);
-    text-decoration: none;
-  }
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
-  .breadcrumb [aria-current="page"] {
-    color: var(--color-neutral-600);
-  }
-</style>
-
 <script>
   document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
     trigger.addEventListener('click', () => {
       const expanded = trigger.getAttribute('aria-expanded') === 'true';
       trigger.setAttribute('aria-expanded', String(!expanded));
       const contentId = trigger.getAttribute('aria-controls');
-      if (!contentId) return;
-      const content = document.getElementById(contentId);
-      if (content) {
-        content.hidden = expanded;
-      }
+      const content = contentId ? document.getElementById(contentId) : null;
+      if (content) content.hidden = expanded;
     });
   });
 </script>
+
+<style>
+  .audience-list, .decisions-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .audience-list li, .decisions-list li { color: var(--color-text-secondary); font-size: var(--text-base); }
+  .decisions-list li { padding-left: var(--space-5); position: relative; }
+  .decisions-list li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
+  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
+  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
+  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
+</style>
