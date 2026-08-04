@@ -5,15 +5,15 @@ import PageHero from '../../components/PageHero.astro';
 const mode = getBuildMode();
 
 const expertiseAreas = [
-  { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.' },
-  { title: 'Regenerative Rangeland', slug: 'regenerative-rangeland', description: 'Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.' },
-  { title: 'Agroforestry', slug: 'agroforestry', description: 'Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.' },
-  { title: 'Aquaculture', slug: 'aquaculture', description: 'Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.' },
-  { title: 'Biodiversity & Ecosystem Resilience', slug: 'biodiversity-and-ecosystem-resilience', description: 'Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.' },
-  { title: 'Sustainable Supply Chains', slug: 'sustainable-supply-chains', description: 'Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.' },
-  { title: 'Low Carbon Energy & Biofuels', slug: 'low-carbon-energy-and-biofuels', description: 'Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.' },
-  { title: 'Purpose-Driven Food Brands & Retailers', slug: 'purpose-driven-food-brands-and-retailers', description: 'Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.' },
-  { title: 'Food Waste: Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.' },
+  { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.', heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Regenerative Rangeland', slug: 'regenerative-rangeland', description: 'Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.', heroImage: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Agroforestry', slug: 'agroforestry', description: 'Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.', heroImage: 'https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Aquaculture', slug: 'aquaculture', description: 'Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.', heroImage: 'https://images.pexels.com/photos/14992906/pexels-photo-14992906.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Biodiversity & Ecosystem Resilience', slug: 'biodiversity-and-ecosystem-resilience', description: 'Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.', heroImage: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Sustainable Supply Chains', slug: 'sustainable-supply-chains', description: 'Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.', heroImage: 'https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Low Carbon Energy & Biofuels', slug: 'low-carbon-energy-and-biofuels', description: 'Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.', heroImage: 'https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Purpose-Driven Food Brands & Retailers', slug: 'purpose-driven-food-brands-and-retailers', description: 'Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.', heroImage: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1600' },
+  { title: 'Food Waste: Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.', heroImage: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1600' },
 ];
 ---
 
@@ -32,15 +32,16 @@ const expertiseAreas = [
 
   <section class="section">
     <div class="container">
-      <div class="expertise-list">
-        {expertiseAreas.map((area, i) => (
-          <a href={`/expertise/${area.slug}/`} class="expertise-item">
-            <span class="expertise-number">{String(i + 1).padStart(2, '0')}</span>
-            <div class="expertise-content">
-              <h3>{area.title}</h3>
-              <p>{area.description}</p>
+      <div class="expertise-grid">
+        {expertiseAreas.map((area) => (
+          <a href={`/expertise/${area.slug}/`} class="expertise-tile">
+            <img src={area.heroImage} alt="" class="tile-img" loading="lazy" />
+            <div class="tile-overlay"></div>
+            <div class="tile-content">
+              <h3 class="tile-title">{area.title}</h3>
+              <p class="tile-desc">{area.description}</p>
+              <span class="tile-cta">Learn More <span aria-hidden="true">&rarr;</span></span>
             </div>
-            <span class="expertise-arrow" aria-hidden="true">&rarr;</span>
           </a>
         ))}
       </div>
@@ -68,12 +69,112 @@ const expertiseAreas = [
 </SiteLayout>
 
 <style>
-  .expertise-list { display: flex; flex-direction: column; border-top: 1px solid var(--color-border); }
-  .expertise-item { display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); text-decoration: none; color: inherit; transition: background var(--transition-fast); }
-  .expertise-item:hover { background: var(--color-surface); padding-left: var(--space-4); padding-right: var(--space-4); }
-  .expertise-number { font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 600; color: var(--color-text-muted); flex-shrink: 0; min-width: 2.5rem; }
-  .expertise-content { flex: 1; }
-  .expertise-content h3 { font-size: var(--text-lg); margin-bottom: var(--space-1); }
-  .expertise-content p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .expertise-arrow { color: var(--color-text-muted); flex-shrink: 0; margin-top: var(--space-1); }
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 40rem) {
+    .expertise-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .expertise-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-8); }
+  }
+
+  .expertise-tile {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    text-decoration: none;
+    color: #fff;
+    background: var(--color-dark);
+    box-shadow: var(--shadow-md);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    isolation: isolate;
+  }
+  .expertise-tile:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+  }
+  .expertise-tile:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .tile-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    transition: transform var(--transition-slow);
+  }
+  .expertise-tile:hover .tile-img {
+    transform: scale(1.05);
+  }
+
+  .tile-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.45) 55%, rgba(15, 23, 42, 0.2) 100%);
+    z-index: -1;
+    transition: background var(--transition-base);
+  }
+  .expertise-tile:hover .tile-overlay {
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 55%, rgba(15, 23, 42, 0.35) 100%);
+  }
+
+  .tile-content {
+    padding: var(--space-6);
+    width: 100%;
+  }
+  .tile-title {
+    color: #fff;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-2);
+    text-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+  }
+  .tile-desc {
+    color: rgba(248, 250, 252, 0.85);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-base), opacity var(--transition-base), margin var(--transition-base);
+  }
+  .expertise-tile:hover .tile-desc,
+  .expertise-tile:focus-visible .tile-desc {
+    max-height: 10rem;
+    opacity: 1;
+    margin-bottom: var(--space-4);
+  }
+
+  .tile-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--c-primary-300);
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+  }
+  .expertise-tile:hover .tile-cta,
+  .expertise-tile:focus-visible .tile-cta {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 40rem) {
+    .tile-content { padding: var(--space-5); }
+    .tile-desc { max-height: none; opacity: 1; margin-bottom: var(--space-3); }
+    .tile-cta { opacity: 1; transform: none; }
+  }
 </style>
