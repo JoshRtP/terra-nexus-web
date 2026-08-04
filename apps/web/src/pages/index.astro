@@ -68,7 +68,7 @@ const capabilities = [
             <a
               href={`/expertise/${area.slug}/`}
               class="expertise-tile"
-              style={`background-image: url('${area.heroImage}')`}
+              style={`--tile-bg: url('${area.heroImage}')`}
               aria-label={area.title}
             >
               <div class="tile-overlay" aria-hidden="true"></div>
@@ -319,8 +319,6 @@ const capabilities = [
     overflow: hidden;
     text-decoration: none;
     color: #fff;
-    background-size: cover;
-    background-position: center;
     background-color: #0f172a;
     box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.15);
     transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -338,7 +336,7 @@ const capabilities = [
     content: '';
     position: absolute;
     inset: 0;
-    background-image: inherit;
+    background-image: var(--tile-bg);
     background-size: cover;
     background-position: center;
     transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
