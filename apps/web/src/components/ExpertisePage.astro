@@ -145,46 +145,6 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- System Steps -->
-  <section class="section" aria-labelledby="system-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">How It Works</span>
-        <h2 id="system-heading">How an Opportunity Moves from Concept to Value</h2>
-      </header>
-      <ol class="steps-list" role="list">
-        {data.systemSteps.map((step, i) => (
-          <li class="step-item">
-            <span class="step-number">{String(i + 1).padStart(2, '0')}</span>
-            <div class="step-content">
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-              {step.detail && <p class="step-detail">{step.detail}</p>}
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <!-- Audience Pathways -->
-  <section class="section section-alt" aria-labelledby="audiences-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Who We Support</span>
-        <h2 id="audiences-heading">How We Support Different Participants</h2>
-      </header>
-      <div class="card-grid">
-        {data.audiencePathways.map((aud) => (
-          <article class="card">
-            <h3>{aud.title}</h3>
-            <p>{aud.description}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- Market Validation & Decisions -->
   <section class="section" aria-labelledby="decisions-heading">
     <div class="container">
@@ -203,6 +163,28 @@ const mode = getBuildMode();
           </article>
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- System Steps -->
+  <section class="section section-alt" aria-labelledby="system-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">How It Works</span>
+        <h2 id="system-heading">How an Opportunity Moves from Concept to Value</h2>
+      </header>
+      <ol class="steps-list" role="list">
+        {data.systemSteps.map((step, i) => (
+          <li class="step-item">
+            <span class="step-number">{String(i + 1).padStart(2, '0')}</span>
+            <div class="step-content">
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+              {step.detail && <p class="step-detail">{step.detail}</p>}
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
