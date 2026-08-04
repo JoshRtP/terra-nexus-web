@@ -1,236 +1,81 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
+import ExpertisePage from '../../../components/ExpertisePage.astro';
 
-const mode = getBuildMode();
-
-const capabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Market, growth, business-model, product, program, and partner strategy; opportunity assessment, segmentation, positioning, and commercialization; pilot design and build-buy-partner decisions.' },
-  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Business cases, scenario analysis, value allocation, and initiative prioritization; investor, technology, project, program, and transaction diligence; capital, partnership, and portfolio decisions.' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Sourcing, supplier, producer, traceability, and chain-of-custody design; operating models, governance, systems, controls, and implementation; recurring program management.' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Impact measurement, inventory and target alignment, disclosure, and governance; product, value-chain, climate, nature, resilience, and claims integration; stakeholder communication.' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Market-mechanism and methodology assessment; environmental-program design, MRV, valuation, commercialization, and management; verification readiness, evidence, and claims translation.' },
-];
-
-const audiences = [
-  { title: 'Agricultural Producers & Integrated Protein Companies', lead: true, description: 'Primary audience. Own aquatic production systems where performance and environmental outcomes are created.' },
-  { title: 'Ingredient & Feed Processors', lead: false, description: 'Supply and optimize feed ingredients that drive cost, conversion, and footprint.' },
-  { title: 'Food & Beverage Companies', lead: false, description: 'Source aquatic protein and build product claims around responsible production.' },
-  { title: 'Food Retail & Distribution', lead: false, description: 'Connect farmed products to customers and verify sourcing and certification.' },
-  { title: 'Commodity Traders', lead: false, description: 'Move aquatic commodities and manage price, supply, and origin risk.' },
-  { title: 'Enabling Tech & Solution Providers', lead: false, description: 'Provide farm-management, monitoring, traceability, and data-validation tools.' },
-];
-
-const decisionGroups = [
-  { heading: 'Strategic Fit & Feed Strategy', items: ['Which species, systems, geographies, and products offer the strongest strategic fit?', 'How to manage feed cost, feed conversion, ingredient availability, and feed footprint?'] },
-  { heading: 'Performance Indicators & Frameworks', items: ['Which farm-performance, water, welfare, biodiversity, and GHG indicators matter to customers and regulators?', 'Which certification, sourcing, food-safety, and chain-of-custody frameworks apply?'] },
-  { heading: 'Data Validation & Market Positioning', items: ['How to validate technology claims and production data?', 'What route to market and product positioning fits the system and the customer?'] },
-  { heading: 'Impact Allocation & Diligence Risk', items: ['How to allocate upstream feed and downstream processing impacts?', 'What risks arise in investment, partner, or acquisition diligence?'] },
-];
-
-const pathwayTags = [
-  'responsible-production participation and certification claims',
-  'product differentiation and customer qualification',
-  'GHG/feed/water/welfare/ecosystem performance claims',
-  'corporate reporting and procurement value',
-  'resilience and supply-security value',
-  'new ingredient/product/market-access value',
-];
+const data = {
+  eyebrow: 'Aquatic Production',
+  title: 'Build More Resilient Aquatic Food Systems',
+  lead: 'Terra Nexus helps aquaculture producers, integrated protein companies, feed and ingredient businesses, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.',
+  primaryCta: { label: 'Discuss Your Aquaculture Strategy', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Aquaculture | Terra Nexus',
+  metaDescription: 'Terra Nexus helps aquaculture producers, integrated protein companies, feed and ingredient businesses, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.',
+  orientation: [
+    'Aquaculture is often discussed as a farm-level production activity. In practice, commercial performance depends on a much wider system. Species biology, genetics, hatchery quality, feed, water, stocking, animal health, farm management, infrastructure, energy, processing, cold chain, traceability, certification, market access, and customer expectations all shape the outcome.',
+    'A change that improves one part of the system may create cost or risk elsewhere. A lower-impact feed may affect growth, availability, or price. A new production technology may improve control but require more energy, capital, or operational capability. A strong farm standard may not support the intended product claim if processing and chain of custody are not aligned. Terra Nexus helps clients evaluate these connections and build aquatic food systems that can perform commercially, improve resilience, and support credible evidence and market positioning.',
+  ],
+  performanceCategories: [
+    { title: 'Production and Animal Performance', items: ['Improved survival, growth, feed conversion, consistency, or harvest quality', 'Better control of water quality, stocking, and production conditions', 'Improved animal health, welfare, and biosecurity', 'Reduced mortality, escapes, disease exposure, or production variability', 'Stronger operational data and management decisions'] },
+    { title: 'Feed and Resource Efficiency', items: ['Reduced feed waste and improved feed conversion', 'More resilient and responsibly sourced ingredient portfolios', 'Reduced exposure to scarce, volatile, or high-impact inputs', 'Improved nutrient utilization', 'Better alignment of feed strategy with species, system, and product objectives'] },
+    { title: 'Water and Ecosystem Performance', items: ['Improved water use, treatment, and discharge management', 'Reduced nutrient loss or local environmental pressure', 'Better siting and carrying-capacity decisions', 'Stronger habitat, benthic, coastal, or watershed management where relevant', 'Improved understanding of cumulative and landscape-level impacts'] },
+    { title: 'Climate, Energy, and Circularity', items: ['Improved energy efficiency', 'Reduced lifecycle emissions where supported by evidence', 'Beneficial use of processing co-products, nutrients, or organic material', 'Integration of renewable energy or resource-recovery systems', 'Improved resilience to heat, storms, drought, flooding, salinity, or supply disruption'] },
+    { title: 'Product and Market Value', items: ['Certification or customer qualification', 'Differentiated products and sourcing propositions', 'Stronger traceability and food-safety confidence', 'Improved supply reliability and quality', 'Access to new markets, channels, customers, or investment'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Business Objective and System Boundary', body: 'The objective may be to improve farm economics, develop a new species or system, reduce feed or energy exposure, improve environmental performance, enter a new market, meet a buyer requirement, launch a differentiated product, or evaluate an investment.', detail: 'Terra Nexus helps define the species, geography, farm system, products, participants, value-chain boundary, intended outcomes, and users of the evidence or claim.' },
+    { title: 'Understand Biology, Operations, and Local Context', body: 'Aquaculture systems are highly context specific. Relevant factors include water source and quality, species biology, climate, disease environment, farm design, stocking, feed, energy, labor, infrastructure, permitting, community context, processing capacity, logistics, and market access.', detail: 'Terra Nexus combines technical input from qualified aquaculture, veterinary, engineering, feed, food-safety, and ecological specialists with commercial, financial, supply-chain, and sustainability analysis.' },
+    { title: 'Evaluate the Business Case and Key Risks', body: 'Aquaculture opportunities can require significant capital and may be exposed to biological, operational, feed, energy, market, regulatory, and technology risks.', detail: 'Terra Nexus helps clients assess market demand and product fit; capital and operating economics; feed and ingredient scenarios; production assumptions and sensitivity; technology readiness and integration risk; health, welfare, disease, and biosecurity exposure; water, ecosystem, community, and permitting considerations; processing, logistics, and customer access; certification, traceability, and claims requirements; and partner, vendor, acquisition, and investment quality.' },
+    { title: 'Design the Operating and Evidence Model', body: 'The operating model should connect farm management, feed, data, processing, traceability, and reporting. Potential information may include hatchery and stocking records, feed and ingredient data, water-quality measurements, health and treatment records, mortality, escapes, energy, production output, harvest and processing records, chain of custody, product footprints, certification evidence, and independent review.', detail: 'Terra Nexus helps determine which data are required for management versus claims; how farm, feed, processing, and product boundaries align; how data quality, missing information, and version changes are handled; how products are traced across processing and distribution; how environmental impacts are allocated; and what controls and documentation are needed for buyers, standards, investors, regulators, or assurance providers.' },
+    { title: 'Launch, Implement, and Improve', body: 'Implementation may require farm pilots, feed trials, technology deployment, partner selection, supplier engagement, new operating procedures, training, data-system integration, certification, processing changes, or market activation.', detail: 'Terra Nexus helps design pilots, establish decision gates, coordinate partners, track performance, manage exceptions, and determine what is ready to scale.' },
+    { title: 'Connect Performance to Customer and Market Value', body: 'Potential value pathways may include responsible-production or sourcing claims; certification and chain-of-custody claims; product quality, nutrition, welfare, or freshness differentiation; feed, climate, water, biodiversity, or ecosystem performance claims; customer qualification and procurement value; corporate reporting and Scope 3 value; resilience and supply-security value; new ingredients, technologies, products, or markets; and investment and portfolio value. Different pathways require different evidence, ownership, assurance, and commercialization strategies.', detail: 'Terra Nexus helps compare realizable value, cost, risk, market acceptance, operating complexity, and strategic fit.' },
+  ],
+  audiencePathways: [
+    { title: 'Aquaculture Producers & Integrated Protein Companies', description: 'Production strategy, operating-model design, feed and technology assessment, performance improvement, traceability, certification, customer programs, commercialization, and managed delivery.' },
+    { title: 'Feed & Ingredient Companies', description: 'Ingredient and portfolio strategy, product development, sourcing, lifecycle and claims analysis, customer research, commercial partnerships, pilots, and market entry.' },
+    { title: 'Food, Beverage & Retail Companies', description: 'Responsible sourcing, supplier programs, product strategy, traceability, certification, customer propositions, claims, risk management, and supply resilience.' },
+    { title: 'Technology & Solution Providers', description: 'Market entry, customer discovery, product fit, technical and data diligence, pilot design, workflow integration, channel strategy, and investor or buyer diligence.' },
+    { title: 'Investors & Capital Providers', description: 'Market, technology, project, company, and asset diligence; scenario analysis; biological and operating risk; environmental claims; value-creation planning; and portfolio strategy.' },
+    { title: 'Environmental, Certification & Assurance Organizations', description: 'Program design, data and traceability requirements, methodology assessment, claims translation, verification readiness, and coordination across farm, feed, processing, and product systems.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Commercial Leaders', items: ['Which species, systems, geographies, and products fit the strategy?', 'Which farm-performance and environmental indicators matter commercially?', 'What must be validated before capital, partnership, acquisition, or scale?'] },
+    { heading: 'Feed, Technology & Operations', items: ['How should feed performance, cost, availability, and footprint be balanced?', 'Which technologies are ready for the intended operating environment?', 'Which processing and cold-chain requirements determine market access?'] },
+    { heading: 'Health, Risk & Ecosystem Governance', items: ['How will disease, mortality, escapes, water, and ecosystem risks be governed?'] },
+    { heading: 'Data, Evidence & Claims', items: ['What data are decision-useful and what evidence supports a public claim?', 'How should farm, feed, processing, and product impacts be allocated?', 'Which certification, chain-of-custody, food-safety, welfare, or customer systems apply?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Market, species, product, geography, and customer assessment', 'Business cases and scenario analysis', 'Feed, technology, project, company, and investment diligence', 'Competitive positioning and build-buy-partner decisions', 'Risk and value-driver assessment'] },
+    { title: 'Design the Program, Product, or Operating Model', items: ['Farm, feed, supplier, and partner strategy', 'Product and market proposition', 'Performance objectives and indicators', 'Governance, incentives, responsibilities, and decision rights', 'Certification, traceability, claims, and commercialization architecture'] },
+    { title: 'Build the Infrastructure', items: ['Data and system requirements', 'Supplier, feed, farm, processing, and chain-of-custody workflows', 'Controls, documentation, quality review, and reporting', 'Partner and vendor selection', 'Pilot and implementation plans'] },
+    { title: 'Launch and Scale', items: ['Partner and participant onboarding', 'Pilot management and decision gates', 'Operational rollout and change management', 'Customer and market activation', 'Expansion across farms, species, products, or geographies'] },
+    { title: 'Manage Delivery', items: ['Recurring data and performance review', 'Partner, supplier, and program coordination', 'Exception and corrective-action management', 'Certification, customer, investor, and assurance readiness', 'Management reporting and continuous improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Responsible-production or sourcing claims' },
+    { label: 'Certification and chain-of-custody claims' },
+    { label: 'Product quality, nutrition, welfare, or freshness differentiation' },
+    { label: 'Feed, climate, water, biodiversity, or ecosystem performance claims' },
+    { label: 'Customer qualification and procurement value' },
+    { label: 'Corporate reporting and Scope 3 value' },
+    { label: 'Resilience and supply-security value' },
+    { label: 'New ingredients, technologies, products, or markets' },
+    { label: 'Investment and portfolio value' },
+  ],
+  pitfalls: [
+    'Technology is selected before the production and commercial problem is clear.',
+    'Biological and operating assumptions are not stress-tested.',
+    'Feed availability, cost, performance, and sourcing risks are evaluated separately.',
+    'Farm improvements are not connected to processing or market requirements.',
+    'Data systems do not align farm, feed, product, and claims boundaries.',
+    'Certification is treated as a substitute for customer value or operating performance.',
+    'Environmental claims lack appropriate local or lifecycle evidence.',
+    'Capital needs, ramp time, mortality, and working capital are underestimated.',
+    'Ownership across farms, processors, brands, and technology partners is unclear.',
+    'Recurring program management is insufficient after pilot launch.',
+  ],
+  ctaHeading: 'Connect Aquaculture Performance to Market Value',
+  ctaBody: 'Whether the starting point is a production challenge, feed strategy, technology, new product, sourcing program, investment, certification, or environmental objective, Terra Nexus helps clients connect aquatic-system performance with the commercial and operating decisions required to create durable value.',
+  ctaButton: { label: 'Discuss Your Aquaculture Strategy', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Aquaculture | Terra Nexus"
-  description="Terra Nexus helps aquaculture producers, feed and ingredient companies, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access."
-  preview={mode === 'preview'}
->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <div class="container">
-      <ol>
-        <li><a href="/expertise/">Expertise</a></li>
-        <li aria-current="page">Aquaculture</li>
-      </ol>
-    </div>
-  </nav>
-
-  <section class="page-hero" aria-labelledby="page-title">
-    <div class="container">
-      <span class="eyebrow">CULTIVATED BELOW WATER</span>
-      <h1 id="page-title">Build More Resilient Aquatic Food Systems</h1>
-      <p class="hero-lead">Terra Nexus helps aquaculture producers, feed and ingredient companies, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.</p>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="scope-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="scope-heading">Definition and Scope</h2>
-      </header>
-      <div class="detail-content">
-        <p>This area of expertise focuses on changing aquatic production, feed, health, water, operating, traceability, and market systems to improve performance, resilience, environmental outcomes, and product value.</p>
-        <p>Adjacent areas of expertise cover related topics:</p>
-        <ul class="topic-boundaries">
-          <li>Regenerative Agriculture and Regenerative Rangeland cover land-based production.</li>
-          <li>Agroforestry covers systems where trees are an intentional production component.</li>
-          <li>Biodiversity &amp; Ecosystem Resilience addresses broader ecological context.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="thesis-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="thesis-heading">Why This Topic Matters</h2>
-      </header>
-      <div class="detail-content">
-        <blockquote class="market-thesis">
-          Aquaculture creates durable value when biology, feed, farm operations, water and ecosystem impacts, animal health, processing, traceability, certification, customer demand, and investment decisions are managed as one value chain.
-        </blockquote>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="valuechain-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="valuechain-heading">Primary Value-Chain Position</h2>
-      </header>
-      <div class="detail-content">
-        <p><strong>Agricultural Production</strong> — aquatic production of animals, plants, and related inputs, with Ingredient &amp; Feed Processing, Food &amp; Beverage, Retail &amp; Distribution, and technology providers as important adjacent nodes.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="audiences-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="audiences-heading">Primary Audiences</h2>
-        <p class="section-lead">The lead audience holds the production-side decisions. Adjacent audiences shape feed, demand, distribution, and measurement.</p>
-      </header>
-      <div class="audience-grid">
-        {audiences.map((audience) => (
-          <article class="audience-card">
-            <h3>{audience.title}</h3>
-            <p>{audience.lead ? <strong>Primary audience. </strong> : null}{audience.description}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="decisions-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="decisions-heading">Decisions Clients Face</h2>
-      </header>
-      <div class="decisions-grid">
-        {decisionGroups.map((group) => (
-          <article>
-            <h3>{group.heading}</h3>
-            <ul>
-              {group.items.map((item) => <li>{item}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="pathways-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="pathways-heading">Representative Value Pathways</h2>
-      </header>
-      <div class="detail-content">
-        <div class="pathway-tags">
-          {pathwayTags.map((tag) => <span class="pathway-tag">{tag}</span>)}
-        </div>
-        <p class="pathway-note">These pathways are illustrative, not exhaustive. Which apply depends on the program, the frameworks selected, and the evidence available.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="capabilities-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="capabilities-heading">How Terra Nexus Capabilities Apply</h2>
-        <p class="section-lead">Terra Nexus brings five capability families to aquaculture work, from species and product strategy through feed and sourcing, corporate reporting, and environmental performance.</p>
-      </header>
-      <div class="capability-mapping">
-        {capabilities.map((cap) => (
-          <article>
-            <h3><a href={`/capabilities/${cap.slug}/`}>{cap.title}</a></h3>
-            <p>{cap.description}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="engage-heading">
-    <div class="container">
-      <header class="section-header">
-        <h2 id="engage-heading">How We Engage</h2>
-        <p class="section-lead">Terra Nexus engages in two complementary modes.</p>
-      </header>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Evaluate opportunities, perform diligence, model economics, define strategy, select frameworks and partners, and design programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Embed within client-owned programs to coordinate recurring evidence, data, calculations, ledgers, partners, exceptions, reporting, and verification readiness.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Connect Aquaculture Performance to Market Value</h2>
-      <p class="cta-description">Tell us how aquatic production connects to your performance and market objectives.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Aquaculture Strategy</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<style>
-  .breadcrumb { padding: 1rem 0; }
-  .breadcrumb ol { display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; font-size: 0.875rem; }
-  .breadcrumb li:not(:last-child)::after { content: '/'; margin-left: 0.5rem; opacity: 0.5; }
-  .breadcrumb a { color: inherit; opacity: 0.7; }
-  .breadcrumb a:hover { opacity: 1; }
-  .detail-content { max-width: 72ch; margin: 0 auto; }
-  .detail-content p { margin-bottom: 1.25rem; line-height: 1.7; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
-  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .topic-boundaries li:last-child { border-bottom: 0; }
-  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
-  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
-  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
-  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
-  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
-  .decisions-grid ul { padding-left: var(--space-5); }
-  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
-  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
-  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
-  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
-  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
-  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
-  .capability-mapping h3 a { color: var(--color-accent); }
-  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<ExpertisePage data={data} />

@@ -1,222 +1,84 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
+import ExpertisePage from '../../../components/ExpertisePage.astro';
 
-const mode = getBuildMode();
+const data = {
+  eyebrow: 'From Source to Delivery',
+  title: 'Connect Responsible Production to Credible Products and Claims',
+  lead: 'Terra Nexus helps commodity traders, processors, food companies, retailers, and their partners design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations.',
+  primaryCta: { label: 'Discuss Your Supply Chain', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Sustainable Supply Chains | Terra Nexus',
+  metaDescription: 'Terra Nexus helps commodity traders, processors, food companies, retailers, and their partners design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations.',
+  orientation: [
+    'A sustainable supply chain is not a supplier questionnaire, a software platform, a certification logo, or a reporting dashboard. It is the system through which products, data, money, responsibilities, environmental attributes, and claims move among producers, originators, processors, manufacturers, brands, retailers, technology providers, assurance organizations, and customers.',
+    'A program can have strong upstream outcomes and still fail commercially if the commodity is not sourced reliably, the evidence does not follow the product, the contract does not allocate the attribute, the processing system cannot preserve the claim, or the buyer cannot use the result. Terra Nexus helps clients connect responsible production with the commercial and operating infrastructure required to deliver, substantiate, and capture value.',
+    'This Area of Expertise focuses on how food and agricultural products, evidence, attributes, incentives, responsibilities, and value move across participants. It may include responsible sourcing and procurement, traceability and chain of custody, commodity origination and aggregation, processing and allocation, logistics and delivery, supplier and value-chain collaboration, environmental accounting and claims, and resilience and risk management. This topic connects every other Area of Expertise. It explains how upstream change becomes a product, customer outcome, claim, or other form of value.',
+    'Traceability is not one thing. A company may need to know the country of origin, the supplying facility, the farm, the field, the production practice, the product batch, the environmental attribute, or only the aggregate performance of a defined supply shed. The right approach depends on the product and supply-chain structure, the business decision or claim, the point at which materials are mixed or transformed, the ability to segregate or reconcile volume, the cost and reliability of data collection, applicable certification or regulatory requirements, the risk of fraud, and whether the claim must remain physically linked to the product. Terra Nexus helps clients select and govern the level of traceability required for the intended use rather than defaulting to the most complex or least costly option.',
+    'Commodity traders and originators may connect producers, storage, aggregation, logistics, processors, buyers, environmental attributes, and program data. They can source and aggregate eligible commodities, design or administer producer programs, maintain delivery and transaction records, manage physical and attribute inventories, translate downstream requirements into upstream workflows, structure customer offerings and value sharing, coordinate technology, agronomy, assurance, and program partners, and manage reconciliation and commercial risk. Terra Nexus helps traders determine which role to play, where value is created, what controls are needed, and how to build an offering that can scale.',
+  ],
+  performanceCategories: [
+    { title: 'More Reliable and Resilient Supply', items: ['Greater visibility into sourcing regions, suppliers, and critical dependencies', 'Reduced exposure to concentrated, fragile, or high-risk supply', 'Stronger supplier relationships and contingency planning', 'Improved ability to respond to climate, market, logistics, or policy change', 'More stable quality, availability, and service'] },
+    { title: 'Better Supplier and Producer Economics', items: ['Clearer participation requirements and incentives', 'Improved alignment between buyer value and supplier cost', 'More durable contracts and commercial relationships', 'Reduced administrative burden and duplicated data requests', 'Better access to technical support, finance, programs, or markets'] },
+    { title: 'Improved Operational Performance', items: ['Reduced waste, inventory, delay, error, or rework', 'Improved planning, logistics, processing, and utilization', 'Better integration of procurement, sustainability, quality, and operations', 'Stronger data quality and exception management', 'More efficient program delivery at scale'] },
+    { title: 'Credible Evidence and Claims', items: ['Traceability proportionate to the intended decision', 'Clear product and attribute ownership', 'Consistent calculation and allocation boundaries', 'Documentation that can withstand customer, auditor, certification, or regulatory scrutiny', 'Reduced risk of double counting, unsupported claims, fraud, or reconciliation gaps'] },
+    { title: 'Stronger Commercial Value', items: ['Differentiated products, ingredients, feedstocks, or customer programs', 'Access to preferred-supplier, certification, regulatory, or procurement pathways', 'Improved margin, customer retention, market access, or strategic positioning', 'Monetization or use of environmental attributes', 'Improved resilience, supply security, and enterprise risk management'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Business Objective and Claim Boundary', body: 'The starting objective may be responsible sourcing, supplier risk, Scope 3, certification, a low-carbon product, regulatory eligibility, resilience, customer reporting, product differentiation, or cost and service improvement.', detail: 'Terra Nexus helps define the product, geography, supplier population, value-chain boundary, intended outcome, user of the evidence, and level of assurance.' },
+    { title: 'Map the Physical, Commercial, and Data Flows', body: 'A useful supply-chain map shows more than where the product moves. It also shows who owns the material at each stage; where it is stored, mixed, transformed, or allocated; who controls producer and supplier relationships; which contracts govern product and attributes; where data are created, changed, or lost; which systems and teams use the information; where costs, value, and risk accumulate; and which participants must cooperate for the intended outcome.', detail: 'Terra Nexus helps clients identify the true control points and gaps that determine whether a program can operate.' },
+    { title: 'Design the Supplier and Producer Proposition', body: 'Suppliers and producers need clear requirements, economics, support, and value. A program may involve premiums, cost sharing, preferred status, technical support, long-term commitments, data payments, financing, outcome payments, product access, or other incentives.', detail: 'Terra Nexus helps structure eligibility, enrollment, evidence, contracts, incentives, escalation, corrective action, and the treatment of existing suppliers, new suppliers, incomplete data, and nonconforming volume.' },
+    { title: 'Build Traceability, Chain of Custody, and Attribute Controls', body: 'The program must maintain a supportable relationship among physical product, transactions, data, calculations, and claims.', detail: 'Terra Nexus helps define product and attribute identifiers; eligible-volume rules; segregation, commingling, and mass-balance controls; transaction and inventory records; conversion and allocation factors; ledger and reconciliation processes; certificate or claim transfer; exception, correction, expiry, and reversal treatment; documentation retention and audit trails; and roles, approvals, and segregation of duties.' },
+    { title: 'Connect Systems and Recurring Operations', body: 'Technology should support the operating model—not define it. Relevant systems may include procurement, ERP, farm management, traceability, LCA, carbon accounting, supplier management, quality, logistics, certification, customer reporting, and data warehouses.', detail: 'Terra Nexus helps clients define data architecture, integration, validation, version control, workflows, roles, quality checks, and exception management. We also help determine what should remain manual during a pilot and what should be automated at scale.' },
+    { title: 'Launch, Reconcile, and Improve', body: 'Commercial programs require recurring work across procurement, operations, sustainability, finance, legal, technology, suppliers, customers, and assurance.', detail: 'Terra Nexus can support or manage supplier onboarding, evidence review, calculations, eligible-volume tracking, reconciliations, ledger management, partner coordination, corrective action, customer documentation, reporting, and audit readiness.' },
+    { title: 'Connect Performance to the Right Commercial Pathway', body: 'The same underlying performance may create different value for different participants. Potential pathways may include responsible-sourcing and supplier-program claims, certification and chain-of-custody claims, Scope 3 reductions and insets, product footprints and product differentiation, low-carbon feedstock or regulatory value, environmental attributes or credits, procurement qualification and customer reporting, and resilience, service, risk, and supply-security value.', detail: 'Terra Nexus helps compare ownership, evidence, cost, market capacity, utilization, timing, acceptance risk, and participant economics.' },
+  ],
+  audiencePathways: [
+    { title: 'Commodity Traders and Originators', description: 'Market and program strategy, producer and supplier engagement, origination, aggregation, traceability, environmental attributes, customer offerings, managed operations, controls, and diligence.' },
+    { title: 'Ingredient and Feed Processors', description: 'Responsible sourcing, product and impact allocation, processing controls, co-product treatment, customer documentation, low-impact products, and claims.' },
+    { title: 'Food and Beverage Companies', description: 'Supplier programs, product and portfolio sourcing, Scope 3, traceability, certification, customer claims, resilience, governance, and managed value-chain programs.' },
+    { title: 'Retailers and Distributors', description: 'Category and supplier strategy, private-label sourcing, customer propositions, traceability, logistics, claims, food waste, and joint business planning.' },
+    { title: 'Producers and Integrated Agricultural Companies', description: 'Program requirements, evidence, incentives, contracting, routes to market, producer economics, and supplier relationships.' },
+    { title: 'Technology and Solution Providers', description: 'Product-market fit, workflow integration, data and model diligence, pilot design, partner strategy, enterprise adoption, and investor or customer support.' },
+    { title: 'Investors and Environmental-Market Participants', description: 'Supply-chain, asset, program, technology, and claims diligence; operating-model assessment; value-creation planning; commercialization; and assurance readiness.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy, Sourcing & Commercial Leaders', items: ['Which products, suppliers, sourcing regions, and impacts should be prioritized?', 'What level of traceability is required for the decision or claim?', 'Which chain-of-custody model fits the product and market?', 'How should supplier costs, premiums, incentives, and value be allocated?'] },
+    { heading: 'Operations, Data & Claims Teams', items: ['Which data must originate upstream and which can be calculated downstream?', 'How will materials, attributes, and claims be reconciled through processing?', 'Who owns each attribute and who may use it?', 'What evidence and controls are proportionate to the commercial value?'] },
+    { heading: 'Governance & Risk Teams', items: ['How should procurement, sustainability, operations, finance, technology, legal, and sales share accountability?', 'How will the program manage exceptions, unsupported supply, and changing requirements?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Supply-chain, market, customer, and regulatory assessment', 'Sourcing-region and supplier prioritization', 'Business cases, economics, and value-allocation scenarios', 'Technology, program, partner, project, and transaction diligence', 'Build-buy-partner and operating-model decisions'] },
+    { title: 'Design the Program', items: ['Supplier and producer propositions', 'Sourcing, traceability, chain-of-custody, and claims architecture', 'Roles, incentives, contracts, governance, and controls', 'Product, environmental-attribute, and customer pathways', 'Pilot and scale strategy'] },
+    { title: 'Build the Infrastructure', items: ['Workflows, systems, data models, and integration requirements', 'Transaction, inventory, allocation, and ledger controls', 'Quality, exception, correction, and document-retention processes', 'Supplier and partner onboarding', 'Customer, certification, and assurance documentation'] },
+    { title: 'Launch and Scale', items: ['Pilot delivery and decision gates', 'Supplier and producer enrollment', 'Training and change management', 'First transactions, reconciliations, and claims packages', 'Expansion across products, facilities, geographies, and customers'] },
+    { title: 'Manage Delivery', items: ['Recurring data and evidence review', 'Eligible-volume and attribute tracking', 'Partner, supplier, and customer coordination', 'Reconciliation and exception management', 'Reporting, audit readiness, and continuous improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Responsible-sourcing and supplier-program claims' },
+    { label: 'Certification and chain-of-custody claims' },
+    { label: 'Scope 3 reductions and insets' },
+    { label: 'Product footprints and product differentiation' },
+    { label: 'Low-carbon feedstock or regulatory value' },
+    { label: 'Environmental attributes or credits' },
+    { label: 'Procurement qualification and customer reporting' },
+    { label: 'Resilience, service, risk, and supply-security value' },
+  ],
+  pitfalls: [
+    'The claim is selected before the physical and commercial flow is understood.',
+    'Suppliers receive requirements without a viable economic proposition.',
+    'Traceability is more complex than the value it protects.',
+    'Chain-of-custody rules do not match actual storage, mixing, or processing.',
+    'Technology is purchased before roles and workflows are defined.',
+    'Product, inventory, carbon, certification, and financial systems use different boundaries.',
+    'Contracts do not clearly allocate attributes, representations, or liabilities.',
+    'Processing conversion and co-product allocation are poorly controlled.',
+    'Reconciliation and exception management are underestimated.',
+    'The pilot is designed but recurring operations are not staffed or governed.',
+  ],
+  ctaHeading: 'Build a Supply Chain That Can Deliver and Substantiate Value',
+  ctaBody: 'Whether the starting point is responsible sourcing, a producer program, Scope 3, a differentiated product, regulatory eligibility, traceability, resilience, or a customer requirement, Terra Nexus helps clients build the complete path from upstream performance to credible market value.',
+  ctaButton: { label: 'Discuss Your Supply Chain', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Sustainable Supply Chains | Terra Nexus"
-  description="Terra Nexus helps food and agribusinesses design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations."
-  preview={mode === 'preview'}
->
-  <section class="page-hero">
-    <p class="eyebrow">FROM SOURCE TO DELIVERY</p>
-    <h1>Connect Responsible Production to Credible Products and Claims</h1>
-    <p class="hero-lead">Terra Nexus helps food and agribusinesses design sustainable supply chains that align sourcing, supplier engagement, traceability, operations, commercial value, environmental accounting, and customer expectations.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="/contact/">Discuss Your Supply Chain</a>
-      <a class="btn btn-secondary" href="/capabilities/">Explore Our Capabilities</a>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>Definition and Scope</h2>
-      <p>A sustainable supply chain is the operating system that connects upstream change, physical product, commercial terms, environmental attributes, processing, delivery, and claims. It is not a data layer or supplier questionnaire.</p>
-      <h3>Topic Boundaries</h3>
-      <ul class="topic-boundaries">
-        <li>This topic connects production to procurement, movement, processing, sale, delivery, and claims</li>
-        <li>Other Areas of Expertise address specific production systems</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section-alt">
-    <div class="container">
-      <h2>Why This Topic Matters</h2>
-      <blockquote class="market-thesis">A sustainable supply chain is not a data layer or supplier questionnaire. It is an operating system that connects upstream change, physical product, commercial terms, environmental attributes, processing, delivery, and claims.</blockquote>
-      <p>When sourcing, supplier engagement, traceability, and commercial terms are treated as separate workstreams, the supply chain cannot consistently deliver or substantiate the value it promises. Customers, auditors, regulators, and certification bodies increasingly require evidence that connects practice to product to claim — and the operating model must be designed to produce that evidence as a byproduct of doing business, not as a parallel reporting exercise.</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>Primary Value-Chain Position</h2>
-      <p><strong>Commodity Trading; Ingredient &amp; Feed Processing; Food &amp; Beverage; Retail &amp; Distribution.</strong> The sustainable supply chain is the connector that operationalizes plays across production, transformation, energy, nature, and recovery topics.</p>
-      <p>It sits at the center of the value chain, translating upstream production change into downstream commercial and environmental value. Without a coherent supply-chain operating model, production improvements, environmental programs, and product claims cannot be reliably linked, verified, or monetized.</p>
-    </div>
-  </section>
-
-  <section class="section-alt">
-    <div class="container">
-      <h2>Primary Audiences</h2>
-      <div class="audience-grid">
-        <article class="audience-card">
-          <h3>Commodity Traders</h3>
-          <p>The lead audience. Traders connect producer relationships, practices and evidence, origination and aggregation, customer demand and commercial contracts, environmental attributes and value allocation, traceability, chain of custody, and claims.</p>
-        </article>
-        <article class="audience-card">
-          <h3>Food &amp; Beverage Companies</h3>
-          <p>Connect responsible sourcing to product strategy, Scope 3, insetting, certification, claims, and customer value.</p>
-        </article>
-        <article class="audience-card">
-          <h3>Food Retail &amp; Distribution</h3>
-          <p>Category and supplier standards, product and sourcing claims, traceability, customer-facing assurance, and supply-chain risk management.</p>
-        </article>
-        <article class="audience-card">
-          <h3>Ingredient &amp; Feed Processors</h3>
-          <p>Sourcing, footprinting, traceability, low-emissions products, byproduct value, and claims.</p>
-        </article>
-        <article class="audience-card">
-          <h3>Agricultural Producers &amp; Integrated Protein Companies</h3>
-          <p>Buyer requirements, program participation, evidence and traceability, producer economics, and downstream commercial alignment.</p>
-        </article>
-        <article class="audience-card">
-          <h3>Enabling Tech &amp; Solution Providers</h3>
-          <p>Market entry, product strategy, technical diligence, pilot design, partner selection, and integration into real supply-chain workflows.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>Decisions Clients Face</h2>
-      <div class="decisions-grid">
-        <div>
-          <h3>Strategy &amp; Commercial Owners</h3>
-          <ul>
-            <li>Which sourcing regions, suppliers, products, and impacts to prioritize?</li>
-            <li>What level of traceability is required for the intended decision or claim?</li>
-            <li>How to select and control chain-of-custody models?</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Procurement &amp; Origination</h3>
-          <ul>
-            <li>How to source, aggregate, price, and contract responsible volumes?</li>
-            <li>How to handle existing adopters versus new adoption?</li>
-            <li>What evidence must move with the commodity?</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Sustainability &amp; Environmental-Market Teams</h3>
-          <ul>
-            <li>How to allocate environmental attributes, costs, premiums, and benefits?</li>
-            <li>Scope 3, insetting, carbon credits, product claims, or combination?</li>
-            <li>Which framework applies and what assurance level is required?</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Program, Operations &amp; Technology Teams</h3>
-          <ul>
-            <li>What evidence and controls are required for customer, auditor, certification, and regulatory scrutiny?</li>
-            <li>How do systems, vendors, models, field evidence, and ledgers connect?</li>
-            <li>What to internalize, outsource, or run as a managed service?</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-alt">
-    <div class="container">
-      <h2>Representative Value Pathways</h2>
-      <p>The same underlying supply-chain performance improvement may support different claims with different levels of rigor, cost, commercial reach, and value. The best pathway is not always the claim with the highest nominal price.</p>
-      <div class="pathway-tags">
-        <span class="pathway-tag">Responsible sourcing and procurement qualification</span>
-        <span class="pathway-tag">Certification and product-differentiation claims</span>
-        <span class="pathway-tag">Scope 3 reductions and insets</span>
-        <span class="pathway-tag">Carbon or ecosystem-service credits</span>
-        <span class="pathway-tag">Low-carbon feedstock or regulatory value</span>
-        <span class="pathway-tag">Product and customer claims</span>
-        <span class="pathway-tag">Supply-resilience and risk-reduction value</span>
-      </div>
-      <p class="pathway-note">These are categories of potential value, not promises that every pathway is available, stackable, transferable, or commercially superior. Detailed pathway analysis remains client-specific.</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>How Terra Nexus Capabilities Apply</h2>
-      <div class="capability-mapping">
-        <article>
-          <h3><a href="/capabilities/strategy-and-innovation/">Strategy &amp; Innovation</a></h3>
-          <p>Market, growth, business-model, product, program, and partner strategy; opportunity assessment, segmentation, positioning, and commercialization; pilot design and build-buy-partner decisions.</p>
-        </article>
-        <article>
-          <h3><a href="/capabilities/financial-investments-and-new-venture-development/">Financial Investments &amp; New Venture Development</a></h3>
-          <p>Business cases, scenario analysis, value allocation, and initiative prioritization; investor, technology, project, program, and transaction diligence; capital, partnership, and portfolio decisions.</p>
-        </article>
-        <article>
-          <h3><a href="/capabilities/sustainable-supply-chain-and-operations/">Sustainable Supply Chain &amp; Operations</a></h3>
-          <p>Sourcing, supplier, producer, traceability, and chain-of-custody design; operating models, governance, systems, controls, and implementation; recurring program management.</p>
-        </article>
-        <article>
-          <h3><a href="/capabilities/corporate-sustainability/">Corporate Sustainability</a></h3>
-          <p>Impact measurement, inventory and target alignment, disclosure, and governance; product, value-chain, climate, nature, resilience, and claims integration; stakeholder communication.</p>
-        </article>
-        <article>
-          <h3><a href="/capabilities/carbon-and-ecosystem-services/">Carbon &amp; Ecosystem Services</a></h3>
-          <p>Market-mechanism and methodology assessment; environmental-program design, MRV, valuation, commercialization, and management; verification readiness, evidence, and claims translation.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-alt">
-    <div class="container">
-      <h2>How Terra Nexus Engages</h2>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, defines strategy, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Terra Nexus embeds within client-owned programs to coordinate recurring evidence, data, calculations, ledgers, partners, exceptions, reporting, and verification readiness.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-dark">
-    <div class="container text-center">
-      <h2>Build a Supply Chain That Can Deliver and Substantiate Value</h2>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="/contact/">Discuss Your Supply Chain</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<style>
-  .topic-boundaries { list-style: none; padding: 0; margin-top: var(--space-4); }
-  .topic-boundaries li { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .topic-boundaries li:last-child { border-bottom: 0; }
-  .market-thesis { font-family: var(--font-serif); font-size: var(--text-lg); font-style: italic; color: var(--color-text); padding: var(--space-4) var(--space-6); border-left: 3px solid var(--color-accent); margin-bottom: var(--space-4); }
-  .audience-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
-  .audience-card { padding: var(--space-4); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .audience-card h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
-  .audience-card p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .decisions-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
-  .decisions-grid h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
-  .decisions-grid ul { padding-left: var(--space-5); }
-  .decisions-grid li { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
-  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
-  .pathway-tag { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); }
-  .pathway-note { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
-  .capability-mapping { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .capability-mapping { grid-template-columns: repeat(2, 1fr); } }
-  .capability-mapping article { padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .capability-mapping h3 { font-size: var(--text-base); margin-bottom: var(--space-2); }
-  .capability-mapping h3 a { color: var(--color-accent); }
-  .capability-mapping p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<ExpertisePage data={data} />
