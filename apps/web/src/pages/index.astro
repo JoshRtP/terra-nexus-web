@@ -68,9 +68,15 @@ const capabilities = [
             <a
               href={`/expertise/${area.slug}/`}
               class="expertise-tile"
-              style={`--tile-bg: url('${area.heroImage}')`}
               aria-label={area.title}
             >
+              <img
+                src={area.heroImage}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                class="tile-bg-img"
+              />
               <div class="tile-overlay" aria-hidden="true"></div>
               <div class="tile-content">
                 <h3 class="tile-title">{area.title}</h3>
@@ -332,17 +338,17 @@ const capabilities = [
     outline: 3px solid #0d9488;
     outline-offset: 3px;
   }
-  .expertise-tile::before {
-    content: '';
+  .tile-bg-img {
     position: absolute;
     inset: 0;
-    background-image: var(--tile-bg);
-    background-size: cover;
-    background-position: center;
-    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     z-index: 0;
+    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-tile:hover::before { transform: scale(1.06); }
+  .expertise-tile:hover .tile-bg-img { transform: scale(1.06); }
 
   /* ── Gradient overlay ─────────────────────────────── */
   .tile-overlay {
@@ -424,10 +430,10 @@ const capabilities = [
   }
   /* ── Reduced motion ───────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
-    .expertise-tile, .expertise-tile::before,
+    .expertise-tile, .tile-bg-img,
     .tile-overlay, .tile-desc, .tile-cta { transition: none; }
     .expertise-tile:hover { transform: none; }
-    .expertise-tile:hover::before { transform: none; }
+    .expertise-tile:hover .tile-bg-img { transform: none; }
   }
 
   /* Value pillars */
