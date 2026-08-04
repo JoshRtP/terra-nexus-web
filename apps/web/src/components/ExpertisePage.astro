@@ -191,7 +191,7 @@ const mode = getBuildMode();
       <header class="section-header">
         <span class="eyebrow">Market Validation</span>
         <h2 id="decisions-heading">Market Validation</h2>
-        <p class="section-lead">We pressure-test every opportunity across desirability, viability, feasibility, and strategic fit before capital is committed. The right questions differ by stakeholder, but every program must clear all four gates.</p>
+        <p class="section-lead">A customer-centric approach &mdash; starting with desirability, then validating viability, feasibility, and strategic fit &mdash; prevents the most common reasons programs struggle. Each row pairs a frequent pitfall with the market-validation discipline that prevents it.</p>
       </header>
       <div class="decisions-grid">
         {data.decisionGroups.map((group) => (
@@ -202,43 +202,6 @@ const mode = getBuildMode();
             </ul>
           </article>
         ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Avoiding Common Pitfalls: Market Validation Comparison -->
-  <section class="section section-alt" aria-labelledby="pitfalls-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Experience</span>
-        <h2 id="pitfalls-heading">Avoiding Common Pitfalls</h2>
-        <p class="section-lead">A customer-centric approach &mdash; starting with desirability, then validating viability, feasibility, and strategic fit &mdash; prevents the most common reasons programs struggle. Each row pairs a frequent pitfall with the market-validation discipline that prevents it.</p>
-      </header>
-      <div class="validation-table-wrap">
-        <table class="validation-table">
-          <thead>
-            <tr>
-              <th scope="col">Category</th>
-              <th scope="col" class="col-pitfall">
-                <span class="col-icon col-icon-x" aria-hidden="true">&times;</span>
-                Common Pitfall
-              </th>
-              <th scope="col" class="col-validation">
-                <span class="col-icon col-icon-check" aria-hidden="true">&check;</span>
-                Market Validation
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.validationRows.map((row) => (
-              <tr>
-                <td class="cell-category">{row.category}</td>
-                <td class="cell-pitfall">{row.pitfall}</td>
-                <td class="cell-validation">{row.validation}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   </section>
