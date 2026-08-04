@@ -99,7 +99,7 @@ const mode = getBuildMode();
       <div class="overview-split">
         <div class="overview-left">
           <span class="eyebrow">Overview</span>
-          <h2 id="overview-heading" class="overview-heading">About This Practice Area</h2>
+          <h2 id="overview-heading" class="overview-heading">{data.title}</h2>
           {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
           <div class="overview-cta">
             <a href={data.primaryCta.href} class="btn btn-primary">{data.primaryCta.label}</a>
