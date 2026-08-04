@@ -22,7 +22,7 @@ export interface CapabilityPageData {
   secondaryCta?: { label: string; href: string };
   metaTitle: string;
   metaDescription: string;
-  decisionOwners: string[];
+  decisionOwners?: string[];
 
   orientation: string[];
   offerings: Offering[];
@@ -57,21 +57,8 @@ const mode = getBuildMode();
     <div class="container">
       <div class="text-container">
         <span class="eyebrow">Overview</span>
-        <h2 id="orientation-heading">What This Capability Covers</h2>
+        <h2 id="orientation-heading">{data.title}</h2>
         {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
-      </div>
-    </div>
-  </section>
-
-  <!-- Who This Supports -->
-  <section class="section section-alt" aria-labelledby="audiences-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Who We Support</span>
-        <h2 id="audiences-heading">Who This Capability Serves</h2>
-      </header>
-      <div class="owner-tags">
-        {data.decisionOwners.map((owner) => <span class="owner-tag">{owner}</span>)}
       </div>
     </div>
   </section>
@@ -81,7 +68,7 @@ const mode = getBuildMode();
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Our Offerings</span>
-        <h2 id="offerings-heading">How We Help</h2>
+        <h2 id="offerings-heading">What We Do</h2>
         <p class="section-lead">These offerings can be combined to match the decision at hand. Each engagement is tailored to the client's specific context, objectives, and constraints.</p>
       </header>
       <div class="offerings-list">
@@ -166,26 +153,6 @@ const mode = getBuildMode();
     color: var(--color-text-secondary);
     margin-bottom: var(--space-5);
     line-height: var(--line-relaxed);
-  }
-
-  /* Owner tags */
-  .owner-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-  .owner-tag {
-    font-size: var(--text-sm);
-    padding: var(--space-3) var(--space-5);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-  }
-  .owner-tag:hover {
-    border-color: var(--color-accent-border);
-    color: var(--color-accent);
   }
 
   /* Offerings */
