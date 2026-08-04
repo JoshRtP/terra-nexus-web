@@ -1,234 +1,115 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
-const mode = getBuildMode();
+import CapabilityPage from '../../../components/CapabilityPage.astro';
 
-const offerings = [
-  {
-    id: 'strategy-corporate',
-    name: 'Corporate & Business Unit Strategy',
-    definition: 'Define strategic direction and align aspiration, portfolio choices, resources, capabilities, governance, and execution priorities.',
-    activities: [
-      'Purpose and ambition',
-      'Portfolio choices',
-      'Resource prioritization',
-      'Governance design',
-    ],
-  },
-  {
-    id: 'strategy-market-entry',
-    name: 'Market Entry & Competitive Strategy',
-    definition: 'Evaluate markets, customers, competitors, barriers, positioning, pricing, and routes to market.',
-    activities: [
-      'Landscape analysis',
-      'Segmentation',
-      'Entry barriers',
-      'Go-to-market strategy',
-      'Pilot commercialization',
-    ],
-  },
-  {
-    id: 'strategy-business-model',
-    name: 'Business Model & Growth Strategy',
-    definition: 'Design how an organization creates, delivers, and captures value.',
-    activities: [
-      'Business-model innovation',
-      'Portfolio strategy',
-      'Purpose premiums',
-      'Partnerships',
-      'Joint ventures',
-      'Inorganic growth',
-    ],
-  },
-  {
-    id: 'strategy-customer-experience',
-    name: 'Customer Experience',
-    definition: 'Understand how customers perceive, select, use, and value products, programs, services, and claims.',
-    activities: [
-      'Customer research',
-      'Segmentation',
-      'Voice of customer',
-      'Journey mapping',
-      'Buying criteria',
-    ],
-  },
-  {
-    id: 'strategy-product-innovation',
-    name: 'Product, Innovation & Design',
-    definition: 'Move products, services, programs, and processes from opportunity through concept, testing, launch, and scale.',
-    activities: [
-      'Innovation roadmaps',
-      'Open innovation',
-      'Design thinking',
-      'Product development',
-      'Prototyping',
-      'Certification',
-      'Product claims',
-    ],
-  },
-  {
-    id: 'strategy-sustainability',
-    name: 'Sustainability & Climate Change Strategy',
-    definition: 'Define sustainability and climate strategy when the decision is owned by strategy, a business unit, innovation, or commercial leadership rather than the enterprise sustainability function.',
-    activities: [],
-  },
-];
+const data = {
+  eyebrow: 'Capabilities',
+  title: 'Find the Right Place to Play — and Build a Credible Path to Win',
+  lead: 'Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.',
+  primaryCta: { label: 'Discuss Your Strategy', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
+  metaTitle: 'Strategy & Innovation | Terra Nexus',
+  metaDescription: 'Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.',
+  decisionOwners: [
+    'P&L Owners',
+    'Business Unit Leaders',
+    'Corporate Strategy',
+    'Innovation & R&D Leaders',
+    'Commercial & Growth Leaders',
+  ],
+  coreQuestion: 'Where should we play, and how do we win at the intersection of food and climate?',
+  orientation: [
+    'Strategy & Innovation addresses the growth, market, product, and customer decisions that arise when food and agribusiness companies face climate-driven change. This is not generic corporate strategy — it is strategy at the specific intersection of food systems and climate, where new products, sourcing models, claims, technologies, and value propositions are reshaping competitive positions.',
+    'A company may need to enter a new sustainable food category, build a business model around regenerative sourcing, develop a climate-linked product, understand how customers value environmental claims, or create an innovation pipeline for food-and-climate opportunities. Each of these decisions requires connecting strategic analysis with deep domain knowledge of how food systems, supply chains, and environmental markets actually work.',
+    'Terra Nexus combines strategic frameworks with practical operating knowledge so leaders can make confident decisions about where to invest, what to build, and how to win.',
+  ],
+  offerings: [
+    {
+      name: 'Corporate & Business Unit Strategy',
+      description: 'Define strategic direction and align aspiration, portfolio choices, resources, capabilities, governance, and execution priorities.',
+      subOfferings: [
+        { name: 'Vision & Mission Development', description: 'Define a winning aspiration by establishing clear, inspiring, and compelling purpose.' },
+        { name: 'Business Portfolio Management', description: 'Manage and optimize the mix of business units for strategic alignment and performance.' },
+        { name: 'Resource Allocation & Prioritization', description: 'Allocate resources to align with business goals, support key initiatives, and maximize returns.' },
+        { name: 'Supporting Capabilities', description: 'Strengthen the key capabilities needed to support strategic objectives and drive growth.' },
+        { name: 'Corporate Governance & Compliance', description: 'Integrate management systems and governance structures to align strategy with operations and facilitate effective execution.' },
+      ],
+    },
+    {
+      name: 'Market Entry & Competitive Strategy',
+      description: 'Evaluate markets, customers, competitors, barriers, positioning, pricing, and routes to market.',
+      subOfferings: [
+        { name: 'Landscape Analysis', description: 'Determine the market dynamics that govern competition and success.' },
+        { name: 'Entry Barrier Analysis', description: 'Identify challenges and barriers to entering new markets, including regulatory, economic, and competitive obstacles.' },
+        { name: 'Go-to-Market Strategies', description: 'Create profitable paths to market and future growth options.' },
+        { name: 'Market Positioning Strategies', description: 'Craft unique market positioning, pricing, and competitive differentiators.' },
+        { name: 'Market Segmentation & Targeting', description: 'Identify and target specific market segments with tailored strategies to meet customer needs and preferences.' },
+        { name: 'Targeted Brand Development', description: 'Develop a brand identity that resonates with the target audience.' },
+        { name: 'Pilot Projects & Commercialization', description: 'Test and refine strategies to quickly reach scale and create traction.' },
+      ],
+    },
+    {
+      name: 'Business Model & Growth Strategy',
+      description: 'Design how an organization creates, delivers, and captures value.',
+      subOfferings: [
+        { name: 'Portfolio Management', description: 'Evaluate and optimize the mix of products or services to ensure alignment with strategic goals and market demands.' },
+        { name: 'Business Model Innovation', description: 'Reinvent the company\'s approach to creating, delivering, and capturing value.' },
+        { name: 'Purpose Premiums & Pricing', description: 'Develop pricing strategies that reflect the value delivered to customers and optimize revenue across different market segments.' },
+        { name: 'Digital Transformation', description: 'Integrate digital technology across functions to fundamentally transform operations and add value for customers.' },
+        { name: 'Strategic Capability Building', description: 'Identify and develop the essential skills, technologies, and processes needed to support the company\'s strategic direction.' },
+        { name: 'Inorganic Growth', description: 'Expand through strategic acquisitions, mergers, joint ventures, alliances, and partnerships.' },
+      ],
+    },
+    {
+      name: 'Customer Experience',
+      description: 'Understand how customers perceive, select, use, and value products, programs, services, and claims.',
+      subOfferings: [
+        { name: 'Consumer Research', description: 'Gather and analyze customer data to understand buying preferences, behaviors, and unmet needs.' },
+        { name: 'Segmentation & Targeting', description: 'Identify distinct customer segments and channels to tailor marketing and product strategies for more effective acquisition and satisfaction.' },
+        { name: 'Voice of Customer', description: 'Collect and analyze customer feedback to inform product development, customer service improvements, and strategic initiatives.' },
+        { name: 'Customer Journey Mapping', description: 'Analyze how and where customers utilize a product or service to identify opportunities to improve the customer experience.' },
+        { name: 'Market Basket Analysis', description: 'Analyze customer purchasing patterns and identify cross-selling opportunities.' },
+        { name: 'Personalization & Buying Criteria', description: 'Enhance customer experience with personalized engagement strategies tailored to specific preferences.' },
+        { name: 'Channel Integration', description: 'Select appropriate channels and ensure a seamless experience across all sales and communication channels.' },
+        { name: 'Loyalty Programs & CRM', description: 'Design and implement loyalty programs and customer relationship management strategies to enhance retention and value.' },
+      ],
+    },
+    {
+      name: 'Product, Innovation & Design',
+      description: 'Move products, services, programs, and processes from opportunity through concept, testing, launch, and scale.',
+      subOfferings: [
+        { name: 'Innovation Process & Roadmap', description: 'Establish structured processes for innovation, from ideation through to commercialization, including setting strategic milestones.' },
+        { name: 'Open Innovation & Collaboration', description: 'Encourage collaboration with external partners and groups to bring in fresh ideas and accelerate innovation.' },
+        { name: 'Design Thinking', description: 'Apply a human-centered approach to innovation, focusing on understanding user needs and creating effective solutions.' },
+        { name: 'Empathy Mapping & Personas', description: 'Develop deep understanding of customer motivations and needs through empathy maps and personas, informing design and innovation.' },
+        { name: 'Ideation & Concept Development', description: 'Facilitate the generation of new ideas and develop them into concepts for products or services.' },
+        { name: 'New Product Development', description: 'Commercialize and launch product concepts as new products and services.' },
+        { name: 'Rapid Prototyping & Testing', description: 'Utilize rapid prototyping techniques to create minimum viable products for market testing, feedback, and iteration.' },
+        { name: 'Certifications & Claims', description: 'Enhance consumer trust by validating product claims and securing certifications.' },
+      ],
+    },
+    {
+      name: 'Sustainability & Climate Change Strategy',
+      description: 'Define sustainability and climate strategy when the decision is owned by strategy, a business unit, innovation, or commercial leadership rather than the enterprise sustainability function.',
+      subOfferings: [],
+    },
+  ],
+  relatedExpertise: [
+    { label: 'Regenerative Agriculture', href: '/expertise/regenerative-agriculture/' },
+    { label: 'Regenerative Rangeland', href: '/expertise/regenerative-rangeland/' },
+    { label: 'Agroforestry', href: '/expertise/agroforestry/' },
+    { label: 'Aquaculture', href: '/expertise/aquaculture/' },
+    { label: 'Biodiversity & Ecosystem Resilience', href: '/expertise/biodiversity-and-ecosystem-resilience/' },
+    { label: 'Low Carbon Energy & Biofuels', href: '/expertise/low-carbon-energy-and-biofuels/' },
+    { label: 'Sustainable Supply Chains', href: '/expertise/sustainable-supply-chains/' },
+    { label: 'Food Waste Prevention, Diversion & Recovery', href: '/expertise/food-waste-prevention-diversion-recovery/' },
+    { label: 'Purpose-Driven Food Brands & Retailers', href: '/expertise/purpose-driven-food-brands-and-retailers/' },
+  ],
+  proofNote: 'The approved lower-emissions beef case study supports commercialization strategy, market-mechanism assessment, market acceptance, and competitive benchmarking.',
+  proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
+  ctaHeading: 'Discuss Your Strategy or Growth Opportunity',
+  ctaBody: 'Tell us where you are trying to play and how you hope to win.',
+  ctaButton: { label: 'Discuss Your Strategy', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Strategy & Innovation | Terra Nexus"
-  description="Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution."
-  preview={mode === 'preview'}
->
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Capabilities</span>
-      <h1>Find the Right Place to Play&mdash;and Build a Credible Path to Win</h1>
-      <p class="hero-lead">Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Strategy</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>Who This Capability Supports</h2>
-      </header>
-      <ul class="audience-list">
-        <li>P&amp;L and business-unit leaders</li>
-        <li>Corporate strategy</li>
-        <li>Innovation and R&amp;D</li>
-        <li>Commercial, growth, product, and customer leaders</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Decisions We Help Resolve</h2>
-      </header>
-      <ul class="decisions-list">
-        <li>Where should we play, and how do we win at the intersection of food and climate?</li>
-        <li>How do we translate sustainability ambition into commercial action?</li>
-        <li>What products, services, and programs create differentiated growth?</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Help</h2>
-        <p class="section-lead">Strategy &amp; Innovation is organized around six offering modules that can be combined to match the decision at hand.</p>
-      </header>
-      <div class="accordion">
-        {offerings.map((o) => (
-          <div class="accordion-item">
-            <button class="accordion-trigger" aria-expanded="false" aria-controls={`acc-${o.id}`}>{o.name}</button>
-            <div class="accordion-content" id={`acc-${o.id}`} hidden>
-              <p>{o.definition}</p>
-              {o.activities.length > 0 && (
-                <ul>
-                  {o.activities.map((a) => <li>{a}</li>)}
-                </ul>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Related Expertise</h2>
-      </header>
-      <p>All nine Areas of Expertise connect to Strategy &amp; Innovation.</p>
-      <div class="tag-row">
-        <a href="/expertise/regenerative-agriculture/" class="segment-tag">Regenerative Agriculture</a>
-        <a href="/expertise/regenerative-rangeland/" class="segment-tag">Regenerative Rangeland</a>
-        <a href="/expertise/agroforestry/" class="segment-tag">Agroforestry</a>
-        <a href="/expertise/aquaculture/" class="segment-tag">Aquaculture</a>
-        <a href="/expertise/biodiversity-and-ecosystem-resilience/" class="segment-tag">Biodiversity &amp; Ecosystem Resilience</a>
-        <a href="/expertise/low-carbon-energy-and-biofuels/" class="segment-tag">Low Carbon Energy &amp; Biofuels</a>
-        <a href="/expertise/sustainable-supply-chains/" class="segment-tag">Sustainable Supply Chains</a>
-        <a href="/expertise/food-waste-prevention-diversion-recovery/" class="segment-tag">Food Waste Prevention, Diversion &amp; Recovery</a>
-        <a href="/expertise/purpose-driven-food-brands-and-retailers/" class="segment-tag">Purpose-Driven Food Brands &amp; Retailers</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Engage</h2>
-        <p class="section-lead">Terra Nexus engages with clients through two complementary models.</p>
-      </header>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, data, partners, reporting, and continuous improvement.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Relevant Proof</h2>
-      </header>
-      <p>The approved lower-emissions beef case study supports commercialization strategy, market-mechanism assessment, market acceptance, and competitive benchmarking.</p>
-      <div class="section-cta">
-        <a href="/case-studies/" class="btn btn-secondary">Read the Case Study</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Strategy or Growth Opportunity</h2>
-      <p class="cta-description">Tell us where you are trying to play and how you hope to win.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Strategy</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<script>
-  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', String(!expanded));
-      const contentId = trigger.getAttribute('aria-controls');
-      const content = contentId ? document.getElementById(contentId) : null;
-      if (content) content.hidden = expanded;
-    });
-  });
-</script>
-
-<style>
-  .audience-list, .decisions-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .audience-list li, .decisions-list li { color: var(--color-text-secondary); font-size: var(--text-base); }
-  .decisions-list li { padding-left: var(--space-5); position: relative; }
-  .decisions-list li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); }
-  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
-  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
-  .section-cta { margin-top: var(--space-6); display: flex; justify-content: flex-start; }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<CapabilityPage data={data} />

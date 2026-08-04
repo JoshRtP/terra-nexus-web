@@ -1,200 +1,105 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
-const mode = getBuildMode();
+import CapabilityPage from '../../../components/CapabilityPage.astro';
 
-const offerings = [
-  {
-    id: 'cs-strategy',
-    name: 'Sustainability Strategy',
-    definition: 'Define ambition, material priorities, goals, policies, governance, resources, roadmaps, and the connection between sustainability and business value.',
-    activities: [],
-  },
-  {
-    id: 'cs-measurement',
-    name: 'Measurement, Impact & Disclosure',
-    definition: 'Build the accounting, measurement, risk, data, control, and reporting systems needed to understand and communicate performance.',
-    activities: [
-      'Climate risk',
-      'GHG inventories',
-      'Product footprints',
-      'Environmental-asset procurement',
-      'Reporting',
-      'Disclosure response',
-    ],
-  },
-  {
-    id: 'cs-stakeholders',
-    name: 'Stakeholder Engagement',
-    definition: 'Align the internal and external people whose decisions, support, data, and participation determine delivery.',
-    activities: [
-      'Ecosystem engagement',
-      'Supplier and partner engagement',
-      'Employee activation',
-      'Leadership or board education',
-    ],
-  },
-  {
-    id: 'cs-products',
-    name: 'Building Purpose-Driven Products & Services',
-    definition: 'Connect sustainability priorities to products, services, customers, growth, and commercial value.',
-    activities: [
-      'Market strategy',
-      'Purpose-led models',
-      'Product development',
-      'Claims',
-      'Certification',
-      'Commercialization',
-    ],
-  },
-  {
-    id: 'cs-supply-chain',
-    name: 'Sustainable Supply Chain & Operations',
-    definition: 'Translate enterprise commitments into sourcing, supplier, logistics, operations, efficiency, traceability, and circularity action. Corporate Sustainability integrates related workstreams into enterprise ambition, governance, performance, and disclosure.',
-    activities: [],
-  },
-];
+const data = {
+  eyebrow: 'Capabilities',
+  title: 'Set Ambition, Prioritize Action, Account for Progress, and Report Credibly',
+  lead: 'Terra Nexus helps sustainability, climate, and reporting leaders set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance — connecting sustainability strategy with operational reality.',
+  primaryCta: { label: 'Discuss Your Sustainability Priorities', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
+  metaTitle: 'Corporate Sustainability | Terra Nexus',
+  metaDescription: 'Terra Nexus helps sustainability, climate, and reporting leaders set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance — connecting sustainability strategy with operational reality.',
+  decisionOwners: [
+    'Chief Sustainability Officers',
+    'ESG Teams',
+    'Climate Teams',
+    'Compliance Leaders',
+    'Reporting & Disclosure Teams',
+  ],
+  coreQuestion: 'How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?',
+  orientation: [
+    'Corporate Sustainability addresses the enterprise-level decisions that determine how a company sets environmental and social goals, prioritizes action, measures progress, manages claims, engages stakeholders, and reports performance. This capability connects high-level ambition with the operational, accounting, and governance systems that make commitments credible.',
+    'Sustainability strategy is not a standalone exercise. Goals set at the enterprise level must connect to sourcing decisions, product strategy, supply-chain operations, investment choices, and environmental-market participation. Claims made externally must be supportable by evidence, accounting, and controls. Reporting must satisfy multiple frameworks while remaining accurate and defensible.',
+    'Terra Nexus helps clients build the complete system — from ambition and materiality through measurement, governance, claims control, and disclosure — so sustainability performance is strategic, measurable, and credible.',
+  ],
+  callout: 'Sustainability commitments are only as credible as the systems behind them. Terra Nexus helps clients connect ambition to action, evidence, accounting, and reporting so goals translate into defensible performance.',
+  offerings: [
+    {
+      name: 'Sustainability Strategy',
+      description: 'Align environmental and social impacts with business success by integrating sustainability into the core of corporate strategy and business operations.',
+      subOfferings: [
+        { name: 'Defining Corporate Ambition & Leadership', description: 'Set a clear sustainability vision and demonstrate leadership commitment, laying the foundation for transformative action.' },
+        { name: 'Purpose-to-Profit Alignment', description: "Ensure sustainability is a key driver of business success by aligning the company's purpose with its profit-making mechanisms." },
+        { name: 'Materiality Assessment', description: 'Identify and prioritize sustainability issues most significant to the business and stakeholders.' },
+        { name: 'Performance Benchmarking & Best Practices', description: 'Compare current sustainability performance against peers and identify best practices for improvement.' },
+        { name: 'Corporate Narrative & Comms Strategy', description: 'Develop an authentic and cohesive narrative for communicating achievements.' },
+        { name: 'Opportunity Identification & Analytics', description: 'Utilize detailed company data to create a prioritized list of opportunities for delivering impact, growth, and efficiencies.' },
+        { name: 'Goals, Targets, Commitments & Policies', description: 'Set clear, measurable sustainability goals and develop policies and commitments to achieve them.' },
+        { name: 'Operating Model & Governance', description: 'Design an operating model and governance structure that defines decision authority, reporting lines, budgets, resourcing, and innovative funding mechanisms.' },
+        { name: 'Roadmap & Action Plans', description: 'Create detailed action plans and roadmap to achieve sustainability goals, outlining specific steps, timelines, and responsibilities.' },
+      ],
+    },
+    {
+      name: 'Measurement, Impact & Disclosure',
+      description: 'Quantify and report progress through transparent disclosure.',
+      subOfferings: [
+        { name: 'Climate Risk, Adaptation & Resilience', description: 'Assess climate-related risks and develop strategies for adaptation and resilience.' },
+        { name: 'Risk Management & Mitigation Testing', description: 'Proactively manage risks and implement mitigation plans that involve key market influencers.' },
+        { name: 'Verified Emissions Reduction & Carbon Asset Procurement', description: 'Identify and acquire high-quality carbon assets, energy credits, offsets, removals, and verified emission reductions, including insets.' },
+        { name: 'On-Demand Disclosure — Third-Party Response', description: 'Utilize third party to sense and respond to ongoing inquiries, including documentation and scientific backing of market-facing programs and claims.' },
+        { name: 'Product & Services Footprinting', description: 'Measure the environmental footprint of products and services using life cycle analysis and accepted GHG accounting estimates.' },
+        { name: 'Corporate Reporting', description: 'Manage external reporting requirements and common frameworks.' },
+      ],
+    },
+    {
+      name: 'Stakeholder Engagement',
+      description: 'Engage internal and external stakeholder groups.',
+      subOfferings: [
+        { name: 'External Stakeholder & Ecosystem Engagement', description: 'Build relationships and partnerships with external stakeholders to support sustainability objectives.' },
+        { name: 'Internal Talent Engagement', description: 'Foster internal culture that engages employees and supports sustainability initiatives.' },
+        { name: 'Leadership & Board Coaching', description: 'Provide coaching for leaders and boards to enhance understanding and governance.' },
+      ],
+    },
+    {
+      name: 'Building Purpose-Driven Products & Services',
+      description: 'Commercialize sustainable products and services.',
+      subOfferings: [
+        { name: 'Market Entry & Competitive Strategy', description: 'Analyze market opportunities and the competitive landscape for new sustainable products.' },
+        { name: 'New Game Business Models & Growth', description: 'Develop innovative business models for accelerated growth.' },
+        { name: 'Customer Discovery, Acquisition, Experience & Retention', description: 'Enhance the connection between purpose-driven solutions and customers.' },
+        { name: 'New Product Development', description: 'Incubate new, sustainable products from concept through launch, ensuring they meet market needs.' },
+      ],
+    },
+    {
+      name: 'Sustainable Supply Chain & Operations',
+      description: 'Reduce cost and improve operational efficiencies by implementing sustainability in supply chain and operations.',
+      subOfferings: [
+        { name: 'Value Chain Interventions (Influence-to-Impact)', description: 'Create clear expectations for reducing environmental impact across the value chain.' },
+        { name: 'Responsible Sourcing & Procurement', description: 'Increase resilience through ethical sourcing and procurement practices.' },
+        { name: 'Resource Efficiency & Lean Operations', description: 'Optimize resource use and streamline operations to reduce waste and improve environmental performance.' },
+        { name: 'Joint Business Planning & Supply Chain Collaboration', description: 'Collaborate with suppliers to improve overall supply chain performance.' },
+        { name: 'Low Impact Logistics', description: 'Implement logistics and transportation strategies that minimize environmental impact.' },
+        { name: 'Circular Economy, Waste & Diversion', description: 'Promote circular economy principles, reducing waste and encouraging the reuse and recycling of materials.' },
+      ],
+    },
+  ],
+  relatedExpertise: [
+    { label: 'Regenerative Agriculture', href: '/expertise/regenerative-agriculture/' },
+    { label: 'Regenerative Rangeland', href: '/expertise/regenerative-rangeland/' },
+    { label: 'Agroforestry', href: '/expertise/agroforestry/' },
+    { label: 'Aquaculture', href: '/expertise/aquaculture/' },
+    { label: 'Biodiversity & Ecosystem Resilience', href: '/expertise/biodiversity-and-ecosystem-resilience/' },
+    { label: 'Low Carbon Energy & Biofuels', href: '/expertise/low-carbon-energy-and-biofuels/' },
+    { label: 'Sustainable Supply Chains', href: '/expertise/sustainable-supply-chains/' },
+    { label: 'Food Waste Prevention, Diversion & Recovery', href: '/expertise/food-waste-prevention-diversion-recovery/' },
+    { label: 'Purpose-Driven Food Brands & Retailers', href: '/expertise/purpose-driven-food-brands-and-retailers/' },
+  ],
+  proofNote: 'The approved lower-emissions beef case study supports target-setting, Scope 3 accounting, claims governance, verification readiness, and reporting.',
+  proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
+  ctaHeading: 'Discuss Your Sustainability Priorities',
+  ctaBody: 'Tell us what you are committing to, measuring, or reporting.',
+  ctaButton: { label: 'Discuss Your Sustainability Priorities', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Corporate Sustainability | Terra Nexus"
-  description="Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain."
-  preview={mode === 'preview'}
->
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Capabilities</span>
-      <h1>Turn Enterprise Sustainability Commitments into Governed Action</h1>
-      <p class="hero-lead">Terra Nexus helps sustainability, climate, ESG, reporting, and compliance leaders set direction, prioritize action, measure performance, manage claims, engage stakeholders, and connect enterprise commitments to the food and agricultural value chain.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Sustainability Priorities</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>Who This Capability Supports</h2>
-      </header>
-      <ul class="audience-list">
-        <li>Chief sustainability officers</li>
-        <li>Climate and ESG teams</li>
-        <li>Reporting, disclosure, compliance, risk, and program leaders</li>
-        <li>Executive teams and boards</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Decisions We Help Resolve</h2>
-      </header>
-      <ul class="decisions-list">
-        <li>How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Help</h2>
-        <p class="section-lead">Corporate Sustainability is organized around five offering modules that can be combined to match the decision at hand.</p>
-      </header>
-      <div class="accordion">
-        {offerings.map((o) => (
-          <div class="accordion-item">
-            <button class="accordion-trigger" aria-expanded="false" aria-controls={`acc-${o.id}`}>{o.name}</button>
-            <div class="accordion-content" id={`acc-${o.id}`} hidden>
-              <p>{o.definition}</p>
-              {o.activities.length > 0 && (
-                <ul>
-                  {o.activities.map((a) => <li>{a}</li>)}
-                </ul>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Related Expertise</h2>
-      </header>
-      <p>All nine Areas of Expertise connect to Corporate Sustainability.</p>
-      <div class="tag-row">
-        <a href="/expertise/regenerative-agriculture/" class="segment-tag">Regenerative Agriculture</a>
-        <a href="/expertise/regenerative-rangeland/" class="segment-tag">Regenerative Rangeland</a>
-        <a href="/expertise/agroforestry/" class="segment-tag">Agroforestry</a>
-        <a href="/expertise/aquaculture/" class="segment-tag">Aquaculture</a>
-        <a href="/expertise/biodiversity-and-ecosystem-resilience/" class="segment-tag">Biodiversity &amp; Ecosystem Resilience</a>
-        <a href="/expertise/low-carbon-energy-and-biofuels/" class="segment-tag">Low Carbon Energy &amp; Biofuels</a>
-        <a href="/expertise/sustainable-supply-chains/" class="segment-tag">Sustainable Supply Chains</a>
-        <a href="/expertise/food-waste-prevention-diversion-recovery/" class="segment-tag">Food Waste Prevention, Diversion &amp; Recovery</a>
-        <a href="/expertise/purpose-driven-food-brands-and-retailers/" class="segment-tag">Purpose-Driven Food Brands &amp; Retailers</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Engage</h2>
-        <p class="section-lead">Terra Nexus engages with clients through two complementary models.</p>
-      </header>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, data, partners, reporting, and continuous improvement.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Sustainability Priorities</h2>
-      <p class="cta-description">Tell us what commitments you are governing or reporting against.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Sustainability Priorities</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<script>
-  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', String(!expanded));
-      const contentId = trigger.getAttribute('aria-controls');
-      const content = contentId ? document.getElementById(contentId) : null;
-      if (content) content.hidden = expanded;
-    });
-  });
-</script>
-
-<style>
-  .audience-list, .decisions-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .audience-list li, .decisions-list li { color: var(--color-text-secondary); font-size: var(--text-base); }
-  .decisions-list li { padding-left: var(--space-5); position: relative; }
-  .decisions-list li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); }
-  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
-  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<CapabilityPage data={data} />

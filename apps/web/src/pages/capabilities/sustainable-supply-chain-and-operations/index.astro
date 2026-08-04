@@ -1,248 +1,122 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
-const mode = getBuildMode();
+import CapabilityPage from '../../../components/CapabilityPage.astro';
 
-const offerings = [
-  {
-    id: 'sco-digital',
-    name: 'Digital Supply Chain Strategy',
-    definition: 'Use data, analytics, traceability, and decision-support tools to improve visibility, responsiveness, and environmental management.',
-    activities: [
-      'Supply-chain design',
-      'System architecture',
-      'Planning',
-      'Analytics',
-      'Traceability integration',
-    ],
-  },
-  {
-    id: 'sco-interventions',
-    name: 'Value Chain Interventions: Influence to Impact',
-    definition: 'Identify where a company can influence performance and design policies, incentives, support, evidence, and governance that turn influence into action.',
-    activities: [
-      'Spend and impact assessment',
-      'Supplier segmentation',
-      'Engagement',
-      'Resilience',
-      'Performance planning',
-    ],
-  },
-  {
-    id: 'sco-responsible-sourcing',
-    name: 'Responsible Sourcing & Procurement',
-    definition: 'Balance commercial value, quality, availability, risk, resilience, environmental performance, and supplier relationships.',
-    activities: [
-      'Category strategy',
-      'Supplier evaluation',
-      'Global sourcing',
-      'Contracting',
-      'Supplier relationship management',
-    ],
-  },
-  {
-    id: 'sco-resource-efficiency',
-    name: 'Resource Efficiency & Lean Operations',
-    definition: 'Improve process performance, material and energy use, quality, productivity, cost, and waste.',
-    activities: [
-      'Lean operations',
-      'Inventory and process optimization',
-      'Quality management',
-      'Value engineering',
-      'KPIs',
-    ],
-  },
-  {
-    id: 'sco-logistics',
-    name: 'Low Impact Logistics',
-    definition: 'Reduce cost and environmental impact while maintaining service and resilience.',
-    activities: [
-      'Network design',
-      'Transportation',
-      'Freight',
-      'Mode and carrier decisions',
-      'Reverse logistics',
-    ],
-  },
-  {
-    id: 'sco-joint-planning',
-    name: 'Joint Business Planning & Supply Chain Collaboration',
-    definition: 'Create shared plans, data, responsibilities, incentives, and governance across organizations.',
-    activities: [
-      'Joint planning',
-      'Visibility',
-      'Traceability',
-      'Chain of custody',
-      'Collaboration platforms',
-      'Partner governance',
-    ],
-  },
-  {
-    id: 'sco-circular',
-    name: 'Circular Economy, Waste & Diversion',
-    definition: 'Keep products, materials, nutrients, and energy at their highest practical value.',
-    activities: [
-      'Material-flow assessment',
-      'Diversion',
-      'Secondary markets',
-      'Byproduct commercialization',
-      'Organics recovery',
-      'Waste-to-energy pathways',
-    ],
-  },
-];
+const data = {
+  eyebrow: 'Capabilities',
+  title: 'Reduce Impact, Risk, Cost, and Volatility Across the Value Chain',
+  lead: 'Terra Nexus helps sourcing, supply chain, and operations leaders redesign what they buy, who they buy from, and how products are produced, moved, processed, used, and recovered — connecting operational change with measurable sustainability outcomes.',
+  primaryCta: { label: 'Discuss Your Supply Chain Challenge', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
+  metaTitle: 'Sustainable Supply Chain & Operations | Terra Nexus',
+  metaDescription: 'Terra Nexus helps sourcing, supply chain, and operations leaders redesign what they buy, who they buy from, and how products are produced, moved, processed, used, and recovered — connecting operational change with measurable sustainability outcomes.',
+  decisionOwners: [
+    'Procurement',
+    'Sourcing',
+    'Supply Chain',
+    'Operations',
+    'Category Management',
+    'Logistics',
+    'Manufacturing',
+  ],
+  coreQuestion: 'How can impacts, risk, cost, and volatility be reduced by changing what is bought, who it is bought from, how it is produced, moved, processed, used, or recovered?',
+  orientation: [
+    'Sustainable Supply Chain & Operations addresses the decisions inside company operations and upstream supply chains that determine environmental impact, cost, risk, resilience, and value. This capability connects sourcing strategy, supplier engagement, operational efficiency, logistics, traceability, and circularity with the commercial and sustainability goals of the enterprise.',
+    'Supply chain decisions in food and agribusiness are rarely simple. Changing a sourcing model may affect cost, quality, availability, supplier relationships, traceability, claims, and risk exposure simultaneously. A logistics optimization may reduce emissions but affect service levels or working capital. A circular-economy initiative may create new revenue streams while requiring new infrastructure, partnerships, and compliance.',
+    'Terra Nexus helps clients navigate these trade-offs with a practical approach that connects operational decisions to their commercial, environmental, and strategic consequences — so changes are designed to deliver multiple forms of value, not just one.',
+  ],
+  offerings: [
+    {
+      name: 'Digital Supply Chain Strategy',
+      description: 'Leverage digital technologies to enhance supply chain efficiency and responsiveness.',
+      subOfferings: [
+        { name: 'Supply Chain Design & Optimization', description: 'Design and optimize supply chains for peak performance.' },
+        { name: 'Demand Planning & Forecasting', description: 'Improve forecasting accuracy and align supply with market demands.' },
+        { name: 'Digital Analytics & Decision Support', description: 'Utilize digital analytics to create actionable insights and enhance decision making.' },
+      ],
+    },
+    {
+      name: 'Value Chain Interventions (Influence-to-Impact)',
+      description: 'Create clear expectations for reducing environmental impact across the value chain.',
+      subOfferings: [
+        { name: 'Spend & Impact Assessment', description: 'Assess supplier base and its impact on the value chain.' },
+        { name: 'White Label Product Performance', description: 'Improve white-label product integration and enhance market positioning across the value chain.' },
+        { name: 'Supplier Engagement Policies', description: 'Establish policies for effective supplier engagement that promote sustainable and ethical practices.' },
+        { name: 'Resilience & Contingency Planning', description: 'Ensure continuity and adaptability of supply base in the face of disruptions.' },
+        { name: 'SC Vulnerability & Surety of Supply', description: 'Identify vulnerabilities and secure supply surety.' },
+        { name: 'ESG Performance Planning', description: 'Establish clear performance expectations and ESG transparency metrics for supply chain.' },
+      ],
+    },
+    {
+      name: 'Responsible Sourcing & Procurement',
+      description: 'Increase resilience through ethical sourcing and procurement practices.',
+      subOfferings: [
+        { name: 'Category Management', description: 'Strategically manage groups of products or services across procurement activities to maximize impact, reduce cost, and drive efficiencies.' },
+        { name: 'Supplier Evaluation & Selection', description: 'Evaluate and select suppliers that align with your values and performance standards.' },
+        { name: 'Contract Negotiation & Management', description: 'Manage negotiations and contracts with suppliers to secure favorable terms and ensure compliance.' },
+        { name: 'Global Sourcing Strategies', description: 'Develop strategies for global sourcing that balance cost, quality, and risk.' },
+        { name: 'Supplier Relationship Management', description: 'Actively manage supplier relationships to enhance mutual value and performance.' },
+      ],
+    },
+    {
+      name: 'Resource Efficiency & Lean Operations',
+      description: 'Maximize operational efficiency and minimize waste with lean principles.',
+      subOfferings: [
+        { name: 'Lean Operations & Waste Reduction', description: 'Apply lean methodologies to reduce waste and streamline operations for higher efficiency.' },
+        { name: 'Inventory Management', description: 'Optimize inventory to meet demand without excess, reducing costs and improving efficiency.' },
+        { name: 'Process Improvement & Workflow Optimization', description: 'Improve processes and workflows for enhanced efficiency and productivity.' },
+        { name: 'Total Quality Management', description: 'Implement quality management systems to improve product performance and consistency.' },
+        { name: 'Cost Reduction & Value Engineering', description: 'Identify opportunities to reduce costs and optimize value across the supply chain.' },
+        { name: 'Performance Benchmarking, Reporting & KPIs', description: 'Measure, monitor, and improve performance with aligned KPIs.' },
+      ],
+    },
+    {
+      name: 'Low Impact Logistics',
+      description: 'Design logistics solutions that minimize environmental impact and enhance sustainability.',
+      subOfferings: [
+        { name: 'Network Design & Optimization', description: 'Design and optimize logistics networks for efficiency.' },
+        { name: 'Transportation & Freight Management', description: 'Manage transportation and freight for efficiency.' },
+        { name: 'Reverse Logistics & Returns Management', description: 'Manage reverse logistics processes and returns policies.' },
+      ],
+    },
+    {
+      name: 'Joint Business Planning & Supply Chain Collaboration',
+      description: 'Collaborate with supply chain partners for enhanced visibility, efficiency, and resilience.',
+      subOfferings: [
+        { name: 'Joint Business Planning', description: 'Conduct joint planning with strategic partners to align supply chain goals and strategies across organizations.' },
+        { name: 'SC Visibility & Tracking', description: 'Enhance visibility and tracking across the supply chain.' },
+        { name: 'Transparency & Traceability', description: 'Enable traceability of products through the supply chain to ensure transparency and accountability.' },
+        { name: 'Smart Contracts & Blockchain for SCM', description: 'Utilize smart contracts and blockchain technology for efficient supply chain management.' },
+        { name: 'Collaboration Platforms', description: 'Use digital platforms to facilitate information sharing and collaboration among supply chain stakeholders.' },
+      ],
+    },
+    {
+      name: 'Circular Economy, Waste & Diversion',
+      description: 'Promote circular economy principles to reduce waste and foster sustainable material management.',
+      subOfferings: [
+        { name: 'Lifecycle Management', description: 'Manage product lifecycles to minimize environmental impact and promote sustainability.' },
+        { name: 'Diversion Optimization', description: 'Optimize waste diversion efforts to reduce landfill use and promote recycling and recovery.' },
+        { name: 'Waste-to-Energy & Materials Recovery', description: 'Convert waste to energy and recover materials to create sustainable by-products.' },
+      ],
+    },
+  ],
+  callout: 'The most effective supply-chain changes address cost, risk, resilience, and environmental performance simultaneously. Terra Nexus helps clients design interventions that create value across multiple dimensions rather than optimizing one at the expense of another.',
+  relatedExpertise: [
+    { label: 'Regenerative Agriculture', href: '/expertise/regenerative-agriculture/' },
+    { label: 'Regenerative Rangeland', href: '/expertise/regenerative-rangeland/' },
+    { label: 'Agroforestry', href: '/expertise/agroforestry/' },
+    { label: 'Aquaculture', href: '/expertise/aquaculture/' },
+    { label: 'Biodiversity & Ecosystem Resilience', href: '/expertise/biodiversity-and-ecosystem-resilience/' },
+    { label: 'Low Carbon Energy & Biofuels', href: '/expertise/low-carbon-energy-and-biofuels/' },
+    { label: 'Sustainable Supply Chains', href: '/expertise/sustainable-supply-chains/' },
+    { label: 'Food Waste Prevention, Diversion & Recovery', href: '/expertise/food-waste-prevention-diversion-recovery/' },
+    { label: 'Purpose-Driven Food Brands & Retailers', href: '/expertise/purpose-driven-food-brands-and-retailers/' },
+  ],
+  proofNote: 'The approved lower-emissions beef case study supports value-chain interventions, supplier engagement, traceability, claims pathways, and operational improvement.',
+  proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
+  ctaHeading: 'Discuss Your Supply Chain or Operations Challenge',
+  ctaBody: 'Tell us what you are sourcing, changing, or trying to improve.',
+  ctaButton: { label: 'Discuss Your Supply Chain Challenge', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Sustainable Supply Chain & Operations | Terra Nexus"
-  description="Terra Nexus helps procurement, sourcing, supply-chain, and operations leaders reduce impact, risk, cost, and volatility by changing what is bought and how it is produced, moved, processed, used, and recovered."
-  preview={mode === 'preview'}
->
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Capabilities</span>
-      <h1>Improve What Is Sourced, How It Moves, and How Value Is Delivered</h1>
-      <p class="hero-lead">Terra Nexus helps procurement, sourcing, supply-chain, and operations leaders reduce impact, risk, cost, and volatility by changing what is bought, who it is bought from, and how materials are produced, moved, processed, used, and recovered.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Supply Chain</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>Who This Capability Supports</h2>
-      </header>
-      <ul class="audience-list">
-        <li>Procurement</li>
-        <li>Responsible sourcing</li>
-        <li>Category management</li>
-        <li>Supply chain</li>
-        <li>Logistics</li>
-        <li>Operations</li>
-        <li>Manufacturing</li>
-        <li>Supplier-program, quality, traceability, and data leaders</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Decisions We Help Resolve</h2>
-      </header>
-      <ul class="decisions-list">
-        <li>How can impact, risk, cost, and volatility be reduced by changing what is bought and how it is produced, moved, processed, used, or recovered?</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Help</h2>
-        <p class="section-lead">Sustainable Supply Chain &amp; Operations is organized around seven offering modules that can be combined to match the decision at hand.</p>
-      </header>
-      <div class="accordion">
-        {offerings.map((o) => (
-          <div class="accordion-item">
-            <button class="accordion-trigger" aria-expanded="false" aria-controls={`acc-${o.id}`}>{o.name}</button>
-            <div class="accordion-content" id={`acc-${o.id}`} hidden>
-              <p>{o.definition}</p>
-              {o.activities.length > 0 && (
-                <ul>
-                  {o.activities.map((a) => <li>{a}</li>)}
-                </ul>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Related Expertise</h2>
-      </header>
-      <div class="tag-row">
-        <a href="/expertise/sustainable-supply-chains/" class="segment-tag">Sustainable Supply Chains</a>
-        <a href="/expertise/food-waste-prevention-diversion-recovery/" class="segment-tag">Food Waste Prevention, Diversion &amp; Recovery</a>
-        <a href="/expertise/regenerative-agriculture/" class="segment-tag">Regenerative Agriculture</a>
-        <a href="/expertise/low-carbon-energy-and-biofuels/" class="segment-tag">Low Carbon Energy &amp; Biofuels</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Engage</h2>
-        <p class="section-lead">Terra Nexus engages with clients through two complementary models.</p>
-      </header>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, data, partners, reporting, and continuous improvement.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Relevant Proof</h2>
-      </header>
-      <p>The approved lower-emissions beef case study supports market mechanisms, value-chain claims, insetting, and commercialization.</p>
-      <div class="section-cta">
-        <a href="/case-studies/" class="btn btn-secondary">Read the Case Study</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Supply Chain or Operations Challenge</h2>
-      <p class="cta-description">Tell us what you are sourcing, moving, or trying to improve.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Supply Chain</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<script>
-  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', String(!expanded));
-      const contentId = trigger.getAttribute('aria-controls');
-      const content = contentId ? document.getElementById(contentId) : null;
-      if (content) content.hidden = expanded;
-    });
-  });
-</script>
-
-<style>
-  .audience-list, .decisions-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .audience-list li, .decisions-list li { color: var(--color-text-secondary); font-size: var(--text-base); }
-  .decisions-list li { padding-left: var(--space-5); position: relative; }
-  .decisions-list li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); }
-  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
-  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
-  .section-cta { margin-top: var(--space-6); display: flex; justify-content: flex-start; }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<CapabilityPage data={data} />

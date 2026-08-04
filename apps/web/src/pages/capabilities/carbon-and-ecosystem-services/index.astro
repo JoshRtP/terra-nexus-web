@@ -1,210 +1,81 @@
 ---
-import SiteLayout from '../../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../../lib/build-mode.js';
-const mode = getBuildMode();
+import CapabilityPage from '../../../components/CapabilityPage.astro';
 
-const offerings = [
-  {
-    id: 'ces-vcm',
-    name: 'VCM & Scope 3 Markets',
-    definition: 'Evaluate how organizations can access, buy, sell, develop, use, or participate in voluntary carbon, Scope 3, inset, and related markets.',
-    activities: [],
-  },
-  {
-    id: 'ces-commercialization',
-    name: 'Commercialization Pathways',
-    definition: 'Compare product claims, insets, credits, certifications, regulatory pathways, customer programs, and other market mechanisms using route-to-market, value, utilization, ownership, stacking, and risk analysis.',
-    activities: [],
-  },
-  {
-    id: 'ces-valuation',
-    name: 'Asset & Portfolio Valuation',
-    definition: 'Assess the quality, risk, value, strategic fit, and portfolio role of environmental assets, projects, programs, and claims.',
-    activities: [],
-  },
-  {
-    id: 'ces-pilot',
-    name: 'Pilot Development & Partner Selection',
-    definition: 'Design pilots that test critical technical, operational, commercial, and market assumptions before scale and select the partners and technologies required.',
-    activities: [],
-  },
-  {
-    id: 'ces-program',
-    name: 'Program Design & Operations',
-    definition: 'Build and manage program governance, workflows, data, contracts, controls, ledgers, chain of custody, partners, exceptions, and reporting.',
-    activities: [],
-  },
-  {
-    id: 'ces-verification',
-    name: 'Impact Verification & Claims Translation',
-    definition: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.',
-    activities: [],
-  },
-  {
-    id: 'ces-ghg',
-    name: 'Full-Service GHG Accounting',
-    definition: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.',
-    activities: [],
-  },
-];
+const data = {
+  eyebrow: 'Capabilities',
+  title: 'Turn Environmental Performance into Credible Assets, Claims, and Value',
+  lead: 'Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes.',
+  primaryCta: { label: 'Discuss Your Carbon Opportunity', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
+  metaTitle: 'Carbon & Ecosystem Services | Terra Nexus',
+  metaDescription: 'Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes.',
+  decisionOwners: [
+    'Environmental Markets Teams',
+    'Carbon Desks',
+    'Trade Desks',
+    'P&L Owners',
+    'Program Owners',
+    'Project Developers',
+    'Portfolio Managers',
+  ],
+  coreQuestion: 'How are environmental assets, attributes, credits, insets, offsets, and claims created, accessed, valued, verified, accounted for, managed, and monetized?',
+  orientation: [
+    'Carbon & Ecosystem Services addresses the decisions that turn environmental performance into credible, monetizable assets and claims. This capability connects the technical work of measuring, verifying, and accounting for environmental outcomes with the commercial work of structuring, pricing, and transacting them in the right market.',
+    'Environmental value is not created automatically. A reduction in emissions, an improvement in soil health, or a restoration outcome may support different claims — a Scope 3 reduction, a carbon credit, a product claim, a certification, a regulatory compliance pathway, or an ecosystem-service payment. Each pathway has different evidence, ownership, assurance, and commercial requirements. Some may coexist; others may conflict or require allocation.',
+    'Terra Nexus helps clients navigate these decisions with a discipline that connects environmental performance, accounting integrity, and commercial value — so the highest-value pathway is chosen, not simply the most visible one.',
+  ],
+  offerings: [
+    {
+      name: 'VCM & Scope 3 Markets',
+      description: 'Evaluate how organizations can access, buy, sell, develop, use, or participate in voluntary carbon, Scope 3, inset, and related markets.',
+      subOfferings: [],
+    },
+    {
+      name: 'Commercialization Pathways',
+      description: 'Compare product claims, insets, credits, certifications, regulatory pathways, customer programs, and other market mechanisms using route-to-market, value, utilization, ownership, stacking, and risk analysis.',
+      subOfferings: [],
+    },
+    {
+      name: 'Asset & Portfolio Valuation',
+      description: 'Assess the quality, risk, value, strategic fit, and portfolio role of environmental assets, projects, programs, and claims.',
+      subOfferings: [],
+    },
+    {
+      name: 'Pilot Development & Partner Selection',
+      description: 'Design pilots that test critical technical, operational, commercial, and market assumptions before scale and select the partners and technologies required.',
+      subOfferings: [],
+    },
+    {
+      name: 'Program Design & Operations',
+      description: 'Build and manage program governance, workflows, data, contracts, controls, ledgers, chain of custody, partners, exceptions, and reporting.',
+      subOfferings: [],
+    },
+    {
+      name: 'Impact Verification & Claims Translation',
+      description: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.',
+      subOfferings: [],
+    },
+    {
+      name: 'Full-Service GHG Accounting',
+      description: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.',
+      subOfferings: [],
+    },
+  ],
+  callout: 'The highest nominal price is not always the highest-value path. Terra Nexus compares participant economics, evidence and operating cost, ownership, market capacity, utilization, acceptance risk, timing, scalability, durability, stacking compatibility, and strategic value. Detailed pricing, intervention libraries, stacking logic, and client-specific optimization remain paid work.',
+  relatedExpertise: [
+    { label: 'Regenerative Agriculture', href: '/expertise/regenerative-agriculture/' },
+    { label: 'Regenerative Rangeland', href: '/expertise/regenerative-rangeland/' },
+    { label: 'Agroforestry', href: '/expertise/agroforestry/' },
+    { label: 'Biodiversity & Ecosystem Resilience', href: '/expertise/biodiversity-and-ecosystem-resilience/' },
+    { label: 'Low Carbon Energy & Biofuels', href: '/expertise/low-carbon-energy-and-biofuels/' },
+    { label: 'Sustainable Supply Chains', href: '/expertise/sustainable-supply-chains/' },
+  ],
+  proofNote: 'The approved lower-emissions beef case study supports methodology review, claims pathways, insetting, program readiness, market acceptance, and commercialization.',
+  proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
+  ctaHeading: 'Discuss Your Carbon or Ecosystem Opportunity',
+  ctaBody: 'Tell us what you are developing, verifying, or trying to commercialize.',
+  ctaButton: { label: 'Discuss Your Carbon Opportunity', href: '/contact/' },
+};
 ---
 
-<SiteLayout
-  title="Carbon & Ecosystem Services | Terra Nexus"
-  description="Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes."
-  preview={mode === 'preview'}
->
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Capabilities</span>
-      <h1>Turn Environmental Performance into Credible Assets, Claims, and Value</h1>
-      <p class="hero-lead">Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Carbon Opportunity</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>Who This Capability Supports</h2>
-      </header>
-      <ul class="audience-list">
-        <li>Environmental markets and carbon teams</li>
-        <li>Trading and origination desks</li>
-        <li>Program and project owners</li>
-        <li>P&amp;L and commercial leaders</li>
-        <li>Sustainability and Scope 3 teams</li>
-        <li>Developers, portfolio managers, investors, and buyers</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Decisions We Help Resolve</h2>
-      </header>
-      <ul class="decisions-list">
-        <li>How are environmental assets, attributes, credits, insets, offsets, and claims created, accessed, valued, verified, accounted for, managed, and monetized?</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Help</h2>
-        <p class="section-lead">Carbon &amp; Ecosystem Services is organized around seven offering modules that can be combined to match the decision at hand.</p>
-      </header>
-      <div class="accordion">
-        {offerings.map((o) => (
-          <div class="accordion-item">
-            <button class="accordion-trigger" aria-expanded="false" aria-controls={`acc-${o.id}`}>{o.name}</button>
-            <div class="accordion-content" id={`acc-${o.id}`} hidden>
-              <p>{o.definition}</p>
-              {o.activities.length > 0 && (
-                <ul>
-                  {o.activities.map((a) => <li>{a}</li>)}
-                </ul>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div class="callout">
-        <p>The highest nominal price is not always the highest-value path. Terra Nexus compares participant economics, evidence and operating cost, ownership, market capacity, utilization, acceptance risk, timing, scalability, durability, stacking compatibility, and strategic value. Detailed pricing, intervention libraries, stacking logic, and client-specific optimization remain paid work.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Related Expertise</h2>
-      </header>
-      <div class="tag-row">
-        <a href="/expertise/regenerative-agriculture/" class="segment-tag">Regenerative Agriculture</a>
-        <a href="/expertise/regenerative-rangeland/" class="segment-tag">Regenerative Rangeland</a>
-        <a href="/expertise/agroforestry/" class="segment-tag">Agroforestry</a>
-        <a href="/expertise/biodiversity-and-ecosystem-resilience/" class="segment-tag">Biodiversity &amp; Ecosystem Resilience</a>
-        <a href="/expertise/low-carbon-energy-and-biofuels/" class="segment-tag">Low Carbon Energy &amp; Biofuels</a>
-        <a href="/expertise/sustainable-supply-chains/" class="segment-tag">Sustainable Supply Chains</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <h2>How We Engage</h2>
-        <p class="section-lead">Terra Nexus engages with clients through two complementary models.</p>
-      </header>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Advise</h3>
-          <p>Terra Nexus evaluates opportunities, performs diligence, models economics, selects frameworks and partners, and designs programs, systems, controls, and commercial structures.</p>
-        </article>
-        <article class="card">
-          <h3>Manage</h3>
-          <p>Terra Nexus embeds within client-owned programs to coordinate recurring work, data, partners, reporting, and continuous improvement.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="container">
-      <header class="section-header">
-        <h2>Relevant Proof</h2>
-      </header>
-      <p>The approved lower-emissions beef case study supports methodology review, claims pathways, insetting, program readiness, market acceptance, and commercialization.</p>
-      <div class="section-cta">
-        <a href="/case-studies/" class="btn btn-secondary">Read the Case Study</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Carbon or Ecosystem Opportunity</h2>
-      <p class="cta-description">Tell us what you are developing, verifying, or trying to commercialize.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Carbon Opportunity</a>
-      </div>
-    </div>
-  </section>
-</SiteLayout>
-
-<script>
-  document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', String(!expanded));
-      const contentId = trigger.getAttribute('aria-controls');
-      const content = contentId ? document.getElementById(contentId) : null;
-      if (content) content.hidden = expanded;
-    });
-  });
-</script>
-
-<style>
-  .audience-list, .decisions-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .audience-list li, .decisions-list li { color: var(--color-text-secondary); font-size: var(--text-base); }
-  .decisions-list li { padding-left: var(--space-5); position: relative; }
-  .decisions-list li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); }
-  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
-  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
-  .callout { margin-top: var(--space-6); padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-left: 3px solid var(--color-accent); border-radius: var(--radius-md); }
-  .callout p { margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
-  .section-cta { margin-top: var(--space-6); display: flex; justify-content: flex-start; }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-</style>
+<CapabilityPage data={data} />

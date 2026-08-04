@@ -1,0 +1,427 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from './PageHero.astro';
+import { getBuildMode } from '../lib/build-mode.js';
+
+export interface SubOffering {
+  name: string;
+  description: string;
+}
+
+export interface Offering {
+  name: string;
+  description: string;
+  subOfferings: SubOffering[];
+}
+
+export interface CapabilityPageData {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  metaTitle: string;
+  metaDescription: string;
+  decisionOwners: string[];
+  coreQuestion: string;
+  orientation: string[];
+  offerings: Offering[];
+  relatedExpertise: { label: string; href: string }[];
+  proofNote?: string;
+  proofLink?: { label: string; href: string };
+  callout?: string;
+  ctaHeading: string;
+  ctaBody: string;
+  ctaButton: { label: string; href: string };
+}
+
+interface Props {
+  data: CapabilityPageData;
+}
+
+const { data } = Astro.props;
+const mode = getBuildMode();
+---
+
+<SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lead={data.lead}
+    primaryCta={data.primaryCta}
+    secondaryCta={data.secondaryCta}
+  />
+
+  <!-- Orientation -->
+  <section class="section" aria-labelledby="orientation-heading">
+    <div class="container">
+      <div class="text-container">
+        <span class="eyebrow">Understanding This Capability</span>
+        <h2 id="orientation-heading">What This Capability Covers</h2>
+        {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Who This Supports -->
+  <section class="section section-alt" aria-labelledby="audiences-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Who We Support</span>
+        <h2 id="audiences-heading">Who This Capability Serves</h2>
+      </header>
+      <div class="owner-tags">
+        {data.decisionOwners.map((owner) => <span class="owner-tag">{owner}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Question -->
+  <section class="section" aria-labelledby="question-heading">
+    <div class="container">
+      <div class="question-block">
+        <span class="eyebrow">The Central Decision</span>
+        <blockquote class="core-question" id="question-heading">{data.coreQuestion}</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Offerings -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Our Offerings</span>
+        <h2 id="offerings-heading">How We Help</h2>
+        <p class="section-lead">These offerings can be combined to match the decision at hand. Each engagement is tailored to the client's specific context, objectives, and constraints.</p>
+      </header>
+      <div class="offerings-list">
+        {data.offerings.map((offering, i) => (
+          <article class="offering-card" id={`offering-${i + 1}`}>
+            <div class="offering-header">
+              <span class="offering-number">{String(i + 1).padStart(2, '0')}</span>
+              <div class="offering-title-area">
+                <h3>{offering.name}</h3>
+                <p class="offering-description">{offering.description}</p>
+              </div>
+            </div>
+            {offering.subOfferings.length > 0 && (
+              <div class="sub-offerings-grid">
+                {offering.subOfferings.map((sub) => (
+                  <div class="sub-offering">
+                    <h4>{sub.name}</h4>
+                    <p>{sub.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+      {data.callout && (
+        <div class="callout">
+          <p>{data.callout}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Related Expertise -->
+  <section class="section" aria-labelledby="related-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Connected Expertise</span>
+        <h2 id="related-heading">Related Areas of Expertise</h2>
+      </header>
+      <div class="tag-row">
+        {data.relatedExpertise.map((tag) => (
+          <a href={tag.href} class="segment-tag">{tag.label}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Engage -->
+  <section class="section section-alt" aria-labelledby="engage-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">How We Engage</span>
+        <h2 id="engage-heading">From Advisory to Embedded Management</h2>
+      </header>
+      <div class="engage-grid">
+        <article class="engage-card">
+          <span class="engage-label">01</span>
+          <h3>Advise</h3>
+          <p>We evaluate opportunities, perform diligence, model economics, define strategy, select frameworks and partners, and design programs, systems, controls, and commercial structures.</p>
+        </article>
+        <article class="engage-card">
+          <span class="engage-label">02</span>
+          <h3>Manage</h3>
+          <p>We embed within client-owned programs to coordinate recurring work, including data workflows, partner coordination, exception management, reporting, and continuous improvement.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Relevant Proof -->
+  {data.proofNote && (
+    <section class="section" aria-labelledby="proof-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">Evidence</span>
+          <h2 id="proof-heading">Relevant Proof</h2>
+        </header>
+        <p class="proof-text">{data.proofNote}</p>
+        {data.proofLink && (
+          <div class="section-cta">
+            <a href={data.proofLink.href} class="btn btn-secondary">{data.proofLink.label}</a>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Final CTA -->
+  <section class="section section-dark" aria-labelledby="final-cta-heading">
+    <div class="container text-center">
+      <h2 id="final-cta-heading">{data.ctaHeading}</h2>
+      <p class="cta-description">{data.ctaBody}</p>
+      <div class="hero-actions">
+        <a href={data.ctaButton.href} class="btn btn-primary">{data.ctaButton.label}</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .lead-paragraph {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-5);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Owner tags */
+  .owner-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .owner-tag {
+    font-size: var(--text-sm);
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+  .owner-tag:hover {
+    border-color: var(--color-accent-border);
+    color: var(--color-accent);
+  }
+
+  /* Core question */
+  .question-block {
+    max-width: var(--max-width-text);
+    margin: 0 auto;
+    text-align: center;
+  }
+  .question-block .eyebrow {
+    display: block;
+    margin-bottom: var(--space-4);
+  }
+  .core-question {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-medium);
+    line-height: var(--line-snug);
+    color: var(--color-text);
+    margin: 0;
+    padding: var(--space-8) var(--space-8);
+    border-top: 2px solid var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+    position: relative;
+  }
+  @media (max-width: 40rem) {
+    .core-question { font-size: var(--text-xl); padding: var(--space-6) var(--space-4); }
+  }
+
+  /* Offerings */
+  .offerings-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .offering-card {
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .offering-card:hover {
+    border-color: var(--color-accent-border);
+    box-shadow: var(--shadow-md);
+  }
+  .offering-header {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    align-items: flex-start;
+  }
+  .offering-number {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-accent);
+    flex-shrink: 0;
+    min-width: 3rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .offering-title-area { flex: 1; min-width: 0; }
+  .offering-title-area h3 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+  .offering-description {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Sub-offerings */
+  .sub-offerings-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--color-border);
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--color-border);
+  }
+  @media (min-width: 48rem) { .sub-offerings-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 72rem) { .sub-offerings-grid { grid-template-columns: repeat(3, 1fr); } }
+  .sub-offering {
+    background: var(--color-surface-elevated);
+    padding: var(--space-6);
+    transition: background var(--transition-fast);
+  }
+  .sub-offering:hover { background: var(--color-surface); }
+  .sub-offering h4 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+  .sub-offering p {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-normal);
+  }
+
+  /* Callout */
+  .callout {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+  }
+  .callout p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Tags */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .segment-tag {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+  .segment-tag:hover {
+    border-color: var(--color-accent-border);
+    color: var(--color-accent);
+  }
+
+  /* Engage */
+  .engage-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) { .engage-grid { grid-template-columns: repeat(2, 1fr); } }
+  .engage-card {
+    padding: var(--space-10);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+  .engage-card:hover { box-shadow: var(--shadow-lg); border-color: var(--color-accent-border); }
+  .engage-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gradient-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+  }
+  .engage-card:hover::before { transform: scaleX(1); }
+  .engage-label {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-accent);
+    display: block;
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.02em;
+  }
+  .engage-card h3 { font-size: var(--text-2xl); margin-bottom: var(--space-4); }
+  .engage-card p { font-size: var(--text-base); color: var(--color-text-secondary); }
+
+  /* Proof */
+  .proof-text {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    max-width: var(--max-width-text);
+  }
+  .section-cta {
+    margin-top: var(--space-6);
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /* CTA section */
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+  .cta-description {
+    color: #a3adb8;
+    max-width: var(--max-width-text);
+    margin: var(--space-4) auto var(--space-8);
+  }
+  .section-dark .btn-primary {
+    background: #fff;
+    color: #1a1f24;
+    border-color: #fff;
+  }
+  .section-dark .btn-primary:hover {
+    background: #e2e5e9;
+    border-color: #e2e5e9;
+  }
+</style>

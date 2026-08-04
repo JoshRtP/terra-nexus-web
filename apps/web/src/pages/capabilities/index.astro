@@ -45,10 +45,18 @@ const capabilities = [
   <section class="section section-alt">
     <div class="container">
       <header class="section-header">
-        <h2>Integrated Support Across the Path to Value</h2>
+        <span class="eyebrow">Integrated Support</span>
+        <h2>One Engagement, Multiple Capabilities</h2>
         <p class="section-lead">A single engagement may require strategy, finance, operations, sustainability, and environmental-market capabilities working together. Terra Nexus organizes the work around the client functions that own each decision while integrating the complete path to value.</p>
       </header>
-      <p>Each capability page contains its relevant offering modules. The 29 offerings are not standalone pages — they explain the types of decisions and engagement work inside a capability without forcing visitors to navigate a consulting-service catalogue.</p>
+      <div class="pathway-tags">
+        <span class="pathway-tag">Strategy</span>
+        <span class="pathway-tag">Investment</span>
+        <span class="pathway-tag">Operations</span>
+        <span class="pathway-tag">Sustainability</span>
+        <span class="pathway-tag">Environmental Markets</span>
+      </div>
+      <p class="integration-note">Each capability family contains its own offerings, and offerings may overlap when a different client function owns the decision. Terra Nexus preserves the decision-owner perspective rather than forcing every activity into a single category.</p>
     </div>
   </section>
 
@@ -65,4 +73,14 @@ const capabilities = [
 
 <style>
   .capability-question { font-style: italic; color: var(--color-text); margin-bottom: var(--space-2); font-size: var(--text-sm); }
+  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 var(--space-4); }
+  .pathway-tag {
+    font-size: var(--text-sm);
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+  }
+  .integration-note { font-size: var(--text-sm); color: var(--color-text-muted); max-width: var(--max-width-text); }
 </style>
