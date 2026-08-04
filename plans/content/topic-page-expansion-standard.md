@@ -212,11 +212,18 @@ Developer and corporate pages are useful for understanding market communication,
 - display internal labels such as “decision owners,” “offering modules,” or “content architecture” as public headings;
 - expose detailed intervention libraries, pricing, stacking logic, or optimization methods.
 
-## Initial application
+## Application across the nine Areas of Expertise
 
-This standard is first applied to:
+This standard is now applied to:
 
 1. Regenerative Agriculture
 2. Regenerative Rangeland
+3. Agroforestry
+4. Aquaculture
+5. Biodiversity & Ecosystem Resilience
+6. Sustainable Supply Chains
+7. Low Carbon Energy & Biofuels
+8. Purpose-Driven Food Brands & Retailers
+9. Food Waste: Prevention, Diversion & Recovery
 
-After owner review, use the same depth standard—adapted to each topic—to expand Agroforestry, Aquaculture, Biodiversity & Ecosystem Resilience, Sustainable Supply Chains, Low Carbon Energy & Biofuels, Purpose-Driven Food Brands & Retailers, and Food Waste: Prevention, Diversion & Recovery.
+The page architecture is adapted to the commercial and operating logic of each topic. It should not force every topic into the same sequence, terminology, audience hierarchy, or claims pathway.
