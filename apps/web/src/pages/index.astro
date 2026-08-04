@@ -42,7 +42,7 @@ const capabilities = [
     <div class="container hero-content">
       <span class="hero-eyebrow">An Innovation &amp; Insights Studio</span>
       <h1 id="hero-heading">Impact at the Intersection of <span class="hero-highlight">Food &amp; Climate</span></h1>
-      <p class="hero-engagement">We advise and manage commercial sustainability programs at scale.</p>
+      <p class="hero-engagement">We help food and agribusiness companies create commercial sustainability programs at scale.</p>
       <p class="hero-supporting">
         Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system.
       </p>
@@ -180,30 +180,6 @@ const capabilities = [
           </div>
           <h3>Market Mechanisms</h3>
           <p>Design incentives, commercial structures, claims, attributes, and routes to market that reward the participants whose actions create the value.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- How We Engage -->
-  <section class="section" aria-labelledby="engage-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">How We Engage</span>
-        <h2 id="engage-heading">From Advisory to Embedded Management</h2>
-        <p class="section-lead">Terra Nexus offers two standard client engagement models so clients can start where the decision is and scale to the level of support the work requires.</p>
-      </header>
-
-      <div class="engage-grid">
-        <article class="engage-card">
-          <span class="engage-label">01</span>
-          <h3>Advise</h3>
-          <p>Terra Nexus helps clients evaluate decisions, opportunities, risks, markets, economics, technologies, partners, programs, claims, and strategies.</p>
-        </article>
-        <article class="engage-card">
-          <span class="engage-label">02</span>
-          <h3>Manage</h3>
-          <p>Terra Nexus acts as an operating partner for a client-owned program or defined workstream, coordinating recurring work, data, partners, reporting, and continuous improvement.</p>
         </article>
       </div>
     </div>
@@ -368,30 +344,6 @@ const capabilities = [
   }
   .value-pillar h3 { margin-bottom: var(--space-3); }
   .value-pillar p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-
-  /* Engage grid */
-  .engage-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .engage-grid { grid-template-columns: repeat(2, 1fr); } }
-  .engage-card {
-    padding: var(--space-10); background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-    position: relative; overflow: hidden;
-    transition: box-shadow var(--transition-base), border-color var(--transition-base);
-  }
-  .engage-card:hover { box-shadow: var(--shadow-lg); border-color: var(--color-accent-border); }
-  .engage-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: var(--gradient-accent); transform: scaleX(0); transform-origin: left;
-    transition: transform var(--transition-base);
-  }
-  .engage-card:hover::before { transform: scaleX(1); }
-  .engage-label {
-    font-family: var(--font-serif); font-size: var(--text-3xl);
-    font-weight: var(--font-semibold); color: var(--color-accent);
-    display: block; margin-bottom: var(--space-4); letter-spacing: -0.02em;
-  }
-  .engage-card h3 { font-size: var(--text-2xl); margin-bottom: var(--space-4); }
-  .engage-card p { font-size: var(--text-base); color: var(--color-text-secondary); }
 
   /* Proof */
   .proof-note {
