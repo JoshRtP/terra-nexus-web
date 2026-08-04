@@ -141,12 +141,13 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- Decisions -->
+  <!-- Market Validation (DVFS) -->
   <section class="section" aria-labelledby="decisions-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Real Decisions</span>
-        <h2 id="decisions-heading">Decisions Clients Need to Resolve</h2>
+        <span class="eyebrow">Market Validation</span>
+        <h2 id="decisions-heading">Market Validation</h2>
+        <p class="section-lead">We apply the BCG DVFS framework &mdash; Desirability, Viability, Feasibility, and Strategic Fit &mdash; to pressure-test each opportunity before capital is committed. The right questions differ by stakeholder, but every program must clear all four gates.</p>
       </header>
       <div class="decisions-grid">
         {data.decisionGroups.map((group) => (
@@ -186,7 +187,7 @@ const mode = getBuildMode();
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Experience</span>
-        <h2 id="pitfalls-heading">Common Reasons Programs Struggle</h2>
+        <h2 id="pitfalls-heading">Avoiding Common Pitfalls</h2>
       </header>
       <ul class="pitfall-list" role="list">
         {data.pitfalls.map((pitfall) => (
