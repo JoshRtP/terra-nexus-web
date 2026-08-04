@@ -11,7 +11,8 @@ const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
 ---
 
 <section class="page-hero">
-  <div class="container">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-content">
     {eyebrow && <span class="eyebrow">{eyebrow}</span>}
     <h1>{title}</h1>
     {lead && <p class="hero-lead">{lead}</p>}
@@ -23,3 +24,36 @@ const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
     )}
   </div>
 </section>
+
+<style>
+  .page-hero {
+    position: relative;
+    padding-block: var(--space-20) var(--space-16);
+    background: var(--gradient-surface);
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: -30%; right: -15%;
+    width: 50rem; height: 50rem;
+    background: radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; }
+  .hero-content .eyebrow { margin-bottom: var(--space-4); }
+  .hero-content h1 {
+    margin-bottom: var(--space-5);
+    max-width: var(--max-width-text);
+  }
+  .hero-lead {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: var(--max-width-text);
+    line-height: var(--line-relaxed);
+  }
+  .hero-actions {
+    display: flex; flex-wrap: wrap; gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+</style>

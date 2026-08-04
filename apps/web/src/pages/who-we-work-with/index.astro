@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
 const mode = getBuildMode();
 
 const valueChainSegments = [
@@ -26,17 +27,12 @@ const enablerSegments = [
   description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it."
   preview={mode === 'preview'}
 >
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Who We Work With</span>
-      <h1>Shared Value Requires the Whole System</h1>
-      <p class="hero-lead">Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it.</p>
-      <p class="hero-lead">A client may hire Terra Nexus at one node. Terra Nexus still evaluates the actions, evidence, economics, incentives, and collaboration required across every participant needed to make the solution work.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Value-Chain Challenge</a>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Who We Work With"
+    title="Shared Value Requires the Whole System"
+    lead="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it. A client may hire Terra Nexus at one node, but we evaluate the actions, evidence, economics, incentives, and collaboration required across every participant needed to make the solution work."
+    primaryCta={{ label: 'Discuss Your Value-Chain Challenge', href: '/contact/' }}
+  />
 
   <section class="section">
     <div class="container">

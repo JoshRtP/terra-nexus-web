@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
 const mode = getBuildMode();
 
 const capabilities = [
@@ -17,17 +18,13 @@ const capabilities = [
   description="Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
   preview={mode === 'preview'}
 >
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Capabilities</span>
-      <h1>Connect Strategy, Investment, Operations, Sustainability, and Market Value</h1>
-      <p class="hero-lead">Food-and-climate opportunities rarely fit inside one business function. Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Capabilities"
+    title="Connect Strategy, Investment, Operations, Sustainability, and Market Value"
+    lead="Food-and-climate opportunities rarely fit inside one business function. Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
+  />
 
   <section class="section">
     <div class="container">
@@ -68,9 +65,4 @@ const capabilities = [
 
 <style>
   .capability-question { font-style: italic; color: var(--color-text); margin-bottom: var(--space-2); font-size: var(--text-sm); }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

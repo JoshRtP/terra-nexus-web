@@ -13,6 +13,7 @@ interface Props {
 const { title, description, preview = false } = Astro.props;
 const mode = getBuildMode();
 const isPreview = preview || mode === 'preview';
+const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexus`;
 ---
 
 <!doctype html>
@@ -20,13 +21,15 @@ const isPreview = preview || mode === 'preview';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     {description && <meta name="description" content={description} />}
     {isPreview && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#1a1f24" />
+    <meta name="theme-color" content="#0f172a" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     {description && <meta property="og:description" content={description} />}
-    <title>{title}</title>
+    <title>{fullTitle}</title>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

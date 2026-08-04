@@ -35,22 +35,26 @@ const capabilities = [
   description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
   preview={mode === 'preview'}
 >
-  <section class="section hero-section" aria-labelledby="hero-heading">
-    <div class="container">
-      <span class="eyebrow">An Innovation &amp; Insights Studio</span>
-      <h1 id="hero-heading">Impact at the Intersection of Food &amp; Climate</h1>
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <span class="hero-eyebrow">An Innovation &amp; Insights Studio</span>
+      <h1 id="hero-heading">Impact at the Intersection of <span class="hero-highlight">Food &amp; Climate</span></h1>
       <p class="hero-engagement">We advise and manage commercial sustainability programs at scale.</p>
       <p class="hero-supporting">
         Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system.
       </p>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
-        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
+        <a href="/contact/" class="btn btn-primary btn-lg">Discuss Your Challenge</a>
+        <a href="/expertise/" class="btn btn-secondary btn-lg">Explore Our Expertise</a>
       </div>
     </div>
   </section>
 
-  <section class="section section-alt" aria-labelledby="expertise-heading">
+  <!-- Expertise -->
+  <section class="section" aria-labelledby="expertise-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">What We Are Known For</span>
@@ -77,7 +81,8 @@ const capabilities = [
     </div>
   </section>
 
-  <section class="section" aria-labelledby="capabilities-heading">
+  <!-- Capabilities -->
+  <section class="section section-alt" aria-labelledby="capabilities-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Capabilities</span>
@@ -103,7 +108,8 @@ const capabilities = [
     </div>
   </section>
 
-  <section class="section section-alt" aria-labelledby="audiences-heading">
+  <!-- Who We Work With -->
+  <section class="section" aria-labelledby="audiences-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Who We Work With</span>
@@ -116,6 +122,8 @@ const capabilities = [
           src="/diagrams/value-chain-with-associated-enablers.png"
           alt="Food and agribusiness value chain diagram showing eight value-chain segments (Inputs, Agricultural Production, Commodity Trading, Ingredient & Feed Processing, Food & Beverage, Food Retail & Distribution, Energy & Biofuels, Food Waste Prevention Diversion & Recovery) and three enabling groups (Environmental Markets & Ecosystem Services, Enabling Tech & Solution Providers, Private Equity Venture Capital & Impact Investors)."
           loading="lazy"
+          width="1200"
+          height="400"
           class="diagram-img"
         />
       </div>
@@ -141,7 +149,8 @@ const capabilities = [
     </div>
   </section>
 
-  <section class="section" aria-labelledby="value-heading">
+  <!-- How We Create Value -->
+  <section class="section section-alt" aria-labelledby="value-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">How We Create Value</span>
@@ -152,14 +161,23 @@ const capabilities = [
 
       <div class="value-pillars">
         <article class="value-pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18" /><circle cx="12" cy="12" r="9" /></svg>
+          </div>
           <h3>Transparency</h3>
           <p>Clarify the performance, evidence, costs, ownership, risks, and value available to each participant.</p>
         </article>
         <article class="value-pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3" /><circle cx="15" cy="15" r="3" /><path d="M9 15v3M15 6v3" /></svg>
+          </div>
           <h3>Collaboration</h3>
           <p>Align the producers, suppliers, traders, processors, brands, retailers, technology providers, investors, and market partners required to make the solution work.</p>
         </article>
         <article class="value-pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12a10 10 0 0 0 20 0M2 12a10 10 0 0 1 20 0" /><path d="M12 2a10 10 0 0 0 0 20M12 2a10 10 0 0 1 0 20" /></svg>
+          </div>
           <h3>Market Mechanisms</h3>
           <p>Design incentives, commercial structures, claims, attributes, and routes to market that reward the participants whose actions create the value.</p>
         </article>
@@ -167,7 +185,8 @@ const capabilities = [
     </div>
   </section>
 
-  <section class="section section-alt" aria-labelledby="engage-heading">
+  <!-- How We Engage -->
+  <section class="section" aria-labelledby="engage-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">How We Engage</span>
@@ -175,12 +194,14 @@ const capabilities = [
         <p class="section-lead">Terra Nexus offers two standard client engagement models so clients can start where the decision is and scale to the level of support the work requires.</p>
       </header>
 
-      <div class="card-grid">
-        <article class="card engagement-card">
+      <div class="engage-grid">
+        <article class="engage-card">
+          <span class="engage-label">01</span>
           <h3>Advise</h3>
           <p>Terra Nexus helps clients evaluate decisions, opportunities, risks, markets, economics, technologies, partners, programs, claims, and strategies.</p>
         </article>
-        <article class="card engagement-card">
+        <article class="engage-card">
+          <span class="engage-label">02</span>
           <h3>Manage</h3>
           <p>Terra Nexus acts as an operating partner for a client-owned program or defined workstream, coordinating recurring work, data, partners, reporting, and continuous improvement.</p>
         </article>
@@ -188,8 +209,9 @@ const capabilities = [
     </div>
   </section>
 
+  <!-- Case Study -->
   {hasCaseStudy && (
-    <section class="section" aria-labelledby="proof-heading">
+    <section class="section section-alt" aria-labelledby="proof-heading">
       <div class="container">
         <header class="section-header">
           <span class="eyebrow">Proven Commercial Impact</span>
@@ -217,6 +239,7 @@ const capabilities = [
     </section>
   )}
 
+  <!-- Final CTA -->
   <section class="section section-dark" aria-labelledby="final-cta-heading">
     <div class="container text-center">
       <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
@@ -229,41 +252,150 @@ const capabilities = [
 </SiteLayout>
 
 <style>
-  .hero-section { padding-block: var(--space-24); }
-  .hero-section .eyebrow { margin-bottom: var(--space-4); }
-  .hero-engagement { font-size: var(--text-xl); font-weight: 600; color: var(--color-text); margin-top: var(--space-4); max-width: var(--max-width-text); }
-  .hero-supporting { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: var(--max-width-text); margin-top: var(--space-4); line-height: var(--line-relaxed); }
-  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-8); }
+  /* Hero */
+  .hero {
+    position: relative; overflow: hidden;
+    padding-block: var(--space-32) var(--space-24);
+    background: var(--gradient-hero); color: #fff;
+  }
+  .hero-bg {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(13, 148, 136, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 20% 80%, rgba(13, 148, 136, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-size: var(--text-xs); font-weight: var(--font-semibold);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--c-primary-300); margin-bottom: var(--space-5);
+  }
+  .hero-eyebrow::before {
+    content: ''; display: inline-block; width: 1.5rem; height: 2px;
+    background: var(--c-primary-400); border-radius: var(--radius-full);
+  }
+  .hero h1 {
+    font-size: clamp(2.25rem, 5.5vw, var(--text-6xl));
+    color: #fff; line-height: 1.05; max-width: 24ch;
+    margin-bottom: var(--space-5);
+  }
+  .hero-highlight {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-engagement {
+    font-size: var(--text-2xl); font-weight: var(--font-medium);
+    color: var(--c-secondary-200); margin-bottom: var(--space-4);
+    max-width: var(--max-width-text);
+  }
+  .hero-supporting {
+    font-size: var(--text-lg); color: var(--c-secondary-400);
+    max-width: var(--max-width-text); line-height: var(--line-relaxed);
+  }
+  .hero .hero-actions { margin-top: var(--space-10); }
+  .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
+  .hero .btn-secondary {
+    background: transparent; color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .hero .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4); color: #fff;
+  }
 
+  /* Expertise list */
   .expertise-list { display: flex; flex-direction: column; border-top: 1px solid var(--color-border); }
-  .expertise-item { display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); text-decoration: none; color: inherit; transition: background var(--transition-fast); }
-  .expertise-item:hover { background: var(--color-surface); padding-left: var(--space-4); padding-right: var(--space-4); }
-  .expertise-number { font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 600; color: var(--color-text-muted); flex-shrink: 0; min-width: 2.5rem; }
-  .expertise-content { flex: 1; }
+  .expertise-item {
+    display: flex; align-items: flex-start; gap: var(--space-4);
+    padding: var(--space-5) var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none; color: inherit;
+    transition: padding var(--transition-base), background var(--transition-base);
+  }
+  .expertise-item:hover {
+    background: var(--color-surface);
+    padding-left: var(--space-5); padding-right: var(--space-5);
+  }
+  .expertise-number {
+    font-family: var(--font-serif); font-size: var(--text-lg);
+    font-weight: var(--font-semibold); color: var(--color-text-muted);
+    flex-shrink: 0; min-width: 2.5rem; transition: color var(--transition-base);
+  }
+  .expertise-item:hover .expertise-number { color: var(--color-accent); }
+  .expertise-content { flex: 1; min-width: 0; }
   .expertise-content h3 { font-size: var(--text-lg); margin-bottom: var(--space-1); }
   .expertise-content p { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .expertise-arrow { color: var(--color-text-muted); flex-shrink: 0; margin-top: var(--space-1); }
+  .expertise-arrow {
+    color: var(--color-text-muted); flex-shrink: 0; margin-top: var(--space-1);
+    transition: transform var(--transition-base), color var(--transition-base);
+  }
+  .expertise-item:hover .expertise-arrow { transform: translateX(4px); color: var(--color-accent); }
 
-  .capability-question { font-style: italic; color: var(--color-text); margin-bottom: var(--space-2); font-size: var(--text-sm); }
+  /* Capability question */
+  .capability-question {
+    font-style: italic; color: var(--color-text);
+    margin-bottom: var(--space-2); font-size: var(--text-sm);
+  }
 
-  .diagram-container { margin-bottom: var(--space-8); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-bg); }
-  .diagram-img { width: 100%; height: auto; }
-
+  /* Value pillars */
   .value-pillars { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
   @media (min-width: 40rem) { .value-pillars { grid-template-columns: repeat(3, 1fr); } }
-  .value-pillar { padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .value-pillar {
+    padding: var(--space-8); background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+  .value-pillar:hover {
+    box-shadow: var(--shadow-md); border-color: var(--color-accent-border);
+  }
+  .pillar-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 3rem; height: 3rem; border-radius: var(--radius-md);
+    background: var(--color-accent-bg); color: var(--color-accent);
+    margin-bottom: var(--space-5);
+  }
   .value-pillar h3 { margin-bottom: var(--space-3); }
   .value-pillar p { font-size: var(--text-sm); color: var(--color-text-secondary); }
 
-  .engagement-card h3 { font-size: var(--text-xl); margin-bottom: var(--space-3); }
-  .engagement-card p { font-size: var(--text-base); }
+  /* Engage grid */
+  .engage-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .engage-grid { grid-template-columns: repeat(2, 1fr); } }
+  .engage-card {
+    padding: var(--space-10); background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+    position: relative; overflow: hidden;
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+  .engage-card:hover { box-shadow: var(--shadow-lg); border-color: var(--color-accent-border); }
+  .engage-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--gradient-accent); transform: scaleX(0); transform-origin: left;
+    transition: transform var(--transition-base);
+  }
+  .engage-card:hover::before { transform: scaleX(1); }
+  .engage-label {
+    font-family: var(--font-serif); font-size: var(--text-3xl);
+    font-weight: var(--font-semibold); color: var(--color-accent);
+    display: block; margin-bottom: var(--space-4); letter-spacing: -0.02em;
+  }
+  .engage-card h3 { font-size: var(--text-2xl); margin-bottom: var(--space-4); }
+  .engage-card p { font-size: var(--text-base); color: var(--color-text-secondary); }
 
-  .proof-note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
-
-  .section-cta { margin-top: var(--space-8); display: flex; justify-content: center; }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; font-size: var(--text-lg); max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); line-height: var(--line-relaxed); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
+  /* Proof */
+  .proof-note {
+    margin-top: var(--space-4); font-size: var(--text-sm);
+    color: var(--color-text-muted); font-style: italic;
+  }
 </style>

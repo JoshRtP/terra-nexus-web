@@ -6,9 +6,12 @@ const currentYear = new Date().getFullYear();
   <div class="footer-inner container">
     <div class="footer-top">
       <div class="footer-brand">
-        <p class="footer-wordmark">Terra Nexus</p>
+        <a class="footer-wordmark" href="/">
+          <span class="footer-mark" aria-hidden="true">TN</span>
+          <span>Terra Nexus</span>
+        </a>
         <p class="footer-summary">
-          Terra Nexus is an innovation and insights studio at the intersection of food and climate. We advise and manage commercial sustainability programs at scale.
+          An innovation and insights studio at the intersection of food and climate. We advise and manage commercial sustainability programs at scale.
         </p>
         <p class="footer-tagline">Impact at the Intersection of Food &amp; Climate</p>
       </div>
@@ -40,20 +43,63 @@ const currentYear = new Date().getFullYear();
 </footer>
 
 <style>
-  .site-footer { background: #1a1f24; color: #a3adb8; padding-block: var(--space-16) var(--space-6); margin-top: auto; }
-  .footer-inner { display: flex; flex-direction: column; gap: var(--space-10); }
-  .footer-top { display: grid; gap: var(--space-10); }
+  .site-footer {
+    background: var(--color-dark); color: var(--c-secondary-400);
+    padding-block: var(--space-20) var(--space-8);
+    margin-top: auto; position: relative; overflow: hidden;
+  }
+  .site-footer::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(13, 148, 136, 0.5), transparent);
+  }
+  .footer-inner { display: flex; flex-direction: column; gap: var(--space-12); position: relative; }
+  .footer-top { display: grid; gap: var(--space-12); }
   .footer-brand { max-width: 28rem; }
-  .footer-wordmark { font-family: var(--font-serif); font-size: var(--text-xl); font-weight: 600; color: #fff; margin: 0 0 var(--space-3) 0; }
-  .footer-summary { font-size: var(--text-sm); color: #8e97a2; line-height: var(--line-relaxed); margin-bottom: var(--space-3); }
-  .footer-tagline { font-size: var(--text-sm); color: #6e7987; font-style: italic; margin: 0; }
-  .footer-nav { display: flex; flex-wrap: wrap; gap: var(--space-10); }
-  .footer-nav-group h3 { font-size: var(--text-xs); font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-3); }
+
+  .footer-wordmark {
+    display: inline-flex; align-items: center; gap: var(--space-3);
+    text-decoration: none; color: #fff;
+    margin-bottom: var(--space-5);
+  }
+  .footer-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem;
+    background: var(--gradient-accent); color: #fff;
+    font-family: var(--font-serif); font-size: var(--text-xs);
+    font-weight: var(--font-semibold); border-radius: var(--radius-xs);
+  }
+  .footer-wordmark span:last-child {
+    font-family: var(--font-serif); font-size: var(--text-xl);
+    font-weight: var(--font-semibold); color: #fff;
+  }
+  .footer-summary {
+    font-size: var(--text-sm); color: var(--c-secondary-400);
+    line-height: var(--line-relaxed); margin-bottom: var(--space-4);
+  }
+  .footer-tagline {
+    font-size: var(--text-sm); color: var(--c-secondary-500);
+    font-style: italic; margin: 0;
+  }
+
+  .footer-nav { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+  .footer-nav-group h3 {
+    font-size: var(--text-xs); font-weight: var(--font-bold); color: #fff;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-4);
+  }
   .footer-nav-group ul { list-style: none; margin: 0; padding: 0; }
-  .footer-nav-group li { margin-bottom: var(--space-2); }
-  .footer-nav-group a { color: #8e97a2; font-size: var(--text-sm); text-decoration: none; transition: color var(--transition-fast); }
+  .footer-nav-group li { margin-bottom: var(--space-3); }
+  .footer-nav-group a {
+    color: var(--c-secondary-400); font-size: var(--text-sm);
+    text-decoration: none; transition: color var(--transition-fast);
+  }
   .footer-nav-group a:hover { color: #fff; }
-  .footer-bottom { padding-top: var(--space-6); border-top: 1px solid #2d343c; }
-  .footer-bottom small { font-size: var(--text-xs); color: #6e7987; }
-  @media (min-width: 48rem) { .footer-top { grid-template-columns: 1fr auto; } }
+
+  .footer-bottom {
+    padding-top: var(--space-6); border-top: 1px solid var(--color-dark-border);
+  }
+  .footer-bottom small { font-size: var(--text-xs); color: var(--c-secondary-500); }
+
+  @media (min-width: 48rem) {
+    .footer-top { grid-template-columns: 1fr auto; }
+  }
 </style>

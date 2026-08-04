@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
 const mode = getBuildMode();
 
 const expertiseAreas = [
@@ -21,17 +22,13 @@ const expertiseAreas = [
   description="Terra Nexus brings specialized knowledge to the production systems, supply chains, markets, products, and recovery pathways where food-and-climate performance can create commercial and environmental value."
   preview={mode === 'preview'}
 >
-  <section class="page-hero">
-    <div class="container">
-      <span class="eyebrow">Areas of Expertise</span>
-      <h1>Expertise Across the Food and Agriculture System</h1>
-      <p class="hero-lead">Terra Nexus brings specialized knowledge to the production systems, supply chains, markets, products, and recovery pathways where food-and-climate performance can create commercial and environmental value.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
-        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Areas of Expertise"
+    title="Expertise Across the Food and Agriculture System"
+    lead="Terra Nexus brings specialized knowledge to the production systems, supply chains, markets, products, and recovery pathways where food-and-climate performance can create commercial and environmental value."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
+  />
 
   <section class="section">
     <div class="container">
@@ -79,11 +76,4 @@ const expertiseAreas = [
   .expertise-content h3 { font-size: var(--text-lg); margin-bottom: var(--space-1); }
   .expertise-content p { font-size: var(--text-sm); color: var(--color-text-secondary); }
   .expertise-arrow { color: var(--color-text-muted); flex-shrink: 0; margin-top: var(--space-1); }
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
-  .section-dark .btn-secondary { color: #fff; border-color: rgba(255,255,255,0.4); }
-  .section-dark .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
 </style>
