@@ -29,6 +29,9 @@ const capabilities = [
   { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
   { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
 ];
+
+const heroImage = 'https://images.pexels.com/photos/37103127/pexels-photo-37103127.jpeg?auto=compress&cs=tinysrgb&w=1920';
+const valueSectionImage = 'https://images.pexels.com/photos/30756893/pexels-photo-30756893.jpeg?auto=compress&cs=tinysrgb&w=1200';
 ---
 
 <SiteLayout
@@ -37,14 +40,28 @@ const capabilities = [
   preview={mode === 'preview'}
 >
   <!-- Hero -->
-  <PageHero
-    eyebrow="An Innovation & Insights Studio"
-    title="Impact at the Intersection of Food & Climate"
-    lead="We advise and manage commercial sustainability programs at scale."
-    description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
-    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
-    secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
-  />
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-bg">
+      <img src={heroImage} alt="" loading="eager" fetchpriority="high" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content container">
+      <span class="hero-eyebrow animate-fade-up">An Innovation &amp; Insights Studio</span>
+      <h1 id="hero-heading" class="animate-fade-up" style="animation-delay: 0.1s">
+        Impact at the Intersection<br />of Food &amp; Climate
+      </h1>
+      <p class="hero-lead animate-fade-up" style="animation-delay: 0.2s">
+        We advise and manage commercial sustainability programs that integrate fit-for-purpose solutions at every node in the food value chain.
+      </p>
+      <div class="hero-actions animate-fade-up" style="animation-delay: 0.3s">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/expertise/" class="btn btn-secondary">Explore Our Expertise</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span></span>
+    </div>
+  </section>
 
   <!-- Expertise Section -->
   <section class="section" aria-labelledby="expertise-heading">
@@ -61,6 +78,7 @@ const capabilities = [
             <article class="card">
               <h3>{area.title}</h3>
               <p>{area.description}</p>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
             </article>
           </a>
         ))}
@@ -87,6 +105,7 @@ const capabilities = [
             <article class="card">
               <h3>{cap.title}</h3>
               <p>{cap.description}</p>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
             </article>
           </a>
         ))}
@@ -110,14 +129,16 @@ const capabilities = [
       <div class="card-grid">
         <a href="/who-we-work-with/food-and-agribusiness-value-chain/" class="card-link">
           <article class="card">
-            <h3>Food & Agribusiness Value Chain</h3>
+            <h3>Food &amp; Agribusiness Value Chain</h3>
             <p>Work with the organizations that produce, move, transform, sell, distribute, and recover food and agricultural materials.</p>
+            <span class="card-arrow" aria-hidden="true">&rarr;</span>
           </article>
         </a>
         <a href="/who-we-work-with/enabling-markets-technology-and-capital/" class="card-link">
           <article class="card">
-            <h3>Enabling Markets, Technology & Capital</h3>
+            <h3>Enabling Markets, Technology &amp; Capital</h3>
             <p>Work with the organizations that provide environmental markets, data, technology, assurance, partnerships, and investment.</p>
+            <span class="card-arrow" aria-hidden="true">&rarr;</span>
           </article>
         </a>
       </div>
@@ -128,24 +149,33 @@ const capabilities = [
     </div>
   </section>
 
-  <!-- Shared Value Section -->
-  <section class="section section-dark" aria-labelledby="value-heading">
-    <div class="container">
-      <header class="section-header">
+  <!-- Shared Value Section with image -->
+  <section class="section section-dark value-section" aria-labelledby="value-heading">
+    <div class="container value-grid">
+      <div class="value-text">
+        <span class="eyebrow">How We Create Value</span>
         <h2 id="value-heading">From Improved Performance to the Right Market Value</h2>
         <p>Improving performance does not automatically create value. Terra Nexus helps clients connect fit-for-purpose changes with the evidence, collaboration, operating model, and market mechanisms required to create the highest-value supportable outcome.</p>
-      </header>
-
-      <div class="card-grid card-grid-3">
+      </div>
+      <div class="value-pillars">
         <article class="value-pillar">
+          <div class="value-pillar-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
+          </div>
           <h3>Transparency</h3>
           <p>Clarify the performance, evidence, costs, ownership, risks, and value available to each participant.</p>
         </article>
         <article class="value-pillar">
+          <div class="value-pillar-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="3"/><circle cx="15" cy="15" r="3"/><path d="M9 12v6M15 12v6"/></svg>
+          </div>
           <h3>Collaboration</h3>
           <p>Align the producers, suppliers, traders, processors, brands, retailers, technology providers, investors, and market partners required to make the solution work.</p>
         </article>
         <article class="value-pillar">
+          <div class="value-pillar-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l4-4 4 4 4-4 4 4M3 18l4-4 4 4 4-4 4 4"/></svg>
+          </div>
           <h3>Market Mechanisms</h3>
           <p>Design incentives, commercial structures, claims, attributes, and routes to market that reward the participants whose actions create the value.</p>
         </article>
@@ -159,16 +189,24 @@ const capabilities = [
       <header class="section-header">
         <span class="eyebrow">How We Engage</span>
         <h2 id="engage-heading">From Advisory to Embedded Management</h2>
+        <p>Terra Nexus offers three engagement models so clients can start where the decision is and scale to the level of support the work requires.</p>
       </header>
 
       <div class="card-grid">
-        <article class="card">
+        <article class="card engagement-card">
+          <div class="engagement-number">01</div>
           <h3>Advise</h3>
           <p>Evaluate decisions, opportunities, risks, markets, economics, technologies, partners, programs, and claims.</p>
         </article>
-        <article class="card">
+        <article class="card engagement-card">
+          <div class="engagement-number">02</div>
           <h3>Manage</h3>
           <p>Embed as an operating partner to coordinate client-owned programs, workstreams, data, evidence, partners, reporting, and continuous improvement.</p>
+        </article>
+        <article class="card engagement-card">
+          <div class="engagement-number">03</div>
+          <h3>Operate</h3>
+          <p>Deliver defined workstreams, programs, or functions on behalf of the client under clear scope, governance, and accountability.</p>
         </article>
       </div>
     </div>
@@ -205,57 +243,322 @@ const capabilities = [
   )}
 
   <!-- Final CTA Section -->
-  <section class="section section-dark" aria-labelledby="final-cta-heading">
+  <section class="section section-dark cta-final" aria-labelledby="final-cta-heading">
     <div class="container cta-section">
       <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
       <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next and how the participants required to deliver it can share in the value.</p>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/contact/" class="btn btn-accent">Discuss Your Challenge</a>
       </div>
     </div>
   </section>
 </SiteLayout>
 
 <style>
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    color: var(--color-neutral-0);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: slow-zoom 20s ease-out both;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(16, 45, 38, 0.88) 0%,
+      rgba(16, 45, 38, 0.70) 50%,
+      rgba(31, 101, 83, 0.55) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding-block: var(--space-32);
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-400);
+    margin-bottom: var(--space-5);
+    padding-left: var(--space-6);
+    position: relative;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: var(--space-4);
+    height: 2px;
+    background: var(--color-accent-400);
+    transform: translateY(-50%);
+  }
+
+  .hero h1 {
+    color: var(--color-neutral-0);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    line-height: 1.05;
+    margin-bottom: var(--space-6);
+    max-width: 40rem;
+  }
+
+  .hero-lead {
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 36rem;
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-8);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .hero .btn-secondary {
+    color: var(--color-neutral-0);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .hero .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-neutral-0);
+  }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  .hero-scroll-hint span {
+    display: block;
+    width: 2px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.4);
+    margin: 0 auto;
+    animation: scroll-hint 2s ease-in-out infinite;
+  }
+
+  @keyframes scroll-hint {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* Card arrow */
+  .card-arrow {
+    display: inline-block;
+    margin-top: var(--space-4);
+    font-size: var(--text-lg);
+    color: var(--color-primary-500);
+    transition: transform var(--transition-fast);
+  }
+
+  .card:hover .card-arrow {
+    transform: translateX(6px);
+  }
+
+  /* Section CTA */
   .section-cta {
     margin-top: var(--space-10);
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Value section with grid */
+  .value-grid {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .value-text .eyebrow {
+    color: var(--color-accent-400);
+  }
+
+  .value-text .eyebrow::before {
+    background: var(--color-accent-400);
+  }
+
+  .value-text h2 {
+    margin-bottom: var(--space-5);
+  }
+
+  .value-text p {
+    color: var(--color-neutral-300);
+    font-size: var(--text-lg);
+  }
+
+  .value-pillars {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .value-pillar {
+    padding: var(--space-6);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--border-radius-lg);
+    transition: background var(--transition-base), border-color var(--transition-base);
+  }
+
+  .value-pillar:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(240, 184, 58, 0.3);
+  }
+
+  .value-pillar-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-md);
+    background: rgba(240, 184, 58, 0.12);
+    color: var(--color-accent-400);
+    margin-bottom: var(--space-4);
   }
 
   .value-pillar h3 {
-    color: var(--color-primary-300);
+    color: var(--color-neutral-0);
+    font-size: var(--text-lg);
     margin-bottom: var(--space-3);
   }
 
   .value-pillar p {
     color: var(--color-neutral-300);
+    font-size: var(--text-sm);
   }
 
+  /* Engagement cards */
+  .engagement-card {
+    position: relative;
+    padding-top: var(--space-12);
+  }
+
+  .engagement-number {
+    position: absolute;
+    top: var(--space-6);
+    left: var(--space-8);
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary-300);
+    opacity: 0.6;
+    line-height: 1;
+  }
+
+  /* Proof note */
   .proof-note {
     margin-top: var(--space-4);
     font-size: var(--text-sm);
-    color: var(--color-neutral-600);
+    color: var(--color-neutral-500);
     font-style: italic;
+  }
+
+  /* Final CTA */
+  .cta-final {
+    background: var(--color-primary-950);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-final::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 40%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(240, 184, 58, 0.08) 0%, transparent 60%);
+    pointer-events: none;
   }
 
   .cta-section {
     text-align: center;
     max-width: var(--max-width-text);
     margin-inline: auto;
+    position: relative;
+    z-index: 1;
   }
 
   .cta-section h2 {
     color: var(--color-neutral-0);
+    margin-bottom: var(--space-5);
   }
 
   .cta-description {
-    margin-top: var(--space-4);
     color: var(--color-neutral-300);
     font-size: var(--text-lg);
     line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-8);
   }
 
   .cta-section .hero-actions {
     justify-content: center;
-    margin-top: var(--space-8);
+  }
+
+  /* Responsive */
+  @media (min-width: 48rem) {
+    .value-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .value-pillars {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .value-pillars {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .value-grid {
+      grid-template-columns: 1fr 1.5fr;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .hero {
+      min-height: 70vh;
+    }
+
+    .hero-content {
+      padding-block: var(--space-20);
+    }
+
+    .hero-scroll-hint {
+      display: none;
+    }
   }
 </style>

@@ -16,9 +16,16 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="site-header" role="banner">
+<header class="site-header" id="site-header" role="banner">
   <div class="header-inner container">
     <a class="site-logo" href="/" aria-label="Terra Nexus home">
+      <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+        <path d="M16 4 C16 4, 10 10, 10 16 C10 22, 16 28, 16 28 C16 28, 22 22, 22 16 C22 10, 16 4, 16 4 Z" fill="currentColor" opacity="0.15"/>
+        <path d="M16 4 C16 4, 10 10, 10 16 C10 22, 16 28, 16 28 C16 28, 22 22, 22 16 C22 10, 16 4, 16 4 Z" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M16 4 C16 4, 13 8, 13 12 C13 16, 16 20, 16 20 C16 20, 19 16, 19 12 C19 8, 16 4, 16 4 Z" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        <circle cx="16" cy="16" r="2" fill="currentColor"/>
+      </svg>
       <span class="logo-text">Terra Nexus</span>
     </a>
 
@@ -56,8 +63,17 @@ function isActive(href: string): boolean {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--color-neutral-0);
-    border-bottom: 1px solid var(--color-neutral-200);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .site-header[data-scrolled="true"] {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom-color: var(--color-neutral-200);
+    box-shadow: var(--shadow-sm);
   }
 
   .header-inner {
@@ -70,14 +86,29 @@ function isActive(href: string): boolean {
 
   .site-logo {
     text-decoration: none;
-    color: var(--color-neutral-950);
+    color: var(--color-primary-700);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .logo-mark {
+    color: var(--color-primary-600);
+    flex-shrink: 0;
+    transition: transform var(--transition-slow);
+  }
+
+  .site-logo:hover .logo-mark {
+    transform: rotate(15deg);
   }
 
   .logo-text {
+    font-family: var(--font-serif);
     font-size: var(--text-xl);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: -0.01em;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.02em;
+    color: var(--color-neutral-950);
   }
 
   .nav-toggle {
@@ -117,16 +148,36 @@ function isActive(href: string): boolean {
     text-decoration: none;
     border-radius: var(--border-radius-sm);
     transition: color var(--transition-fast), background var(--transition-fast);
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: var(--space-1);
+    left: var(--space-3);
+    right: var(--space-3);
+    height: 2px;
+    background: var(--color-accent-500);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
   }
 
   .nav-link:hover {
     color: var(--color-primary-700);
-    background: var(--color-primary-50);
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
   }
 
   .nav-link-active {
     color: var(--color-primary-700);
-    background: var(--color-primary-50);
+  }
+
+  .nav-link-active::after {
+    transform: scaleX(1);
   }
 
   @media (max-width: 64rem) {
@@ -147,6 +198,7 @@ function isActive(href: string): boolean {
       transition: transform var(--transition-base);
       overflow-y: auto;
       z-index: 60;
+      box-shadow: var(--shadow-xl);
     }
 
     .primary-nav[data-open="true"] {
@@ -163,12 +215,17 @@ function isActive(href: string): boolean {
       font-size: var(--text-base);
       padding: var(--space-3) var(--space-4);
     }
+
+    .nav-link::after {
+      display: none;
+    }
   }
 </style>
 
 <script>
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('primary-nav');
+  const header = document.getElementById('site-header');
 
   if (toggle && nav) {
     toggle.addEventListener('click', () => {
@@ -186,5 +243,13 @@ function isActive(href: string): boolean {
         (toggle as HTMLElement).focus();
       }
     });
+  }
+
+  if (header) {
+    const updateScroll = () => {
+      header.setAttribute('data-scrolled', String(window.scrollY > 20));
+    };
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    updateScroll();
   }
 </script>

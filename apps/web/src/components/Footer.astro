@@ -4,60 +4,111 @@ const currentYear = new Date().getFullYear();
 
 <footer class="site-footer" role="contentinfo">
   <div class="footer-inner container">
-    <div class="footer-brand">
-      <span class="footer-logo">Terra Nexus</span>
-      <p class="footer-tagline">An innovation and insights studio at the intersection of food and climate.</p>
-    </div>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="footer-logo" href="/" aria-label="Terra Nexus home">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <path d="M16 4 C16 4, 10 10, 10 16 C10 22, 16 28, 16 28 C16 28, 22 22, 22 16 C22 10, 16 4, 16 4 Z" fill="currentColor" opacity="0.15"/>
+            <path d="M16 4 C16 4, 10 10, 10 16 C10 22, 16 28, 16 28 C16 28, 22 22, 22 16 C22 10, 16 4, 16 4 Z" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          </svg>
+          <span>Terra Nexus</span>
+        </a>
+        <p class="footer-tagline">An innovation and insights studio at the intersection of food and climate.</p>
+        <p class="footer-mission">We advise, manage, and operate commercial sustainability programs that integrate fit-for-purpose solutions at every node in the food value chain.</p>
+      </div>
 
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <div class="footer-nav-group">
-        <h3>Explore</h3>
-        <ul role="list">
-          <li><a href="/expertise/">Areas of Expertise</a></li>
-          <li><a href="/capabilities/">Capabilities</a></li>
-          <li><a href="/who-we-work-with/">Who We Work With</a></li>
-          <li><a href="/case-studies/">Case Studies</a></li>
-        </ul>
-      </div>
-      <div class="footer-nav-group">
-        <h3>Company</h3>
-        <ul role="list">
-          <li><a href="/about/">About</a></li>
-          <li><a href="/contact/">Contact</a></li>
-        </ul>
-      </div>
-    </nav>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-nav-group">
+          <h3>Explore</h3>
+          <ul role="list">
+            <li><a href="/expertise/">Areas of Expertise</a></li>
+            <li><a href="/capabilities/">Capabilities</a></li>
+            <li><a href="/who-we-work-with/">Who We Work With</a></li>
+            <li><a href="/case-studies/">Case Studies</a></li>
+          </ul>
+        </div>
+        <div class="footer-nav-group">
+          <h3>Company</h3>
+          <ul role="list">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
 
     <div class="footer-bottom">
       <small>&copy; {currentYear} Terra Nexus. All rights reserved.</small>
+      <small class="footer-tag">Impact at the Intersection of Food &amp; Climate</small>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    background: var(--color-neutral-950);
+    background: var(--color-primary-950);
     color: var(--color-neutral-300);
-    padding-block: var(--space-16) var(--space-8);
+    padding-block: var(--space-20) var(--space-8);
     margin-top: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary-400), var(--color-accent-400), var(--color-primary-400));
   }
 
   .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  .footer-top {
     display: grid;
     gap: var(--space-12);
   }
 
   .footer-brand {
-    max-width: 24rem;
+    max-width: 28rem;
   }
 
   .footer-logo {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
     color: var(--color-neutral-0);
   }
 
+  .footer-logo span {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.02em;
+  }
+
+  .footer-logo svg {
+    color: var(--color-primary-300);
+  }
+
   .footer-tagline {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-primary-300);
+    line-height: var(--line-height-relaxed);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .footer-mission {
     margin-top: var(--space-3);
     font-size: var(--text-sm);
     color: var(--color-neutral-400);
@@ -75,7 +126,7 @@ const currentYear = new Date().getFullYear();
     font-weight: var(--font-weight-semibold);
     color: var(--color-neutral-0);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     margin-bottom: var(--space-4);
   }
 
@@ -93,16 +144,21 @@ const currentYear = new Date().getFullYear();
     color: var(--color-neutral-400);
     font-size: var(--text-sm);
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: color var(--transition-fast), padding-left var(--transition-fast);
   }
 
   .footer-nav-group a:hover {
-    color: var(--color-neutral-100);
+    color: var(--color-accent-400);
+    padding-left: var(--space-2);
   }
 
   .footer-bottom {
     padding-top: var(--space-8);
-    border-top: 1px solid var(--color-neutral-800);
+    border-top: 1px solid var(--color-primary-800);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
   .footer-bottom small {
@@ -110,14 +166,14 @@ const currentYear = new Date().getFullYear();
     color: var(--color-neutral-500);
   }
 
-  @media (min-width: 48rem) {
-    .footer-inner {
-      grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
-    }
+  .footer-tag {
+    color: var(--color-primary-400);
+    font-style: italic;
+  }
 
-    .footer-bottom {
-      grid-column: 1 / -1;
+  @media (min-width: 48rem) {
+    .footer-top {
+      grid-template-columns: 1fr auto;
     }
   }
 </style>
