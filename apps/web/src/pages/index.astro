@@ -62,29 +62,25 @@ const capabilities = [
         <p class="section-lead">We bring specialized food-and-climate knowledge to the production systems, supply chains, markets, products, and recovery pathways where change can create the greatest value.</p>
       </header>
 
-      <ul class="expertise-photo-grid" role="list">
+      <ul class="expertise-grid" role="list">
         {expertiseAreas.map((area) => (
           <li>
             <a
               href={`/expertise/${area.slug}/`}
-              class="expertise-photo-tile"
+              class="expertise-tile"
               style={`background-image: url('${area.heroImage}')`}
               aria-label={area.title}
             >
-              <div class="ept-overlay" aria-hidden="true"></div>
-              <div class="ept-content">
-                <h3 class="ept-title">{area.title}</h3>
-                <p class="ept-desc">{area.description}</p>
-                <span class="ept-cta" aria-hidden="true">Learn More &rarr;</span>
+              <div class="tile-overlay" aria-hidden="true"></div>
+              <div class="tile-content">
+                <h3 class="tile-title">{area.title}</h3>
+                <p class="tile-desc">{area.description}</p>
+                <span class="tile-cta" aria-hidden="true">Learn More &rarr;</span>
               </div>
             </a>
           </li>
         ))}
       </ul>
-
-      <div class="section-cta">
-        <a href="/expertise/" class="btn btn-secondary">Explore All Areas of Expertise</a>
-      </div>
     </div>
   </section>
 
@@ -297,8 +293,8 @@ const capabilities = [
     border-color: rgba(255, 255, 255, 0.4); color: #fff;
   }
 
-  /* Expertise photo grid */
-  .expertise-photo-grid {
+  /* ── Expertise grid ──────────────────────────────── */
+  .expertise-grid {
     display: grid;
     list-style: none;
     padding: 0;
@@ -307,13 +303,14 @@ const capabilities = [
     grid-template-columns: repeat(1, 1fr);
   }
   @media (min-width: 640px) {
-    .expertise-photo-grid { grid-template-columns: repeat(2, 1fr); }
+    .expertise-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (min-width: 1024px) {
-    .expertise-photo-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .expertise-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
   }
 
-  .expertise-photo-tile {
+  /* ── Tile ─────────────────────────────────────────── */
+  .expertise-tile {
     display: flex;
     align-items: flex-end;
     position: relative;
@@ -329,15 +326,15 @@ const capabilities = [
     transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-photo-tile:hover {
+  .expertise-tile:hover {
     box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.35);
     transform: translateY(-4px);
   }
-  .expertise-photo-tile:focus-visible {
+  .expertise-tile:focus-visible {
     outline: 3px solid #0d9488;
     outline-offset: 3px;
   }
-  .expertise-photo-tile::before {
+  .expertise-tile::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -347,9 +344,10 @@ const capabilities = [
     transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
   }
-  .expertise-photo-tile:hover::before { transform: scale(1.06); }
+  .expertise-tile:hover::before { transform: scale(1.06); }
 
-  .ept-overlay {
+  /* ── Gradient overlay ─────────────────────────────── */
+  .tile-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
@@ -361,7 +359,7 @@ const capabilities = [
     transition: background 250ms cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
   }
-  .expertise-photo-tile:hover .ept-overlay {
+  .expertise-tile:hover .tile-overlay {
     background: linear-gradient(
       to top,
       rgba(15, 23, 42, 0.95) 0%,
@@ -370,13 +368,14 @@ const capabilities = [
     );
   }
 
-  .ept-content {
+  /* ── Content ──────────────────────────────────────── */
+  .tile-content {
     position: relative;
     z-index: 2;
     padding: 1.5rem;
     width: 100%;
   }
-  .ept-title {
+  .tile-title {
     color: #fff;
     font-size: 1.125rem;
     font-weight: 600;
@@ -384,7 +383,7 @@ const capabilities = [
     margin: 0 0 0.5rem;
     text-shadow: 0 1px 6px rgba(15, 23, 42, 0.5);
   }
-  .ept-desc {
+  .tile-desc {
     color: rgba(248, 250, 252, 0.88);
     font-size: 0.875rem;
     line-height: 1.6;
@@ -396,13 +395,13 @@ const capabilities = [
                 opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 margin-bottom 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-photo-tile:hover .ept-desc,
-  .expertise-photo-tile:focus-visible .ept-desc {
+  .expertise-tile:hover .tile-desc,
+  .expertise-tile:focus-visible .tile-desc {
     max-height: 8rem;
     opacity: 1;
     margin-bottom: 0.75rem;
   }
-  .ept-cta {
+  .tile-cta {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
@@ -415,21 +414,22 @@ const capabilities = [
     transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-photo-tile:hover .ept-cta,
-  .expertise-photo-tile:focus-visible .ept-cta {
+  .expertise-tile:hover .tile-cta,
+  .expertise-tile:focus-visible .tile-cta {
     opacity: 1;
     transform: translateY(0);
   }
+  /* ── Mobile: always show desc + CTA ──────────────── */
   @media (max-width: 639px) {
-    .ept-desc { max-height: 12rem; opacity: 1; margin-bottom: 0.75rem; }
-    .ept-cta { opacity: 1; transform: translateY(0); }
+    .tile-desc { max-height: 12rem; opacity: 1; margin-bottom: 0.75rem; }
+    .tile-cta { opacity: 1; transform: translateY(0); }
   }
+  /* ── Reduced motion ───────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
-    .expertise-photo-tile,
-    .expertise-photo-tile::before,
-    .ept-overlay, .ept-desc, .ept-cta { transition: none; }
-    .expertise-photo-tile:hover { transform: none; }
-    .expertise-photo-tile:hover::before { transform: none; }
+    .expertise-tile, .expertise-tile::before,
+    .tile-overlay, .tile-desc, .tile-cta { transition: none; }
+    .expertise-tile:hover { transform: none; }
+    .expertise-tile:hover::before { transform: none; }
   }
 
   /* Value pillars */
