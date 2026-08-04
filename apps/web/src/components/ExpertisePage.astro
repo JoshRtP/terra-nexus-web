@@ -182,21 +182,6 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- Value Pathways -->
-  <section class="section" aria-labelledby="value-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">From Performance to Value</span>
-        <h2 id="value-heading">Connecting Performance to the Right Form of Value</h2>
-        <p class="section-lead">The same improvement may support different claims with different evidence, ownership, assurance, and commercial reach. The best pathway is not always the one with the highest nominal price.</p>
-      </header>
-      <div class="pathway-tags">
-        {data.valuePathways.map((p) => <span class="pathway-tag">{p.label}</span>)}
-      </div>
-      <p class="pathway-note">These are categories of potential value, not promises that every pathway is available, stackable, transferable, or commercially superior. Detailed pathway analysis remains client-specific.</p>
-    </div>
-  </section>
-
   <!-- Common Pitfalls -->
   <section class="section section-alt" aria-labelledby="pitfalls-heading">
     <div class="container">
@@ -336,33 +321,6 @@ const mode = getBuildMode();
   .workstream-card h3 {
     font-size: var(--text-lg);
     margin-bottom: var(--space-4);
-  }
-
-  /* Pathways */
-  .pathway-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin: var(--space-6) 0 var(--space-4);
-  }
-  .pathway-tag {
-    font-size: var(--text-sm);
-    padding: var(--space-3) var(--space-5);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-  }
-  .pathway-tag:hover {
-    border-color: var(--color-accent-border);
-    color: var(--color-accent);
-  }
-  .pathway-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    font-style: italic;
-    max-width: var(--max-width-text);
   }
 
   /* Pitfalls */
