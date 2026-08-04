@@ -1,6 +1,5 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import PageHero from './PageHero.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 
 export interface Workstream {
@@ -43,6 +42,8 @@ export interface ExpertisePageData {
   eyebrow: string;
   title: string;
   lead: string;
+  heroImage: string;
+  heroImageAlt?: string;
   primaryCta: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   metaTitle: string;
@@ -69,37 +70,74 @@ const mode = getBuildMode();
 ---
 
 <SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
-  <PageHero
-    eyebrow={data.eyebrow}
-    title={data.title}
-    lead={data.lead}
-    primaryCta={data.primaryCta}
-    secondaryCta={data.secondaryCta}
-  />
 
-  <!-- Topic Orientation -->
-  <section class="section" aria-labelledby="orientation-heading">
-    <div class="container">
-      <div class="text-container">
-        <span class="eyebrow">Overview</span>
-        {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
+  <!-- Visual Hero -->
+  <section class="expertise-hero" aria-labelledby="hero-heading">
+    <div
+      class="hero-bg"
+      style={`background-image: url('${data.heroImage}')`}
+      role="img"
+      aria-label={data.heroImageAlt ?? data.title}
+    ></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <span class="eyebrow eyebrow-light">{data.eyebrow}</span>
+      <h1 id="hero-heading">{data.title}</h1>
+      <p class="hero-lead">{data.lead}</p>
+      <div class="hero-actions">
+        <a href={data.primaryCta.href} class="btn btn-primary">{data.primaryCta.label}</a>
+        {data.secondaryCta && (
+          <a href={data.secondaryCta.href} class="btn btn-ghost">{data.secondaryCta.label}</a>
+        )}
       </div>
     </div>
   </section>
 
-  <!-- Performance Categories -->
-  <section class="section section-alt" aria-labelledby="performance-heading">
+  <!-- Overview + Benefits (split layout) -->
+  <section class="section" aria-labelledby="overview-heading">
+    <div class="container">
+      <div class="overview-split">
+        <div class="overview-left">
+          <span class="eyebrow">Overview</span>
+          <h2 id="overview-heading" class="overview-heading">About This Practice Area</h2>
+          {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
+          <div class="overview-cta">
+            <a href={data.primaryCta.href} class="btn btn-primary">{data.primaryCta.label}</a>
+          </div>
+        </div>
+        <div class="overview-right">
+          <div class="benefits-stack">
+            <div class="benefits-eyebrow">
+              <span class="eyebrow">Better Performance</span>
+              <h3 class="benefits-title">Key Benefits</h3>
+            </div>
+            {data.performanceCategories.map((cat) => (
+              <article class="benefit-card">
+                <h4>{cat.title}</h4>
+                <ul class="bullet-list">
+                  {cat.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Approach (directly under Benefits) -->
+  <section class="section section-alt" aria-labelledby="help-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Better Performance</span>
-        <h2 id="performance-heading">Benefits</h2>
+        <span class="eyebrow">Our Approach</span>
+        <h2 id="help-heading">Our Approach</h2>
       </header>
-      <div class="card-grid card-grid-3">
-        {data.performanceCategories.map((cat) => (
-          <article class="card">
-            <h3>{cat.title}</h3>
+      <div class="workstream-grid">
+        {data.workstreams.map((ws) => (
+          <article class="workstream-card">
+            <h3>{ws.title}</h3>
             <ul class="bullet-list">
-              {cat.items.map((item) => <li>{item}</li>)}
+              {ws.items.map((item) => <li>{item}</li>)}
             </ul>
           </article>
         ))}
@@ -168,26 +206,6 @@ const mode = getBuildMode();
     </div>
   </section>
 
-  <!-- How Terra Nexus Helps -->
-  <section class="section section-alt" aria-labelledby="help-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Our Approach</span>
-        <h2 id="help-heading">Our Approach</h2>
-      </header>
-      <div class="workstream-grid">
-        {data.workstreams.map((ws) => (
-          <article class="workstream-card">
-            <h3>{ws.title}</h3>
-            <ul class="bullet-list">
-              {ws.items.map((item) => <li>{item}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- Avoiding Common Pitfalls: Market Validation Comparison -->
   <section class="section section-alt" aria-labelledby="pitfalls-heading">
     <div class="container">
@@ -238,13 +256,138 @@ const mode = getBuildMode();
 </SiteLayout>
 
 <style>
+  /* ── Visual Hero ── */
+  .expertise-hero {
+    position: relative;
+    min-height: clamp(28rem, 60vh, 48rem);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 40%;
+    transform: scale(1.03);
+    transition: transform 8s ease-out;
+  }
+  .expertise-hero:hover .hero-bg { transform: scale(1); }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(15, 23, 42, 0.88) 0%,
+      rgba(15, 23, 42, 0.55) 50%,
+      rgba(15, 23, 42, 0.25) 100%
+    );
+  }
+  .hero-content {
+    position: relative;
+    padding-block: var(--space-16) var(--space-20);
+    z-index: 1;
+  }
+  .eyebrow-light {
+    color: var(--c-primary-300);
+  }
+  .eyebrow-light::before { background: var(--c-primary-300); }
+  .hero-content h1 {
+    color: #fff;
+    max-width: 40rem;
+    margin-bottom: var(--space-5);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .hero-lead {
+    font-size: var(--text-lg);
+    color: rgba(248, 250, 252, 0.88);
+    max-width: 38rem;
+    line-height: var(--line-relaxed);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-3) var(--space-6);
+    border: 1.5px solid rgba(248, 250, 252, 0.5);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: rgba(248, 250, 252, 0.9);
+    background: transparent;
+    text-decoration: none;
+    transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(248, 250, 252, 0.9);
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* ── Overview + Benefits split ── */
+  .overview-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+  @media (min-width: 56rem) {
+    .overview-split {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-20);
+    }
+  }
+  .overview-left { max-width: 40rem; }
+  .overview-heading {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
   .lead-paragraph {
     font-size: var(--text-lg);
     color: var(--color-text-secondary);
     margin-bottom: var(--space-5);
     line-height: var(--line-relaxed);
   }
+  .overview-cta { margin-top: var(--space-8); }
 
+  /* Benefits stack */
+  .benefits-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .benefits-eyebrow {
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: var(--space-2);
+  }
+  .benefits-title {
+    font-size: var(--text-xl);
+    margin-top: var(--space-2);
+  }
+  .benefit-card {
+    padding: var(--space-5) var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+  }
+  .benefit-card h4 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Shared ── */
   .bullet-list {
     list-style: none;
     padding: 0;
@@ -269,7 +412,7 @@ const mode = getBuildMode();
     background: var(--color-accent);
   }
 
-  /* Steps */
+  /* ── System Steps ── */
   .steps-list {
     list-style: none;
     padding: 0;
@@ -305,7 +448,29 @@ const mode = getBuildMode();
   }
   .step-detail { font-size: var(--text-sm); color: var(--color-text-muted); }
 
-  /* Decisions */
+  /* ── Card grid (audience) ── */
+  .card-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+  .card {
+    padding: var(--space-8);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .card:hover {
+    border-color: var(--color-accent-border);
+    box-shadow: var(--shadow-md);
+  }
+  .card h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .card p { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
+
+  /* ── Decisions ── */
   .decisions-grid {
     display: grid;
     gap: var(--space-6);
@@ -324,7 +489,7 @@ const mode = getBuildMode();
     color: var(--color-text);
   }
 
-  /* Workstreams */
+  /* ── Workstreams ── */
   .workstream-grid {
     display: grid;
     gap: var(--space-6);
@@ -348,7 +513,7 @@ const mode = getBuildMode();
     margin-bottom: var(--space-4);
   }
 
-  /* Validation Comparison Table */
+  /* ── Validation Comparison Table ── */
   .validation-table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -384,7 +549,7 @@ const mode = getBuildMode();
     margin-right: 0.3em;
   }
   .col-icon-x { background: var(--c-error-50); color: var(--c-error-500); }
-  .col-icon-check { background: var(--c-success-50); color: var(--c-success-600); }
+  .col-icon-check { background: var(--c-success-50); color: var(--c-success-600, #16a34a); }
   .validation-table tbody td {
     padding: var(--space-4) var(--space-5);
     font-size: var(--text-sm);
@@ -401,6 +566,7 @@ const mode = getBuildMode();
   }
   .cell-pitfall { color: var(--color-text-secondary); }
   .cell-validation { color: var(--color-text-secondary); }
+
   @media (max-width: 48rem) {
     .validation-table { min-width: 0; }
     .validation-table thead { display: none; }
@@ -445,11 +611,20 @@ const mode = getBuildMode();
       font-weight: var(--font-bold);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--c-success-600);
+      color: var(--c-success-700, #15803d);
       margin-bottom: var(--space-1);
       margin-top: var(--space-2);
     }
   }
 
-
+  /* ── CTA section ── */
+  .text-center { text-align: center; }
+  .cta-description {
+    margin-top: var(--space-5);
+    font-size: var(--text-lg);
+    color: var(--c-secondary-400);
+    max-width: var(--max-width-text);
+    margin-inline: auto;
+    line-height: var(--line-relaxed);
+  }
 </style>
