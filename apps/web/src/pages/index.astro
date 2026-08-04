@@ -22,11 +22,11 @@ const expertiseAreas = [
 ];
 
 const capabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', question: 'Where should we play, and how do we win at the intersection of food and climate?', description: 'Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.' },
-  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', question: 'Which ideas, ventures, investments, assets, partnerships, or facilities should be screened, funded, incubated, acquired, or scaled?', description: 'Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', question: 'How can impact, risk, cost, and volatility be reduced by changing what is bought and how it is produced, moved, processed, used, or recovered?', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', question: 'How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', question: 'How are environmental assets, attributes, credits, insets, offsets, and claims created, accessed, valued, verified, accounted for, managed, and monetized?', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
+  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.' },
+  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.' },
+  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
+  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
+  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
 ];
 ---
 
@@ -95,7 +95,6 @@ const capabilities = [
           <a href={`/capabilities/${cap.slug}/`} class="card-link">
             <article class="card">
               <h3>{cap.title}</h3>
-              <p class="capability-question">{cap.question}</p>
               <p>{cap.description}</p>
             </article>
           </a>
@@ -318,12 +317,6 @@ const capabilities = [
     transition: transform var(--transition-base), color var(--transition-base);
   }
   .expertise-item:hover .expertise-arrow { transform: translateX(4px); color: var(--color-accent); }
-
-  /* Capability question */
-  .capability-question {
-    font-style: italic; color: var(--color-text);
-    margin-bottom: var(--space-2); font-size: var(--text-sm);
-  }
 
   /* Value pillars */
   .value-pillars { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }

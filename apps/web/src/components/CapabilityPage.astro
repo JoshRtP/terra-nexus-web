@@ -23,7 +23,7 @@ export interface CapabilityPageData {
   metaTitle: string;
   metaDescription: string;
   decisionOwners: string[];
-  coreQuestion: string;
+
   orientation: string[];
   offerings: Offering[];
   relatedExpertise: { label: string; href: string }[];
@@ -72,16 +72,6 @@ const mode = getBuildMode();
       </header>
       <div class="owner-tags">
         {data.decisionOwners.map((owner) => <span class="owner-tag">{owner}</span>)}
-      </div>
-    </div>
-  </section>
-
-  <!-- Core Question -->
-  <section class="section" aria-labelledby="question-heading">
-    <div class="container">
-      <div class="question-block">
-        <span class="eyebrow">The Central Decision</span>
-        <blockquote class="core-question" id="question-heading">{data.coreQuestion}</blockquote>
       </div>
     </div>
   </section>
@@ -196,32 +186,6 @@ const mode = getBuildMode();
   .owner-tag:hover {
     border-color: var(--color-accent-border);
     color: var(--color-accent);
-  }
-
-  /* Core question */
-  .question-block {
-    max-width: var(--max-width-text);
-    margin: 0 auto;
-    text-align: center;
-  }
-  .question-block .eyebrow {
-    display: block;
-    margin-bottom: var(--space-4);
-  }
-  .core-question {
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    font-weight: var(--font-medium);
-    line-height: var(--line-snug);
-    color: var(--color-text);
-    margin: 0;
-    padding: var(--space-8) var(--space-8);
-    border-top: 2px solid var(--color-accent);
-    border-bottom: 2px solid var(--color-accent);
-    position: relative;
-  }
-  @media (max-width: 40rem) {
-    .core-question { font-size: var(--text-xl); padding: var(--space-6) var(--space-4); }
   }
 
   /* Offerings */
