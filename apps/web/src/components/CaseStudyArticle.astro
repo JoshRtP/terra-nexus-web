@@ -8,122 +8,487 @@ interface Props {
 
 const { page, renderedBody } = Astro.props;
 
-const relByField = (field: string) => page.relationships.outbound
-  .filter((e) => e.field === field)
-  .map((e) => e.to.replace(/^.*\//, '').replace(/-/g, ' '))
-  .join(', ');
+const relByField = (field: string) =>
+  page.relationships.outbound
+    .filter((e) => e.field === field)
+    .map((e) => e.to.replace(/^.*\//, '').replace(/-/g, ' '))
+    .join(', ');
 
 const capabilities = relByField('related_services');
 const expertise = relByField('related_expertise');
 const audience = relByField('related_audiences');
-const engagementModel = relByField('engagement_models');
 
-const overview = [
-  { label: 'Capabilities used', value: capabilities },
+const hasStats = page.quantifiedResults && page.quantifiedResults.length > 0;
+const hasFrameworks = page.frameworksReviewed && page.frameworksReviewed.length > 0;
+const hasDeliverables = page.deliverables && page.deliverables.length > 0;
+
+const profileItems = [
+  { label: 'Client Type', value: page.clientType },
+  { label: 'Engagement Year', value: page.engagementYear },
+  { label: 'Status', value: page.engagementStatus },
+  { label: 'Geography', value: page.geographyContext },
+  { label: 'Value Chain', value: page.valueChain },
+  { label: 'Production System', value: page.productionSystem },
+  { label: 'Solution', value: page.solutionType },
+  { label: 'Engagement Model', value: page.engagementModel },
+  { label: 'Attribution', value: page.attribution },
+].filter((item) => item.value);
+
+const overviewItems = [
+  { label: 'Capabilities', value: capabilities },
   { label: 'Area of Expertise', value: expertise },
   { label: 'Audience', value: audience },
-  { label: 'Engagement model', value: engagementModel },
 ].filter((item) => item.value);
 ---
 
-<section class="section">
-  <div class="container">
+<section class="case-hero" aria-labelledby="case-title">
+  <div class="container case-hero-inner">
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="/case-studies/">Case Studies</a>
       <span aria-hidden="true">/</span>
       <span aria-current="page">{page.title}</span>
     </nav>
-
-    <article class="case-study-article">
-      <header class="article-header">
-        <span class="eyebrow">{page.label}</span>
-        <h1>{page.title}</h1>
-        {page.description && <p class="article-lead">{page.description}</p>}
-      </header>
-
-      {overview.length > 0 && (
-        <aside class="case-overview" aria-label="Case study overview">
-          <h2 class="overview-heading">At a Glance</h2>
-          <dl class="overview-list">
-            {overview.map((item) => (
-              <div class="overview-item">
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </aside>
-      )}
-
-      <div class="markdown-body" set:html={renderedBody}></div>
-      <p class="return-link"><a href="/case-studies/" class="btn btn-secondary">Back to Case Studies</a></p>
-    </article>
+    <span class="eyebrow eyebrow-light">{page.label}</span>
+    <h1 id="case-title">{page.title}</h1>
+    {page.description && <p class="case-lead">{page.description}</p>}
   </div>
 </section>
 
+<div class="container case-body-grid">
+  <article class="case-main">
+    {hasStats && (
+      <section class="stats-band" aria-label="Key results">
+        {page.quantifiedResults!.map((stat) => (
+          <div class="stat-item">
+            <span class="stat-number">{stat.value}</span>
+            <span class="stat-label">{stat.metric}</span>
+            {stat.resultType && <span class="stat-type">{stat.resultType}</span>}
+          </div>
+        ))}
+      </section>
+    )}
+
+    {page.challenge && (
+      <section class="content-block" aria-labelledby="challenge-heading">
+        <span class="eyebrow">The Challenge</span>
+        <h2 id="challenge-heading">The Challenge</h2>
+        <p class="block-text">{page.challenge}</p>
+      </section>
+    )}
+
+    {page.workPerformed && (
+      <section class="content-block" aria-labelledby="approach-heading">
+        <span class="eyebrow">Our Approach</span>
+        <h2 id="approach-heading">Our Approach</h2>
+        <p class="block-text">{page.workPerformed}</p>
+      </section>
+    )}
+
+    {hasDeliverables && (
+      <section class="content-block" aria-labelledby="deliverables-heading">
+        <span class="eyebrow">Deliverables</span>
+        <h2 id="deliverables-heading">Deliverables</h2>
+        <ul class="deliverable-list">
+          {page.deliverables!.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {page.outcome && (
+      <section class="content-block content-block-accent" aria-labelledby="outcome-heading">
+        <span class="eyebrow">Outcomes</span>
+        <h2 id="outcome-heading">Outcomes</h2>
+        <p class="block-text">{page.outcome}</p>
+      </section>
+    )}
+
+    <section class="content-block" aria-labelledby="details-heading">
+      <span class="eyebrow">Full Engagement Details</span>
+      <h2 id="details-heading">Full Engagement Details</h2>
+      <div class="markdown-body" set:html={renderedBody}></div>
+    </section>
+
+    <p class="return-link"><a href="/case-studies/" class="btn btn-secondary">Back to Case Studies</a></p>
+  </article>
+
+  <aside class="case-sidebar" aria-label="Case study details">
+    {overviewItems.length > 0 && (
+      <div class="sidebar-card">
+        <h3 class="sidebar-heading">At a Glance</h3>
+        <dl class="sidebar-list">
+          {overviewItems.map((item) => (
+            <div class="sidebar-item">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
+
+    {profileItems.length > 0 && (
+      <div class="sidebar-card">
+        <h3 class="sidebar-heading">Engagement Profile</h3>
+        <dl class="sidebar-list">
+          {profileItems.map((item) => (
+            <div class="sidebar-item">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
+
+    {hasFrameworks && (
+      <div class="sidebar-card">
+        <h3 class="sidebar-heading">Frameworks Reviewed</h3>
+        <ul class="framework-list">
+          {page.frameworksReviewed!.map((fw) => (
+            <li>
+              <span class="framework-name">{fw.name}</span>
+              {fw.role && <span class="framework-role">{fw.role}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {page.marketMechanisms && page.marketMechanisms.length > 0 && (
+      <div class="sidebar-card">
+        <h3 class="sidebar-heading">Market Mechanisms</h3>
+        <div class="tag-cloud">
+          {page.marketMechanisms!.map((mech) => <span class="tag">{mech}</span>)}
+        </div>
+      </div>
+    )}
+
+    <div class="sidebar-cta">
+      <h3 class="sidebar-heading">Explore Further</h3>
+      <p class="cta-text">Want to discuss a similar engagement?</p>
+      <a href="/contact/" class="btn btn-primary">Contact Terra Nexus</a>
+    </div>
+  </aside>
+</div>
+
 <style>
-  .breadcrumb {
+  /* ── Hero ── */
+  .case-hero {
+    background: var(--gradient-dark);
+    color: var(--c-secondary-400);
+    padding-block: var(--space-12) var(--space-10);
+    position: relative;
+    overflow: hidden;
+  }
+  .case-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(13, 148, 136, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .case-hero-inner { position: relative; }
+  .case-hero .breadcrumb {
     display: flex; align-items: center; gap: var(--space-2);
-    font-size: var(--text-sm); color: var(--color-text-muted);
-    margin-bottom: var(--space-8);
+    font-size: var(--text-sm); color: var(--c-secondary-400);
+    margin-bottom: var(--space-6);
   }
-  .breadcrumb a { color: var(--color-accent); font-weight: var(--font-medium); }
-
-  .article-header { margin-bottom: var(--space-10); }
-  .article-header h1 {
+  .case-hero .breadcrumb a {
+    color: var(--c-primary-300); font-weight: var(--font-medium);
+  }
+  .case-hero .breadcrumb a:hover { color: var(--c-primary-200); }
+  .case-hero .eyebrow-light {
+    color: var(--c-primary-300);
+  }
+  .case-hero .eyebrow-light::before { background: var(--c-primary-300); }
+  .case-hero h1 {
+    color: #fff;
     font-size: clamp(1.75rem, 4vw, var(--text-4xl));
-    margin-bottom: var(--space-4); max-width: var(--max-width-text);
+    max-width: 44rem;
+    margin-bottom: var(--space-4);
   }
-  .article-lead {
-    font-size: var(--text-lg); color: var(--color-text-secondary);
-    max-width: var(--max-width-text); line-height: var(--line-relaxed);
+  .case-lead {
+    font-size: var(--text-lg);
+    color: rgba(248, 250, 252, 0.82);
+    max-width: 44rem;
+    line-height: var(--line-relaxed);
   }
 
-  .case-overview {
-    padding: var(--space-8); background: var(--color-surface);
-    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-    margin-bottom: var(--space-10);
+  /* ── Body grid: main + sidebar ── */
+  .case-body-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    padding-block: var(--space-12);
   }
-  .overview-heading {
-    font-size: var(--text-base); font-weight: var(--font-semibold);
-    margin-bottom: var(--space-5); color: var(--color-text);
+  @media (min-width: 56rem) {
+    .case-body-grid {
+      grid-template-columns: 1fr 20rem;
+      gap: var(--space-10);
+      align-items: start;
+    }
   }
-  .overview-list { display: grid; gap: var(--space-4); margin: 0; }
-  @media (min-width: 40rem) { .overview-list { grid-template-columns: repeat(2, 1fr); } }
-  .overview-item { display: flex; flex-direction: column; gap: var(--space-1); }
-  .overview-item dt {
-    font-size: var(--text-xs); font-weight: var(--font-semibold);
-    text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted);
+  @media (min-width: 72rem) {
+    .case-body-grid { grid-template-columns: 1fr 22rem; }
   }
-  .overview-item dd { margin: 0; font-size: var(--text-sm); color: var(--color-text); }
 
+  /* ── Stats band ── */
+  .stats-band {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-12);
+  }
+  @media (min-width: 40rem) {
+    .stats-band { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border-left: 3px solid var(--color-accent);
+  }
+  .stat-number {
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 3vw, var(--text-3xl));
+    font-weight: var(--font-semibold);
+    color: var(--color-accent);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-medium);
+  }
+  .stat-type {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: var(--space-1);
+  }
+
+  /* ── Content blocks ── */
+  .content-block {
+    margin-bottom: var(--space-12);
+  }
+  .content-block h2 {
+    font-size: var(--text-2xl);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-5);
+    scroll-margin-top: var(--space-16);
+  }
+  .block-text {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+    max-width: 42rem;
+  }
+
+  .content-block-accent {
+    padding: var(--space-8);
+    background: var(--color-accent-bg);
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--radius-lg);
+  }
+  .content-block-accent h2 { color: var(--color-accent-hover); }
+  .content-block-accent .block-text { color: var(--color-text); }
+
+  /* ── Deliverable list ── */
+  .deliverable-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .deliverable-list li {
+    padding-left: var(--space-6);
+    position: relative;
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--line-normal);
+  }
+  .deliverable-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  /* ── Markdown body ── */
   .markdown-body > :first-child { margin-top: 0; }
   .markdown-body h2 {
-    margin-top: var(--space-12); margin-bottom: var(--space-4);
-    font-size: var(--text-2xl); padding-top: var(--space-4);
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-2xl);
+    padding-top: var(--space-4);
     scroll-margin-top: var(--space-16);
   }
   .markdown-body h3 {
-    margin-top: var(--space-8); margin-bottom: var(--space-3);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
     scroll-margin-top: var(--space-16);
   }
-  .markdown-body p { margin-bottom: var(--space-4); line-height: var(--line-relaxed); }
-  .markdown-body ul, .markdown-body ol { margin-bottom: var(--space-4); padding-left: var(--space-6); }
+  .markdown-body p {
+    margin-bottom: var(--space-4);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .markdown-body ul, .markdown-body ol {
+    margin-bottom: var(--space-4);
+    padding-left: var(--space-6);
+    color: var(--color-text-secondary);
+  }
   .markdown-body li { margin-bottom: var(--space-2); }
-  .markdown-body table { width: 100%; border-collapse: collapse; margin-block: var(--space-6); }
+  .markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-block: var(--space-6);
+  }
   .markdown-body th, .markdown-body td {
-    padding: var(--space-3); text-align: left; vertical-align: top;
+    padding: var(--space-3);
+    text-align: left;
+    vertical-align: top;
     border: 1px solid var(--color-border);
   }
-  .markdown-body th { background: var(--color-surface); font-weight: var(--font-semibold); }
-  .markdown-body pre {
-    padding: var(--space-5); overflow-x: auto; color: #fff;
-    background: var(--color-dark); border-radius: var(--radius-md);
+  .markdown-body th {
+    background: var(--color-surface);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
   }
-  .markdown-body :not(pre) > code {
-    padding: 0.1em 0.3em; background: var(--color-surface-alt);
-    border-radius: var(--radius-xs); font-size: var(--text-sm);
-  }
+  .markdown-body strong { color: var(--color-text); }
 
   .return-link { margin-top: var(--space-12); }
+
+  /* ── Sidebar ── */
+  .case-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    position: sticky;
+    top: var(--space-6);
+  }
+  @media (max-width: 55rem) {
+    .case-sidebar { position: static; }
+  }
+  .sidebar-card {
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .sidebar-heading {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .sidebar-list {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+  .sidebar-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .sidebar-item dt {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+  .sidebar-item dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    line-height: var(--line-normal);
+  }
+
+  /* ── Framework list ── */
+  .framework-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+  .framework-list li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .framework-name {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+  .framework-role {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-normal);
+  }
+
+  /* ── Tag cloud ── */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-accent-bg);
+    color: var(--color-accent-hover);
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    line-height: 1.4;
+  }
+
+  /* ── Sidebar CTA ── */
+  .sidebar-cta {
+    padding: var(--space-6);
+    background: var(--gradient-dark);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .sidebar-cta .sidebar-heading {
+    color: var(--c-primary-300);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  .cta-text {
+    color: var(--c-secondary-400);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+    line-height: var(--line-normal);
+  }
+  .sidebar-cta .btn-primary {
+    width: 100%;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 48rem) {
+    .stats-band { padding: var(--space-6); }
+    .content-block-accent { padding: var(--space-6); }
+  }
 </style>

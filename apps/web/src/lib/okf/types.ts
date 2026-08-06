@@ -45,6 +45,26 @@ export interface CompilerWarning {
   sourcePath: string;
 }
 
+export interface CaseStudyData {
+  challenge?: string;
+  workPerformed?: string;
+  deliverables?: string[];
+  outcome?: string;
+  quantifiedResults?: { metric: string; value: string; resultType?: string }[];
+  frameworksReviewed?: { name: string; role?: string }[];
+  marketMechanisms?: string[];
+  clientType?: string;
+  engagementYear?: string;
+  engagementStatus?: string;
+  geographyContext?: string;
+  commodityContext?: string;
+  valueChain?: string;
+  productionSystem?: string;
+  solutionType?: string;
+  engagementModel?: string;
+  attribution?: string;
+}
+
 export interface OkfRecord {
   conceptId: string;
   sourcePath: string;
@@ -59,6 +79,7 @@ export interface OkfRecord {
   generated?: Provenance;
   verified?: Provenance;
   slug?: string;
+  caseStudyData?: CaseStudyData;
 }
 
 export interface RouteCandidate {

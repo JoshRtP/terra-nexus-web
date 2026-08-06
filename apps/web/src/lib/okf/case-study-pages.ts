@@ -2,6 +2,17 @@ import type { CompilationResult, OkfRecord, RelationshipEdge } from './types.js'
 
 const CASE_STUDY_ROUTE_PREFIX = '/case-studies/';
 
+export interface QuantifiedResult {
+  metric: string;
+  value: string;
+  resultType?: string;
+}
+
+export interface FrameworkReviewed {
+  name: string;
+  role?: string;
+}
+
 export interface CaseStudyPageModel {
   route: string;
   slug: string;
@@ -9,6 +20,23 @@ export interface CaseStudyPageModel {
   description?: string;
   body: string;
   label: string;
+  challenge?: string;
+  workPerformed?: string;
+  deliverables?: string[];
+  outcome?: string;
+  quantifiedResults?: QuantifiedResult[];
+  frameworksReviewed?: FrameworkReviewed[];
+  marketMechanisms?: string[];
+  clientType?: string;
+  engagementYear?: string;
+  engagementStatus?: string;
+  geographyContext?: string;
+  commodityContext?: string;
+  valueChain?: string;
+  productionSystem?: string;
+  solutionType?: string;
+  engagementModel?: string;
+  attribution?: string;
   relationships: {
     outbound: RelationshipEdge[];
     inbound: RelationshipEdge[];
@@ -66,6 +94,7 @@ export function selectCaseStudyPages(
         description: record.description,
         body: record.body,
         label: labelFor(record),
+        ...record.caseStudyData,
         relationships: {
           outbound: edges.filter((edge) => edge.from === record.conceptId),
           inbound: reverseIndex[record.conceptId] ?? [],

@@ -7,6 +7,7 @@ import { parse, parseDocument } from 'yaml';
 import { pageFamilyForType, routeCandidateFor } from './route-contract.js';
 import type {
   BuildMode,
+  CaseStudyData,
   CompilationAudit,
   CompilationResult,
   CompileOptions,
@@ -569,9 +570,68 @@ function defaultPaths(options: CompileOptions): Required<CompileOptions> {
   };
 }
 
+function extractCaseStudyData(frontmatter: Record<string, unknown>): CaseStudyData | undefined {
+  const raw = frontmatter as Record<string, unknown>;
+  const hasAny = ['challenge', 'work_performed', 'deliverables', 'outcome', 'quantified_results',
+    'frameworks_reviewed', 'market_mechanisms', 'client_type', 'engagement_year',
+    'engagement_status', 'geography_context', 'commodity_context', 'value_chain',
+    'production_system', 'solution_type', 'engagement_model', 'attribution'
+  ].some((key) => key in raw);
+  if (!hasAny) return undefined;
+
+  const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+  const strArr = (v: unknown) => (Array.isArray(v) ? v.filter((i): i is string => typeof i === 'string') : undefined);
+
+  const quantifiedResults = Array.isArray(raw.quantified_results)
+    ? raw.quantified_results
+        .map((item): { metric: string; value: string; resultType?: string } | null => {
+          if (typeof item !== 'object' || item === null) return null;
+          const obj = item as Record<string, unknown>;
+          const metric = str(obj.metric);
+          const value = str(obj.value);
+          if (!metric || !value) return null;
+          return { metric, value, resultType: str(obj.result_type) };
+        })
+        .filter((item): item is { metric: string; value: string; resultType?: string } => item !== null)
+    : undefined;
+
+  const frameworksReviewed = Array.isArray(raw.frameworks_reviewed)
+    ? raw.frameworks_reviewed
+        .map((item): { name: string; role?: string } | null => {
+          if (typeof item !== 'object' || item === null) return null;
+          const obj = item as Record<string, unknown>;
+          const name = str(obj.name);
+          if (!name) return null;
+          return { name, role: str(obj.role) };
+        })
+        .filter((item): item is { name: string; role?: string } => item !== null)
+    : undefined;
+
+  return {
+    challenge: str(raw.challenge),
+    workPerformed: str(raw.work_performed),
+    deliverables: strArr(raw.deliverables),
+    outcome: str(raw.outcome),
+    quantifiedResults: quantifiedResults?.length ? quantifiedResults : undefined,
+    frameworksReviewed: frameworksReviewed?.length ? frameworksReviewed : undefined,
+    marketMechanisms: strArr(raw.market_mechanisms),
+    clientType: str(raw.client_type),
+    engagementYear: str(raw.engagement_year),
+    engagementStatus: str(raw.engagement_status),
+    geographyContext: str(raw.geography_context),
+    commodityContext: str(raw.commodity_context),
+    valueChain: str(raw.value_chain),
+    productionSystem: str(raw.production_system),
+    solutionType: str(raw.solution_type),
+    engagementModel: str(raw.engagement_model),
+    attribution: str(raw.attribution),
+  };
+}
+
 function publicRecord(record: InternalRecord): OkfRecord {
   const { frontmatter: _frontmatter, ...safeRecord } = record;
-  return safeRecord;
+  const caseStudyData = record.type === 'Case Study' ? extractCaseStudyData(_frontmatter) : undefined;
+  return { ...safeRecord, ...(caseStudyData ? { caseStudyData } : {}) };
 }
 
 export async function compileOkf(options: CompileOptions): Promise<CompilationResult> {
