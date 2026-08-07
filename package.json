@@ -25,6 +25,9 @@
     "web:build": "npm run build --workspace=@terra-nexus/web",
     "web:test": "npm run test --workspace=@terra-nexus/web",
     "web:typecheck": "npm run typecheck --workspace=@terra-nexus/web",
-    "check": "tsx apps/web/scripts/repository-check.ts complete"
+    "check": "tsx apps/web/scripts/repository-check.ts complete",
+    "miro:transfer": "tsx scripts/create-miro-board.ts",
+    "miro:resume": "tsx scripts/create-miro-board.ts --resume",
+    "miro:connect": "tsx scripts/create-miro-board.ts --auto-connect"
   }
 }
