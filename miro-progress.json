@@ -1,0 +1,30 @@
+{
+  "boardId": "uXjVH0E2UfE=",
+  "lastUpdated": "2026-08-07T14:25:00.000Z",
+  "entries": [
+    { "pageId": "home", "pageName": "Home", "miroItemId": "3458764680242319275", "x": 0, "y": -2000, "timestamp": "2026-08-07T14:20:50.000Z", "batch": 1 },
+    { "pageId": "expertise", "pageName": "Expertise", "miroItemId": "3458764680242319276", "x": 800, "y": -2000, "timestamp": "2026-08-07T14:20:50.000Z", "batch": 1 },
+    { "pageId": "capabilities", "pageName": "Capabilities", "miroItemId": "3458764680242319277", "x": 1600, "y": -2000, "timestamp": "2026-08-07T14:20:50.000Z", "batch": 1 },
+    { "pageId": "who-we-work-with", "pageName": "Who We Work With", "miroItemId": "3458764680242319278", "x": 2400, "y": -2000, "timestamp": "2026-08-07T14:20:50.000Z", "batch": 1 },
+    { "pageId": "case-studies", "pageName": "Case Studies", "miroItemId": "3458764680242319571", "x": 3200, "y": -2000, "timestamp": "2026-08-07T14:21:10.000Z", "batch": 2 },
+    { "pageId": "about", "pageName": "About", "miroItemId": "3458764680242319572", "x": 4000, "y": -2000, "timestamp": "2026-08-07T14:21:10.000Z", "batch": 2 },
+    { "pageId": "contact", "pageName": "Contact", "miroItemId": "3458764680242319573", "x": 4800, "y": -2000, "timestamp": "2026-08-07T14:21:10.000Z", "batch": 2 },
+    { "pageId": "case-studies/[slug]", "pageName": "Case Study Detail", "miroItemId": "3458764680242319574", "x": 5600, "y": -2000, "timestamp": "2026-08-07T14:21:10.000Z", "batch": 2 },
+    { "pageId": "expertise/regenerative-agriculture", "pageName": "Regenerative Agriculture", "miroItemId": "3458764680242319704", "x": -400, "y": -900, "timestamp": "2026-08-07T14:22:00.000Z", "batch": 3 },
+    { "pageId": "expertise/regenerative-rangeland", "pageName": "Regenerative Rangeland", "miroItemId": "3458764680242319705", "x": 400, "y": -900, "timestamp": "2026-08-07T14:22:00.000Z", "batch": 3 },
+    { "pageId": "expertise/agroforestry", "pageName": "Agroforestry", "miroItemId": "3458764680242319706", "x": 1200, "y": -900, "timestamp": "2026-08-07T14:22:00.000Z", "batch": 3 },
+    { "pageId": "expertise/aquaculture", "pageName": "Aquaculture", "miroItemId": "3458764680242319707", "x": 2000, "y": -900, "timestamp": "2026-08-07T14:22:00.000Z", "batch": 3 },
+    { "pageId": "expertise/biodiversity-and-ecosystem-resilience", "pageName": "Biodiversity & Ecosystem Resilience", "miroItemId": "3458764680242319708", "x": 2800, "y": -900, "timestamp": "2026-08-07T14:22:00.000Z", "batch": 3 },
+    { "pageId": "expertise/sustainable-supply-chains", "pageName": "Sustainable Supply Chains", "miroItemId": "3458764680242319815", "x": 3600, "y": -900, "timestamp": "2026-08-07T14:22:30.000Z", "batch": 4 },
+    { "pageId": "expertise/low-carbon-energy-and-biofuels", "pageName": "Low Carbon Energy & Biofuels", "miroItemId": "3458764680242319816", "x": 4400, "y": -900, "timestamp": "2026-08-07T14:22:30.000Z", "batch": 4 },
+    { "pageId": "expertise/purpose-driven-food-brands-and-retailers", "pageName": "Purpose-Driven Food Brands & Retailers", "miroItemId": "3458764680242319817", "x": 5200, "y": -900, "timestamp": "2026-08-07T14:22:30.000Z", "batch": 4 },
+    { "pageId": "expertise/food-waste-prevention-diversion-recovery", "pageName": "Food Waste: Prevention, Diversion & Recovery", "miroItemId": "3458764680242319818", "x": 6000, "y": -900, "timestamp": "2026-08-07T14:22:30.000Z", "batch": 4 },
+    { "pageId": "capabilities/strategy-and-innovation", "pageName": "Strategy & Innovation", "miroItemId": "3458764680242456981", "x": 0, "y": 200, "timestamp": "2026-08-07T14:23:30.000Z", "batch": 5 },
+    { "pageId": "capabilities/financial-investments-and-new-venture-development", "pageName": "Financial Investments & New Venture Development", "miroItemId": "3458764680242456982", "x": 800, "y": 200, "timestamp": "2026-08-07T14:23:30.000Z", "batch": 5 },
+    { "pageId": "capabilities/sustainable-supply-chain-and-operations", "pageName": "Sustainable Supply Chain & Operations", "miroItemId": "3458764680242456983", "x": 1600, "y": 200, "timestamp": "2026-08-07T14:23:30.000Z", "batch": 5 },
+    { "pageId": "capabilities/corporate-sustainability", "pageName": "Corporate Sustainability", "miroItemId": "3458764680242456984", "x": 2400, "y": 200, "timestamp": "2026-08-07T14:23:30.000Z", "batch": 5 },
+    { "pageId": "capabilities/carbon-and-ecosystem-services", "pageName": "Carbon & Ecosystem Services", "miroItemId": "3458764680242456985", "x": 3200, "y": 200, "timestamp": "2026-08-07T14:23:30.000Z", "batch": 5 },
+    { "pageId": "who-we-work-with/food-and-agribusiness-value-chain", "pageName": "Food & Agribusiness Value Chain", "miroItemId": "3458764680242457547", "x": 4000, "y": 200, "timestamp": "2026-08-07T14:24:00.000Z", "batch": 6 },
+    { "pageId": "who-we-work-with/enabling-markets-technology-and-capital", "pageName": "Enabling Markets, Technology & Capital", "miroItemId": "3458764680242457548", "x": 4800, "y": 200, "timestamp": "2026-08-07T14:24:00.000Z", "batch": 6 }
+  ]
+}
