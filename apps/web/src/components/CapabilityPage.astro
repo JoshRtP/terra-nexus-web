@@ -169,7 +169,7 @@ const mode = getBuildMode();
     transition: border-color var(--transition-base), box-shadow var(--transition-base);
   }
   .offering-card:hover {
-    border-color: var(--color-accent-border);
+    border-color: var(--c-sky-300);
     box-shadow: var(--shadow-md);
   }
   .offering-header {
@@ -182,7 +182,7 @@ const mode = getBuildMode();
     font-family: var(--font-serif);
     font-size: var(--text-3xl);
     font-weight: var(--font-semibold);
-    color: var(--color-accent);
+    color: var(--c-sky-600);
     flex-shrink: 0;
     min-width: 3rem;
     line-height: 1;
@@ -233,7 +233,7 @@ const mode = getBuildMode();
     padding: var(--space-6);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-left: 3px solid var(--color-accent);
+    border-left: 3px solid var(--c-sky-600);
     border-radius: var(--radius-md);
   }
   .callout p {
@@ -260,8 +260,8 @@ const mode = getBuildMode();
     transition: border-color var(--transition-fast), color var(--transition-fast);
   }
   .segment-tag:hover {
-    border-color: var(--color-accent-border);
-    color: var(--color-accent);
+    border-color: var(--c-sky-300);
+    color: var(--c-sky-600);
   }
 
   /* Proof */
@@ -279,18 +279,4 @@ const mode = getBuildMode();
   /* CTA section */
   .text-center { text-align: center; }
   .text-center .hero-actions { justify-content: center; }
-  .cta-description {
-    color: #a3adb8;
-    max-width: var(--max-width-text);
-    margin: var(--space-4) auto var(--space-8);
-  }
-  .section-dark .btn-primary {
-    background: #fff;
-    color: #1a1f24;
-    border-color: #fff;
-  }
-  .section-dark .btn-primary:hover {
-    background: #e2e5e9;
-    border-color: #e2e5e9;
-  }
 </style>

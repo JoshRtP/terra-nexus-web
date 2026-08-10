@@ -6,9 +6,8 @@ const currentYear = new Date().getFullYear();
   <div class="footer-inner container">
     <div class="footer-top">
       <div class="footer-brand">
-        <a class="footer-wordmark" href="/">
-          <span class="footer-mark" aria-hidden="true">TN</span>
-          <span>Terra Nexus</span>
+        <a class="footer-wordmark" href="/" aria-label="Terra Nexus home">
+          <img class="footer-logo" src="/brand/logo-wordmark-dark.png" alt="Terra Nexus" width="600" height="105" />
         </a>
         <p class="footer-summary">
           An innovation and insights studio at the intersection of food and climate. We advise and manage commercial sustainability programs at scale.
@@ -50,27 +49,19 @@ const currentYear = new Date().getFullYear();
   }
   .site-footer::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(13, 148, 136, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(231, 215, 127, 0.5), transparent);
   }
   .footer-inner { display: flex; flex-direction: column; gap: var(--space-12); position: relative; }
   .footer-top { display: grid; gap: var(--space-12); }
   .footer-brand { max-width: 28rem; }
 
   .footer-wordmark {
-    display: inline-flex; align-items: center; gap: var(--space-3);
+    display: inline-flex; align-items: center;
     text-decoration: none; color: #fff;
     margin-bottom: var(--space-5);
   }
-  .footer-mark {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 2rem; height: 2rem;
-    background: var(--gradient-accent); color: #fff;
-    font-family: var(--font-serif); font-size: var(--text-xs);
-    font-weight: var(--font-semibold); border-radius: var(--radius-xs);
-  }
-  .footer-wordmark span:last-child {
-    font-family: var(--font-serif); font-size: var(--text-xl);
-    font-weight: var(--font-semibold); color: #fff;
+  .footer-logo {
+    height: 1.5rem; width: auto; display: block;
   }
   .footer-summary {
     font-size: var(--text-sm); color: var(--c-secondary-400);

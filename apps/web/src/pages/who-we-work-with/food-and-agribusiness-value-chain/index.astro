@@ -24,6 +24,7 @@ const expertiseLinks: Record<string, string> = {
 
 interface Segment {
   name: string;
+  slug: string;
   description: string;
   decisions: string[];
   expertise: string[];
@@ -34,6 +35,7 @@ interface Segment {
 const segments: Segment[] = [
   {
     name: 'Inputs Companies',
+    slug: 'inputs-companies',
     description: 'Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, partnerships, claims, and commercialization for agricultural and animal-production solutions.',
     decisions: [
       'Where should we play, and how do we win at the intersection of food and climate?',
@@ -45,6 +47,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Agricultural Producers & Integrated Protein Companies',
+    slug: 'agricultural-producers',
     description: 'Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, commercialization, and buyer requirements.',
     decisions: [
       'Which programs and practices fit our land, operations, and markets?',
@@ -56,6 +59,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Commodity Traders',
+    slug: 'commodity-traders',
     description: 'Market and program strategy, sourcing, producer engagement, traceability, data systems, environmental programs, commercialization, claims controls, managed operations, and diligence.',
     decisions: [
       'How do we build traceable, credibly claimed supply without fragmenting liquidity?',
@@ -68,6 +72,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Ingredient & Feed Processors',
+    slug: 'ingredient-feed-processors',
     description: 'Sourcing, feed and ingredient strategy, process improvement, footprinting, traceability, low-emissions products, byproduct value, commercialization, and claims.',
     decisions: [
       'How do we source, process, and verify lower-impact ingredients and feed?',
@@ -79,6 +84,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Food & Beverage Companies',
+    slug: 'food-beverage-companies',
     description: 'Product and portfolio strategy, supplier programs, traceability, Scope 3 and insetting, footprinting, certification, claims, pricing, commercialization, and managed value-chain programs.',
     decisions: [
       'How do we connect sustainability priorities to products, customers, and growth?',
@@ -90,6 +96,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Food Retail & Distribution',
+    slug: 'food-retail-distribution',
     description: 'Responsible sourcing, category and supplier strategy, private-label propositions, traceability, customer insight, logistics, food-waste programs, claims, and collaboration.',
     decisions: [
       'How do we build responsible sourcing into category and private-label strategy?',
@@ -101,6 +108,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Energy & Biofuels Refiners',
+    slug: 'energy-biofuels-refiners',
     description: 'Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.',
     decisions: [
       'How do we source and verify low-carbon-intensity feedstock at scale?',
@@ -112,6 +120,7 @@ const segments: Segment[] = [
   },
   {
     name: 'Food Waste Prevention, Diversion & Recovery',
+    slug: 'food-waste-prevention-diversion-recovery',
     description: 'Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.',
     decisions: [
       'Where are the highest-value opportunities to prevent, divert, or recover waste?',
@@ -149,7 +158,7 @@ const segments: Segment[] = [
 
       <div class="segment-grid">
         {segments.map((seg) => (
-          <article class="segment-card">
+          <article class="segment-card" id={seg.slug}>
             <h3>{seg.name}</h3>
             <p class="segment-description">{seg.description}</p>
             <div class="segment-section">
@@ -206,23 +215,20 @@ const segments: Segment[] = [
   .segment-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
   @media (min-width: 40rem) { .segment-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .segment-grid { grid-template-columns: repeat(2, 1fr); } }
-  .segment-card { padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-4); }
+  .segment-card { padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-4); scroll-margin-top: 6rem; }
   .segment-card h3 { margin: 0; font-size: var(--text-lg); }
   .segment-description { color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm); }
   .segment-section h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin: 0 0 var(--space-2); }
   .segment-section ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
   .segment-section ul li { color: var(--color-text-secondary); font-size: var(--text-sm); padding-left: var(--space-4); position: relative; }
-  .segment-section ul li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--color-accent); }
+  .segment-section ul li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--c-sky-600); }
   .segment-proof { margin: 0; font-size: var(--text-sm); }
-  .segment-proof a { color: var(--color-accent); text-decoration: none; font-weight: 500; }
+  .segment-proof a { color: var(--c-sky-600); text-decoration: none; font-weight: 500; }
   .segment-proof a:hover { text-decoration: underline; }
   .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
   .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-xs); color: var(--color-text-secondary); text-decoration: none; }
-  .segment-tag:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .segment-tag:hover { border-color: var(--c-sky-600); color: var(--c-sky-600); }
   .closing-statement { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: var(--max-width-text); line-height: var(--line-relaxed); }
   .text-center { text-align: center; }
   .text-center .hero-actions { justify-content: center; }
-  .cta-description { color: #a3adb8; max-width: var(--max-width-text); margin: var(--space-4) auto var(--space-8); }
-  .section-dark .btn-primary { background: #fff; color: #1a1f24; border-color: #fff; }
-  .section-dark .btn-primary:hover { background: #e2e5e9; border-color: #e2e5e9; }
 </style>

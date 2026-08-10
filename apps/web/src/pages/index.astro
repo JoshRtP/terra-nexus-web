@@ -1,13 +1,19 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
-import { compileForBuild } from '../lib/okf/build.js';
-import { selectCaseStudyPages } from '../lib/okf/case-study-pages.js';
 
 const mode = getBuildMode();
-const compilation = await compileForBuild(mode);
-const caseStudies = selectCaseStudyPages(compilation);
-const hasCaseStudy = caseStudies.length > 0;
+
+// Portfolio-wide stats for the "Our Track Record" section below. Real,
+// confirmed figures (approved 2026-08-10) — not placeholders, no NOI flag.
+const portfolioStats = [
+  { value: '$3B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
+  { value: '25+', label: 'Global Projects Across 25+ Countries' },
+  { value: '15+', label: 'Commodities worked with' },
+  { value: '20+', label: '20+ Sustainable Food Systems Certifications' },
+  { value: '10+', label: '10+ Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
+  { value: '5M+', label: 'Acres of regenerative ecosystems' },
+];
 
 const expertiseAreas = [
   { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.', heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200' },
@@ -27,6 +33,60 @@ const capabilities = [
   { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
   { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
   { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
+];
+
+// Condensed for the homepage — full "Decisions We Help Resolve" / related expertise & capabilities
+// detail for each segment lives on /who-we-work-with/food-and-agribusiness-value-chain/#<slug>.
+const valueChainSegments = [
+  { name: 'Inputs Companies', slug: 'inputs-companies', description: 'Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, partnerships, claims, and commercialization for agricultural and animal-production solutions.', image: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Agricultural Producers & Integrated Protein Companies', slug: 'agricultural-producers', description: 'Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, commercialization, and buyer requirements.', image: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Commodity Traders', slug: 'commodity-traders', description: 'Market and program strategy, sourcing, producer engagement, traceability, data systems, environmental programs, commercialization, claims controls, managed operations, and diligence.', image: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Ingredient & Feed Processors', slug: 'ingredient-feed-processors', description: 'Sourcing, feed and ingredient strategy, process improvement, footprinting, traceability, low-emissions products, byproduct value, commercialization, and claims.', image: 'https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Food & Beverage Companies', slug: 'food-beverage-companies', description: 'Product and portfolio strategy, supplier programs, traceability, Scope 3 and insetting, footprinting, certification, claims, pricing, commercialization, and managed value-chain programs.', image: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Food Retail & Distribution', slug: 'food-retail-distribution', description: 'Responsible sourcing, category and supplier strategy, private-label propositions, traceability, customer insight, logistics, food-waste programs, claims, and collaboration.', image: 'https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Energy & Biofuels Refiners', slug: 'energy-biofuels-refiners', description: 'Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.', image: 'https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: 'Food Waste Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.', image: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+];
+
+// Condensed for the homepage — the full workstream detail (bullet lists) lives on /capabilities/.
+// `caps` names the capability slugs (see `capabilities` above) each step draws on, driving the
+// highlight state in the interactive rail below. Step 6 sets `loop: true` — rather than
+// highlighting one or two capabilities, it lights up all five in a neutral grey sweep to signal
+// "end-to-end value creation" (closing the loop back to Step 1) instead of "this step relates to
+// this capability" (the maroon treatment steps 1-5 use).
+const allCapSlugs = capabilities.map((cap) => cap.slug);
+const approachSteps = [
+  {
+    title: 'Evaluate the Opportunity',
+    description: 'Assess the market, economics, and strategic fit before committing to a path.',
+    caps: ['strategy-and-innovation', 'financial-investments-and-new-venture-development'],
+  },
+  {
+    title: 'Design the Program',
+    description: 'Define the commercial model, governance, and route to market.',
+    caps: ['financial-investments-and-new-venture-development', 'sustainable-supply-chain-and-operations', 'corporate-sustainability'],
+  },
+  {
+    title: 'Build the Operating Infrastructure',
+    description: 'Stand up the workflows, data, and controls a program needs to run.',
+    caps: ['sustainable-supply-chain-and-operations', 'corporate-sustainability', 'carbon-and-ecosystem-services'],
+  },
+  {
+    title: 'Launch and Scale',
+    description: 'Pilot, prove, and expand across partners, geographies, and products.',
+    caps: ['carbon-and-ecosystem-services'],
+  },
+  {
+    title: 'Manage Client-Owned Programs',
+    description: 'Run the recurring operations, ledgers, and reporting clients own.',
+    caps: allCapSlugs,
+  },
+  {
+    title: 'Connect Performance to Claims and Market Value',
+    description: 'Translate results into credible claims and commercial value. This step closes the loop — connecting performance back to the original opportunity to drive continuous improvement toward best-in-class performance and profitability.',
+    caps: allCapSlugs,
+    loop: true,
+  },
 ];
 ---
 
@@ -90,28 +150,58 @@ const capabilities = [
     </div>
   </section>
 
-  <!-- Capabilities -->
-  <section class="section section-alt" aria-labelledby="capabilities-heading">
+  <!-- How We Work: Approach + Capabilities, merged -->
+  <section class="section" aria-labelledby="approach-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Capabilities</span>
-        <h2 id="capabilities-heading">Capabilities from Strategy Through Execution</h2>
-        <p class="section-lead">Terra Nexus combines five capability families so clients can move from an opportunity or challenge to an operating, supportable, and commercially valuable solution.</p>
+        <span class="eyebrow">How We Work</span>
+        <h2 id="approach-heading">Terra Nexus Manages Every Step from Cultivation to Claim</h2>
+        <p class="section-lead">We connect strategy, investments, operations, and sustainability to generate market value.</p>
+        <p class="section-lead">Food-and-climate opportunities rarely fit inside one business function. Terra Nexus enables clients to make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value.</p>
       </header>
 
-      <div class="card-grid">
-        {capabilities.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link">
-            <article class="card">
-              <h3>{cap.title}</h3>
-              <p>{cap.description}</p>
-            </article>
-          </a>
-        ))}
+      <div class="approach-card">
+        <div class="approach-rail">
+          <div class="approach-track" role="tablist" aria-label="Approach steps">
+            {approachSteps.map((step, i) => (
+              <button
+                type="button"
+                class="approach-stop"
+                class:list={{ 'is-active': i === 0 }}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls="approach-panel"
+                id={`approach-tab-${i}`}
+                data-index={i}
+                data-loop={step.loop ? 'true' : 'false'}
+                data-caps={step.caps.join(',')}
+                data-desc={step.description}
+              >
+                <span class="dot" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span class="label">{step.title}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="approach-panel" id="approach-panel" role="tabpanel" aria-labelledby="approach-tab-0">
+          <p class="approach-desc" id="approach-desc">
+            <strong>{approachSteps[0].title}</strong> — {approachSteps[0].description}
+          </p>
+
+          <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
+            {capabilities.map((cap) => (
+              <a href={`/capabilities/${cap.slug}/`} class="approach-cap" data-cap={cap.slug} class:list={{ 'is-linked': approachSteps[0].caps.includes(cap.slug) }}>
+                <h4>{cap.title}</h4>
+                <p>{cap.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div class="section-cta">
-        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
+        <a href="/capabilities/" class="btn btn-secondary">Explore Our Approach &amp; Capabilities</a>
       </div>
     </div>
   </section>
@@ -125,15 +215,56 @@ const capabilities = [
         <p class="section-lead">Terra Nexus works with every node of the food and agribusiness value chain — from inputs and agricultural production through trading, processing, brands, retail, energy, and resource recovery. We also work with the environmental markets, technology providers, assurance organizations, and capital partners that enable the system to change.</p>
       </header>
 
-      <div class="diagram-container">
-        <img
-          src="/diagrams/value-chain-with-associated-enablers.png"
-          alt="Food and agribusiness value chain diagram showing eight value-chain segments (Inputs, Agricultural Production, Commodity Trading, Ingredient & Feed Processing, Food & Beverage, Food Retail & Distribution, Energy & Biofuels, Food Waste Prevention Diversion & Recovery) and three enabling groups (Environmental Markets & Ecosystem Services, Enabling Tech & Solution Providers, Private Equity Venture Capital & Impact Investors)."
-          loading="lazy"
-          width="1200"
-          height="400"
-          class="diagram-img"
-        />
+      <div class="segment-slider">
+        <div class="segment-slider-nav">
+          <span class="segment-slider-label">By Value-Chain Segment</span>
+          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
+            {valueChainSegments.map((seg, i) => (
+              <button
+                type="button"
+                class="segment-tab"
+                class:list={{ 'is-active': i === 0 }}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`segment-panel-${seg.slug}`}
+                id={`segment-tab-${seg.slug}`}
+                data-index={i}
+              >
+                {seg.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="segment-slider-panel">
+          <div class="segment-frame">
+            {valueChainSegments.map((seg, i) => (
+              <div
+                class="segment-slide"
+                class:list={{ 'is-active': i === 0 }}
+                id={`segment-panel-${seg.slug}`}
+                role="tabpanel"
+                aria-labelledby={`segment-tab-${seg.slug}`}
+              >
+                <img
+                  src={seg.image}
+                  alt=""
+                  aria-hidden="true"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  class="segment-slide-img"
+                />
+                <div class="segment-slide-copy">
+                  <h3>{seg.name}</h3>
+                  <p>{seg.description}</p>
+                  <a href={`/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`} class="segment-explore">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div class="card-grid">
@@ -157,71 +288,29 @@ const capabilities = [
     </div>
   </section>
 
-  <!-- How We Create Value -->
-  <section class="section section-alt" aria-labelledby="value-heading">
+  <!-- Our Track Record -->
+  <section class="section section-alt" aria-labelledby="track-record-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">How We Create Value</span>
-        <h2 id="value-heading">From Improved Performance to the Right Market Value</h2>
-        <p class="section-lead">Improving performance does not automatically create value. The same operational or environmental improvement may support participation in a program, a certification, a product claim, a Scope 3 reduction, an inset, a tradable environmental asset, a regulatory incentive, corporate reporting, or greater resilience and supply security.</p>
-        <p class="section-lead">Terra Nexus helps clients connect fit-for-purpose changes with the evidence, collaboration, operating model, and market mechanisms required to create the highest-value supportable outcome across the participants needed to deliver it.</p>
+        <span class="eyebrow">Our Track Record</span>
+        <h2 id="track-record-heading">Impact Across Every Engagement We've Taken On</h2>
+        <p class="section-lead">One case study only shows one outcome. Across every client relationship since Terra Nexus started, our work spans a growing range of geographies, commodities, certification systems, and environmental markets — and has created measurable value throughout.</p>
       </header>
 
-      <div class="value-pillars">
-        <article class="value-pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18" /><circle cx="12" cy="12" r="9" /></svg>
+      <div class="stat-grid">
+        {portfolioStats.map((stat) => (
+          <div class="stat-cell">
+            <p class="stat-value">{stat.value}</p>
+            <p class="stat-label">{stat.label}</p>
           </div>
-          <h3>Transparency</h3>
-          <p>Clarify the performance, evidence, costs, ownership, risks, and value available to each participant.</p>
-        </article>
-        <article class="value-pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3" /><circle cx="15" cy="15" r="3" /><path d="M9 15v3M15 6v3" /></svg>
-          </div>
-          <h3>Collaboration</h3>
-          <p>Align the producers, suppliers, traders, processors, brands, retailers, technology providers, investors, and market partners required to make the solution work.</p>
-        </article>
-        <article class="value-pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12a10 10 0 0 0 20 0M2 12a10 10 0 0 1 20 0" /><path d="M12 2a10 10 0 0 0 0 20M12 2a10 10 0 0 1 0 20" /></svg>
-          </div>
-          <h3>Market Mechanisms</h3>
-          <p>Design incentives, commercial structures, claims, attributes, and routes to market that reward the participants whose actions create the value.</p>
-        </article>
+        ))}
+      </div>
+
+      <div class="section-cta">
+        <a href="/case-studies/" class="btn btn-primary">Read Our Case Studies</a>
       </div>
     </div>
   </section>
-
-  <!-- Case Study -->
-  {hasCaseStudy && (
-    <section class="section section-alt" aria-labelledby="proof-heading">
-      <div class="container">
-        <header class="section-header">
-          <span class="eyebrow">Proven Commercial Impact</span>
-          <h2 id="proof-heading">Evaluating Commercial Pathways for Lower-Emissions Beef</h2>
-          <p class="section-lead">For a global agricultural trading company, Terra Nexus connected methodology, claims, market readiness, competitive positioning, and commercialization strategy for a proprietary feed-optimization solution.</p>
-        </header>
-
-        <div class="stat-group">
-          <div class="stat">
-            <p class="stat-value">$12.5M</p>
-            <p class="stat-label">Annual recurring contract value</p>
-          </div>
-          <div class="stat">
-            <p class="stat-value">8.25%</p>
-            <p class="stat-label">Normalized margin improvement</p>
-          </div>
-        </div>
-
-        <p class="proof-note">Both results were modeled and subsequently achieved.</p>
-
-        <div class="section-cta">
-          <a href={caseStudies[0]?.route ?? '/case-studies/'} class="btn btn-primary">Read the Case Study</a>
-        </div>
-      </div>
-    </section>
-  )}
 
   <!-- Final CTA -->
   <section class="section section-dark" aria-labelledby="final-cta-heading">
@@ -235,24 +324,110 @@ const capabilities = [
   </section>
 </SiteLayout>
 
+<script>
+  // Who We Work With — segment slider tabs (mirrors the nav-toggle pattern in Header.astro)
+  (function () {
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.segment-tab'));
+    const slides = Array.from(document.querySelectorAll<HTMLDivElement>('.segment-slide'));
+    const panel = document.querySelector('.segment-slider-panel');
+    if (!tabs.length || !slides.length) return;
+
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function activate(index: number) {
+      current = index;
+      tabs.forEach((tab, idx) => {
+        const active = idx === index;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
+      slides.forEach((slide, idx) => slide.classList.toggle('is-active', idx === index));
+    }
+    function advance() { activate((current + 1) % tabs.length); }
+    function resetAuto() {
+      if (timer) clearInterval(timer);
+      if (!reduceMotion) timer = setInterval(advance, 6000);
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => { activate(i); resetAuto(); });
+    });
+    if (panel) {
+      panel.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
+      panel.addEventListener('mouseleave', resetAuto);
+    }
+    resetAuto();
+  })();
+</script>
+
+<script>
+  // How We Work — approach rail tabs. Step→capability relationships come from
+  // each button's data-caps attribute (set server-side from approachSteps in
+  // the frontmatter above), so this script has no content of its own to keep
+  // in sync — it just reads the DOM.
+  (function () {
+    const stops = Array.from(document.querySelectorAll<HTMLButtonElement>('.approach-stop'));
+    const capCards = Array.from(document.querySelectorAll<HTMLAnchorElement>('.approach-cap'));
+    const descElMaybe = document.getElementById('approach-desc');
+    const gridElMaybe = document.getElementById('approach-cap-grid');
+    const panelEl = document.getElementById('approach-panel');
+    if (!stops.length || !descElMaybe || !gridElMaybe) return;
+    const descEl = descElMaybe;
+    const gridEl = gridElMaybe;
+
+    function activate(index: number) {
+      stops.forEach((stop, idx) => {
+        const active = idx === index;
+        stop.classList.toggle('is-active', active);
+        stop.setAttribute('aria-selected', String(active));
+      });
+      const step = stops[index];
+      const title = step.querySelector('.label')?.textContent ?? '';
+      const desc = step.dataset.desc ?? '';
+      panelEl?.setAttribute('aria-labelledby', `approach-tab-${index}`);
+      descEl.innerHTML = `<strong>${title}</strong> — ${desc}`;
+
+      const caps = (step.dataset.caps ?? '').split(',').filter(Boolean);
+      if (step.dataset.loop === 'true') {
+        gridEl.classList.remove('is-filtering');
+        capCards.forEach((card) => card.classList.remove('is-linked'));
+        gridEl.classList.remove('is-loop');
+        void gridEl.offsetWidth; // force reflow so the sweep animation replays every time
+        gridEl.classList.add('is-loop');
+      } else {
+        gridEl.classList.remove('is-loop');
+        gridEl.classList.add('is-filtering');
+        capCards.forEach((card) => card.classList.toggle('is-linked', caps.includes(card.dataset.cap ?? '')));
+      }
+    }
+    stops.forEach((stop, i) => {
+      stop.addEventListener('click', () => activate(i));
+      stop.addEventListener('mouseenter', () => activate(i));
+    });
+  })();
+</script>
+
 <style>
   /* Hero */
   .hero {
     position: relative; overflow: hidden;
-    padding-block: var(--space-32) var(--space-24);
-    background: var(--gradient-hero); color: #fff;
+    padding-block: var(--space-24) var(--space-20);
+    background: linear-gradient(135deg, var(--c-sky-200) 0%, var(--c-sky-300) 100%);
+    color: var(--color-dark);
   }
   .hero-bg {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(13, 148, 136, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 20% 80%, rgba(13, 148, 136, 0.08) 0%, transparent 50%);
+    background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(231, 215, 127, 0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
     pointer-events: none;
   }
   .hero-grid {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(19, 31, 72, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(19, 31, 72, 0.05) 1px, transparent 1px);
     background-size: 4rem 4rem;
     mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
     -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
@@ -263,41 +438,35 @@ const capabilities = [
     display: inline-flex; align-items: center; gap: var(--space-2);
     font-size: var(--text-xs); font-weight: var(--font-semibold);
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--c-primary-300); margin-bottom: var(--space-5);
+    color: var(--color-eyebrow); margin-bottom: var(--space-5);
   }
   .hero-eyebrow::before {
     content: ''; display: inline-block; width: 1.5rem; height: 2px;
-    background: var(--c-primary-400); border-radius: var(--radius-full);
+    background: var(--color-eyebrow); border-radius: var(--radius-full);
   }
   .hero h1 {
     font-size: clamp(2.25rem, 5.5vw, var(--text-6xl));
-    color: #fff; line-height: 1.05; max-width: 24ch;
+    color: var(--color-dark); line-height: 1.05; max-width: 24ch;
     margin-bottom: var(--space-5);
   }
   .hero-highlight {
+    /* The light-blue hero has plenty of contrast for the literal button
+       maroon, unlike the old navy background it was tuned to avoid. */
     background: var(--gradient-accent);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   .hero-engagement {
     font-size: var(--text-2xl); font-weight: var(--font-medium);
-    color: var(--c-secondary-200); margin-bottom: var(--space-4);
+    color: var(--color-dark); margin-bottom: var(--space-4);
     max-width: var(--max-width-text);
   }
   .hero-supporting {
-    font-size: var(--text-lg); color: var(--c-secondary-400);
+    font-size: var(--text-lg); color: var(--c-sky-700);
     max-width: var(--max-width-text); line-height: var(--line-relaxed);
   }
   .hero .hero-actions { margin-top: var(--space-10); }
   .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
-  .hero .btn-secondary {
-    background: transparent; color: #fff;
-    border-color: rgba(255, 255, 255, 0.25);
-  }
-  .hero .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.4); color: #fff;
-  }
 
   /* ── Expertise grid ──────────────────────────────── */
   .expertise-grid {
@@ -325,7 +494,7 @@ const capabilities = [
     overflow: hidden;
     text-decoration: none;
     color: #fff;
-    background-color: #0f172a;
+    background-color: #131f48;
     box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.15);
     transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -335,7 +504,7 @@ const capabilities = [
     transform: translateY(-4px);
   }
   .expertise-tile:focus-visible {
-    outline: 3px solid #0d9488;
+    outline: 3px solid #427e90;
     outline-offset: 3px;
   }
   .tile-bg-img {
@@ -411,7 +580,7 @@ const capabilities = [
     gap: 0.375rem;
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #5eead4;
+    color: #e7d77f;
     letter-spacing: 0.01em;
     opacity: 0;
     transform: translateY(6px);
@@ -436,29 +605,194 @@ const capabilities = [
     .expertise-tile:hover .tile-bg-img { transform: none; }
   }
 
-  /* Value pillars */
-  .value-pillars { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
-  @media (min-width: 40rem) { .value-pillars { grid-template-columns: repeat(3, 1fr); } }
-  .value-pillar {
-    padding: var(--space-8); background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+  /* Who We Work With — segment slider */
+  .segment-slider {
+    margin-bottom: var(--space-8);
+    position: relative;
+    overflow: hidden;
+    background: var(--gradient-dark);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+    padding: var(--space-10) var(--space-10) var(--space-10);
+    display: grid;
+    gap: var(--space-10);
+    grid-template-columns: 0.82fr 1.3fr;
+    align-items: start;
   }
-  .value-pillar:hover {
-    box-shadow: var(--shadow-md); border-color: var(--color-accent-border);
+  .segment-slider::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.1) 0%, transparent 60%);
+    pointer-events: none;
   }
-  .pillar-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 3rem; height: 3rem; border-radius: var(--radius-md);
-    background: var(--color-accent-bg); color: var(--color-accent);
-    margin-bottom: var(--space-5);
+  @media (max-width: 64rem) {
+    .segment-slider { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-8) var(--space-6); }
   }
-  .value-pillar h3 { margin-bottom: var(--space-3); }
-  .value-pillar p { font-size: var(--text-sm); color: var(--color-text-secondary); }
 
-  /* Proof */
-  .proof-note {
-    margin-top: var(--space-4); font-size: var(--text-sm);
-    color: var(--color-text-muted); font-style: italic;
+  .segment-slider-nav { position: relative; }
+  .segment-slider-label {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-size: var(--text-xs); font-weight: var(--font-semibold);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--c-accent-400); margin-bottom: var(--space-5);
   }
+  .segment-tabs {
+    display: flex; flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .segment-tab {
+    display: block; width: 100%; text-align: left; background: none; cursor: pointer;
+    border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); border-left: 2px solid transparent;
+    padding: var(--space-4) 0 var(--space-4) var(--space-4); margin: 0;
+    font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--font-medium);
+    color: #8f9dc5; transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base);
+  }
+  .segment-tab:hover { color: #fff; }
+  .segment-tab:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: -2px; }
+  .segment-tab.is-active {
+    color: #fff; font-weight: var(--font-semibold); border-left-color: var(--c-accent-400);
+    background: linear-gradient(90deg, rgba(231, 215, 127, 0.08), transparent);
+  }
+
+  .segment-slider-panel { position: relative; }
+  .segment-frame {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    aspect-ratio: 16 / 11; box-shadow: var(--shadow-xl);
+  }
+  @media (max-width: 30rem) { .segment-frame { aspect-ratio: 4 / 5; } }
+  .segment-slide {
+    position: absolute; inset: 0; opacity: 0; visibility: hidden;
+    transition: opacity var(--transition-slow); pointer-events: none;
+  }
+  .segment-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
+  .segment-slide-img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;
+  }
+  .segment-slide::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(0deg, rgba(13, 21, 48, 0.92) 0%, rgba(13, 21, 48, 0.25) 50%, transparent 80%);
+  }
+  .segment-slide-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8); z-index: 1; }
+  .segment-slide-copy h3 { color: #fff; font-size: var(--text-xl); margin-bottom: var(--space-3); }
+  .segment-slide-copy p {
+    color: #d7deef; font-size: var(--text-sm); max-width: 30rem;
+    margin-bottom: var(--space-6); line-height: var(--line-relaxed);
+  }
+  .segment-explore {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    background: #fff; color: var(--color-dark); font-size: var(--text-sm); font-weight: var(--font-semibold);
+    padding: var(--space-3) var(--space-5); border-radius: var(--radius-full);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+  .segment-explore:hover { background: var(--c-sky-100); color: var(--color-dark); transform: translateX(2px); }
+  @media (prefers-reduced-motion: reduce) {
+    .segment-slide { transition: none; }
+  }
+
+  /* Our Track Record — portfolio stat band. Extends the sitewide .stat-value
+     /.stat-label pattern (design-system.css) into a bordered 3x2 grid rather
+     than the flex .stat-group, since six figures need a firmer structure
+     than two. Deliberately light (.section-alt), not another dark card —
+     "Who We Work With" and "How We Work" above already use that device for
+     interactive content, so a third one in a row would read as the default
+     rather than a choice; a plain stat band also reads more like an audited
+     credibility strip than a feature pitch. */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--color-border); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  @media (max-width: 56rem) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 30rem) { .stat-grid { grid-template-columns: 1fr; } }
+  .stat-cell { background: var(--color-surface-elevated); padding: var(--space-8) var(--space-6); }
+  .stat-cell .stat-value { font-size: var(--text-4xl); }
+  .stat-cell .stat-label { margin-top: var(--space-2); line-height: var(--line-relaxed); }
+
+  /* How We Work — Approach + Capabilities, merged into one interactive dark
+     card. Reuses the same embedded-dark-card device as .segment-slider and
+     .case-study below, so the page has one consistent "detail view" pattern
+     rather than three different ones. */
+  .approach-card {
+    position: relative; overflow: hidden;
+    background: var(--gradient-dark);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl);
+    padding: var(--space-10);
+  }
+  .approach-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  @media (max-width: 48rem) { .approach-card { padding: var(--space-8) var(--space-6); } }
+
+  .approach-track { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; }
+  .approach-track::before {
+    content: ''; position: absolute; top: 22px; left: 8.3%; right: 8.3%; height: 2px;
+    background: rgba(255, 255, 255, 0.15); z-index: 0;
+  }
+  .approach-stop {
+    position: relative; z-index: 1; background: none; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3);
+    padding: 0 var(--space-2); font-family: inherit;
+  }
+  .approach-stop .dot {
+    width: 2.75rem; height: 2.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.25); color: #c3cdea;
+    font-family: var(--font-serif); font-style: italic; font-weight: var(--font-semibold); font-size: var(--text-base);
+    transition: all var(--transition-base);
+  }
+  .approach-stop .label { font-size: var(--text-sm); font-weight: var(--font-semibold); color: #8f9dc5; line-height: 1.3; transition: color var(--transition-base); }
+  .approach-stop:hover .dot, .approach-stop.is-active .dot {
+    border-color: var(--c-accent-400); background: var(--c-accent-400); color: var(--color-dark); transform: scale(1.08);
+  }
+  .approach-stop:hover .label, .approach-stop.is-active .label { color: #fff; }
+  .approach-stop:focus-visible .dot { outline: 2px solid var(--c-accent-400); outline-offset: 2px; }
+  @media (max-width: 48rem) {
+    .approach-track { grid-template-columns: repeat(3, 1fr); row-gap: var(--space-8); }
+    .approach-track::before { display: none; }
+  }
+
+  .approach-desc {
+    text-align: center; margin: var(--space-8) 0 var(--space-10); font-size: var(--text-sm); line-height: var(--line-relaxed);
+    width: 100%; background: rgba(231, 215, 127, 0.08); border: 1px solid rgba(231, 215, 127, 0.3);
+    border-radius: var(--radius-lg); padding: var(--space-5) var(--space-8); color: #d7deef;
+  }
+  .approach-desc strong { color: #fff; }
+
+  .approach-cap-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); }
+  @media (max-width: 64rem) { .approach-cap-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 40rem) { .approach-cap-grid { grid-template-columns: 1fr; } }
+  .approach-cap {
+    display: block; padding: var(--space-5); border-radius: var(--radius-lg); text-decoration: none;
+    background: rgba(255, 255, 255, 0.04); border: 1.5px solid rgba(255, 255, 255, 0.14);
+    transition: border-color var(--transition-slow) ease, opacity var(--transition-slow) ease,
+                box-shadow var(--transition-slow) ease, transform var(--transition-slow) ease;
+  }
+  .approach-cap h4 { font-size: var(--text-sm); margin: 0 0 var(--space-2); font-weight: var(--font-semibold); color: #fff; }
+  .approach-cap p { font-size: var(--text-xs); color: #a9b6d6; line-height: 1.55; }
+  .approach-cap-grid.is-filtering .approach-cap { opacity: 0.4; }
+  .approach-cap-grid.is-filtering .approach-cap.is-linked {
+    opacity: 1; border-color: var(--c-accent-400); box-shadow: 0 0 0 1px var(--c-accent-400); transform: translateY(-2px);
+  }
+
+  /* Step 6 — "end-to-end value creation": every card lights up in a left-to-
+     right sweep, in white/neutral rather than the gold single-step highlight,
+     so it reads as a distinct, culminating moment. */
+  @keyframes approach-loop-sweep {
+    0% { border-color: rgba(255, 255, 255, 0.14); box-shadow: none; transform: translateY(0); }
+    45% { border-color: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); transform: translateY(-3px); }
+    100% { border-color: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4); transform: translateY(0); }
+  }
+  .approach-cap-grid.is-loop .approach-cap { opacity: 1; animation: approach-loop-sweep 1.3s ease forwards; }
+  .approach-cap-grid.is-loop .approach-cap:nth-child(1) { animation-delay: .05s; }
+  .approach-cap-grid.is-loop .approach-cap:nth-child(2) { animation-delay: .18s; }
+  .approach-cap-grid.is-loop .approach-cap:nth-child(3) { animation-delay: .31s; }
+  .approach-cap-grid.is-loop .approach-cap:nth-child(4) { animation-delay: .44s; }
+  .approach-cap-grid.is-loop .approach-cap:nth-child(5) { animation-delay: .57s; }
+  @media (prefers-reduced-motion: reduce) {
+    .approach-cap { transition: none; }
+    .approach-cap-grid.is-loop .approach-cap { animation: none; border-color: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4); }
+  }
+
 </style>
