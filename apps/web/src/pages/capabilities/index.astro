@@ -11,6 +11,15 @@ const capabilities = [
   { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
   { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
 ];
+
+const workstreams = [
+  { title: 'Evaluate the Opportunity', items: ['Market, customer, competitor, and landscape analysis', 'Business cases, economics, scenarios, and value allocation', 'Technology, methodology, partner, project, and transaction diligence', 'Build-buy-partner and investment decisions', 'Risk, feasibility, and strategic-fit assessment'] },
+  { title: 'Design the Program', items: ['Objectives, boundaries, outcomes, and participation criteria', 'Commercial model, incentives, contracts, and risk allocation', 'Practice-based, outcome-based, or hybrid architecture', 'Governance, roles, controls, and assurance strategy', 'Routes to market and stakeholder alignment'] },
+  { title: 'Build the Operating Infrastructure', items: ['Workflows, roles, and process design', 'Data requirements and system architecture', 'Measurement, calculation, and quality-control processes', 'Traceability, chain of custody, and attribute controls', 'Ledgers, documentation, reporting, and exception management'] },
+  { title: 'Launch and Scale', items: ['Pilot design and success criteria', 'Partner and technology selection', 'Implementation planning and change management', 'Coordination across producers, partners, and customers', 'Expansion across geographies, products, and customers'] },
+  { title: 'Manage Client-Owned Programs', items: ['Recurring operational and evidence workflows', 'Data review and calculation processes', 'Program and attribute ledgers', 'Vendor and partner coordination', 'Exception resolution and management reporting', 'Audit and verification preparation', 'Continuous program improvement'] },
+  { title: 'Connect Performance to Claims and Market Value', items: ['Corporate inventory and target alignment', 'Certification and sourcing claims', 'Product, customer, and commercial propositions', 'Scope 3 and inset pathways', 'Carbon and ecosystem-service market assessment', 'Low-carbon and regulatory opportunities', 'Claims governance and communication boundaries'] },
+];
 ---
 
 <SiteLayout
@@ -26,8 +35,31 @@ const capabilities = [
     secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
   />
 
-  <section class="section">
+  <section class="section" aria-labelledby="approach-heading">
     <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Our Approach</span>
+        <h2 id="approach-heading">Our Approach</h2>
+      </header>
+      <div class="workstream-grid">
+        {workstreams.map((ws) => (
+          <article class="workstream-card">
+            <h3>{ws.title}</h3>
+            <ul class="bullet-list">
+              {ws.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="delivery-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Our Delivery</span>
+        <h2 id="delivery-heading">Our Delivery</h2>
+      </header>
       <div class="card-grid">
         {capabilities.map((cap) => (
           <a href={`/capabilities/${cap.slug}/`} class="card-link">
@@ -41,7 +73,7 @@ const capabilities = [
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Integrated Support</span>
@@ -55,7 +87,6 @@ const capabilities = [
         <span class="pathway-tag">Sustainability</span>
         <span class="pathway-tag">Environmental Markets</span>
       </div>
-      <p class="integration-note">Each capability family contains its own offerings, and offerings may overlap when a different client function owns the decision. Terra Nexus preserves the decision-owner perspective rather than forcing every activity into a single category.</p>
     </div>
   </section>
 
@@ -80,5 +111,50 @@ const capabilities = [
     border-radius: var(--radius-full);
     color: var(--color-text-secondary);
   }
-  .integration-note { font-size: var(--text-sm); color: var(--color-text-muted); max-width: var(--max-width-text); }
+  /* ── Our Approach ── */
+  .workstream-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) { .workstream-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .workstream-grid { grid-template-columns: repeat(3, 1fr); } }
+  .workstream-card {
+    padding: var(--space-8);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .workstream-card:hover {
+    border-color: var(--color-accent-border);
+    box-shadow: var(--shadow-md);
+  }
+  .workstream-card h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+  }
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .bullet-list li {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    padding-left: var(--space-4);
+    position: relative;
+    margin-bottom: var(--space-2);
+    line-height: var(--line-normal);
+  }
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
 </style>
