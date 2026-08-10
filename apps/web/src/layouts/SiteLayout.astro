@@ -25,10 +25,19 @@ const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexu
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     {description && <meta name="description" content={description} />}
     {isPreview && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#131f48" />
+
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/brand/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/brand/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content="/brand/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>{fullTitle}</title>
   </head>
   <body>

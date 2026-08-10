@@ -1,23 +1,30 @@
 /*
   Terra Nexus — Professional Design System
   A refined, premium visual language for a sustainability consulting studio.
-  Neutral palette with deep teal accent, layered depth, and subtle motion.
+  Brand palette: navy as the dominant voice, sky blue as the supporting/section
+  color, gold for accents on dark backgrounds, and maroon reserved for small
+  eyebrow labels + the literal button fill — not spread across every accent.
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
 :root {
   /* Color System — 6 ramps + neutrals */
-  --c-primary-50: #f0fdfa;
-  --c-primary-100: #ccfbf1;
-  --c-primary-200: #99f6e4;
-  --c-primary-300: #5eead4;
-  --c-primary-400: #2dd4bf;
-  --c-primary-500: #14b8a6;
-  --c-primary-600: #0d9488;
-  --c-primary-700: #0f766e;
-  --c-primary-800: #115e59;
-  --c-primary-900: #134e4a;
+  /* Primary ramp is anchored to the button color actually live at terra.nexus
+     (Elementor global kit: --e-global-color-* on the production WordPress site),
+     not just the brighter red in the logo artwork. 800 (#4e0110) is that literal
+     button fill; lighter steps are used for links, borders, and display text
+     where the near-black 800 would lose legibility. */
+  --c-primary-50: #fbebec;
+  --c-primary-100: #f6d2d5;
+  --c-primary-200: #eaa7ac;
+  --c-primary-300: #d97880;
+  --c-primary-400: #b94952;
+  --c-primary-500: #952631;
+  --c-primary-600: #711620;
+  --c-primary-700: #5c0d17;
+  --c-primary-800: #4e0110;
+  --c-primary-900: #380009;
 
   --c-secondary-50: #f8fafc;
   --c-secondary-100: #f1f5f9;
@@ -30,11 +37,26 @@
   --c-secondary-800: #1e293b;
   --c-secondary-900: #0f172a;
 
-  --c-accent-50: #fffbeb;
-  --c-accent-100: #fef3c7;
-  --c-accent-400: #fbbf24;
-  --c-accent-500: #f59e0b;
-  --c-accent-600: #d97706;
+  --c-accent-50: #fdfaf0;
+  --c-accent-100: #faf2d8;
+  --c-accent-200: #f5e6b3;
+  --c-accent-300: #f0dc99;
+  --c-accent-400: #e7d77f;
+  --c-accent-500: #d4bd5c;
+  --c-accent-600: #b39a3f;
+
+  /* Sky — the site's signature light blue (matches live-site
+     --e-global-color-secondary: #A8D0DB almost exactly at 300). Used as the
+     supporting color for section washes, dividers, secondary interactions —
+     the role red had been over-filling. */
+  --c-sky-50: #f3f9fb;
+  --c-sky-100: #e2f0f4;
+  --c-sky-200: #c7e3ea;
+  --c-sky-300: #a8d0db;
+  --c-sky-400: #86bccb;
+  --c-sky-500: #5fa1b4;
+  --c-sky-600: #427e90;
+  --c-sky-700: #315f6c;
 
   --c-success-50: #f0fdf4;
   --c-success-500: #22c55e;
@@ -50,30 +72,40 @@
 
   /* Semantic tokens */
   --color-bg: #ffffff;
-  --color-surface: #f8fafc;
-  --color-surface-alt: #f1f5f9;
+  --color-surface: #f3f8fa;
+  --color-surface-alt: #e9f2f5;
   --color-surface-elevated: #ffffff;
   --color-border: #e2e8f0;
   --color-border-strong: #cbd5e1;
 
-  --color-text: #0f172a;
+  /* Headings default to navy (matching the live site, where display copy is
+     navy rather than near-black) — body copy stays a neutral slate. */
+  --color-text: #131f48;
   --color-text-secondary: #475569;
   --color-text-muted: #94a3b8;
   --color-text-inverse: #f8fafc;
 
-  --color-link: #0d9488;
-  --color-link-hover: #0f766e;
+  --color-link: #1b2c5c;
+  --color-link-hover: #5c0d17;
 
-  --color-accent: #0f766e;
-  --color-accent-hover: #115e59;
-  --color-accent-bg: #f0fdfa;
-  --color-accent-border: #99f6e4;
-  --color-accent-soft: #ccfbf1;
+  /* Small maroon accent — eyebrow labels, subheadings. Lighter than the
+     literal button fill (--color-accent) so it reads at small caps sizes;
+     matches the brand's #6A1B32 maroon swatch. */
+  --color-eyebrow: #6a1b32;
+  --color-eyebrow-hover: #551327;
 
-  --color-focus: #0d9488;
-  --color-dark: #0f172a;
-  --color-dark-surface: #1e293b;
-  --color-dark-border: #334155;
+  /* The literal button color live at terra.nexus — reserved for buttons and
+     their direct shadows, not spread across links/borders/glows. */
+  --color-accent: #4e0110;
+  --color-accent-hover: #380009;
+  --color-accent-bg: #fbebec;
+  --color-accent-border: #eaa7ac;
+  --color-accent-soft: #f6d2d5;
+
+  --color-focus: #427e90;
+  --color-dark: #131f48;
+  --color-dark-surface: #1b2c5c;
+  --color-dark-border: #2c3f7a;
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -138,7 +170,7 @@
   --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
   --shadow-2xl: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
-  --shadow-accent: 0 4px 14px rgba(13, 148, 136, 0.25);
+  --shadow-accent: 0 4px 14px rgba(78, 1, 16, 0.3);
 
   /* Transitions — explicit properties only */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -150,10 +182,11 @@
   --focus-offset: 2px;
 
   /* Gradients */
-  --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  --gradient-accent: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
-  --gradient-surface: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-  --gradient-dark: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+  --gradient-hero: linear-gradient(135deg, #131f48 0%, #1b2c5c 50%, #131f48 100%);
+  --gradient-accent: linear-gradient(135deg, #380009 0%, #4e0110 100%);
+  --gradient-sky: linear-gradient(135deg, #86bccb 0%, #a8d0db 100%);
+  --gradient-surface: linear-gradient(180deg, #f3f9fb 0%, #ffffff 100%);
+  --gradient-dark: linear-gradient(160deg, #131f48 0%, #1b2c5c 100%);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -248,11 +281,15 @@ ul, ol { margin: 0; padding: 0; }
 }
 
 /* Sections */
-.section { padding-block: var(--space-24); position: relative; }
+.section { padding-block: var(--space-20); position: relative; }
 .section-alt { background: var(--color-surface); }
+/* .section-dark: the brand's light-blue CTA banner treatment (matches the
+   terra.nexus "Save Food. Get Paid." style banners — navy text and a maroon
+   button on a solid light-blue field), not a dark/navy background. Name kept
+   for compatibility with existing usages across the site. */
 .section-dark {
-  background: var(--gradient-dark);
-  color: var(--c-secondary-400);
+  background: linear-gradient(135deg, var(--c-sky-200) 0%, var(--c-sky-300) 100%);
+  color: var(--color-dark);
   position: relative;
   overflow: hidden;
 }
@@ -260,14 +297,16 @@ ul, ol { margin: 0; padding: 0; }
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at top right, rgba(13, 148, 136, 0.08) 0%, transparent 60%);
+  background:
+    radial-gradient(ellipse at top right, rgba(255, 255, 255, 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(231, 215, 127, 0.2) 0%, transparent 55%);
   pointer-events: none;
 }
 .section-dark h1, .section-dark h2, .section-dark h3, .section-dark h4 {
-  color: #fff;
+  color: var(--color-dark);
 }
 
-.section-header { margin-bottom: var(--space-12); }
+.section-header { margin-bottom: var(--space-10); }
 .section-header h2 { margin-top: 0; }
 .section-header .section-lead {
   margin-top: var(--space-4);
@@ -286,7 +325,7 @@ ul, ol { margin: 0; padding: 0; }
   font-weight: var(--font-semibold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-eyebrow);
   margin-bottom: var(--space-3);
 }
 .eyebrow::before {
@@ -294,7 +333,7 @@ ul, ol { margin: 0; padding: 0; }
   display: inline-block;
   width: 1.5rem;
   height: 2px;
-  background: var(--color-accent);
+  background: var(--color-eyebrow);
   border-radius: var(--radius-full);
 }
 
@@ -335,17 +374,17 @@ ul, ol { margin: 0; padding: 0; }
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
   color: #fff;
-  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 6px 20px rgba(78, 1, 16, 0.4);
 }
 .btn-secondary {
   background: transparent;
-  color: var(--color-accent);
-  border-color: var(--color-accent-border);
+  color: var(--color-dark);
+  border-color: var(--c-sky-300);
 }
 .btn-secondary:hover {
-  background: var(--color-accent-bg);
-  color: var(--color-accent-hover);
-  border-color: var(--color-accent);
+  background: var(--c-sky-50);
+  color: var(--color-dark);
+  border-color: var(--c-sky-500);
 }
 
 /* Cards */
@@ -372,13 +411,13 @@ ul, ol { margin: 0; padding: 0; }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: var(--gradient-accent);
+  background: var(--gradient-sky);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--transition-base);
 }
 .card:hover {
-  border-color: var(--color-accent-border);
+  border-color: var(--c-sky-300);
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
@@ -454,7 +493,7 @@ ul, ol { margin: 0; padding: 0; }
   font-family: var(--font-serif);
   font-size: var(--text-5xl);
   font-weight: var(--font-semibold);
-  color: var(--color-accent);
+  color: var(--color-dark);
   line-height: 1;
   letter-spacing: -0.02em;
 }
@@ -479,7 +518,7 @@ ul, ol { margin: 0; padding: 0; }
   right: -10%;
   width: 40rem;
   height: 40rem;
-  background: radial-gradient(circle, rgba(13, 148, 136, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 208, 219, 0.35) 0%, transparent 70%);
   pointer-events: none;
 }
 .page-hero .eyebrow { margin-bottom: var(--space-4); }
@@ -533,39 +572,28 @@ ul, ol { margin: 0; padding: 0; }
 .text-center .hero-actions { justify-content: center; }
 
 .section-cta {
-  margin-top: var(--space-10);
+  margin-top: var(--space-8);
   display: flex;
   justify-content: center;
 }
 
 .cta-description {
-  color: var(--c-secondary-400);
+  color: var(--c-sky-700);
   font-size: var(--text-lg);
   max-width: var(--max-width-text);
   margin: var(--space-4) auto var(--space-8);
   line-height: var(--line-relaxed);
 }
 
-/* Dark section buttons */
-.section-dark .btn-primary {
-  background: #fff;
-  color: var(--color-dark);
-  border-color: #fff;
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
-}
-.section-dark .btn-primary:hover {
-  background: var(--c-secondary-100);
-  border-color: var(--c-secondary-100);
-  color: var(--color-dark);
-}
+/* .btn-primary (maroon) reads fine directly on the light-blue banner.
+   .btn-secondary's default sky-tinted border would nearly disappear against
+   the same light-blue field, so give it a navy border here instead. */
 .section-dark .btn-secondary {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--color-dark);
 }
 .section-dark .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(19, 31, 72, 0.06);
+  border-color: var(--color-dark);
 }
 
 /* Diagram */
@@ -581,7 +609,7 @@ ul, ol { margin: 0; padding: 0; }
 
 /* Responsive */
 @media (max-width: 48rem) {
-  .section { padding-block: var(--space-16); }
+  .section { padding-block: var(--space-12); }
   .page-hero { padding-block: var(--space-12) var(--space-10); }
   .stat-group { gap: var(--space-8); }
   .card { padding: var(--space-6); }

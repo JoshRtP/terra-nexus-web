@@ -252,9 +252,9 @@ const mode = getBuildMode();
     z-index: 1;
   }
   .eyebrow-light {
-    color: var(--c-primary-300);
+    color: var(--c-accent-300);
   }
-  .eyebrow-light::before { background: var(--c-primary-300); }
+  .eyebrow-light::before { background: var(--c-accent-300); }
   .hero-content h1 {
     color: #fff;
     max-width: 40rem;
@@ -338,7 +338,7 @@ const mode = getBuildMode();
     padding: var(--space-5) var(--space-6);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-left: 3px solid var(--color-accent);
+    border-left: 3px solid var(--c-sky-600);
     border-radius: var(--radius-md);
   }
   .benefit-card h4 {
@@ -372,7 +372,7 @@ const mode = getBuildMode();
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: var(--c-sky-600);
   }
 
   /* ── System Steps ── */
@@ -393,7 +393,7 @@ const mode = getBuildMode();
     font-family: var(--font-serif);
     font-size: var(--text-3xl);
     font-weight: var(--font-semibold);
-    color: var(--color-accent);
+    color: var(--c-sky-600);
     flex-shrink: 0;
     min-width: 3rem;
     line-height: 1;
@@ -427,7 +427,7 @@ const mode = getBuildMode();
     transition: border-color var(--transition-base), box-shadow var(--transition-base);
   }
   .card:hover {
-    border-color: var(--color-accent-border);
+    border-color: var(--c-sky-300);
     box-shadow: var(--shadow-md);
   }
   .card h3 { font-size: var(--text-base); margin-bottom: var(--space-3); }
@@ -468,7 +468,7 @@ const mode = getBuildMode();
     transition: border-color var(--transition-base), box-shadow var(--transition-base);
   }
   .workstream-card:hover {
-    border-color: var(--color-accent-border);
+    border-color: var(--c-sky-300);
     box-shadow: var(--shadow-md);
   }
   .workstream-card h3 {
