@@ -17,6 +17,7 @@ knowledge/
 │   │   └── inputs-companies.md
 │   └── index.md
 ├── brand
+│   ├── brand-color-palette.md
 │   ├── brand-platform.md
 │   ├── brand-usage-rules.md
 │   ├── index.md

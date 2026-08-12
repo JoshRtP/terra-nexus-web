@@ -1,7 +1,7 @@
 {
   "okf_version": "0.2",
-  "generated_at": "2026-08-03T03:52:58Z",
-  "concept_count": 104,
+  "generated_at": "2026-08-12T07:05:19Z",
+  "concept_count": 105,
   "by_type": {
     "Agent Instructions": 1,
     "Audience Segment": 11,
@@ -21,7 +21,7 @@
     "Gap Analysis": 1,
     "Operating Model": 2,
     "Prompt": 1,
-    "Reference": 1,
+    "Reference": 2,
     "Service Family": 5,
     "Service Offering": 29,
     "Source Document": 3,
@@ -30,15 +30,15 @@
   },
   "by_status": {
     "draft": 37,
-    "stable": 67
+    "stable": 68
   },
   "by_publication_audience": {
-    "None": 81,
+    "None": 82,
     "internal": 22,
     "public": 1
   },
   "by_publication_state": {
-    "None": 81,
+    "None": 82,
     "approved": 1,
     "blocked": 22
   },
@@ -131,6 +131,14 @@
       "path": "audiences/food-and-agribusiness-value-chain/inputs-companies.md",
       "type": "Audience Segment",
       "title": "Inputs Companies",
+      "status": "stable",
+      "pub_audience": "None",
+      "pub_state": "None"
+    },
+    {
+      "path": "brand/brand-color-palette.md",
+      "type": "Reference",
+      "title": "Terra Nexus Brand Color Palette",
       "status": "stable",
       "pub_audience": "None",
       "pub_state": "None"

@@ -572,6 +572,7 @@ const approachSteps = [
     }
 
     function update() {
+      if (!hero) return;
       const heroHeight = hero.offsetHeight || 1;
       const viewportWidth = window.innerWidth;
       const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1.3);
