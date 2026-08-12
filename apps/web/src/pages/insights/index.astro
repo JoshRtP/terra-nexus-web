@@ -1,0 +1,104 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PageHero from '../../components/PageHero.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+
+const mode = getBuildMode();
+const allPosts: CollectionEntry<'posts'>[] = await getCollection('posts');
+const posts = allPosts
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+// timeZone: 'UTC' — publishDate is a date-only value (no time component),
+// parsed as UTC midnight; formatting in the viewer's local zone can roll it
+// back a day west of UTC. Format in UTC to keep the displayed date matching
+// what was entered in Keystatic.
+const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
+---
+
+<SiteLayout
+  title="Insights | Terra Nexus"
+  description="Terra Nexus perspectives on regenerative agriculture, carbon markets, and sustainable supply chains."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Insights"
+    title="Terra Nexus Insights"
+    lead="Practical perspective on regenerative agriculture, carbon and ecosystem markets, and sustainable supply chains — from the team doing the work."
+  />
+
+  <section class="section" aria-label="Insight articles">
+    <div class="container">
+      {posts.length ? (
+        <div class="insight-grid">
+          {posts.map((post) => (
+            <article class="insight-card">
+              <a href={`/insights/${post.id}/`}>
+                <img src={post.data.heroImage} alt={post.data.heroImageAlt} loading="lazy" />
+                <div class="insight-card-body">
+                  <p class="insight-card-date">{dateFormatter.format(post.data.publishDate)}</p>
+                  <h2>{post.data.title}</h2>
+                  <p class="insight-card-excerpt">{post.data.excerpt}</p>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">No published Insight articles yet.</p>
+      )}
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .insight-grid {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .insight-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .insight-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .insight-card a {
+    color: inherit;
+    display: block;
+  }
+  .insight-card img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    display: block;
+  }
+  .insight-card-body {
+    padding-top: var(--space-4);
+  }
+  .insight-card-date {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-2);
+  }
+  .insight-card h2 {
+    font-size: 1.125rem;
+    margin: 0 0 var(--space-2);
+  }
+  .insight-card-excerpt {
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+  .empty-state {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+</style>

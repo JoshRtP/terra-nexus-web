@@ -1,0 +1,171 @@
+---
+import { getCollection, getEntries, getEntry, render, type CollectionEntry } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import Callout from '../../components/mdx/Callout.astro';
+import CTA from '../../components/mdx/CTA.astro';
+import DataTable from '../../components/mdx/DataTable.astro';
+import Download from '../../components/mdx/Download.astro';
+import Figure from '../../components/mdx/Figure.astro';
+import FullBleedImage from '../../components/mdx/FullBleedImage.astro';
+import Gallery from '../../components/mdx/Gallery.astro';
+import InteractiveEmbed from '../../components/mdx/InteractiveEmbed.astro';
+import PullQuote from '../../components/mdx/PullQuote.astro';
+import RelatedContent from '../../components/mdx/RelatedContent.astro';
+import SourceBox from '../../components/mdx/SourceBox.astro';
+import Stat from '../../components/mdx/Stat.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }: CollectionEntry<'posts'>) => !data.draft);
+  return posts.map((post: CollectionEntry<'posts'>) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const mode = getBuildMode();
+const { Content } = await render(post);
+// `reference()` fields resolve to `{ collection, id }` objects, not plain
+// strings — getEntry/getEntries take the resolved reference directly.
+const author = await getEntry(post.data.author);
+const topics: CollectionEntry<'topics'>[] = post.data.topics.length
+  ? await getEntries(post.data.topics)
+  : [];
+
+// Registered names here must match the component names used in the MDX body
+// (which in turn must match the keys of `mdxContentComponents` in
+// apps/web/keystatic.content-components.tsx).
+const mdxComponents = {
+  Callout,
+  CTA,
+  DataTable,
+  Download,
+  Figure,
+  FullBleedImage,
+  Gallery,
+  InteractiveEmbed,
+  PullQuote,
+  RelatedContent,
+  SourceBox,
+  Stat,
+};
+
+// See src/pages/insights/index.astro for why timeZone is pinned to UTC.
+const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
+---
+
+<SiteLayout
+  title={`${post.data.seoTitle || post.data.title} | Terra Nexus`}
+  description={post.data.seoDescription || post.data.excerpt}
+  preview={mode === 'preview'}
+>
+  <article class="insight-article">
+    <header class="insight-header">
+      <div class="container">
+        {topics.length > 0 && (
+          <p class="insight-topics">
+            {topics.map((topic) => topic.data.name).join(' · ')}
+          </p>
+        )}
+        <h1>{post.data.title}</h1>
+        <p class="insight-excerpt">{post.data.excerpt}</p>
+        <div class="insight-meta">
+          {author && <span>By {author.data.name}</span>}
+          <span>{dateFormatter.format(post.data.publishDate)}</span>
+          {post.data.updatedDate && (
+            <span>Updated {dateFormatter.format(post.data.updatedDate)}</span>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <img class="insight-hero" src={post.data.heroImage} alt={post.data.heroImageAlt} />
+
+    <div class="container insight-body">
+      <Content components={mdxComponents} />
+    </div>
+
+    {author && (
+      <div class="container">
+        <div class="insight-author-card">
+          {author.data.photo && <img src={author.data.photo} alt="" />}
+          <div>
+            <p class="insight-author-name">{author.data.name}</p>
+            {author.data.title && <p class="insight-author-title">{author.data.title}</p>}
+          </div>
+        </div>
+      </div>
+    )}
+  </article>
+</SiteLayout>
+
+<style>
+  .insight-header {
+    padding-block: var(--space-16) var(--space-8);
+  }
+  .insight-topics {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.8125rem;
+    font-weight: var(--font-semibold);
+    color: var(--color-eyebrow);
+    margin: 0 0 var(--space-3);
+  }
+  .insight-header h1 {
+    max-width: 42rem;
+  }
+  .insight-excerpt {
+    max-width: 42rem;
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+  }
+  .insight-meta {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  .insight-hero {
+    width: 100%;
+    max-height: 32rem;
+    object-fit: cover;
+    display: block;
+  }
+  .insight-body {
+    max-width: 42rem;
+    padding-block: var(--space-10);
+  }
+  .insight-body :global(p) {
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+  .insight-author-card {
+    max-width: 42rem;
+    margin: 0 auto var(--space-16);
+    padding: var(--space-5) var(--space-6);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .insight-author-card img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+  }
+  .insight-author-name {
+    font-weight: var(--font-semibold);
+    margin: 0;
+  }
+  .insight-author-title {
+    color: var(--color-text-secondary);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+</style>
