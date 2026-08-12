@@ -37,7 +37,17 @@ export default defineConfig({
   // this. Only affects the build-time prerender step — on-demand rendered
   // routes (none yet; future GitHub-mode Keystatic routes) still run under
   // workerd regardless of this setting.
-  adapter: cloudflare({ prerenderEnvironment: 'node' }),
+  // imageService: 'passthrough' — the site has no astro:assets <Image>/<Picture>
+  // usage anywhere (Keystatic's asset fields intentionally render plain <img>,
+  // see keystatic.config.tsx comments), so the adapter's default
+  // 'cloudflare-binding' image service would provision an unused Cloudflare
+  // Images binding on every deploy. Passthrough avoids that speculative
+  // binding per CLAUDE.md (§6: don't add Cloudflare product bindings before
+  // there's a real need). The adapter still auto-provisions a `SESSION` KV
+  // namespace by default (no supported way to disable that on Astro 6.4.6 —
+  // `session: false` isn't a valid config shape on this version); it's
+  // unused (no getSession() calls in this repo) but harmless/free-tier.
+  adapter: cloudflare({ prerenderEnvironment: 'node', imageService: 'passthrough' }),
   build: {
     format: 'directory',
   },
