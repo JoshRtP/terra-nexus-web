@@ -57,6 +57,12 @@ still lives in `knowledge/`): root `AGENTS.md` and
    GitHub App/OAuth application and Cloudflare env config — not implemented;
    see `cloudflare-deployment` skill for the adapter prerequisite. Stop at
    that boundary and ask the owner rather than guessing at credentials.
+   `apps/web/keystatic.config.tsx` already selects `github` storage when
+   `KEYSTATIC_STORAGE_KIND=github` is set (falls back to `local` otherwise),
+   but hosted editing is separately blocked on an upstream `@keystatic/astro`
+   bug independent of credentials — see
+   `docs/architecture/web-platform-architecture.md` §6.1 before resuming
+   this work.
 4. Retrieve current Keystatic/Astro docs before changing integration
    config — this ecosystem moves fast; the setup above was verified against
    documentation current as of 2026-08-12, not memorized from training data.

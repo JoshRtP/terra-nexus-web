@@ -1,22 +1,30 @@
 ---
 name: cloudflare-deployment
-description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Use before any Cloudflare setup or deploy — no Cloudflare config exists in this repo yet.
+description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is blocked on an upstream bug, not credentials.
 ---
 
 # Cloudflare Deployment
 
 ## Current state (audited 2026-08-12)
 
-**Zero Cloudflare configuration exists.** No `wrangler.jsonc`/`.toml`, no
-`@astrojs/cloudflare` adapter, no environment bindings, no `.env`/
-`.env.example`. The app currently builds to a plain static `dist/` and could
-be hosted anywhere. Setting up Cloudflare is milestone M5 (per
-`docs/architecture/web-platform-architecture.md` §Migration phases) —
-entirely new infrastructure, not a migration of anything existing. Note:
-the architecture doc sequences M5 (Cloudflare) after M4 (Tailwind), but an
-owner-directed session may tackle Cloudflare preview deployment ahead of
-Tailwind — that reordering is a deliberate scope decision made per-session,
-not a change to the milestone dependencies themselves.
+**M5 done.** Deployed via `wrangler deploy` (adapter-generated config, no
+hand-written `wrangler.jsonc`) to a non-production Worker at
+`https://terra-nexus-web-preview.josh-242.workers.dev`. `astro.config.ts` sets
+`adapter: cloudflare({ prerenderEnvironment: 'node', imageService: 'passthrough' })`
+— `imageService: 'passthrough'` avoids provisioning an unused Cloudflare
+Images binding (no `astro:assets` usage anywhere in this repo). The adapter
+still auto-provisions an unused `SESSION` KV namespace by default; no
+supported way to disable that on this Astro/adapter version (`session:
+false` is not a valid config shape) — harmless/free-tier, not a chosen
+binding.
+
+**M6 (hosted Keystatic) is blocked** — not on missing credentials, but on a
+confirmed upstream `@keystatic/astro@5.2.0` bug incompatible with
+`@astrojs/cloudflare`'s Astro 6 `locals.runtime` removal. Full technical
+finding: `docs/architecture/web-platform-architecture.md` §6.1. The mixed
+static + on-demand rendering approach itself (public site static, `/keystatic`
++ `/api/keystatic/*` on-demand) was verified working correctly under real
+`workerd` via `wrangler dev` — this is not an Astro 7 problem.
 
 ## Setup sequence (when this milestone starts)
 

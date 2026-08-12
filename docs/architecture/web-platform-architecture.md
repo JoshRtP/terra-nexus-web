@@ -164,6 +164,64 @@ false") routes once implemented — those would run under `workerd`
 regardless of `prerenderEnvironment`, which only affects the static
 prerender step.
 
+### 6.1 Hosted Keystatic (GitHub storage) blocker — confirmed 2026-08-12
+
+**Finding:** `@keystatic/astro@5.2.0`'s bundled `/api/keystatic/*` route handler
+(`keystatic-astro-api.js`) unconditionally reads
+`context.locals.runtime.env` to source `KEYSTATIC_GITHUB_CLIENT_ID` /
+`KEYSTATIC_GITHUB_CLIENT_SECRET` / `KEYSTATIC_SECRET`. As of
+`@astrojs/cloudflare@13.x` (the whole major line that targets Astro 6, not
+just 13.7.0 — confirmed by inspecting `dist/utils/cf-helpers.js`), the
+adapter deliberately defines `locals.runtime.env` as a getter that **throws**
+(`"Astro.locals.runtime.env has been removed in Astro v6. Use 'import { env }
+from \"cloudflare:workers\"' instead."`) rather than returning `undefined`.
+Keystatic's optional chaining (`locals?.runtime?.env`) does not protect
+against this, because `locals.runtime` itself exists — only `.env` throws —
+so every `/api/keystatic/*` request 500s as soon as the handler is invoked,
+**before** GitHub credentials even come into play.
+
+**Verified empirically** (not from docs) by building with
+`SKIP_KEYSTATIC=` (Keystatic included) and `KEYSTATIC_STORAGE_KIND=github`,
+then running the built Worker under real `workerd` via `wrangler dev`: `/keystatic`
+itself renders fine (200, dashboard shell loads), but
+`GET /api/keystatic/tree` 500s with the exact error above.
+
+**This is not an Astro 7 problem.** The mixed static + on-demand rendering
+approach described in §12 of the original session brief works correctly on
+Astro 6.4.6 with the pinned adapter — confirmed by the same `wrangler dev`
+test: `/keystatic` and `/api/keystatic/*` are correctly served as on-demand
+(`prerender: false`) routes alongside the fully static public site, with no
+adapter/runtime errors of their own. The blocker is purely an unpatched gap
+in `@keystatic/astro` (already on its latest published version, `5.2.0`, as
+of this audit) that hasn't been updated for `@astrojs/cloudflare`'s Astro 6
+`locals.runtime` removal. Downgrading the adapter within the Astro-6-compatible
+13.x line does not help — the throwing behavior is present across that whole
+major version, not a late 13.7.0 addition.
+
+**Not fixed in this session.** A viable workaround exists in principle (a
+project-owned `src/pages/api/keystatic/[...params].ts` route, using
+`@keystatic/core/api/generic`'s `makeGenericAPIRouteHandler` directly and
+sourcing credentials from `cloudflare:workers`'s `env` export instead of the
+broken `locals.runtime.env` path — Astro's current routing gives file-based
+routes the same precedence as integration-injected ones, so a project file at
+the same pattern should take priority). Implementing it means reimplementing
+part of Keystatic's own OAuth/cookie/session wiring outside its tested code
+path, which is a security-sensitive design decision warranting its own
+reviewed change, not something to improvise inside this deployment session.
+Recommended options, either being enough to unblock M6: (a) check for a
+`@keystatic/astro` release newer than `5.2.0` before starting that work —
+it may simply get fixed upstream; (b) if not, implement and test the bypass
+route as its own scoped changeset.
+
+**Prepared and unaffected by this blocker:**
+`apps/web/keystatic.config.tsx` now selects `storage: { kind: 'github', repo:
+{ owner: 'JoshRtP', name: 'terra-nexus-web' } }` when
+`KEYSTATIC_STORAGE_KIND=github` is set (a Cloudflare env var, opt-in), and
+falls back to `local` storage otherwise — local development keeps working
+exactly as before with no env vars set. The GitHub App creation itself (an
+owner action, independent of the bug above) can proceed at any time using
+the real preview URL; see the session record for exact steps.
+
 ## 7. Migration phases (do these in order; each ends with a working build)
 
 | Phase | Exit criteria |
@@ -173,8 +231,8 @@ prerender step.
 | M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
 | M4 — Progressive Tailwind/design-system normalization | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
-| M5 — Cloudflare Workers preview deployment (adapter done 2026-08-12; deploy pending owner Cloudflare auth) | `@astrojs/cloudflare@13.7.0` adapter installed and configured, build/typecheck/test/check all green, `wrangler dev` verified locally; **preview deployment itself blocked on owner `wrangler login`**; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow | Deployed CMS editing works end-to-end (requires GitHub App/OAuth credentials + Cloudflare env — owner action required) |
+| M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
+| M6 — GitHub-backed production Keystatic workflow (blocked, see §6.1) | Env-conditional `keystatic.config.tsx` storage prepared (`KEYSTATIC_STORAGE_KIND=github` opt-in); confirmed the mixed static+on-demand rendering approach works on the pinned Astro 6.4.6/adapter 13.7.0 stack without an Astro 7 upgrade; **blocked on an upstream `@keystatic/astro@5.2.0` bug** (not a credentials or Astro-version issue) — see §6.1 |
 | M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
 | M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
 | M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |

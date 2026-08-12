@@ -8,16 +8,24 @@
 // type, not yet populated or routed; see
 // docs/architecture/okf-migration-inventory.md.
 //
-// GitHub-storage mode (deployed CMS editing) is not configured — it needs
-// an owner-created GitHub App/OAuth application. See cloudflare-deployment
-// and keystatic-mdx skills for what's required before that can happen.
+// GitHub-storage mode (deployed CMS editing, M6): environment-conditional —
+// local storage stays the default everywhere (including this repo's own
+// `wrangler dev`/preview builds unless explicitly opted in) so local
+// development is never silently broken by a missing GitHub App. Hosted
+// environments opt in by setting KEYSTATIC_STORAGE_KIND=github as a
+// Cloudflare Worker environment variable once the GitHub App exists (see
+// docs/architecture/web-platform-architecture.md §6 and
+// .claude/skills/keystatic-mdx/SKILL.md for the exact setup steps).
 import { config, fields, collection } from '@keystatic/core';
 import { mdxContentComponents } from './keystatic.content-components';
 
+const storage =
+  process.env.KEYSTATIC_STORAGE_KIND === 'github'
+    ? ({ kind: 'github', repo: { owner: 'JoshRtP', name: 'terra-nexus-web' } } as const)
+    : ({ kind: 'local' } as const);
+
 export default config({
-  storage: {
-    kind: 'local',
-  },
+  storage,
   ui: {
     brand: { name: 'Terra Nexus' },
     navigation: {
