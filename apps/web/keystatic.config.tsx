@@ -28,7 +28,21 @@ import { mdxContentComponents } from './keystatic.content-components';
 
 const storage =
   import.meta.env.PUBLIC_KEYSTATIC_STORAGE_KIND === 'github'
-    ? ({ kind: 'github', repo: { owner: 'JoshRtP', name: 'terra-nexus-web' } } as const)
+    ? // pathPrefix is required here because this is a monorepo: the repo
+      // root is JoshRtP/terra-nexus-web, but all Keystatic-managed content
+      // (collection `path`s below, e.g. 'src/content/posts/*') actually
+      // lives under apps/web/. Local storage mode "just works" without this
+      // because it resolves paths relative to process.cwd() (apps/web, when
+      // dev is run from there) — GitHub storage mode has no cwd concept and
+      // reads from the literal repo root over the GitHub API instead.
+      // Confirmed empirically: without pathPrefix, the hosted GitHub-mode
+      // dashboard showed the Insights collection as 0 entries despite a real
+      // article being committed on main at apps/web/src/content/posts/.
+      ({
+          kind: 'github',
+          repo: { owner: 'JoshRtP', name: 'terra-nexus-web' },
+          pathPrefix: 'apps/web',
+        } as const)
     : ({ kind: 'local' } as const);
 
 export default config({
