@@ -1,6 +1,6 @@
 ---
 name: keystatic-mdx
-description: Keystatic collections/singletons, MDX schema, content components, figures/citations. Canonical CMS for Terra Nexus — installed and live (local storage mode) as of 2026-08-12.
+description: Keystatic collections/singletons, MDX schema, content components, figures/citations. Canonical CMS for Terra Nexus — installed and live (local storage mode) as of 2026-08-12; GitHub storage mode's Cloudflare compatibility blocker resolved via a compat shim as of 2026-08-12 (M6), GitHub App/credentials pending owner action.
 ---
 
 # Keystatic + MDX
@@ -53,16 +53,20 @@ still lives in `knowledge/`): root `AGENTS.md` and
    references, case-study outcomes), the OKF content-integrity rules in
    `AGENTS.md` still apply — no invented clients/case studies/outcomes, no
    unapproved public claims.
-3. `github` storage mode (deployed CMS editing) requires an owner-created
-   GitHub App/OAuth application and Cloudflare env config — not implemented;
-   see `cloudflare-deployment` skill for the adapter prerequisite. Stop at
-   that boundary and ask the owner rather than guessing at credentials.
-   `apps/web/keystatic.config.tsx` already selects `github` storage when
-   `KEYSTATIC_STORAGE_KIND=github` is set (falls back to `local` otherwise),
-   but hosted editing is separately blocked on an upstream `@keystatic/astro`
-   bug independent of credentials — see
-   `docs/architecture/web-platform-architecture.md` §6.1 before resuming
-   this work.
+3. `github` storage mode (deployed CMS editing): the upstream
+   `@keystatic/astro`/Cloudflare-adapter blocker is **resolved** (2026-08-12)
+   via `apps/web/src/lib/keystatic-cloudflare-shim.ts` — see
+   `docs/architecture/web-platform-architecture.md` §6.1 for the mechanism,
+   verified-working state, and deletion condition. `apps/web/keystatic.config.tsx`
+   selects `github` storage when **`PUBLIC_KEYSTATIC_STORAGE_KIND=github`**
+   is set at build time (note the `PUBLIC_` prefix — a plain
+   `KEYSTATIC_STORAGE_KIND` does not work; Vite doesn't statically inline
+   bare `process.env.*` for the client UI bundle or the on-demand `workerd`
+   SSR bundle), falls back to `local` otherwise. What's still outstanding is
+   the GitHub App itself and its credentials — an owner-created GitHub
+   App/OAuth application and Cloudflare secrets, not implemented as of this
+   audit. Stop at that boundary and ask the owner rather than guessing at
+   credentials.
 4. Retrieve current Keystatic/Astro docs before changing integration
    config — this ecosystem moves fast; the setup above was verified against
    documentation current as of 2026-08-12, not memorized from training data.

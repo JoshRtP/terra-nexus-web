@@ -1,6 +1,6 @@
 ---
 name: cloudflare-deployment
-description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is blocked on an upstream bug, not credentials.
+description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic's Cloudflare compatibility blocker is resolved via a compat shim as of 2026-08-12 (M6), GitHub App/credentials pending owner action.
 ---
 
 # Cloudflare Deployment
@@ -18,13 +18,26 @@ supported way to disable that on this Astro/adapter version (`session:
 false` is not a valid config shape) — harmless/free-tier, not a chosen
 binding.
 
-**M6 (hosted Keystatic) is blocked** — not on missing credentials, but on a
-confirmed upstream `@keystatic/astro@5.2.0` bug incompatible with
-`@astrojs/cloudflare`'s Astro 6 `locals.runtime` removal. Full technical
-finding: `docs/architecture/web-platform-architecture.md` §6.1. The mixed
-static + on-demand rendering approach itself (public site static, `/keystatic`
-+ `/api/keystatic/*` on-demand) was verified working correctly under real
-`workerd` via `wrangler dev` — this is not an Astro 7 problem.
+**M6 (hosted Keystatic) — Cloudflare compatibility blocker resolved
+(2026-08-12).** The previously-confirmed upstream `@keystatic/astro@5.2.0`
+bug (incompatible with `@astrojs/cloudflare`'s Astro 6 `locals.runtime`
+removal) is worked around by `apps/web/src/lib/keystatic-cloudflare-shim.ts`,
+wired in via a local Astro integration in `astro.config.ts` (not a plain
+`src/pages` file — see the shim's own header comment and
+`docs/architecture/web-platform-architecture.md` §6.1 for why). Verified
+resolved under real `workerd` both locally (`wrangler dev`) and on the
+deployed `terra-nexus-web-preview` Worker (`wrangler tail` shows Keystatic
+core's own "Missing required config" error, not the original
+`Astro.locals.runtime.env` throw). Building a GitHub-storage variant
+requires `SKIP_KEYSTATIC=false PUBLIC_KEYSTATIC_STORAGE_KIND=github` (note
+the `PUBLIC_` prefix — see `keystatic-mdx` skill). Default production
+builds (`SKIP_KEYSTATIC=true`, i.e. `npm run web:build` unmodified) are
+unaffected — still fully static, zero on-demand routes, regression-tested
+in `apps/web/test/astro-foundation.test.ts`. **Still outstanding:** the
+GitHub App itself doesn't exist yet — creating it and its Wrangler secrets
+is an owner action (guided flow from the hosted `/keystatic` UI); until
+then hosted Keystatic will 500 with a "Missing required config" error,
+which is expected, not a regression.
 
 ## Setup sequence (when this milestone starts)
 

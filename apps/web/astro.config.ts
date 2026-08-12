@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import type { AstroIntegration } from 'astro';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
@@ -17,6 +18,30 @@ console.info(`[Terra Nexus] static foundation build mode: ${buildMode}`);
 // .claude/skills/keystatic-mdx/SKILL.md and
 // docs/architecture/web-platform-architecture.md §4.
 const includeKeystatic = process.env.SKIP_KEYSTATIC !== 'true';
+
+// Keystatic/Cloudflare compatibility shim (M6) — see
+// src/lib/keystatic-cloudflare-shim.ts and
+// docs/architecture/web-platform-architecture.md §6.1. Injected the same
+// way @keystatic/astro injects its own /api/keystatic route (not a plain
+// src/pages file), under the same includeKeystatic condition, so default
+// production builds (SKIP_KEYSTATIC=true) stay fully static with zero
+// on-demand routes — identical to pre-M6 build output. Listed before
+// keystatic() below so it wins route-array precedence over the upstream
+// (broken-under-Cloudflare) handler for the same pattern.
+function keystaticCloudflareCompatShim(): AstroIntegration {
+  return {
+    name: 'keystatic-cloudflare-compat-shim',
+    hooks: {
+      'astro:config:setup': ({ injectRoute }) => {
+        injectRoute({
+          entrypoint: './src/lib/keystatic-cloudflare-shim.ts',
+          pattern: '/api/keystatic/[...params]',
+          prerender: false,
+        });
+      },
+    },
+  };
+}
 
 // Cloudflare Workers adapter (M5, added 2026-08-12). The public site stays
 // fully prerendered (output: 'static') — the adapter's job here is only to
@@ -55,5 +80,9 @@ export default defineConfig({
     host: true,
     port: 4321,
   },
-  integrations: [mdx(), react(), ...(includeKeystatic ? [keystatic()] : [])],
+  integrations: [
+    mdx(),
+    react(),
+    ...(includeKeystatic ? [keystaticCloudflareCompatShim(), keystatic()] : []),
+  ],
 });

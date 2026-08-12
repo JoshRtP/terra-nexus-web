@@ -8,19 +8,26 @@
 // type, not yet populated or routed; see
 // docs/architecture/okf-migration-inventory.md.
 //
-// GitHub-storage mode (deployed CMS editing, M6): environment-conditional —
-// local storage stays the default everywhere (including this repo's own
-// `wrangler dev`/preview builds unless explicitly opted in) so local
-// development is never silently broken by a missing GitHub App. Hosted
-// environments opt in by setting KEYSTATIC_STORAGE_KIND=github as a
-// Cloudflare Worker environment variable once the GitHub App exists (see
-// docs/architecture/web-platform-architecture.md §6 and
-// .claude/skills/keystatic-mdx/SKILL.md for the exact setup steps).
+// GitHub-storage mode (deployed CMS editing, M6): a build-time toggle, not a
+// deployed-request-time one — this config is bundled both into the
+// browser-side Keystatic UI and into the on-demand /api/keystatic route's
+// workerd bundle, and neither target statically inlines bare
+// `process.env.*` reads (Node-only prerendered pages elsewhere in this repo
+// can use `process.env` because they're evaluated during the Node prerender
+// step; this file is not). `import.meta.env.PUBLIC_*` is Astro/Vite's
+// supported mechanism for a value that must be baked into both the client
+// and server bundles at build time — see
+// docs/architecture/web-platform-architecture.md §6.1. Local storage stays
+// the default everywhere (including this repo's own `wrangler dev`/build
+// unless explicitly opted in) so local development is never silently broken
+// by a missing GitHub App. Hosted builds opt in by setting
+// `PUBLIC_KEYSTATIC_STORAGE_KIND=github` in the shell that runs the build
+// that gets deployed (see .claude/skills/keystatic-mdx/SKILL.md).
 import { config, fields, collection } from '@keystatic/core';
 import { mdxContentComponents } from './keystatic.content-components';
 
 const storage =
-  process.env.KEYSTATIC_STORAGE_KIND === 'github'
+  import.meta.env.PUBLIC_KEYSTATIC_STORAGE_KIND === 'github'
     ? ({ kind: 'github', repo: { owner: 'JoshRtP', name: 'terra-nexus-web' } } as const)
     : ({ kind: 'local' } as const);
 

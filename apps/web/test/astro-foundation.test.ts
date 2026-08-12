@@ -49,6 +49,15 @@ describe('Astro static foundation', () => {
     const pilotRoute = 'commercial-pathways-lower-emissions-beef-2025';
 
     build('production');
+    // The Keystatic/Cloudflare compat shim (src/lib/keystatic-cloudflare-shim.ts,
+    // see docs/architecture/web-platform-architecture.md §6.1) is injected
+    // only when Keystatic itself is mounted (SKIP_KEYSTATIC unset/false).
+    // Default production builds (SKIP_KEYSTATIC=true, as here) must stay
+    // fully static with zero on-demand routes — dist/server exists as an
+    // (empty) build-internals directory even for pure static builds, but
+    // entry.mjs (the actual worker script) must not — identical to pre-M6
+    // build output.
+    expect(existsSync(resolve(APP_ROOT, 'dist/server/entry.mjs'))).toBe(false);
     const productionIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');
