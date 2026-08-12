@@ -10,8 +10,13 @@ description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/prod
 **Zero Cloudflare configuration exists.** No `wrangler.jsonc`/`.toml`, no
 `@astrojs/cloudflare` adapter, no environment bindings, no `.env`/
 `.env.example`. The app currently builds to a plain static `dist/` and could
-be hosted anywhere. Setting up Cloudflare is milestone M4 — entirely new
-infrastructure, not a migration of anything existing.
+be hosted anywhere. Setting up Cloudflare is milestone M5 (per
+`docs/architecture/web-platform-architecture.md` §Migration phases) —
+entirely new infrastructure, not a migration of anything existing. Note:
+the architecture doc sequences M5 (Cloudflare) after M4 (Tailwind), but an
+owner-directed session may tackle Cloudflare preview deployment ahead of
+Tailwind — that reordering is a deliberate scope decision made per-session,
+not a change to the milestone dependencies themselves.
 
 ## Setup sequence (when this milestone starts)
 

@@ -28,8 +28,8 @@ for what has migrated and what remains.
 | Styling | Hand-written CSS (`design-system.css`, `foundation.css`) | Tailwind CSS backed by the same design tokens |
 | Motion | Plain CSS transitions only | GSAP for cinematic/scroll sequences; CSS for simple motion |
 | Content | Keystatic + MDX (local storage) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
-| Repo/source of truth | GitHub (`JoshRtP/Webservices`, branch `homepage-alt-draft`) | Unchanged |
-| Hosting | None configured — no `wrangler.jsonc`, no adapter, static `dist/` only | Cloudflare Workers |
+| Repo/source of truth | GitHub (`JoshRtP/terra-nexus-web`, branch `main`; legacy history preserved read-only at `JoshRtP/Webservices`) | Unchanged |
+| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed, static output, `wrangler dev` verified locally; not yet deployed (owner Cloudflare auth pending) | Cloudflare Workers (preview live) |
 | Large files | Everything in `public/`, including a 16MB reference PNG | Cloudflare R2 for large/reusable assets |
 | Video | None in repo yet | Cloudflare Stream for substantial video |
 | App data | None | Cloudflare D1, only if/when a real relational-data need appears |
@@ -138,11 +138,31 @@ preserving before OKF is retired.
 
 ## 6. Cloudflare direction
 
-No Cloudflare configuration exists yet — no `wrangler.jsonc`, no adapter.
-Adding `@astrojs/cloudflare` + `wrangler.jsonc` and proving a preview
-deployment is a discrete milestone (M4). Until then this app builds to a
-plain static `dist/` and could be hosted anywhere; do not assume Cloudflare
-bindings exist in code today.
+**Adapter installed, preview deployment not yet proven (as of 2026-08-12).**
+`@astrojs/cloudflare` is pinned to `13.7.0` in `apps/web/package.json` — the
+last release whose peer range (`astro@^6.3.0`) covers this repo's Astro
+`6.4.6`; `@astrojs/cloudflare@14+` requires Astro 7 and is an explicit
+non-goal until an Astro 7 upgrade is its own deliberate milestone. `astro.config.ts`
+sets `output: 'static'` (the site stays fully prerendered — no route is
+server-rendered yet) with `adapter: cloudflare({ prerenderEnvironment: 'node' })`;
+the `prerenderEnvironment` override is required because the OKF compiler
+(`apps/web/src/lib/okf/compiler.ts`) uses Node built-ins (`node:fs/promises`,
+`node:crypto`, `node:path`, `node:url`) at build time, which the adapter's
+default `workerd` prerender runtime doesn't provide.
+
+No hand-written `wrangler.jsonc` exists — the adapter auto-generates one
+into `dist/client/wrangler.json` at build time (worker name derived as
+`terra-nexus-web`), which is current recommended practice for a project
+with no custom bindings yet. Verified locally: `astro build` succeeds,
+`npx wrangler dev` serves the built worker correctly under `workerd`
+(spot-checked `/`, `/insights`, `/case-studies`, `/robots.txt`, a 404
+route). Deploying an actual preview (`wrangler deploy`) requires
+`wrangler login` against an owner Cloudflare account — not yet
+authenticated in this environment; see the session record for exact
+instructions. GitHub-mode Keystatic (M6) will need on-demand ("prerender:
+false") routes once implemented — those would run under `workerd`
+regardless of `prerenderEnvironment`, which only affects the static
+prerender step.
 
 ## 7. Migration phases (do these in order; each ends with a working build)
 
@@ -153,7 +173,7 @@ bindings exist in code today.
 | M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
 | M4 — Progressive Tailwind/design-system normalization | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
-| M5 — Cloudflare Workers preview deployment | `@astrojs/cloudflare` adapter + `wrangler.jsonc`; preview deployment verified; no production DNS touched |
+| M5 — Cloudflare Workers preview deployment (adapter done 2026-08-12; deploy pending owner Cloudflare auth) | `@astrojs/cloudflare@13.7.0` adapter installed and configured, build/typecheck/test/check all green, `wrangler dev` verified locally; **preview deployment itself blocked on owner `wrangler login`**; no production DNS touched |
 | M6 — GitHub-backed production Keystatic workflow | Deployed CMS editing works end-to-end (requires GitHub App/OAuth credentials + Cloudflare env — owner action required) |
 | M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
 | M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |

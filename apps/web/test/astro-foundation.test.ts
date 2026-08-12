@@ -41,7 +41,11 @@ describe('Astro static foundation', () => {
   it('builds production and preview safely with no source mutation', { timeout: 120_000 }, async () => {
     const beforeKnowledge = await fingerprint(resolve(REPOSITORY_ROOT, 'knowledge'));
     const beforeSchemas = await fingerprint(resolve(REPOSITORY_ROOT, 'schemas'));
-    const dist = resolve(APP_ROOT, 'dist');
+    // The Cloudflare adapter (added 2026-08-12) splits build output into
+    // dist/client (the deployable static assets Wrangler serves) and
+    // dist/server (worker/prerender internals) — even with output: 'static'.
+    // dist/client is the equivalent of the old flat dist/ this test checks.
+    const dist = resolve(APP_ROOT, 'dist/client');
     const pilotRoute = 'commercial-pathways-lower-emissions-beef-2025';
 
     build('production');
