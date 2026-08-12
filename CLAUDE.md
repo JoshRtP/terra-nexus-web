@@ -15,16 +15,23 @@ new top-level dependency, deployment target changes).
 Do not assume this is a greenfield scaffold. As of the last audit
 (2026-08-12), `apps/web` is a working, tested, static Astro 6 site with:
 
-- **No React, no Tailwind, no GSAP, no Keystatic, no Cloudflare adapter yet.**
-  These are target-architecture additions, not existing infrastructure to
-  "normalize." Introduce them deliberately, one milestone at a time, per
-  §Migration phases below — not all at once.
+- **Keystatic + MDX is the canonical target content-management
+  architecture** (decided 2026-08-12). React and MDX were introduced
+  specifically to support the Keystatic admin UI and MDX editorial
+  content — not as general-purpose additions. Tailwind, GSAP, and a
+  Cloudflare adapter are still not installed; introduce them deliberately,
+  one milestone at a time, per §Migration phases below — not all at once.
 - A bespoke, well-tested **OKF governed-content pipeline**
   (`apps/web/src/lib/okf/*`) that compiles `knowledge/` (repo root) into
   routes at build time. This is NOT Astro Content Collections and is NOT
   Keystatic. It has its own eligibility/approval rules — see `AGENTS.md`.
-  Do not route around it or duplicate its job with a second content system
-  without an explicit decision to replace it.
+  **It is retained temporarily** as a migration source, a reference for
+  existing structured content, and a source of validation concepts worth
+  preserving — not as a second permanent publishing architecture. It powers
+  Case Studies today (the only content type actually wired to it); it
+  should be retired once its remaining content and useful validation
+  behavior have migrated to Keystatic. See
+  `docs/architecture/okf-migration-inventory.md`.
 - Plain CSS design tokens in `apps/web/src/styles/design-system.css`
   (already reverse-engineered from the live WordPress brand kit) plus an
   older `foundation.css`. Treat `design-system.css` as the current source of
@@ -37,15 +44,22 @@ Do not assume this is a greenfield scaffold. As of the last audit
 ## Non-negotiable rules
 
 1. **Astro first.** React is only for components that genuinely need
-   client-side state/interaction. There is currently zero React in the repo —
-   adding it is a real architectural step, not a default.
+   client-side state/interaction, plus the Keystatic admin UI itself (its
+   one sanctioned use today). Do not add React to ordinary page components
+   as a default.
 2. **No page-specific one-off styling** when an existing design-system
    pattern in `design-system.css` (or its future Tailwind-token replacement)
    can be extended instead.
-3. **Content stays in `knowledge/` via the OKF pipeline** until a deliberate,
-   owner-approved decision is made to introduce Keystatic/MDX alongside or in
-   place of it. Do not hand-write blog/editorial content directly into page
-   components.
+3. **Keystatic + MDX is the canonical content-management architecture.**
+   New editorial content (blog/Insights, and eventually Case Studies,
+   Expertise, Services, Audiences) is authored through Keystatic collections
+   in `apps/web/src/content/`, not hand-written into page components and not
+   added to `knowledge/`. The OKF/`knowledge/` pipeline is retained
+   temporarily as a migration source and reference — see
+   `docs/architecture/okf-migration-inventory.md` for what has migrated and
+   what remains. Do not invest further in OKF as primary publishing
+   infrastructure; do not build a second competing content system alongside
+   it without cause.
 4. **Use current official documentation** (Context7 and/or official project
    docs) before implementing or changing configuration for Astro, Tailwind,
    React, GSAP, Keystatic, Cloudflare, or Wrangler — these move fast; do not
@@ -101,13 +115,6 @@ required viewports and inspect console output before reporting completion.
 
 ## Known pre-existing issues (not introduced by this migration, not yet fixed)
 
-- `apps/web/src/pages/homepage-alt.astro:575` — `astro check` reports
-  `'hero' is possibly 'null'` (TS 18047). One error, pre-existing on
-  `homepage-alt-draft`.
-- `knowledge/bundle-inventory.json` and `knowledge/TREE.txt` are stale
-  relative to current `knowledge/` content — `npm run check` fails on the
-  inventory-freshness step until `python scripts/generate_inventory.py
-  knowledge --tree` is run and the results committed.
 - `apps/web/public/images/terranexus-colorway-palette-sheet.png` is a 16MB
   design-reference file sitting in the static `public/` output path — it
   ships to production as-is today. Worth moving to R2 or `docs/` once media
@@ -118,6 +125,10 @@ required viewports and inspect console output before reporting completion.
 ## Milestone-scoped work (do not skip ahead)
 
 See `docs/architecture/web-platform-architecture.md` §Migration phases for
-the full sequence. Do not install Tailwind, Keystatic, GSAP, or a Cloudflare
-adapter speculatively — introduce each as its own reviewable phase with a
-working build/test/QA loop before and after.
+the full sequence. Keystatic + MDX (local storage mode) landed as of
+2026-08-12 (M2/M3); the admin UI is dev-only via `SKIP_KEYSTATIC` (see
+`.claude/skills/keystatic-mdx/SKILL.md`) and is excluded from production
+builds until Cloudflare (M4/M6) is addressed. Do not install Tailwind, GSAP,
+a Cloudflare adapter, or GitHub-storage Keystatic mode speculatively —
+introduce each as its own reviewable phase with a working build/test/QA loop
+before and after.

@@ -7,13 +7,21 @@ description: Astro-first rendering, routing, component boundaries, React-island 
 
 ## Current state (audited 2026-08-12)
 
-- Astro 6.4.6, `output: 'static'`, zero integrations registered, no adapter.
-- No React/Vue/Svelte anywhere in the repo. Every page is plain `.astro` +
-  vanilla JS/TS.
-- Content is not Astro Content Collections — it's a bespoke OKF compiler
-  (`apps/web/src/lib/okf/*`) reading `knowledge/` at build time. See
-  `keystatic-mdx` skill and `docs/architecture/web-platform-architecture.md`
-  §4 before assuming `src/content/` exists.
+- Astro 6.4.6, `output: 'static'`, no adapter. Integrations registered:
+  `@astrojs/mdx`, `@astrojs/react`, and `@keystatic/astro` (the last only
+  when `SKIP_KEYSTATIC` is unset — excluded from production builds).
+- React exists in the repo for exactly one reason: the Keystatic admin UI
+  (`/keystatic`, dev-only). No other page or component uses React — every
+  public-facing page is still plain `.astro` + vanilla JS/TS. Don't treat
+  React's presence as license to reach for it elsewhere without the same
+  genuine-interactivity justification in rule 1 below.
+- `src/content/` now exists (Astro Content Collections: `posts`, `authors`,
+  `topics`, `caseStudies`), bridging Keystatic-managed files to Astro
+  rendering — see `keystatic-mdx` skill and
+  `docs/architecture/web-platform-architecture.md` §4. The bespoke OKF
+  compiler (`apps/web/src/lib/okf/*` reading `knowledge/`) still exists
+  alongside it, wired only to Case Studies, and is being phased out — see
+  `docs/architecture/okf-migration-inventory.md`.
 - Layouts: `FoundationLayout.astro` (base shell), `SiteLayout.astro`
   (primary, takes `title`/`description`/`preview` props).
 - Components are flat in `apps/web/src/components/` (no layout/marketing/

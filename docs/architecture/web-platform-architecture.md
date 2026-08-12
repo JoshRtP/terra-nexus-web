@@ -10,6 +10,15 @@ architecture document. It reflects what the repository actually contains
 today (audited 2026-08-12) plus the target direction. Read [`CLAUDE.md`](../../CLAUDE.md)
 first for operating rules; this doc is the "why" and the phased plan.
 
+**Canonical CMS decision (2026-08-12):** Keystatic + MDX is the target
+canonical content-management architecture for Terra Nexus. The existing
+OKF/`knowledge/` pipeline is retained temporarily as a migration and
+reference system — a source for content still being migrated, a record of
+validation rules worth preserving, and a rollback point — and should be
+retired once required content and useful validation behavior have moved to
+Keystatic. See [`okf-migration-inventory.md`](okf-migration-inventory.md)
+for what has migrated and what remains.
+
 ## 1. Current state (audited, not aspirational)
 
 | Layer | Today | Target |
@@ -18,7 +27,7 @@ first for operating rules; this doc is the "why" and the phased plan.
 | Interactive UI | None — no React/Vue/Svelte in the repo | React islands, added only where a component needs client state |
 | Styling | Hand-written CSS (`design-system.css`, `foundation.css`) | Tailwind CSS backed by the same design tokens |
 | Motion | Plain CSS transitions only | GSAP for cinematic/scroll sequences; CSS for simple motion |
-| Content | Bespoke OKF governed-content pipeline reading `knowledge/` (repo root) at build time — see `AGENTS.md` | Keystatic + MDX for editorial/blog content, introduced *alongside* OKF, not as a replacement, unless a later decision says otherwise |
+| Content | Keystatic + MDX (local storage) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
 | Repo/source of truth | GitHub (`JoshRtP/Webservices`, branch `homepage-alt-draft`) | Unchanged |
 | Hosting | None configured — no `wrangler.jsonc`, no adapter, static `dist/` only | Cloudflare Workers |
 | Large files | Everything in `public/`, including a 16MB reference PNG | Cloudflare R2 for large/reusable assets |
@@ -38,15 +47,21 @@ what already works.
 terra-nexus-website/          (npm workspace root)
   apps/web/                   Astro app (@terra-nexus/web)
     src/
-      pages/                  file-based routes (see route table below)
+      pages/                  file-based routes (see route table below);
+                               insights/ + keystatic/[...params].astro added M3
       layouts/                FoundationLayout.astro, SiteLayout.astro
       components/             flat: Header, Footer, PageHero, CapabilityPage,
                                ExpertisePage, CaseStudyArticle, CaseStudyCard
+      components/mdx/         Keystatic MDX content components (Figure,
+                               Callout, PullQuote, Stat, CTA, etc.) — added M3
+      content/                Keystatic-managed collections (posts, authors,
+                               topics, caseStudies) + config.ts — added M3
       styles/                 design-system.css, foundation.css
       lib/okf/                governed-content compiler (reads knowledge/, schemas/)
+    keystatic.config.ts       Keystatic collections/singletons — added M3
     scripts/                  run-astro.mjs, content-cli.ts, repository-check.ts
     test/                     vitest suite + fixtures
-  knowledge/                  OKF governed content bundle (source of truth for copy)
+  knowledge/                  OKF governed content bundle (source of truth for copy; legacy — see §4)
   schemas/                    OKF schema definitions
   scripts/                    repo-root Python validators (validate_okf.py, tnx_validate.py, ...)
   tests/                      pytest suite for the Python validators
@@ -74,26 +89,41 @@ Fully static, no server rendering, no API routes besides a dynamic
 - `/expertise`, `/expertise/{9 topic slugs}`
 - `/who-we-work-with`, `/who-we-work-with/{2 segment slugs}`
 - `/contact`
+- `/insights`, `/insights/[slug]` (added M3 — Keystatic `posts` collection,
+  `getStaticPaths()` from Astro Content Collections, `prerender = true`)
 - `/robots.txt` (dynamic; emits `noindex,nofollow` + disallow when `TNX_BUILD_MODE=preview`)
+- `/keystatic` (admin UI; dev-only, mounted only when `SKIP_KEYSTATIC` is
+  unset — not present in production builds)
 
 Any route restructuring must preserve these paths or add explicit redirects
 before cutover — see §7.
 
-## 4. Content system: OKF, not (yet) Keystatic
+## 4. Content system: Keystatic (canonical), OKF (temporary/legacy)
 
-`apps/web/src/lib/okf/*` compiles `knowledge/` into build-time route data.
-Only specific record types are route-eligible (Service Family, Service
-Offering, Expertise Topic, Audience Segment, Case Study, Qualification
-Module, Insight, Team Member/Bio/Profile). Publication requires explicit
-`publication.approved_by`; the compiler never writes back to `knowledge/`.
-Full rules: `AGENTS.md` + `knowledge/governance/source-precedence.md`.
+**Keystatic + MDX** (`apps/web/keystatic.config.ts`, local storage mode) is
+the canonical CMS. Collections live under `apps/web/src/content/` and are
+bridged to Astro pages via Astro Content Collections
+(`apps/web/src/content/config.ts`), per current Astro/Keystatic guidance.
+Implemented collections: `posts` (Insights/blog, MDX body, fully wired to
+`/insights` routes), `authors`, `topics`. `caseStudies` is defined
+(schema-only) as the designed future replacement for OKF's Case Study type
+but is not yet populated or routed. The `/keystatic` admin route is mounted
+only when `SKIP_KEYSTATIC` is unset (local dev), and excluded from
+production builds — it needs server rendering, which the site's static
+output doesn't otherwise require; see `.claude/skills/keystatic-mdx/SKILL.md`
+and `cloudflare-deployment` for the adapter implications once GitHub-mode
+Keystatic (deployed editing) is tackled.
 
-**Decision needed before Keystatic work starts:** does Keystatic (a) run
-alongside OKF for a genuinely new editorial/blog surface (e.g. a future blog
-that isn't part of the governed service/expertise/case-study graph), or (b)
-eventually replace OKF for some content types? This has not been decided —
-flag it back to the owner when Keystatic work begins (M3 below); don't
-assume.
+`apps/web/src/lib/okf/*` still compiles `knowledge/` into build-time route
+data, but only **Case Studies** are actually wired to it today (the other
+record types the compiler supports — Service Family, Service Offering,
+Expertise Topic, Audience Segment, Insight, Team Member/Bio/Profile — have
+no consuming Astro pages). OKF is retained temporarily as a migration source
+and reference, not as a permanent second publishing architecture. Full
+rules: `AGENTS.md` + `knowledge/governance/source-precedence.md`. See
+[`okf-migration-inventory.md`](okf-migration-inventory.md) for the
+folder-by-folder migration status and what validation concepts are worth
+preserving before OKF is retired.
 
 ## 5. Styling and motion direction
 
@@ -119,16 +149,16 @@ bindings exist in code today.
 | Phase | Exit criteria |
 | --- | --- |
 | M0 — Baseline (done 2026-08-12) | Repo copied to new path with git history intact; install/build/typecheck/test/check all run; issues logged in `CLAUDE.md` |
-| M1 — Docs + tooling scaffold (this session) | `CLAUDE.md`, `docs/architecture/`, `.claude/skills/*`, subagent scaffolds in place |
-| M2 — Tailwind adoption | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
-| M3 — Keystatic proof | Keystatic local mode + one real MDX collection proven end-to-end; explicit decision recorded on OKF-vs-Keystatic scope |
-| M4 — Cloudflare proof | `@astrojs/cloudflare` adapter + `wrangler.jsonc`; preview deployment verified; no production DNS touched |
-| M5 — Keystatic GitHub mode | Deployed CMS editing works end-to-end (requires GitHub write access + Cloudflare env) |
-| M6 — Design system hardening | Reusable component vocabulary for sections/editorial blocks |
-| M7 — Cinematic hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
-| M8 — Content/SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated |
-| M9 — Launch readiness | Redirects, sitemap, analytics, forms, perf, accessibility validated |
-| M10 — Cutover | DNS moved — requires explicit owner authorization, never automatic |
+| M1 — Green baseline + architecture docs (done 2026-08-12) | Known TS error + stale inventory fixed; `CLAUDE.md`/architecture doc/skills updated to state Keystatic is canonical, OKF is temporary |
+| M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
+| M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
+| M4 — Progressive Tailwind/design-system normalization | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
+| M5 — Cloudflare Workers preview deployment | `@astrojs/cloudflare` adapter + `wrangler.jsonc`; preview deployment verified; no production DNS touched |
+| M6 — GitHub-backed production Keystatic workflow | Deployed CMS editing works end-to-end (requires GitHub App/OAuth credentials + Cloudflare env — owner action required) |
+| M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
+| M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
+| M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |
+| M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
 
 ## 8. Reference
 
