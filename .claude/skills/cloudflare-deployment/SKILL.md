@@ -1,6 +1,6 @@
 ---
 name: cloudflare-deployment
-description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic's Cloudflare compatibility blocker is resolved via a compat shim as of 2026-08-12 (M6), GitHub App/credentials pending owner action.
+description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is fully working as of 2026-08-12 — compat shim, GitHub App/credentials, and publishing loop all verified. Cloudflare Git auto-deploy still pending.
 ---
 
 # Cloudflare Deployment
@@ -33,11 +33,21 @@ requires `SKIP_KEYSTATIC=false PUBLIC_KEYSTATIC_STORAGE_KIND=github` (note
 the `PUBLIC_` prefix — see `keystatic-mdx` skill). Default production
 builds (`SKIP_KEYSTATIC=true`, i.e. `npm run web:build` unmodified) are
 unaffected — still fully static, zero on-demand routes, regression-tested
-in `apps/web/test/astro-foundation.test.ts`. **Still outstanding:** the
-GitHub App itself doesn't exist yet — creating it and its Wrangler secrets
-is an owner action (guided flow from the hosted `/keystatic` UI); until
-then hosted Keystatic will 500 with a "Missing required config" error,
-which is expected, not a regression.
+in `apps/web/test/astro-foundation.test.ts`.
+
+**Credentials + publishing loop (2026-08-12).** GitHub App
+(`terra-nexus-keystatic`) created manually via `github.com/settings/apps/new`
+— Keystatic's own guided create-app flow is dev-only (`NODE_ENV ===
+'development'` gate, writes to a local `.env` via `fs`) and can never run on
+a deployed Worker. Three secrets set via `wrangler secret put ... --name
+terra-nexus-web-preview`. Full loop verified: GitHub OAuth login → collection
+reads → edit + save → real commit on `main` → correct reflection back in the
+editor. See `docs/architecture/web-platform-architecture.md` §6.2 for the
+full record, including a monorepo `pathPrefix` bug and a content-component
+image round-trip issue that were found and fixed along the way (neither was
+a Keystatic defect). **Still outstanding:** Cloudflare Git auto-deploy, so
+the public site rebuilds automatically on a CMS save instead of needing a
+manual `wrangler deploy` — owner dashboard action, not yet done.
 
 ## Setup sequence (when this milestone starts)
 

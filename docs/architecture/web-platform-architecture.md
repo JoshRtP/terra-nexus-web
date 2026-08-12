@@ -278,6 +278,102 @@ exactly as before with no env vars set. The GitHub App creation itself (an
 owner action, independent of the bug above) can proceed at any time using
 the real preview URL; see the session record for exact steps.
 
+### 6.2 GitHub App credentials + hosted publishing loop (2026-08-12)
+
+**GitHub App created manually, not via Keystatic's guided flow.** Keystatic's
+"Create GitHub App" manifest flow (the one its own docs describe) is
+hard-gated to Node dev environments: `@keystatic/core`'s
+`createdGithubApp()` returns `400` unless `process.env.NODE_ENV ===
+'development'`, and on success it writes credentials straight to a local
+`.env` file via `fs.writeFile` — it can never run in a deployed `workerd`
+Worker (no filesystem, `NODE_ENV` isn't `'development'` there). The app
+(`terra-nexus-keystatic`) was created directly via
+`github.com/settings/apps/new` instead — homepage/callback URLs pointed at
+`terra-nexus-web-preview`, `Contents: Read & write` + `Metadata: Read-only`
+permissions, installed on `JoshRtP/terra-nexus-web`. The three secrets
+(`KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`,
+`KEYSTATIC_SECRET`) are set via `wrangler secret put ... --name
+terra-nexus-web-preview`; `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` and
+`PUBLIC_KEYSTATIC_STORAGE_KIND=github` are build-time env vars baked in via
+`import.meta.env.PUBLIC_*` (same mechanism as storage kind, see §6.1) —
+confirmed the app slug is correctly inlined into the client bundle; the
+server-side `slugEnvName` option Keystatic core also accepts is effectively
+dead code in production (only consumed by the dev-only create-app route
+above), so no fix was needed there.
+
+**Monorepo path bug, found and fixed:** `keystatic.config.tsx`'s github
+storage config was missing `pathPrefix: 'apps/web'`. Without it, GitHub
+storage mode reads from the literal repo root (`JoshRtP/terra-nexus-web`),
+not `apps/web/` where all content actually lives — the hosted dashboard
+showed every collection as 0 entries despite real committed content.
+Local storage mode never surfaced this because it resolves paths relative
+to `process.cwd()` instead. Fixed in commit `13af8b7`.
+
+**Content-component image round-trip bug, investigated and fixed —
+confirmed NOT a Keystatic defect.** Opening the sample Insight article in
+the hosted editor and saving (even an unrelated field) silently dropped the
+`image` prop off its `<Figure>` component. Root cause, confirmed by tracing
+the real upstream source (`Thinkmill/keystatic`, installed `0.6.5` verified
+identical to current `main` for the relevant code) and by replaying the
+actual discovery algorithm (`collectDirectoriesUsedInSchema` /
+`getDirectoriesForTreeKey` / `getTreeNodeAtPath`, all in
+`packages/keystatic/src/app/tree-key.tsx`) against real GitHub tree data:
+Keystatic's own upload mechanism (`getSrcPrefix` in
+`packages/keystatic/src/form/fields/image/getSrcPrefix.tsx`) always writes
+`fields.image()` values — top-level fields and content-component-nested
+fields alike — to a slug-scoped path,
+`{publicPath}/{entry-slug}/{filename}`. GitHub-mode's directory-prefetch
+correctly expects that shape (it's the only shape Keystatic's own writes
+ever produce) since, unlike local mode, it can't lazily stat arbitrary
+paths — it has to know in advance which directories to fetch. The sample
+article's Figure image was hand-placed at a flat path
+(`/images/mdx/soil-sample-cross-section.png`, no slug folder) when the
+article was originally authored, bypassing the upload control — so
+GitHub-mode found nothing there and the field silently parsed to `null`.
+Directory discovery for component-nested image fields is itself correctly
+implemented (an earlier theory blaming `kind: 'child'` handling in
+`collectDirectoriesUsedInSchemaInner` was wrong and retracted after reading
+the real source — `fields.mdx()` is `kind: 'form', formKind: 'content'`
+with its own `directories` array explicitly populated from every
+registered content-component's schema).
+
+Confirmed fixed: moved the image to its slug-scoped path, updated the
+article's `<Figure image=...>` reference, removed the old flat file — the
+same shape Keystatic's own upload would have produced — and verified the
+Figure now shows its thumbnail correctly in the hosted editor.
+Live-verified the actual fix mechanism too: uploading a brand-new image
+through a Figure's own "Choose file" control produces a correctly
+slug-scoped path and round-trips cleanly through save + reload.
+
+**Binding rule going forward:** any `fields.image()` value inside an MDX
+content component (Figure, FullBleedImage, Video poster, Gallery) must be
+populated through Keystatic's own upload control — local or hosted —
+never hand-typed as a path string into MDX source. Hand-typed asset paths
+work fine in local storage mode (no directory prefetch needed) but will
+silently fail to round-trip in GitHub storage mode.
+
+**Separate, unrelated finding — not investigated further:** local dev
+(`npm run dev`) currently fails to open Keystatic collection-item pages at
+all (`/keystatic/collection/<name>/item/<slug>`), independent of storage
+mode, with a `module is not defined` error from Astro 6.4.6's dev-mode SSR
+module runner. Reproduced consistently, including after a clean `.astro`
+cache wipe and dev-server restart. Likely an `@keystatic/astro@5.2.0` /
+Astro 6.4.6 dev-mode incompatibility, distinct from the M6 Cloudflare
+compat shim's own known route-collision warning
+(`/api/keystatic/[...params]` registered by both the shim and
+`@keystatic/astro`'s own route). Not chased down this session — flagging
+so it isn't mistaken for a regression from this work, and isn't
+rediscovered from scratch next time someone needs local Keystatic editing.
+
+**Publishing loop proved end-to-end:** hosted `/keystatic` → GitHub OAuth
+login → dashboard/collection reads (after the `pathPrefix` fix) → edit +
+save an existing Insight → real commit lands on `JoshRtP/terra-nexus-web`
+`main` → content correctly reflects in the hosted editor on reload,
+including image fields uploaded through the UI. Cloudflare Git
+auto-deploy (so the public site rebuilds automatically on a CMS save,
+without a manual `wrangler deploy`) is still outstanding — see the session
+record for exact owner-facing dashboard steps.
+
 ## 7. Migration phases (do these in order; each ends with a working build)
 
 | Phase | Exit criteria |
@@ -288,7 +384,7 @@ the real preview URL; see the session record for exact steps.
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
 | M4 — Progressive Tailwind/design-system normalization | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow (compat shim done, GitHub App/credentials pending owner action) | Compatibility shim (`src/lib/keystatic-cloudflare-shim.ts` + `astro.config.ts` integration wiring) resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker — verified under real `workerd` locally and on the deployed `terra-nexus-web-preview` Worker (§6.1); env-conditional `keystatic.config.tsx` storage (`PUBLIC_KEYSTATIC_STORAGE_KIND=github` opt-in) confirmed baked correctly into both the client UI and server bundles; default (non-Keystatic) production builds confirmed to stay fully static (regression-tested). **Remaining before M6 is complete:** owner creates the GitHub App via the hosted `/keystatic` guided flow, owner-entered Wrangler secrets, hosted publishing loop proof, Cloudflare Git auto-deploy — see §6.1 and the session record |
+| M6 — GitHub-backed production Keystatic workflow (credentials + publishing loop done; Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (Keystatic's guided flow is dev-only, can't run on a deployed Worker — §6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug investigated and fixed (not a Keystatic defect — a content-authoring convention mismatch, §6.2). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining before M6 is complete:** Cloudflare Git auto-deploy so the public site rebuilds automatically on a CMS save — see §6.2 and the session record |
 | M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
 | M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
 | M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |

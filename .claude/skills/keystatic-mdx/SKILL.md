@@ -1,6 +1,6 @@
 ---
 name: keystatic-mdx
-description: Keystatic collections/singletons, MDX schema, content components, figures/citations. Canonical CMS for Terra Nexus — installed and live (local storage mode) as of 2026-08-12; GitHub storage mode's Cloudflare compatibility blocker resolved via a compat shim as of 2026-08-12 (M6), GitHub App/credentials pending owner action.
+description: Keystatic collections/singletons, MDX schema, content components, figures/citations. Canonical CMS for Terra Nexus — installed and live (local storage mode) as of 2026-08-12; hosted GitHub storage mode fully working as of 2026-08-12 (M6) — Cloudflare compat shim, GitHub App/credentials, monorepo pathPrefix, and a content-component image round-trip bug all resolved. Cloudflare Git auto-deploy still pending.
 ---
 
 # Keystatic + MDX
@@ -53,23 +53,40 @@ still lives in `knowledge/`): root `AGENTS.md` and
    references, case-study outcomes), the OKF content-integrity rules in
    `AGENTS.md` still apply — no invented clients/case studies/outcomes, no
    unapproved public claims.
-3. `github` storage mode (deployed CMS editing): the upstream
-   `@keystatic/astro`/Cloudflare-adapter blocker is **resolved** (2026-08-12)
-   via `apps/web/src/lib/keystatic-cloudflare-shim.ts` — see
-   `docs/architecture/web-platform-architecture.md` §6.1 for the mechanism,
-   verified-working state, and deletion condition. `apps/web/keystatic.config.tsx`
-   selects `github` storage when **`PUBLIC_KEYSTATIC_STORAGE_KIND=github`**
-   is set at build time (note the `PUBLIC_` prefix — a plain
-   `KEYSTATIC_STORAGE_KIND` does not work; Vite doesn't statically inline
-   bare `process.env.*` for the client UI bundle or the on-demand `workerd`
-   SSR bundle), falls back to `local` otherwise. What's still outstanding is
-   the GitHub App itself and its credentials — an owner-created GitHub
-   App/OAuth application and Cloudflare secrets, not implemented as of this
-   audit. Stop at that boundary and ask the owner rather than guessing at
-   credentials.
-4. Retrieve current Keystatic/Astro docs before changing integration
+3. `github` storage mode (deployed CMS editing): **fully working as of
+   2026-08-12 (M6).** The upstream `@keystatic/astro`/Cloudflare-adapter
+   blocker is resolved via `apps/web/src/lib/keystatic-cloudflare-shim.ts`
+   (§6.1 of the architecture doc). `apps/web/keystatic.config.tsx` selects
+   `github` storage when **`PUBLIC_KEYSTATIC_STORAGE_KIND=github`** is set
+   at build time (note the `PUBLIC_` prefix), falls back to `local`
+   otherwise, and requires `pathPrefix: 'apps/web'` since this is a
+   monorepo — GitHub storage reads from the literal repo root, not
+   wherever a dev server's cwd happens to be. The GitHub App
+   (`terra-nexus-keystatic`) was created **manually** via
+   `github.com/settings/apps/new`, not through Keystatic's own guided
+   flow — that flow is hard-gated to `NODE_ENV === 'development'` and
+   writes credentials to a local `.env` via `fs`, so it can never run on a
+   deployed Worker. See §6.2 of the architecture doc for the full
+   credentials/publishing-loop record.
+4. **Any `fields.image()` value inside an MDX content component (Figure,
+   FullBleedImage, Video poster, Gallery) must be populated through
+   Keystatic's own upload control — local or hosted — never hand-typed as
+   a path string into MDX source.** Keystatic's upload mechanism always
+   writes image values to a slug-scoped path
+   (`{publicPath}/{entry-slug}/{filename}`); GitHub storage mode's
+   directory-prefetch only looks for that shape. A hand-typed path works
+   fine in local mode (no prefetch needed) but silently fails to
+   round-trip (the field parses to `null` and gets dropped on save) in
+   GitHub mode. Not a Keystatic defect — see §6.2 for the full
+   investigation and the fix applied to the sample Insight article.
+5. Retrieve current Keystatic/Astro docs before changing integration
    config — this ecosystem moves fast; the setup above was verified against
    documentation current as of 2026-08-12, not memorized from training data.
+6. Local dev (`npm run dev`) currently fails to open Keystatic
+   collection-item pages (`module is not defined`, an apparent Astro
+   6.4.6 / `@keystatic/astro@5.2.0` dev-mode incompatibility) — a known,
+   separate issue, not caused by the M6 work above. Not yet root-caused;
+   don't assume local CMS editing works until this is fixed.
 
 ## MDX article schema (implemented)
 
