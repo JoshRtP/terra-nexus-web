@@ -1,0 +1,58 @@
+---
+import CaseStudyCard from '../../components/CaseStudyCard.astro';
+import PageHero from '../../components/PageHero.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import { compileForBuild } from '../../lib/okf/build.js';
+import { selectCaseStudyPages } from '../../lib/okf/case-study-pages.js';
+
+const mode = getBuildMode();
+const compilation = await compileForBuild(mode);
+const pages = selectCaseStudyPages(compilation);
+---
+
+<SiteLayout
+  title="Case Studies | Terra Nexus"
+  description="Evidence of commercial and environmental value from Terra Nexus engagements."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Case Studies"
+    title="Evidence of Commercial and Environmental Value"
+    lead="Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements."
+  />
+
+  <section class="section" aria-label="Case studies">
+    <div class="container">
+      {pages.length ? (
+        <div class="case-study-grid">
+          {pages.map((page) => <CaseStudyCard page={page} />)}
+        </div>
+      ) : (
+        <p class="empty-state">No approved case studies are available in this build.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Have a Similar Challenge?</h2>
+      <p class="cta-description">Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .case-study-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .case-study-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .empty-state { color: var(--color-text-muted); font-style: italic; }
+</style>

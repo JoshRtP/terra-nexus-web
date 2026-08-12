@@ -1,0 +1,82 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Aquatic Production',
+  title: 'Build More Resilient Aquatic Food Systems',
+  lead: 'Terra Nexus helps aquaculture producers, integrated protein companies, feed and ingredient businesses, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.',
+  heroImage: 'https://images.pexels.com/photos/14992906/pexels-photo-14992906.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Aquaculture Strategy', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Aquaculture | Terra Nexus',
+  metaDescription: 'Terra Nexus helps aquaculture producers, integrated protein companies, feed and ingredient businesses, buyers, retailers, technology providers, and investors connect production performance, environmental impact, traceability, product strategy, and market access.',
+  orientation: [
+    'Aquaculture is often discussed as a farm-level production activity. In practice, commercial performance depends on a much wider system. Species biology, genetics, hatchery quality, feed, water, stocking, animal health, farm management, infrastructure, energy, processing, cold chain, traceability, certification, market access, and customer expectations all shape the outcome.',
+    'A change that improves one part of the system may create cost or risk elsewhere. A lower-impact feed may affect growth, availability, or price. A new production technology may improve control but require more energy, capital, or operational capability. A strong farm standard may not support the intended product claim if processing and chain of custody are not aligned. Terra Nexus helps clients evaluate these connections and build aquatic food systems that can perform commercially, improve resilience, and support credible evidence and market positioning.',
+  ],
+  performanceCategories: [
+    { title: 'Production and Animal Performance', items: ['Improved survival, growth, feed conversion, consistency, or harvest quality', 'Better control of water quality, stocking, and production conditions', 'Improved animal health, welfare, and biosecurity', 'Reduced mortality, escapes, disease exposure, or production variability', 'Stronger operational data and management decisions'] },
+    { title: 'Feed and Resource Efficiency', items: ['Reduced feed waste and improved feed conversion', 'More resilient and responsibly sourced ingredient portfolios', 'Reduced exposure to scarce, volatile, or high-impact inputs', 'Improved nutrient utilization', 'Better alignment of feed strategy with species, system, and product objectives'] },
+    { title: 'Water and Ecosystem Performance', items: ['Improved water use, treatment, and discharge management', 'Reduced nutrient loss or local environmental pressure', 'Better siting and carrying-capacity decisions', 'Stronger habitat, benthic, coastal, or watershed management where relevant', 'Improved understanding of cumulative and landscape-level impacts'] },
+    { title: 'Climate, Energy, and Circularity', items: ['Improved energy efficiency', 'Reduced lifecycle emissions where supported by evidence', 'Beneficial use of processing co-products, nutrients, or organic material', 'Integration of renewable energy or resource-recovery systems', 'Improved resilience to heat, storms, drought, flooding, salinity, or supply disruption'] },
+    { title: 'Product and Market Value', items: ['Certification or customer qualification', 'Differentiated products and sourcing propositions', 'Stronger traceability and food-safety confidence', 'Improved supply reliability and quality', 'Access to new markets, channels, customers, or investment'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Business Objective and System Boundary', body: 'The objective may be to improve farm economics, develop a new species or system, reduce feed or energy exposure, improve environmental performance, enter a new market, meet a buyer requirement, launch a differentiated product, or evaluate an investment.', detail: 'Terra Nexus helps define the species, geography, farm system, products, participants, value-chain boundary, intended outcomes, and users of the evidence or claim.' },
+    { title: 'Understand Biology, Operations, and Local Context', body: 'Aquaculture systems are highly context specific. Relevant factors include water source and quality, species biology, climate, disease environment, farm design, stocking, feed, energy, labor, infrastructure, permitting, community context, processing capacity, logistics, and market access.', detail: 'Terra Nexus combines technical input from qualified aquaculture, veterinary, engineering, feed, food-safety, and ecological specialists with commercial, financial, supply-chain, and sustainability analysis.' },
+    { title: 'Evaluate the Business Case and Key Risks', body: 'Aquaculture opportunities can require significant capital and may be exposed to biological, operational, feed, energy, market, regulatory, and technology risks.', detail: 'Terra Nexus helps clients assess market demand and product fit; capital and operating economics; feed and ingredient scenarios; production assumptions and sensitivity; technology readiness and integration risk; health, welfare, disease, and biosecurity exposure; water, ecosystem, community, and permitting considerations; processing, logistics, and customer access; certification, traceability, and claims requirements; and partner, vendor, acquisition, and investment quality.' },
+    { title: 'Design the Operating and Evidence Model', body: 'The operating model should connect farm management, feed, data, processing, traceability, and reporting. Potential information may include hatchery and stocking records, feed and ingredient data, water-quality measurements, health and treatment records, mortality, escapes, energy, production output, harvest and processing records, chain of custody, product footprints, certification evidence, and independent review.', detail: 'Terra Nexus helps determine which data are required for management versus claims; how farm, feed, processing, and product boundaries align; how data quality, missing information, and version changes are handled; how products are traced across processing and distribution; how environmental impacts are allocated; and what controls and documentation are needed for buyers, standards, investors, regulators, or assurance providers.' },
+    { title: 'Launch, Implement, and Improve', body: 'Implementation may require farm pilots, feed trials, technology deployment, partner selection, supplier engagement, new operating procedures, training, data-system integration, certification, processing changes, or market activation.', detail: 'Terra Nexus helps design pilots, establish decision gates, coordinate partners, track performance, manage exceptions, and determine what is ready to scale.' },
+    { title: 'Connect Performance to Customer and Market Value', body: 'Potential value pathways may include responsible-production or sourcing claims; certification and chain-of-custody claims; product quality, nutrition, welfare, or freshness differentiation; feed, climate, water, biodiversity, or ecosystem performance claims; customer qualification and procurement value; corporate reporting and Scope 3 value; resilience and supply-security value; new ingredients, technologies, products, or markets; and investment and portfolio value. Different pathways require different evidence, ownership, assurance, and commercialization strategies.', detail: 'Terra Nexus helps compare realizable value, cost, risk, market acceptance, operating complexity, and strategic fit.' },
+  ],
+  audiencePathways: [
+    { title: 'Aquaculture Producers & Integrated Protein Companies', description: 'Production strategy, operating-model design, feed and technology assessment, performance improvement, traceability, certification, customer programs, commercialization, and managed delivery.' },
+    { title: 'Feed & Ingredient Companies', description: 'Ingredient and portfolio strategy, product development, sourcing, lifecycle and claims analysis, customer research, commercial partnerships, pilots, and market entry.' },
+    { title: 'Food, Beverage & Retail Companies', description: 'Responsible sourcing, supplier programs, product strategy, traceability, certification, customer propositions, claims, risk management, and supply resilience.' },
+    { title: 'Technology & Solution Providers', description: 'Market entry, customer discovery, product fit, technical and data diligence, pilot design, workflow integration, channel strategy, and investor or buyer diligence.' },
+    { title: 'Investors & Capital Providers', description: 'Market, technology, project, company, and asset diligence; scenario analysis; biological and operating risk; environmental claims; value-creation planning; and portfolio strategy.' },
+    { title: 'Environmental, Certification & Assurance Organizations', description: 'Program design, data and traceability requirements, methodology assessment, claims translation, verification readiness, and coordination across farm, feed, processing, and product systems.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Commercial Leaders', items: ['Which species, systems, geographies, and products fit the strategy?', 'Which farm-performance and environmental indicators matter commercially?', 'What must be validated before capital, partnership, acquisition, or scale?'] },
+    { heading: 'Feed, Technology & Operations', items: ['How should feed performance, cost, availability, and footprint be balanced?', 'Which technologies are ready for the intended operating environment?', 'Which processing and cold-chain requirements determine market access?'] },
+    { heading: 'Health, Risk & Ecosystem Governance', items: ['How will disease, mortality, escapes, water, and ecosystem risks be governed?'] },
+    { heading: 'Data, Evidence & Claims', items: ['What data are decision-useful and what evidence supports a public claim?', 'How should farm, feed, processing, and product impacts be allocated?', 'Which certification, chain-of-custody, food-safety, welfare, or customer systems apply?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Market, species, product, geography, and customer assessment', 'Business cases and scenario analysis', 'Feed, technology, project, company, and investment diligence', 'Competitive positioning and build-buy-partner decisions', 'Risk and value-driver assessment'] },
+    { title: 'Design the Program, Product, or Operating Model', items: ['Farm, feed, supplier, and partner strategy', 'Product and market proposition', 'Performance objectives and indicators', 'Governance, incentives, responsibilities, and decision rights', 'Certification, traceability, claims, and commercialization architecture'] },
+    { title: 'Build the Infrastructure', items: ['Data and system requirements', 'Supplier, feed, farm, processing, and chain-of-custody workflows', 'Controls, documentation, quality review, and reporting', 'Partner and vendor selection', 'Pilot and implementation plans'] },
+    { title: 'Launch and Scale', items: ['Partner and participant onboarding', 'Pilot management and decision gates', 'Operational rollout and change management', 'Customer and market activation', 'Expansion across farms, species, products, or geographies'] },
+    { title: 'Manage Delivery', items: ['Recurring data and performance review', 'Partner, supplier, and program coordination', 'Exception and corrective-action management', 'Certification, customer, investor, and assurance readiness', 'Management reporting and continuous improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Responsible-production or sourcing claims' },
+    { label: 'Certification and chain-of-custody claims' },
+    { label: 'Product quality, nutrition, welfare, or freshness differentiation' },
+    { label: 'Feed, climate, water, biodiversity, or ecosystem performance claims' },
+    { label: 'Customer qualification and procurement value' },
+    { label: 'Corporate reporting and Scope 3 value' },
+    { label: 'Resilience and supply-security value' },
+    { label: 'New ingredients, technologies, products, or markets' },
+    { label: 'Investment and portfolio value' },
+  ],
+  validationRows: [
+    { category: 'Desirability', pitfall: 'Technology is selected before the production and commercial problem is clear.', validation: 'Define the production and commercial problem first, then select technology that fits it.' },
+    { category: 'Feasibility', pitfall: 'Biological and operating assumptions are not stress-tested.', validation: 'Stress-test biological and operating assumptions under realistic conditions before investing.' },
+    { category: 'Viability', pitfall: 'Feed availability, cost, performance, and sourcing risks are evaluated separately.', validation: 'Evaluate feed availability, cost, performance, and sourcing risks together as an integrated model.' },
+    { category: 'Strategic Fit', pitfall: 'Farm improvements are not connected to processing or market requirements.', validation: 'Connect farm improvements directly to processing and market requirements from the start.' },
+    { category: 'Feasibility', pitfall: 'Data systems do not align farm, feed, product, and claims boundaries.', validation: 'Align data systems across farm, feed, product, and claims boundaries before launch.' },
+    { category: 'Desirability', pitfall: 'Certification is treated as a substitute for customer value or operating performance.', validation: 'Validate customer value and operating performance independently of certification.' },
+    { category: 'Strategic Fit', pitfall: 'Environmental claims lack appropriate local or lifecycle evidence.', validation: 'Gather local and lifecycle evidence before making environmental claims.' },
+    { category: 'Viability', pitfall: 'Capital needs, ramp time, mortality, and working capital are underestimated.', validation: 'Model capital needs, ramp time, mortality, and working capital under realistic scenarios.' },
+    { category: 'Strategic Fit', pitfall: 'Ownership across farms, processors, brands, and technology partners is unclear.', validation: 'Clarify ownership across farms, processors, brands, and technology partners before launch.' },
+    { category: 'Feasibility', pitfall: 'Recurring program management is insufficient after pilot launch.', validation: 'Resource recurring program management adequately from pilot through scale.' },
+  ],
+  ctaHeading: 'Connect Aquaculture Performance to Market Value',
+  ctaBody: 'Whether the starting point is a production challenge, feed strategy, technology, new product, sourcing program, investment, certification, or environmental objective, Terra Nexus helps clients connect aquatic-system performance with the commercial and operating decisions required to create durable value.',
+  ctaButton: { label: 'Discuss Your Aquaculture Strategy', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

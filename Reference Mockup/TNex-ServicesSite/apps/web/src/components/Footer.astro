@@ -1,0 +1,96 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="footer-wordmark" href="/" aria-label="Terra Nexus home">
+          <img class="footer-logo" src="/brand/logo-wordmark-dark.png" alt="Terra Nexus" width="600" height="105" />
+        </a>
+        <p class="footer-summary">
+          An innovation and insights studio at the intersection of food and climate. We advise and manage commercial sustainability programs at scale.
+        </p>
+        <p class="footer-tagline">Impact at the Intersection of Food &amp; Climate</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-nav-group">
+          <h3>Explore</h3>
+          <ul role="list">
+            <li><a href="/expertise/">Expertise</a></li>
+            <li><a href="/capabilities/">Capabilities</a></li>
+            <li><a href="/who-we-work-with/">Who We Work With</a></li>
+            <li><a href="/case-studies/">Case Studies</a></li>
+          </ul>
+        </div>
+        <div class="footer-nav-group">
+          <h3>Company</h3>
+          <ul role="list">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <small>&copy; {currentYear} Terra Nexus. All rights reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-dark); color: var(--c-secondary-400);
+    padding-block: var(--space-20) var(--space-8);
+    margin-top: auto; position: relative; overflow: hidden;
+  }
+  .site-footer::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(231, 215, 127, 0.5), transparent);
+  }
+  .footer-inner { display: flex; flex-direction: column; gap: var(--space-12); position: relative; }
+  .footer-top { display: grid; gap: var(--space-12); }
+  .footer-brand { max-width: 28rem; }
+
+  .footer-wordmark {
+    display: inline-flex; align-items: center;
+    text-decoration: none; color: #fff;
+    margin-bottom: var(--space-5);
+  }
+  .footer-logo {
+    height: 1.5rem; width: auto; display: block;
+  }
+  .footer-summary {
+    font-size: var(--text-sm); color: var(--c-secondary-400);
+    line-height: var(--line-relaxed); margin-bottom: var(--space-4);
+  }
+  .footer-tagline {
+    font-size: var(--text-sm); color: var(--c-secondary-500);
+    font-style: italic; margin: 0;
+  }
+
+  .footer-nav { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+  .footer-nav-group h3 {
+    font-size: var(--text-xs); font-weight: var(--font-bold); color: #fff;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-4);
+  }
+  .footer-nav-group ul { list-style: none; margin: 0; padding: 0; }
+  .footer-nav-group li { margin-bottom: var(--space-3); }
+  .footer-nav-group a {
+    color: var(--c-secondary-400); font-size: var(--text-sm);
+    text-decoration: none; transition: color var(--transition-fast);
+  }
+  .footer-nav-group a:hover { color: #fff; }
+
+  .footer-bottom {
+    padding-top: var(--space-6); border-top: 1px solid var(--color-dark-border);
+  }
+  .footer-bottom small { font-size: var(--text-xs); color: var(--c-secondary-500); }
+
+  @media (min-width: 48rem) {
+    .footer-top { grid-template-columns: 1fr auto; }
+  }
+</style>

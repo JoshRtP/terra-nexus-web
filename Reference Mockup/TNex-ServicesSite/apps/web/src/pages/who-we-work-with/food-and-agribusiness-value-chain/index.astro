@@ -1,0 +1,234 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+const mode = getBuildMode();
+
+const capabilityLinks: Record<string, string> = {
+  'Strategy & Innovation': '/capabilities/strategy-and-innovation/',
+  'Sustainable Supply Chain & Operations': '/capabilities/sustainable-supply-chain-and-operations/',
+  'Carbon & Ecosystem Services': '/capabilities/carbon-and-ecosystem-services/',
+  'Corporate Sustainability': '/capabilities/corporate-sustainability/',
+};
+
+const expertiseLinks: Record<string, string> = {
+  'Regenerative Agriculture': '/expertise/regenerative-agriculture/',
+  'Regenerative Rangeland': '/expertise/regenerative-rangeland/',
+  'Aquaculture': '/expertise/aquaculture/',
+  'Sustainable Supply Chains': '/expertise/sustainable-supply-chains/',
+  'Low Carbon Energy & Biofuels': '/expertise/low-carbon-energy-and-biofuels/',
+  'Purpose-Driven Food Brands & Retailers': '/expertise/purpose-driven-food-brands-and-retailers/',
+  'Biodiversity & Ecosystem Resilience': '/expertise/biodiversity-and-ecosystem-resilience/',
+  'Food Waste': '/expertise/food-waste-prevention-diversion-recovery/',
+  'Food Waste Prevention, Diversion & Recovery': '/expertise/food-waste-prevention-diversion-recovery/',
+};
+
+interface Segment {
+  name: string;
+  slug: string;
+  description: string;
+  decisions: string[];
+  expertise: string[];
+  capabilities: string[];
+  proof?: string;
+}
+
+const segments: Segment[] = [
+  {
+    name: 'Inputs Companies',
+    slug: 'inputs-companies',
+    description: 'Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, partnerships, claims, and commercialization for agricultural and animal-production solutions.',
+    decisions: [
+      'Where should we play, and how do we win at the intersection of food and climate?',
+      'Which products, services, and programs create differentiated growth?',
+      'How do we translate sustainability ambition into commercial action?',
+    ],
+    expertise: ['Regenerative Agriculture', 'Regenerative Rangeland'],
+    capabilities: ['Strategy & Innovation', 'Sustainable Supply Chain & Operations'],
+  },
+  {
+    name: 'Agricultural Producers & Integrated Protein Companies',
+    slug: 'agricultural-producers',
+    description: 'Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, commercialization, and buyer requirements.',
+    decisions: [
+      'Which programs and practices fit our land, operations, and markets?',
+      'How do producer economics and incentives align with buyer requirements?',
+      'How do we measure, verify, and commercialize environmental performance?',
+    ],
+    expertise: ['Regenerative Agriculture', 'Regenerative Rangeland', 'Aquaculture'],
+    capabilities: ['Sustainable Supply Chain & Operations', 'Carbon & Ecosystem Services'],
+  },
+  {
+    name: 'Commodity Traders',
+    slug: 'commodity-traders',
+    description: 'Market and program strategy, sourcing, producer engagement, traceability, data systems, environmental programs, commercialization, claims controls, managed operations, and diligence.',
+    decisions: [
+      'How do we build traceable, credibly claimed supply without fragmenting liquidity?',
+      'How do we engage producers and manage data across fragmented supply chains?',
+      'How do we commercialize environmental attributes while controlling claims risk?',
+    ],
+    expertise: ['Regenerative Agriculture', 'Sustainable Supply Chains', 'Low Carbon Energy & Biofuels'],
+    capabilities: ['Strategy & Innovation', 'Sustainable Supply Chain & Operations', 'Carbon & Ecosystem Services'],
+    proof: 'Evaluating Commercial Pathways for Lower-Emissions Beef',
+  },
+  {
+    name: 'Ingredient & Feed Processors',
+    slug: 'ingredient-feed-processors',
+    description: 'Sourcing, feed and ingredient strategy, process improvement, footprinting, traceability, low-emissions products, byproduct value, commercialization, and claims.',
+    decisions: [
+      'How do we source, process, and verify lower-impact ingredients and feed?',
+      'How do we turn process improvements and byproducts into commercial value?',
+      'How do we build traceability and claims that buyers and regulators accept?',
+    ],
+    expertise: ['Sustainable Supply Chains', 'Aquaculture'],
+    capabilities: ['Sustainable Supply Chain & Operations', 'Corporate Sustainability'],
+  },
+  {
+    name: 'Food & Beverage Companies',
+    slug: 'food-beverage-companies',
+    description: 'Product and portfolio strategy, supplier programs, traceability, Scope 3 and insetting, footprinting, certification, claims, pricing, commercialization, and managed value-chain programs.',
+    decisions: [
+      'How do we connect sustainability priorities to products, customers, and growth?',
+      'How do we build supplier programs that deliver Scope 3 and insetting outcomes?',
+      'How do we manage claims, certification, and commercialization across a portfolio?',
+    ],
+    expertise: ['Sustainable Supply Chains', 'Purpose-Driven Food Brands & Retailers', 'Biodiversity & Ecosystem Resilience', 'Food Waste'],
+    capabilities: ['Corporate Sustainability', 'Strategy & Innovation'],
+  },
+  {
+    name: 'Food Retail & Distribution',
+    slug: 'food-retail-distribution',
+    description: 'Responsible sourcing, category and supplier strategy, private-label propositions, traceability, customer insight, logistics, food-waste programs, claims, and collaboration.',
+    decisions: [
+      'How do we build responsible sourcing into category and private-label strategy?',
+      'How do we reduce food waste and logistics impact while maintaining service?',
+      'How do we collaborate with suppliers on traceability and credible claims?',
+    ],
+    expertise: ['Purpose-Driven Food Brands & Retailers', 'Food Waste', 'Sustainable Supply Chains'],
+    capabilities: ['Sustainable Supply Chain & Operations', 'Corporate Sustainability'],
+  },
+  {
+    name: 'Energy & Biofuels Refiners',
+    slug: 'energy-biofuels-refiners',
+    description: 'Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.',
+    decisions: [
+      'How do we source and verify low-carbon-intensity feedstock at scale?',
+      'How do we build chain of custody and audit-ready program operations?',
+      'How do we commercialize CI outcomes and select the right partners?',
+    ],
+    expertise: ['Low Carbon Energy & Biofuels', 'Sustainable Supply Chains'],
+    capabilities: ['Carbon & Ecosystem Services', 'Sustainable Supply Chain & Operations'],
+  },
+  {
+    name: 'Food Waste Prevention, Diversion & Recovery',
+    slug: 'food-waste-prevention-diversion-recovery',
+    description: 'Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.',
+    decisions: [
+      'Where are the highest-value opportunities to prevent, divert, or recover waste?',
+      'Which technologies, partners, and secondary markets are credible and scalable?',
+      'How do we measure outcomes and build claims that stand up to scrutiny?',
+    ],
+    expertise: ['Food Waste Prevention, Diversion & Recovery', 'Sustainable Supply Chains'],
+    capabilities: ['Sustainable Supply Chain & Operations', 'Corporate Sustainability'],
+  },
+];
+---
+
+<SiteLayout
+  title="Food & Agribusiness Value Chain | Terra Nexus"
+  description="Terra Nexus works with organizations across the physical value chain and understands that a change made by one participant often depends on data, incentives, operations, and demand controlled by another."
+  preview={mode === 'preview'}
+>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Food &amp; Agribusiness Value Chain</span>
+      <h1>Create Value from Inputs Through Recovery</h1>
+      <p class="hero-lead">Terra Nexus works with organizations across the physical value chain and understands that a change made by one participant often depends on data, incentives, operations, and demand controlled by another.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Food or Agribusiness Opportunity</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <header class="section-header">
+        <h2>Value-Chain Segments We Work With</h2>
+        <p class="section-lead">Terra Nexus organizes its work around the eight segments that make up the physical food and agribusiness value chain. Each segment faces distinct decisions, but the outcomes that create value usually depend on coordination across several of them.</p>
+      </header>
+
+      <div class="segment-grid">
+        {segments.map((seg) => (
+          <article class="segment-card" id={seg.slug}>
+            <h3>{seg.name}</h3>
+            <p class="segment-description">{seg.description}</p>
+            <div class="segment-section">
+              <h4>Decisions We Help Resolve</h4>
+              <ul>
+                {seg.decisions.map((d) => <li>{d}</li>)}
+              </ul>
+            </div>
+            {seg.proof && (
+              <div class="segment-section">
+                <h4>Relevant Proof</h4>
+                <p class="segment-proof"><a href="/case-studies/">{seg.proof}</a></p>
+              </div>
+            )}
+            <div class="segment-section">
+              <h4>Related Expertise</h4>
+              <div class="tag-row">
+                {seg.expertise.map((e) => <a href={expertiseLinks[e]} class="segment-tag">{e}</a>)}
+              </div>
+            </div>
+            <div class="segment-section">
+              <h4>Capabilities</h4>
+              <div class="tag-row">
+                {seg.capabilities.map((c) => <a href={capabilityLinks[c]} class="segment-tag">{c}</a>)}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <header class="section-header">
+        <h2>The Principle Behind the Work</h2>
+      </header>
+      <p class="closing-statement">The objective is not to maximize value for one node by shifting cost or risk to another. It is to build a workable path that rewards the participants whose actions make the outcome possible.</p>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Discuss Your Food or Agribusiness Opportunity</h2>
+      <p class="cta-description">Tell us where you sit in the value chain and what you are trying to change.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Food or Agribusiness Opportunity</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .segment-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .segment-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .segment-grid { grid-template-columns: repeat(2, 1fr); } }
+  .segment-card { padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-4); scroll-margin-top: 6rem; }
+  .segment-card h3 { margin: 0; font-size: var(--text-lg); }
+  .segment-description { color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm); }
+  .segment-section h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin: 0 0 var(--space-2); }
+  .segment-section ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+  .segment-section ul li { color: var(--color-text-secondary); font-size: var(--text-sm); padding-left: var(--space-4); position: relative; }
+  .segment-section ul li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.35rem; height: 0.35rem; border-radius: 50%; background: var(--c-sky-600); }
+  .segment-proof { margin: 0; font-size: var(--text-sm); }
+  .segment-proof a { color: var(--c-sky-600); text-decoration: none; font-weight: 500; }
+  .segment-proof a:hover { text-decoration: underline; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-xs); color: var(--color-text-secondary); text-decoration: none; }
+  .segment-tag:hover { border-color: var(--c-sky-600); color: var(--c-sky-600); }
+  .closing-statement { font-size: var(--text-lg); color: var(--color-text-secondary); max-width: var(--max-width-text); line-height: var(--line-relaxed); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+</style>

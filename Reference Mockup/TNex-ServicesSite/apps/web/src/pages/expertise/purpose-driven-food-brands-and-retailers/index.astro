@@ -1,0 +1,84 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Food, Beverage & Retail',
+  title: 'Turn Better Products and Sourcing into Trusted Market Value',
+  lead: 'Terra Nexus helps food brands, manufacturers, retailers, and their partners connect purpose, product design, sourcing, evidence, claims, customer experience, and commercial performance.',
+  heroImage: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Product Opportunity', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Purpose-Driven Food Brands & Retailers | Terra Nexus',
+  metaDescription: 'Terra Nexus helps food brands, manufacturers, retailers, and their partners connect purpose, product design, sourcing, evidence, claims, customer experience, and commercial performance.',
+  orientation: [
+    'Consumers, customers, retailers, investors, and employees increasingly expect food businesses to explain what their products stand for and how those promises are supported.',
+    'A compelling story is not enough. The sourcing model, product design, evidence, price, channel, operations, and claims must all reinforce the same proposition. A product can have meaningful upstream environmental performance but fail in the market if the benefit is not relevant to the customer, the price is unsupported, the claim is confusing, the supply is unreliable, or the organization cannot deliver the promise consistently.',
+    'This Area of Expertise focuses on how food, beverage, feed, and retail businesses translate environmental, social, sourcing, quality, nutrition, resilience, and circularity priorities into products, portfolios, programs, and customer value. It is distinct from Corporate Sustainability, which governs enterprise ambition, accounting, and disclosure, and from Sustainable Supply Chains, which focuses on the operating system connecting upstream performance to the product. This page explains how those capabilities create market-facing value.',
+  ],
+  performanceCategories: [
+    { title: 'Stronger Product and Category Growth', items: ['More differentiated products and portfolios', 'Clearer customer relevance and reasons to choose', 'Improved innovation productivity', 'Stronger retailer, foodservice, or business-to-business propositions', 'Increased access to customers, channels, or preferred-supplier programs'] },
+    { title: 'Better Sourcing and Product Performance', items: ['Improved ingredient, supplier, and production choices', 'Lower exposure to climate, nature, quality, or availability risk', 'Improved product footprint or circularity where supported by evidence', 'Stronger producer and supplier relationships', 'Better connection between upstream investment and product value'] },
+    { title: 'Greater Trust and Claims Confidence', items: ['Clear, supportable, and understandable claims', 'Alignment among marketing, legal, sustainability, procurement, and operations', 'Stronger evidence, traceability, and assurance', 'Reduced risk of overstatement, inconsistency, or customer confusion', 'Improved ability to respond to customer and stakeholder scrutiny'] },
+    { title: 'Improved Commercial Economics', items: ['Premiums or margin supported by customer value', 'Avoided cost, risk, waste, or supply disruption', 'Better allocation of program cost across products, customers, and channels', 'Improved customer retention, loyalty, or category performance', 'More effective use of environmental attributes and supplier investment'] },
+    { title: 'More Durable Purpose', items: ['Product promises that can be delivered repeatedly', 'Stronger integration of purpose with business strategy', 'Clearer governance and accountability', 'Credible progress rather than one-time campaigns', 'A portfolio approach that balances impact, value, feasibility, and scale'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Growth or Customer Opportunity', body: 'The starting point may be a new product, portfolio renovation, responsible-sourcing program, customer request, retailer strategy, certification, environmental attribute, ingredient innovation, waste-reduction initiative, or brand repositioning.', detail: 'Terra Nexus helps define the target customer, category, product, geography, channel, business objective, value-chain boundary, and intended impact or claim.' },
+    { title: 'Understand Customer, Market, and Competitive Context', body: 'The opportunity must be evaluated in the context of customer needs, category dynamics, alternatives, price, channel, competitive claims, retailer requirements, and trust.', detail: 'Terra Nexus helps clients assess customer segments and buying criteria, unmet needs and barriers, category and competitive positioning, willingness to pay and price architecture, retailer, foodservice, or business-customer requirements, claim and certification patterns, and product, supply, and execution feasibility.' },
+    { title: 'Design the Product and Sourcing Proposition', body: 'The product promise must be supported by real choices across formulation, ingredients, production, sourcing, packaging, quality, shelf life, traceability, and supplier programs.', detail: 'Terra Nexus helps clients connect product and portfolio strategy, supplier and producer requirements, sourcing standards and incentives, product performance and footprint, certification and chain of custody, cost, quality, availability, and resilience, environmental and social claims, and customer and channel value.' },
+    { title: 'Build the Evidence and Claims Architecture', body: 'Different claims require different types of substantiation. A product certification, sourcing claim, Scope 3 statement, comparative environmental claim, regenerative claim, animal-care claim, or circularity statement may have different boundaries, data, legal, and assurance requirements.', detail: 'Terra Nexus helps define the precise claim and intended audience, the product, supplier, geography, and time boundary, data and traceability requirements, product and environmental-attribute ownership, calculation and allocation methods, certification or assurance needs, claim language, qualifications, and supporting documentation, and governance for updates, exceptions, and changes.' },
+    { title: 'Build the Business Case and Route to Market', body: 'The value proposition must support the economics. The highest-value pathway may be a premium product, preferred-supplier status, customer retention, private-label differentiation, regulatory access, corporate reporting, risk reduction, or a combination—not necessarily the highest visible price premium.', detail: 'Terra Nexus helps model product cost and margin, supplier premiums and program delivery costs, pricing and willingness to pay, channel and customer economics, cannibalization and portfolio effects, launch, marketing, certification, and assurance costs, market size, utilization, and scale, and risk, sensitivity, and break-even scenarios.' },
+    { title: 'Launch Across Functions and Partners', body: 'Purpose-driven products require coordinated execution across procurement, product development, operations, sustainability, quality, legal, marketing, sales, finance, retailers, suppliers, technology providers, and assurance partners.', detail: 'Terra Nexus helps clients develop launch plans, roles, decision gates, claims controls, customer materials, supplier workflows, training, issue management, and performance tracking.' },
+    { title: 'Measure Market and Impact Performance', body: 'The program should evaluate both commercial and intended sustainability performance. Potential measures include customer response, distribution, sales, margin, repeat, retailer acceptance, supplier participation, traceable volume, product footprint, claims compliance, waste, resilience, and other program-specific outcomes.', detail: 'Terra Nexus helps clients establish dashboards, reviews, corrective actions, and continuous-improvement processes that connect market results with the underlying product and sourcing system.' },
+  ],
+  audiencePathways: [
+    { title: 'Food and Beverage Companies', description: 'Brand, category, portfolio, product, sourcing, supplier, claims, pricing, commercialization, customer, and managed value-chain programs.' },
+    { title: 'Food Retailers and Distributors', description: 'Category and private-label strategy, supplier requirements, customer insight, merchandising, claims, traceability, food waste, and joint business planning.' },
+    { title: 'Ingredient and Feed Companies', description: 'Product and ingredient strategy, customer discovery, differentiated sourcing, footprinting, claims, certification, channel partnerships, and commercialization.' },
+    { title: 'Commodity Traders and Originators', description: 'Customer offerings, differentiated commodities, producer programs, traceability, environmental attributes, claims support, and value allocation.' },
+    { title: 'Producers and Integrated Protein Companies', description: 'Routes to market, customer requirements, product differentiation, certification, evidence, commercial partnerships, and producer economics.' },
+    { title: 'Technology, Certification, and Solution Providers', description: 'Market entry, customer research, product fit, data and claims diligence, pilot integration, channel strategy, partnership, and investor or buyer support.' },
+    { title: 'Investors and Corporate-Venture Teams', description: 'Market, product, brand, technology, supply-chain, claims, and commercial diligence; investment thesis; value-creation planning; and portfolio strategy.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Commercial Leaders', items: ['Which customer problem or category opportunity should the proposition address?', 'Is the sustainability or purpose benefit material to customer choice?', 'What price and margin are supportable?', 'Who funds upstream performance and who captures downstream value?'] },
+    { heading: 'Product, Sourcing & Operations', items: ['Which product, sourcing, packaging, or service changes are required?', 'Can suppliers and operations deliver the promise at the required scale?'] },
+    { heading: 'Claims, Evidence & Communication', items: ['What evidence, traceability, certification, or assurance supports the claim?', 'How should the claim differ by market, channel, customer, or product format?'] },
+    { heading: 'Governance & Organizational Alignment', items: ['How will legal, marketing, sustainability, procurement, product, and sales share accountability?', 'What happens when supply, evidence, regulation, or customer expectations change?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Customer, category, market, and competitive research', 'Portfolio and product opportunity assessment', 'Claim, certification, sourcing, and technology diligence', 'Business cases, pricing, margin, and scenario analysis', 'Build-buy-partner and investment decisions'] },
+    { title: 'Design the Proposition', items: ['Purpose, product, portfolio, and brand strategy', 'Customer value proposition and reasons to believe', 'Product, ingredient, sourcing, and supplier architecture', 'Claims, certification, and evidence strategy', 'Route-to-market and channel design'] },
+    { title: 'Build the Operating Model', items: ['Cross-functional roles and governance', 'Supplier, product, traceability, and evidence workflows', 'Claim review, approval, documentation, and change control', 'Customer and sales enablement', 'Partner and vendor selection'] },
+    { title: 'Launch and Scale', items: ['Pilot and concept testing', 'Product and supplier readiness', 'Claims and channel activation', 'Retailer and customer engagement', 'Launch management and issue resolution', 'Expansion across products, markets, and channels'] },
+    { title: 'Manage Delivery and Improvement', items: ['Recurring supplier, product, evidence, and claims coordination', 'Commercial and impact performance review', 'Exception and corrective-action management', 'Customer and stakeholder reporting', 'Continuous portfolio and program improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Premium product positioning' },
+    { label: 'Preferred-supplier status' },
+    { label: 'Customer retention and loyalty' },
+    { label: 'Private-label differentiation' },
+    { label: 'Regulatory access and compliance' },
+    { label: 'Corporate reporting value' },
+    { label: 'Risk reduction and resilience' },
+    { label: 'Combined commercial and impact value' },
+  ],
+  validationRows: [
+    { category: 'Desirability', pitfall: 'The proposition begins with a sustainability message rather than a customer need.', validation: 'Start with the customer need, then translate sustainability into a product that meets it.' },
+    { category: 'Desirability', pitfall: 'The upstream benefit is not translated into a clear product advantage.', validation: 'Translate upstream benefits into clear, tangible product advantages customers can see.' },
+    { category: 'Strategic Fit', pitfall: 'The claim is broader than the evidence or supply supports.', validation: 'Match claims to the evidence and supply volume that actually supports them.' },
+    { category: 'Feasibility', pitfall: 'Procurement and suppliers cannot deliver the required volume consistently.', validation: 'Validate that procurement and suppliers can deliver required volume consistently before launch.' },
+    { category: 'Feasibility', pitfall: 'Product, sourcing, footprint, and marketing boundaries do not align.', validation: 'Align product, sourcing, footprint, and marketing boundaries before going to market.' },
+    { category: 'Desirability', pitfall: 'Certification is treated as the complete value proposition.', validation: 'Build the value proposition around customer benefit, using certification as proof rather than the proposition itself.' },
+    { category: 'Viability', pitfall: 'Willingness to pay and total program cost are not tested.', validation: 'Test willingness to pay against total program cost before committing to launch.' },
+    { category: 'Strategic Fit', pitfall: 'Legal, marketing, sustainability, and operations interpret the promise differently.', validation: 'Align legal, marketing, sustainability, and operations on a shared interpretation of the promise.' },
+    { category: 'Feasibility', pitfall: 'Launch materials are ready before operational controls and evidence.', validation: 'Complete operational controls and evidence before finalizing launch materials.' },
+    { category: 'Feasibility', pitfall: 'Commercial and impact performance are not reviewed together after launch.', validation: 'Review commercial and impact performance together on a recurring basis after launch.' },
+  ],
+  ctaHeading: 'Build Purpose into Products Customers Can Trust',
+  ctaBody: 'Whether the starting point is a sourcing program, product renovation, customer request, new ingredient, certification, private-label strategy, or environmental claim, Terra Nexus helps clients connect better food-system performance with a credible and commercially valuable proposition.',
+  ctaButton: { label: 'Discuss Your Product Opportunity', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

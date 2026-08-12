@@ -1,0 +1,159 @@
+knowledge/
+├── audiences
+│   ├── enabling-markets-technology-and-capital
+│   │   ├── enabling-tech-and-solution-providers.md
+│   │   ├── environmental-markets-and-ecosystem-services.md
+│   │   ├── index.md
+│   │   └── private-equity-venture-capital-and-impact-investors.md
+│   ├── food-and-agribusiness-value-chain
+│   │   ├── agricultural-producers-and-integrated-protein-companies.md
+│   │   ├── commodity-traders.md
+│   │   ├── energy-and-biofuels-refiners.md
+│   │   ├── food-and-beverage-companies.md
+│   │   ├── food-retail-and-distribution.md
+│   │   ├── food-waste-prevention-diversion-and-recovery.md
+│   │   ├── index.md
+│   │   ├── ingredient-and-feed-processors.md
+│   │   └── inputs-companies.md
+│   └── index.md
+├── brand
+│   ├── brand-platform.md
+│   ├── brand-usage-rules.md
+│   ├── index.md
+│   ├── messaging-options.md
+│   ├── narrative-decision-worksheet.md
+│   ├── tagline-comparison.md
+│   ├── taglines.md
+│   └── why-how-what.md
+├── case-studies
+│   ├── intake-templates
+│   │   ├── trading-company-qualification-intake.md
+│   │   └── universal-proof-intake.md
+│   ├── commercial-pathways-lower-emissions-beef-2025.md
+│   ├── index.md
+│   ├── proof-schema.md
+│   ├── qualification-template.md
+│   └── tagging-schema.md
+├── codex
+│   ├── index.md
+│   ├── kickoff-prompt.md
+│   └── start-here.md
+├── content-audits
+│   └── service-architecture-audit.md
+├── expertise
+│   ├── briefs
+│   │   ├── agroforestry-brief.md
+│   │   ├── aquaculture-brief.md
+│   │   ├── biodiversity-and-ecosystem-resilience-brief.md
+│   │   ├── food-waste-prevention-diversion-recovery-brief.md
+│   │   ├── low-carbon-energy-and-biofuels-brief.md
+│   │   ├── purpose-driven-food-brands-and-retailers-brief.md
+│   │   ├── regenerative-agriculture-brief.md
+│   │   ├── regenerative-rangeland-brief.md
+│   │   └── sustainable-supply-chains-brief.md
+│   ├── agroforestry.md
+│   ├── aquaculture.md
+│   ├── biodiversity-and-ecosystem-resilience.md
+│   ├── expertise-page-schema.md
+│   ├── food-waste-prevention-diversion-recovery.md
+│   ├── index.md
+│   ├── low-carbon-energy-and-biofuels.md
+│   ├── purpose-driven-food-brands-and-retailers.md
+│   ├── regenerative-agriculture.md
+│   ├── regenerative-rangeland.md
+│   └── sustainable-supply-chains.md
+├── governance
+│   ├── advise-manage-operate.md
+│   ├── index.md
+│   ├── knowledge-model.md
+│   ├── service-decision-owner-matrix.md
+│   └── source-precedence.md
+├── references
+│   ├── decisions
+│   │   ├── confirmed-knowledge-architecture.md
+│   │   ├── index.md
+│   │   └── website-build-eligibility.md
+│   ├── images
+│   │   ├── food-agribusiness-value-chain.png
+│   │   ├── index.md
+│   │   └── value-chain-with-associated-enablers.png
+│   ├── okf
+│   │   ├── index.md
+│   │   └── open-knowledge-format-v0-2.md
+│   ├── source-documents
+│   │   ├── originals
+│   │   │   ├── core-messaging-and-branding.docx
+│   │   │   ├── service-architecture.docx
+│   │   │   └── topics-and-value-chains.docx
+│   │   ├── core-messaging-and-branding.md
+│   │   ├── index.md
+│   │   ├── service-architecture.md
+│   │   └── topics-and-value-chains.md
+│   └── index.md
+├── services
+│   ├── carbon-and-ecosystem-services
+│   │   ├── asset-and-portfolio-valuation.md
+│   │   ├── commercialization-pathways.md
+│   │   ├── full-service-ghg-accounting.md
+│   │   ├── impact-verification-and-claims-translation.md
+│   │   ├── index.md
+│   │   ├── overview.md
+│   │   ├── pilot-development-and-partner-selection.md
+│   │   ├── program-design-and-operations.md
+│   │   ├── vcm-and-scope-3-markets.md
+│   │   └── website-brief.md
+│   ├── corporate-sustainability
+│   │   ├── building-purpose-driven-products-and-services.md
+│   │   ├── index.md
+│   │   ├── measurement-impact-and-disclosure.md
+│   │   ├── overview.md
+│   │   ├── stakeholder-engagement.md
+│   │   ├── sustainability-strategy.md
+│   │   ├── sustainable-supply-chain-and-operations.md
+│   │   └── website-brief.md
+│   ├── financial-investments-and-new-venture-development
+│   │   ├── business-case-and-initiative-prioritization.md
+│   │   ├── corporate-ventures.md
+│   │   ├── financial-planning-and-analysis.md
+│   │   ├── index.md
+│   │   ├── investor-due-diligence.md
+│   │   ├── overview.md
+│   │   └── website-brief.md
+│   ├── strategy-and-innovation
+│   │   ├── business-model-and-growth-strategy.md
+│   │   ├── corporate-and-business-unit-strategy.md
+│   │   ├── customer-experience.md
+│   │   ├── index.md
+│   │   ├── market-entry-and-competitive-strategy.md
+│   │   ├── overview.md
+│   │   ├── product-innovation-and-design.md
+│   │   ├── sustainability-and-climate-change-strategy.md
+│   │   └── website-brief.md
+│   ├── sustainable-supply-chain-and-operations
+│   │   ├── circular-economy-waste-and-diversion.md
+│   │   ├── digital-supply-chain-strategy.md
+│   │   ├── index.md
+│   │   ├── joint-business-planning-and-supply-chain-collaboration.md
+│   │   ├── low-impact-logistics.md
+│   │   ├── overview.md
+│   │   ├── resource-efficiency-and-lean-operations-operational-excellence.md
+│   │   ├── responsible-sourcing-and-procurement.md
+│   │   ├── value-chain-interventions-influence-to-impact.md
+│   │   └── website-brief.md
+│   └── index.md
+├── website
+│   ├── page-templates
+│   │   ├── audience-page.md
+│   │   ├── case-study-page.md
+│   │   ├── index.md
+│   │   ├── service-page.md
+│   │   └── topic-page.md
+│   ├── content-readiness.md
+│   ├── content-relationship-model.md
+│   ├── editorial-and-evidence-rules.md
+│   ├── index.md
+│   ├── open-issues-and-required-inputs.md
+│   └── proposed-site-map.md
+├── TREE.txt
+├── bundle-inventory.json
+└── index.md

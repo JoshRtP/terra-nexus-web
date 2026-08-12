@@ -1,0 +1,87 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Nature Across the Value Chain',
+  title: 'Turn Nature-Related Risk into Resilient Business Value',
+  lead: 'Terra Nexus helps food and agribusinesses understand where they depend on nature, prioritize material risks and opportunities, design landscape and supply-chain interventions, measure outcomes, and connect nature strategy to credible business decisions and claims.',
+  heroImage: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Nature Priorities', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Biodiversity & Ecosystem Resilience | Terra Nexus',
+  metaDescription: 'Terra Nexus helps food and agribusinesses understand where they depend on nature, prioritize material risks and opportunities, design landscape and supply-chain interventions, measure outcomes, and connect nature strategy to credible business decisions and claims.',
+  orientation: [
+    'Food and agricultural businesses depend on functioning soils, water systems, pollination, climate regulation, healthy ecosystems, genetic diversity, and the communities that manage and live within production landscapes.',
+    'These dependencies are often treated as background conditions until they become a sourcing disruption, production loss, regulatory issue, investment risk, customer concern, or reputation problem.',
+    'A credible nature strategy begins by understanding where the business depends on and affects ecosystems. It then connects those findings to sourcing, operations, capital allocation, supplier programs, product strategy, risk management, measurement, governance, and claims.',
+    'Terra Nexus helps clients move from broad nature ambition to prioritized action that fits the business and the landscapes on which it relies.',
+    'A company cannot measure or manage every species, ecosystem service, landscape, and community interaction with equal depth. Terra Nexus helps clients focus resources on the nature-related decisions that matter most to the business and the landscapes involved.',
+    'This Area of Expertise is cross-cutting. It connects ecological and community conditions with the production, sourcing, investment, and commercial decisions made across the food and agribusiness value chain. It may include biodiversity and habitat, ecosystem services and natural capital, water and watershed resilience, landscape and seascape programs, nature-related risk and opportunity, and nature measurement, claims, and finance.',
+    'This topic does not replace the production-system pages. Regenerative Agriculture, Regenerative Rangeland, Agroforestry, and Aquaculture explain how specific production systems change. Biodiversity & Ecosystem Resilience explains how those changes interact with broader ecological, landscape, community, and business outcomes.',
+  ],
+  performanceCategories: [
+    { title: 'More Resilient Production Landscapes', items: ['Improved soil, water, habitat, and ecological function', 'Reduced vulnerability to drought, erosion, flooding, heat, fire, pests, or disease', 'Stronger capacity to recover from disturbance', 'Improved long-term productive capacity and supply reliability'] },
+    { title: 'Reduced Business Exposure', items: ['Better understanding of material nature dependencies and impacts', 'More resilient sourcing strategies', 'Reduced concentration in high-risk landscapes or suppliers', 'Stronger contingency planning and supplier relationships', 'More informed capital, procurement, and portfolio decisions'] },
+    { title: 'Better Biodiversity, Water, and Habitat Outcomes', items: ['Improved habitat quality and connectivity', 'Reduced pressure on sensitive ecosystems', 'Restoration or protection of riparian, wetland, grassland, forest, coastal, or marine systems', 'Improved water quality, infiltration, or watershed function', 'Stronger pollinator, wildlife, and biological diversity'] },
+    { title: 'Stronger Community and Landscape Value', items: ['Clearer roles and benefits for producers, land managers, communities, and local partners', 'Improved coordination across property or supply-chain boundaries', 'Better alignment of public, private, and philanthropic investment', 'More durable place-based governance and stewardship'] },
+    { title: 'Credible Reporting and Market Value', items: ['Decision-useful nature metrics and risk information', 'Support for corporate targets and disclosures', 'Sourcing, certification, product, or place-based differentiation', 'Access to partnerships, incentives, environmental markets, or nature finance', 'Improved investor, customer, and stakeholder confidence'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Decision and Business Boundary', body: 'The starting point may be enterprise strategy, a sourcing risk, a corporate commitment, an investor request, a product claim, a landscape program, an asset or transaction, or a specific water or biodiversity concern.', detail: 'Terra Nexus helps define the decision, value-chain boundary, products, geographies, stakeholders, time horizon, and intended use of the analysis.' },
+    { title: 'Locate Dependencies, Impacts, Risks, and Opportunities', body: 'Nature issues are spatial. A company may have the same commodity or operation in several locations with very different ecological and community conditions. Relevant analysis may include sourcing and facility locations; ecosystems, habitats, watersheds, and sensitive areas; business dependencies on water, soil, pollination, climate regulation, or other services; direct and value-chain impacts; physical and transition risks; existing programs, protections, community priorities, and investment flows; and opportunities to improve resilience, supply security, or market value.', detail: 'Terra Nexus combines available data, spatial tools, supplier knowledge, local expertise, and business context to develop a decision-useful view rather than a purely academic inventory.' },
+    { title: 'Prioritize Landscapes, Outcomes, and Participants', body: 'Not every issue requires the same intervention or operating model. Terra Nexus helps clients prioritize where action is most material and feasible using factors such as business exposure, ecological significance, stakeholder importance, urgency, additionality, data quality, implementation capacity, commercial value, and potential for collaboration.', detail: 'The result may be a portfolio of actions rather than one program.' },
+    { title: 'Design the Intervention and Partnership Model', body: 'Nature-related action often crosses ownership and organizational boundaries. Potential approaches may include producer programs, sourcing standards, restoration, water stewardship, habitat protection, landscape collaboration, technology, procurement changes, investment, environmental markets, or combinations of these.', detail: 'Terra Nexus helps define participant roles and responsibilities; producer, supplier, and community incentives; technical and implementation partners; funding and value allocation; governance and decision rights; data, monitoring, and assurance; and claims and communications boundaries.' },
+    { title: 'Establish Measurement and Evidence Proportionate to the Decision', body: 'Nature measurement can involve habitat condition, species, land cover, water, soil, ecological function, threats, management, remote sensing, field surveys, models, and community information. The right evidence depends on the decision. A sourcing-screening tool, an enterprise disclosure, a product claim, a biodiversity credit, and a landscape investment require different precision, attribution, frequency, and assurance.', detail: 'Terra Nexus helps determine which indicators are decision-useful; the appropriate spatial and temporal boundary; what must be measured directly; what may be modeled, remotely sensed, or assessed through proxies; how baselines, counterfactuals, uncertainty, and changing conditions are handled; what evidence supports a report, claim, investment, or environmental asset; and how data are governed and independently reviewed.' },
+    { title: 'Launch, Manage, and Adapt', body: 'Landscape and nature programs require recurring coordination across participants with different incentives, data, authorities, and timelines.', detail: 'Terra Nexus can support or manage workstreams such as partner coordination, supplier and producer engagement, funding, implementation tracking, data review, indicator updates, issue management, governance, reporting, assurance readiness, and continuous improvement.' },
+    { title: 'Connect Nature Performance to Business and Market Value', body: 'Potential pathways may include corporate nature strategy, targets, and reporting; sourcing, procurement, or supplier qualification; product, certification, or place-based claims; water, biodiversity, habitat, restoration, or ecosystem-service programs; resilience, supply-security, and risk-reduction value; natural-capital investment and portfolio value; biodiversity or ecosystem-service credits; and customer, investor, or community partnerships.', detail: 'The highest nominal price is not necessarily the highest-value pathway. Terra Nexus helps compare strategic value, ecological integrity, participant benefits, market demand, evidence, cost, timing, durability, and claims risk.' },
+  ],
+  audiencePathways: [
+    { title: 'Food and Beverage Companies', description: 'Enterprise nature strategy, sourcing and product priorities, landscape programs, measurement, supplier engagement, reporting, claims, investment, and governance.' },
+    { title: 'Commodity Traders and Originators', description: 'Supply-shed and landscape assessment, producer programs, traceability, customer requirements, environmental attributes, partner coordination, and managed execution.' },
+    { title: 'Agricultural Producers and Integrated Protein Companies', description: 'Program opportunity, producer economics, local partnerships, technical support, evidence requirements, access to incentives, and market pathways.' },
+    { title: 'Retailers and Distributors', description: 'Category and supplier strategy, private-label and sourcing programs, risk screening, product claims, customer communication, and collaboration.' },
+    { title: 'Investors and Capital Providers', description: 'Nature-related diligence, asset and portfolio exposure, investment thesis, project and company assessment, value-creation planning, and impact governance.' },
+    { title: 'Technology, Environmental-Market, and Solution Providers', description: 'Market entry, product fit, methodology and data diligence, program integration, commercialization, partner selection, and buyer or investor support.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Nature Assessment', items: ['Where does the business depend on ecosystems and natural capital?', 'Which impacts and risks are material enough to act on?', 'At what geographic and value-chain level should priorities be set?'] },
+    { heading: 'Integration & Measurement', items: ['How should climate, water, biodiversity, sourcing, and resilience be integrated?', 'Which indicators are proportionate and decision-useful?'] },
+    { heading: 'Implementation, Communities & Claims', items: ['Which actions belong inside the company, with suppliers, through partnerships, or in markets?', 'How should communities and local stakeholders participate and benefit?', 'What outcomes can be attributed and claimed credibly?'] },
+    { heading: 'Allocation & Governance', items: ['How should carbon, water, biodiversity, and community benefits be allocated without double counting?', 'What governance is required as ecological conditions and stakeholder expectations change?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate and Prioritize', items: ['Dependency, impact, risk, and opportunity assessment', 'Sourcing, product, asset, and portfolio screening', 'Landscape and stakeholder mapping', 'Materiality, scenario, and strategic-priority development', 'Technology, data, program, project, and investment diligence'] },
+    { title: 'Design the Strategy and Program Portfolio', items: ['Enterprise and business-unit nature strategy', 'Landscape, supplier, producer, or product programs', 'Business cases, investment priorities, and value allocation', 'Partner, governance, and financing models', 'Measurement, claims, and reporting architecture'] },
+    { title: 'Build the Operating Infrastructure', items: ['Supplier and partner workflows', 'Data, spatial, indicator, and evidence systems', 'Contracts, controls, and decision rights', 'Monitoring and reporting processes', 'Assurance and claims-readiness requirements'] },
+    { title: 'Launch and Scale', items: ['Pilot and landscape selection', 'Partner and participant onboarding', 'Implementation planning and change management', 'Financing and resource coordination', 'Expansion across products, suppliers, geographies, or assets'] },
+    { title: 'Manage Delivery', items: ['Recurring partner and supplier coordination', 'Data, indicator, and progress review', 'Governance and issue management', 'Management, investor, and disclosure reporting', 'Assurance readiness and continuous improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Corporate nature strategy, targets, and reporting' },
+    { label: 'Sourcing, procurement, or supplier qualification' },
+    { label: 'Product, certification, or place-based claims' },
+    { label: 'Water, biodiversity, habitat, restoration, or ecosystem-service programs' },
+    { label: 'Resilience, supply-security, and risk-reduction value' },
+    { label: 'Natural-capital investment and portfolio value' },
+    { label: 'Biodiversity or ecosystem-service credits' },
+    { label: 'Customer, investor, or community partnerships' },
+  ],
+  validationRows: [
+    { category: 'Strategic Fit', pitfall: 'The company begins with a disclosure framework rather than a business decision.', validation: 'Start with the business decision the program must support, then map disclosure frameworks to it.' },
+    { category: 'Strategic Fit', pitfall: 'Global targets are not translated into place-based priorities.', validation: 'Translate global targets into specific, place-based priorities before acting.' },
+    { category: 'Feasibility', pitfall: 'Biodiversity is reduced to one metric without ecological context.', validation: 'Use ecologically contextual metrics rather than a single proxy for biodiversity.' },
+    { category: 'Feasibility', pitfall: 'Climate, water, sourcing, and nature programs operate in separate silos.', validation: 'Integrate climate, water, sourcing, and nature programs under a shared strategy.' },
+    { category: 'Feasibility', pitfall: 'Spatial and supply-chain boundaries are inconsistent.', validation: 'Align spatial and supply-chain boundaries across all program components.' },
+    { category: 'Viability', pitfall: 'Interventions are selected without producer, community, or landscape capacity.', validation: 'Assess producer, community, and landscape capacity before selecting interventions.' },
+    { category: 'Viability', pitfall: 'Data precision exceeds what is necessary or affordable for the decision.', validation: 'Match data precision to what the decision actually requires and can afford.' },
+    { category: 'Strategic Fit', pitfall: 'Claims are made without clear attribution, ownership, or assurance.', validation: 'Establish attribution, ownership, and assurance before making claims.' },
+    { category: 'Viability', pitfall: 'Project-level benefits are not connected to enterprise risk or commercial value.', validation: 'Connect project-level benefits to enterprise risk and commercial value explicitly.' },
+    { category: 'Feasibility', pitfall: 'The program lacks long-term governance and adaptive management.', validation: 'Build long-term governance and adaptive management into the program from the start.' },
+  ],
+  ctaHeading: 'Build a Nature Strategy Connected to Real Decisions',
+  ctaBody: 'Whether the starting point is a sourcing risk, corporate target, landscape program, water challenge, product opportunity, environmental asset, or investment decision, Terra Nexus helps clients translate nature-related complexity into prioritized action and durable business value.',
+  ctaButton: { label: 'Discuss Your Nature Priorities', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

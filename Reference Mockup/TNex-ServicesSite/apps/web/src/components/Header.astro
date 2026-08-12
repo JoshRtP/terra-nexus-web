@@ -1,0 +1,164 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { label: 'Expertise', href: '/expertise/' },
+  { label: 'Capabilities', href: '/capabilities/' },
+  { label: 'Who We Work With', href: '/who-we-work-with/' },
+  { label: 'Case Studies', href: '/case-studies/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
+];
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header" id="site-header" role="banner">
+  <div class="header-inner container">
+    <a class="site-wordmark" href="/" aria-label="Terra Nexus home">
+      <img class="wordmark-logo" src="/brand/logo-wordmark-dark.png" alt="Terra Nexus" width="600" height="105" />
+    </a>
+
+    <button
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+      aria-label="Open navigation menu"
+    >
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+      <ul class="nav-list" role="list">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class:list={['nav-link', { 'nav-link-active': isActive(link.href) }]}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--color-dark);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .site-header[data-scrolled="true"] {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+  }
+
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-6); padding-block: var(--space-4);
+  }
+
+  .site-wordmark {
+    display: flex; align-items: center;
+    text-decoration: none; color: var(--color-text);
+    flex-shrink: 0; transition: opacity var(--transition-fast);
+  }
+  .site-wordmark:hover { opacity: 0.85; color: var(--color-text); }
+  .wordmark-logo {
+    height: 1.75rem; width: auto; display: block;
+  }
+
+  .nav-toggle {
+    display: none; flex-direction: column; gap: 5px;
+    padding: var(--space-2); background: none; border: none; cursor: pointer;
+    touch-action: manipulation;
+  }
+  .nav-toggle-bar {
+    display: block; width: 22px; height: 2px;
+    background: #fff; border-radius: 1px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-list {
+    display: flex; align-items: center; gap: var(--space-1);
+    list-style: none; margin: 0; padding: 0;
+  }
+  .nav-link {
+    display: block; padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm); font-weight: var(--font-medium);
+    color: var(--c-accent-200); text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    position: relative;
+  }
+  .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+  .nav-link-active { color: #fff; }
+  .nav-link-active::after {
+    content: ''; position: absolute; bottom: -2px; left: var(--space-3); right: var(--space-3);
+    height: 2px; background: var(--c-accent-400); border-radius: var(--radius-full);
+  }
+
+  @media (max-width: 64rem) {
+    .nav-toggle { display: flex; }
+    .primary-nav {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(320px, 85vw); background: var(--color-dark);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      padding: var(--space-20) var(--space-6) var(--space-8);
+      transform: translateX(100%); transition: transform var(--transition-base);
+      overflow-y: auto; z-index: 60; box-shadow: var(--shadow-2xl);
+      overscroll-behavior: contain;
+      display: flex; flex-direction: column; gap: var(--space-6);
+    }
+    .primary-nav[data-open="true"] { transform: translateX(0); }
+    .nav-list { flex-direction: column; align-items: stretch; gap: var(--space-1); }
+    .nav-link { font-size: var(--text-base); padding: var(--space-3) var(--space-4); }
+    .nav-link-active::after { display: none; }
+    .nav-link-active { background: rgba(255, 255, 255, 0.08); }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('primary-nav');
+  const header = document.getElementById('site-header');
+
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.getAttribute('data-open') === 'true';
+      nav.setAttribute('data-open', String(!isOpen));
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      toggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.getAttribute('data-open') === 'true') {
+        nav.setAttribute('data-open', 'false');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open navigation menu');
+        document.body.style.overflow = '';
+        (toggle as HTMLElement).focus();
+      }
+    });
+  }
+
+  if (header) {
+    const updateScroll = () => { header.setAttribute('data-scrolled', String(window.scrollY > 20)); };
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    updateScroll();
+  }
+</script>

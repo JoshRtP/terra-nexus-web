@@ -1,0 +1,282 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from './PageHero.astro';
+import { getBuildMode } from '../lib/build-mode.js';
+
+export interface SubOffering {
+  name: string;
+  description: string;
+}
+
+export interface Offering {
+  name: string;
+  description: string;
+  subOfferings: SubOffering[];
+}
+
+export interface CapabilityPageData {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  metaTitle: string;
+  metaDescription: string;
+  decisionOwners?: string[];
+
+  orientation: string[];
+  offerings: Offering[];
+  relatedExpertise: { label: string; href: string }[];
+  proofNote?: string;
+  proofLink?: { label: string; href: string };
+  callout?: string;
+  ctaHeading: string;
+  ctaBody: string;
+  ctaButton: { label: string; href: string };
+}
+
+interface Props {
+  data: CapabilityPageData;
+}
+
+const { data } = Astro.props;
+const mode = getBuildMode();
+---
+
+<SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lead={data.lead}
+    primaryCta={data.primaryCta}
+    secondaryCta={data.secondaryCta}
+  />
+
+  <!-- Orientation -->
+  <section class="section" aria-labelledby="orientation-heading">
+    <div class="container">
+      <div class="text-container">
+        <span class="eyebrow">Overview</span>
+        <h2 id="orientation-heading">{data.title}</h2>
+        {data.orientation.map((para) => <p class="lead-paragraph">{para}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Offerings -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Our Offerings</span>
+        <h2 id="offerings-heading">What We Do</h2>
+        <p class="section-lead">These offerings can be combined to match the decision at hand. Each engagement is tailored to the client's specific context, objectives, and constraints.</p>
+      </header>
+      <div class="offerings-list">
+        {data.offerings.map((offering, i) => (
+          <article class="offering-card" id={`offering-${i + 1}`}>
+            <div class="offering-header">
+              <span class="offering-number">{String(i + 1).padStart(2, '0')}</span>
+              <div class="offering-title-area">
+                <h3>{offering.name}</h3>
+                <p class="offering-description">{offering.description}</p>
+              </div>
+            </div>
+            {offering.subOfferings.length > 0 && (
+              <div class="sub-offerings-grid">
+                {offering.subOfferings.map((sub) => (
+                  <div class="sub-offering">
+                    <h4>{sub.name}</h4>
+                    <p>{sub.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+      {data.callout && (
+        <div class="callout">
+          <p>{data.callout}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Related Expertise -->
+  <section class="section" aria-labelledby="related-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Connected Expertise</span>
+        <h2 id="related-heading">Related Areas of Expertise</h2>
+      </header>
+      <div class="tag-row">
+        {data.relatedExpertise.map((tag) => (
+          <a href={tag.href} class="segment-tag">{tag.label}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Relevant Proof -->
+  {data.proofNote && (
+    <section class="section" aria-labelledby="proof-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">Evidence</span>
+          <h2 id="proof-heading">Relevant Proof</h2>
+        </header>
+        <p class="proof-text">{data.proofNote}</p>
+        {data.proofLink && (
+          <div class="section-cta">
+            <a href={data.proofLink.href} class="btn btn-secondary">{data.proofLink.label}</a>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Final CTA -->
+  <section class="section section-dark" aria-labelledby="final-cta-heading">
+    <div class="container text-center">
+      <h2 id="final-cta-heading">{data.ctaHeading}</h2>
+      <p class="cta-description">{data.ctaBody}</p>
+      <div class="hero-actions">
+        <a href={data.ctaButton.href} class="btn btn-primary">{data.ctaButton.label}</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .lead-paragraph {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-5);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Offerings */
+  .offerings-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .offering-card {
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .offering-card:hover {
+    border-color: var(--c-sky-300);
+    box-shadow: var(--shadow-md);
+  }
+  .offering-header {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    align-items: flex-start;
+  }
+  .offering-number {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    color: var(--c-sky-600);
+    flex-shrink: 0;
+    min-width: 3rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .offering-title-area { flex: 1; min-width: 0; }
+  .offering-title-area h3 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+  .offering-description {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Sub-offerings */
+  .sub-offerings-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--color-border);
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--color-border);
+  }
+  @media (min-width: 48rem) { .sub-offerings-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 72rem) { .sub-offerings-grid { grid-template-columns: repeat(3, 1fr); } }
+  .sub-offering {
+    background: var(--color-surface-elevated);
+    padding: var(--space-6);
+    transition: background var(--transition-fast);
+  }
+  .sub-offering:hover { background: var(--color-surface); }
+  .sub-offering h4 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+  .sub-offering p {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-normal);
+  }
+
+  /* Callout */
+  .callout {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--c-sky-600);
+    border-radius: var(--radius-md);
+  }
+  .callout p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Tags */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .segment-tag {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+  .segment-tag:hover {
+    border-color: var(--c-sky-300);
+    color: var(--c-sky-600);
+  }
+
+  /* Proof */
+  .proof-text {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    max-width: var(--max-width-text);
+  }
+  .section-cta {
+    margin-top: var(--space-6);
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /* CTA section */
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+</style>

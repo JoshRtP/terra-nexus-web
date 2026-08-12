@@ -1,0 +1,86 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
+const mode = getBuildMode();
+---
+
+<SiteLayout
+  title="About | Terra Nexus"
+  description="Terra Nexus is an innovation and insights studio for food and climate. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="About Terra Nexus"
+    title="An Innovation & Insights Studio for Food & Climate"
+    lead="Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain."
+  />
+
+  <section class="section">
+    <div class="container text-container">
+      <h2>Why We Exist</h2>
+      <p>To build a more resilient, sustainable, and prosperous food system by accelerating adoption of proven solutions that create impact at the intersection of food and climate.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container text-container">
+      <h2>How We Work</h2>
+      <p>We work with food and agribusinesses across the value chain to:</p>
+      <ul class="how-list">
+        <li>Enhance transparency</li>
+        <li>Facilitate collaboration</li>
+        <li>Establish market mechanisms</li>
+        <li>Unlock shared value</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container text-container">
+      <h2>What We Provide</h2>
+      <p>We provide the insights, tools, and management expertise needed to deliver the right solution, in the right place, with the right partners, and capture the largest supportable sources of value for commercial sustainability and climate programs.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2>What Makes Terra Nexus Different</h2>
+      <div class="different-content">
+        <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
+        <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
+      </div>
+      <div class="not-list">
+        <h3>What Terra Nexus Is Not</h3>
+        <ul>
+          <li>Not generic ESG consulting</li>
+          <li>Not simply a software company</li>
+          <li>Not only a carbon-credit firm</li>
+          <li>Not an accredited verifier</li>
+        </ul>
+        <p class="not-summary">Terra Nexus is an innovation and insights studio integrating commercial strategy, food systems, value-chain operations, technical evidence, environmental accounting, market mechanisms, and program management.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Start a Conversation</h2>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Start a Conversation</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .how-list { margin-top: var(--space-4); padding-left: var(--space-5); }
+  .how-list li { margin-bottom: var(--space-2); font-size: var(--text-lg); color: var(--color-text); }
+  .different-content { max-width: 72ch; margin-bottom: var(--space-8); }
+  .different-content p { margin-bottom: var(--space-4); line-height: var(--line-relaxed); }
+  .not-list { padding: var(--space-6); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .not-list h3 { margin-bottom: var(--space-3); }
+  .not-list ul { padding-left: var(--space-5); margin-bottom: var(--space-4); }
+  .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
+  .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+</style>

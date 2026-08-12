@@ -1,0 +1,82 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Agricultural Production',
+  title: 'Integrate Trees, Production, and Long-Term Value',
+  lead: 'Terra Nexus helps producers, integrated agricultural companies, traders, brands, technology providers, and investors evaluate and build agroforestry systems that align production economics, land use, climate and nature outcomes, supply-chain demand, and credible market pathways.',
+  heroImage: 'https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Agroforestry Opportunity', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Agroforestry | Terra Nexus',
+  metaDescription: 'Terra Nexus helps producers, integrated agricultural companies, traders, brands, technology providers, and investors evaluate and build agroforestry systems that align production economics, land use, climate and nature outcomes, supply-chain demand, and credible market pathways.',
+  orientation: [
+    'Agroforestry intentionally combines trees or woody perennials with crops, livestock, or both. The result is not simply a conservation feature added to a farm. It is a redesigned production system with different biological cycles, capital needs, operating requirements, products, risks, and routes to market.',
+    'Trees may take years to establish and begin producing commercial returns. Crops or livestock may continue generating income during that transition. The system may also create shade, shelter, water, habitat, soil, carbon, resilience, or other environmental benefits whose value depends on how they are measured, owned, financed, and used.',
+  ],
+  performanceCategories: [
+    { title: 'Diversified Production and Revenue', items: ['New tree, crop, livestock, biomass, ingredient, or specialty-product revenue', 'Multiple harvest cycles and product streams', 'Improved use of land, light, water, and vertical space', 'Greater flexibility when one crop or market underperforms', 'Potential long-duration asset value from established trees'] },
+    { title: 'Resilience and Productive Capacity', items: ['Shade and shelter for livestock or crops', 'Reduced wind exposure and erosion', 'Improved water infiltration, moisture retention, or microclimate', 'Diversified biological and income risk', 'Greater capacity to manage heat, drought, storms, or other production stress'] },
+    { title: 'Soil, Water, Carbon, and Biodiversity Outcomes', items: ['Deeper and more diverse root systems', 'Improved nutrient cycling and soil cover', 'Reduced runoff or erosion in appropriate locations', 'Increased structural and habitat diversity', 'Potential carbon storage in biomass and soils', 'Improved riparian, pollinator, or wildlife functions'] },
+    { title: 'Market and Supply-Chain Value', items: ['Differentiated products and ingredients', 'Improved sourcing resilience and long-term supplier relationships', 'Access to certification, customer programs, incentives, or environmental markets', 'Stronger place-based sourcing and landscape narratives', 'Evidence supporting corporate climate, nature, or supply-security objectives'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Objective, Geography, and Time Horizon', body: 'The starting objective may be diversified farm income, resilient livestock production, specialty ingredients, restoration of degraded land, water protection, a climate or nature program, a new branded product, or a long-term investment opportunity.', detail: 'Terra Nexus helps define the land, products, participants, intended outcomes, commercial users, investment horizon, and relationship to the surrounding supply chain and landscape.' },
+    { title: 'Evaluate Site and Production-System Fit', body: 'Agroforestry must fit local conditions and the existing farm or ranch system. Relevant factors include climate, soils, topography, water, species, crop and livestock interactions, equipment, labor, technical capacity, land tenure, producer objectives, infrastructure, and market access.', detail: 'Terra Nexus integrates technical diligence from qualified specialists with business-model, supply-chain, customer, and investment analysis. The goal is to identify where a concept has a supportable path rather than promote one design across every site.' },
+    { title: 'Design the Economics and Producer Proposition', body: 'Establishment can require seedlings, site preparation, fencing, water, equipment, labor, technical support, maintenance, financing, or temporary changes in production. The producer proposition may combine cost sharing or grants, technical assistance, long-term purchase commitments, premiums or differentiated markets, financing or working capital, revenue from crops, livestock, tree products, or co-products, environmental payments or credits, and risk-sharing and replacement provisions.', detail: 'Terra Nexus helps model cash flows, transition risk, value allocation, product markets, environmental revenue, contractual terms, and the roles of producers, buyers, investors, and program partners.' },
+    { title: 'Build Product, Processing, and Market Pathways', body: 'A productive system does not automatically have a viable market. Tree products may require aggregation, storage, specialized harvesting, processing, certification, quality standards, buyer development, or new product applications. Small and irregular volumes can create significant transaction and logistics costs.', detail: 'Terra Nexus helps clients assess customer demand and product specifications, harvest timing and volume development, processing and infrastructure needs, aggregation and logistics, product, ingredient, feed, biomass, timber, or specialty-market pathways, branding, certification, and customer propositions, and partnerships, offtake, and route-to-market strategy.' },
+    { title: 'Establish Evidence, Monitoring, and Rights', body: 'The evidence system should reflect the intended use. A customer sourcing claim, a carbon-removal pathway, a biodiversity program, an investment report, and a certified product may require different boundaries, records, measurements, and assurance. Potential information may include land and tree maps, species and planting records, survival and growth data, farm-management records, product harvests, soil or biomass measurements, remote sensing, habitat indicators, chain of custody, contracts, and independent review.', detail: 'Terra Nexus helps define what must be measured and how often, what may be modeled or remotely sensed, how mortality, replacement, harvesting, and reversals are treated, how product and environmental attributes are traced, who owns and may use each claim or asset, how long-term responsibilities survive land, ownership, or contract changes, and what documentation is needed for customers, investors, standards, or verifiers.' },
+    { title: 'Launch, Manage, and Improve the Program', body: 'Agroforestry requires recurring coordination over many years. Activities may include producer enrollment, site planning, planting, vendor management, technical support, survival checks, maintenance, data collection, product-market development, contract management, environmental accounting, reporting, and assurance readiness.', detail: 'Terra Nexus can advise on the complete operating model or manage defined workstreams within a client-owned program.' },
+    { title: 'Connect Long-Term Performance to the Right Sources of Value', body: 'Potential pathways may include differentiated food, ingredient, livestock, fiber, biomass, or timber products; long-term purchase agreements and customer programs; certification and sourcing claims; Scope 3 reductions and insets; carbon-removal or ecosystem-service credits; biodiversity, habitat, water, restoration, or landscape value; resilience, supply-security, land-value, and risk-reduction benefits; and investment or natural-capital value. These pathways may have different owners, users, time horizons, evidence burdens, and transaction costs. Some may coexist; others may require allocation or exclusive rights.', detail: 'Terra Nexus helps compare the realizable value, timing, risk, cost, utilization, and strategic benefit of the available pathways without publishing a universal stacking or pricing model.' },
+  ],
+  audiencePathways: [
+    { title: 'Agricultural Producers & Integrated Agricultural Companies', description: 'System opportunity assessment, business cases, market development, partner selection, financing pathways, data requirements, and routes to product and environmental value.' },
+    { title: 'Commodity Traders, Processors & Brands', description: 'Supply development, producer programs, aggregation, processing, traceability, commercial contracts, product strategy, customer propositions, and claims.' },
+    { title: 'Livestock & Protein Companies', description: 'Silvopasture strategy, producer economics, livestock and forage integration, sourcing, product differentiation, evidence, and market pathways.' },
+    { title: 'Technology & Solution Providers', description: 'Market entry, product fit, data architecture, remote-sensing or MRV diligence, integration into operating workflows, and customer or investor support.' },
+    { title: 'Investors & Capital Providers', description: 'Market and project diligence, biological and commercial risk, cash-flow and scenario analysis, portfolio fit, asset value, partner quality, and value-creation planning.' },
+    { title: 'Environmental-Market & Nature-Program Participants', description: 'Methodology assessment, program design, measurement and monitoring, ownership, commercialization, claims controls, and verification readiness.' },
+  ],
+  decisionGroups: [
+    { heading: 'System Design & Business Fit', items: ['Which agroforestry system fits the land, production system, and business objective?', 'Which product and environmental outcomes are realistic within the time horizon?'] },
+    { heading: 'Finance, Risk & Producer Support', items: ['How will establishment costs and delayed returns be financed?', 'Which participants carry mortality, production, price, and market risk?', 'What interim revenue supports the producer during establishment?'] },
+    { heading: 'Markets & Routes to Value', items: ['Which products and co-products have a reliable route to market?'] },
+    { heading: 'Governance, Rights & Long-Term Viability', items: ['How will land tenure, succession, harvesting rights, and permanence be governed?', 'Who owns the physical products and environmental attributes?', 'How will the program remain viable when ownership, markets, or ecological conditions change?'] },
+    { heading: 'Evidence & Assurance', items: ['Which data, models, measurements, and assurance are needed?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Market, geography, species, product, and supply-chain assessment', 'Strategic fit and build-buy-partner decisions', 'Producer, customer, and investor research', 'Technical, technology, project, and partner diligence', 'Business cases and scenario modeling'] },
+    { title: 'Design the Program and Investment Model', items: ['System boundary and participant roles', 'Producer proposition and transition support', 'Capital, financing, offtake, and value-allocation structures', 'Product and environmental-market pathways', 'Risk allocation, governance, and long-term responsibilities'] },
+    { title: 'Build the Operating Infrastructure', items: ['Producer and supplier workflows', 'Data, maps, records, monitoring, and controls', 'Contracts, chain of custody, attribute rights, and ledgers', 'Partner and vendor selection', 'Processing, aggregation, logistics, and customer documentation'] },
+    { title: 'Launch and Scale', items: ['Pilot design and site prioritization', 'Producer and partner onboarding', 'Implementation planning and issue resolution', 'Market and customer development', 'Expansion across farms, products, regions, and buyers'] },
+    { title: 'Manage Delivery', items: ['Recurring partner and producer coordination', 'Data, survival, growth, product, and evidence review', 'Exception and change management', 'Management reporting and performance improvement', 'Audit, certification, investor, and verification readiness'] },
+  ],
+  valuePathways: [
+    { label: 'Differentiated food, ingredient, livestock, fiber, biomass, or timber products' },
+    { label: 'Long-term purchase agreements and customer programs' },
+    { label: 'Certification and sourcing claims' },
+    { label: 'Scope 3 reductions and insets' },
+    { label: 'Carbon-removal or ecosystem-service credits' },
+    { label: 'Biodiversity, habitat, water, restoration, or landscape value' },
+    { label: 'Resilience, supply-security, land-value, and risk-reduction benefits' },
+    { label: 'Investment or natural-capital value' },
+  ],
+  validationRows: [
+    { category: 'Desirability', pitfall: 'A compelling land concept lacks a reliable product market.', validation: 'Validate end-market demand and pricing for the land concept before establishing it.' },
+    { category: 'Viability', pitfall: 'Establishment costs and delayed cash flows are underestimated.', validation: 'Model establishment costs and cash-flow timing under realistic assumptions before committing.' },
+    { category: 'Feasibility', pitfall: 'Tree, crop, or livestock interactions are not evaluated locally.', validation: 'Test tree, crop, and livestock interactions under local conditions before scaling.' },
+    { category: 'Viability', pitfall: 'Producers carry long-term risk without durable commercial support.', validation: 'Structure durable commercial support so producers do not carry long-term risk alone.' },
+    { category: 'Strategic Fit', pitfall: 'Land tenure and rights to future products or attributes are unclear.', validation: 'Clarify land tenure and rights to future products and attributes before planting.' },
+    { category: 'Feasibility', pitfall: 'Processing, aggregation, and logistics are addressed after planting.', validation: 'Plan processing, aggregation, and logistics alongside the planting timeline.' },
+    { category: 'Feasibility', pitfall: 'Monitoring systems are not designed for long-duration assets.', validation: 'Design monitoring systems for the full life of long-duration assets from the start.' },
+    { category: 'Feasibility', pitfall: 'Mortality, replacement, harvesting, and reversals lack clear treatment.', validation: 'Define how mortality, replacement, harvesting, and reversals will be handled before launch.' },
+    { category: 'Strategic Fit', pitfall: 'Environmental claims are planned without contractual ownership or assurance.', validation: 'Secure contractual ownership and assurance before making environmental claims.' },
+    { category: 'Feasibility', pitfall: 'The program lacks recurring management over its full time horizon.', validation: 'Commit to recurring management across the program’s full time horizon.' },
+  ],
+  ctaHeading: 'Build an Agroforestry Pathway from Land Design to Market',
+  ctaBody: 'Whether the starting point is a farm or ranch opportunity, a new ingredient or product, a sourcing objective, a landscape program, a carbon or nature pathway, or an investment thesis, Terra Nexus helps clients connect long-term biological change with practical execution and market value.',
+  ctaButton: { label: 'Discuss Your Agroforestry Opportunity', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

@@ -1,0 +1,110 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+const mode = getBuildMode();
+
+const capabilityLinks: Record<string, string> = {
+  'Carbon & Ecosystem Services': '/capabilities/carbon-and-ecosystem-services/',
+  'Corporate Sustainability': '/capabilities/corporate-sustainability/',
+  'Strategy & Innovation': '/capabilities/strategy-and-innovation/',
+  'Financial Investments & New Venture Development': '/capabilities/financial-investments-and-new-venture-development/',
+};
+
+interface Enabler {
+  name: string;
+  description: string;
+  note?: string;
+  capabilities: string[];
+}
+
+const enablers: Enabler[] = [
+  {
+    name: 'Environmental Markets & Ecosystem Services',
+    description: 'Terra Nexus supports market and methodology assessment; program, MRV, traceability, and claims design; commercialization; asset and portfolio diligence; partner and verifier selection; audit readiness; program governance; managed operations; and reconciliation across project, product, inventory, and disclosure systems.',
+    note: 'Terra Nexus does not represent itself as an accredited validator or verifier.',
+    capabilities: ['Carbon & Ecosystem Services', 'Corporate Sustainability'],
+  },
+  {
+    name: 'Enabling Tech & Solution Providers',
+    description: 'Terra Nexus supports market entry, customer discovery, product and business-model strategy, technical and data diligence, pilot design, partner selection, integration into real workflows, commercialization, channel partnerships, and investor or buyer diligence.',
+    note: 'Treat vendor performance claims as self-reported until supported by appropriate evidence.',
+    capabilities: ['Strategy & Innovation', 'Financial Investments & New Venture Development'],
+  },
+  {
+    name: 'Private Equity, Venture Capital & Impact Investors',
+    description: 'Terra Nexus supports market and ecosystem analysis, investment thesis, opportunity screening, financial and commercial diligence, technical and environmental assessment, value-creation planning, portfolio strategy, and corporate-venture design.',
+    note: 'Terra Nexus provides diligence and decision support, not regulated investment advice.',
+    capabilities: ['Financial Investments & New Venture Development', 'Strategy & Innovation'],
+  },
+];
+---
+
+<SiteLayout
+  title="Enabling Markets, Technology & Capital | Terra Nexus"
+  description="Food and agribusiness transformation also depends on the markets, technology, assurance, and capital that make performance measurable, financeable, credible, and commercially actionable."
+  preview={mode === 'preview'}
+>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Enabling Markets, Technology &amp; Capital</span>
+      <h1>Build the Infrastructure That Enables Food-System Change</h1>
+      <p class="hero-lead">Food and agribusiness transformation also depends on the markets, technology, assurance, and capital that make performance measurable, financeable, credible, and commercially actionable.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Platform, Program, or Investment</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <header class="section-header">
+        <h2>Enablers We Work With</h2>
+        <p class="section-lead">The organizations below do not sit in the physical value chain, but the transformation of food and agriculture depends on what they measure, verify, finance, and connect.</p>
+      </header>
+
+      <div class="enabler-grid">
+        {enablers.map((en) => (
+          <article class="enabler-card">
+            <h3>{en.name}</h3>
+            <p class="enabler-description">{en.description}</p>
+            {en.note && (
+              <p class="enabler-note">{en.note}</p>
+            )}
+            <div class="enabler-section">
+              <h4>Capabilities</h4>
+              <div class="tag-row">
+                {en.capabilities.map((c) => <a href={capabilityLinks[c]} class="segment-tag">{c}</a>)}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container text-center">
+      <h2>Discuss Your Platform, Program, or Investment</h2>
+      <p class="cta-description">Tell us what you are building, evaluating, or financing.</p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn btn-primary">Discuss Your Platform, Program, or Investment</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .enabler-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .enabler-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .enabler-grid { grid-template-columns: repeat(3, 1fr); } }
+  .enabler-card { padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-4); }
+  .enabler-card h3 { margin: 0; font-size: var(--text-lg); }
+  .enabler-description { color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm); }
+  .enabler-note { margin: 0; font-size: var(--text-xs); color: var(--color-text-muted); font-style: italic; padding: var(--space-2) var(--space-3); background: var(--color-bg); border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+  .enabler-section h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin: 0 0 var(--space-2); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .segment-tag { display: inline-block; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 999px; font-size: var(--text-xs); color: var(--color-text-secondary); text-decoration: none; }
+  .segment-tag:hover { border-color: var(--c-sky-600); color: var(--c-sky-600); }
+  .text-center { text-align: center; }
+  .text-center .hero-actions { justify-content: center; }
+</style>

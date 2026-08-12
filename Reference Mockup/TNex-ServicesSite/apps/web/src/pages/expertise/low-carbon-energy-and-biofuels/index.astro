@@ -1,0 +1,84 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'SOIL TO CASH',
+  title: 'Create More Value from Low-Carbon Feedstocks',
+  lead: 'Terra Nexus helps biofuel producers and commodity traders create value at every step—from field-level carbon-intensity analysis and origination through program design, commercialization, recurring management, and verification readiness.',
+  heroImage: 'https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Next Step', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Low Carbon Energy & Biofuels | Terra Nexus',
+  metaDescription: 'Terra Nexus helps biofuel producers and commodity traders create value at every step—from field-level carbon-intensity analysis and origination through program design, commercialization, recurring management, and verification readiness.',
+  orientation: [
+    'A biofuel facility may control its process energy, yields, coproduct treatment, utilities, and operating performance. A significant portion of the fuel pathway, however, may begin upstream with how the feedstock is produced, documented, procured, aggregated, and transferred.',
+    'A favorable field or feedstock carbon-intensity result does not create value by itself. The feedstock must be commercially sourced, the supporting evidence must be complete, the physical volume and environmental characteristics must be controlled, the calculation must connect correctly to the fuel pathway, and the result must support the intended regulatory, tax, customer, or market use.',
+    'Terra Nexus helps clients connect agricultural production, commodity origination, lifecycle analysis, contracts, controls, economics, and assurance into one field-to-fuel operating system.',
+    'This Area of Expertise focuses on the agricultural, supply-chain, facility, commercial, regulatory, and environmental-accounting decisions that create and protect value in renewable fuels and bioenergy. It covers feedstock carbon-intensity analysis, feedstock strategy and origination, chain of custody and eligible-volume control, fuel pathway and facility economics, regulatory and market pathways, and program operations and assurance.',
+    'Eligibility and value depend on the current rules, fuel, facility, feedstock, geography, transaction, evidence, and intended claim. One pathway, practice, score, or regulatory program is not universally available.',
+    'Agricultural carbon-intensity tools can help estimate feedstock results, but a commercial program must answer a broader set of questions about data accuracy, sourcing volume, traceability, representation responsibility, and lifecycle pathway connection. Terra Nexus helps clients move from a calculation result to a supportable commercial and operating program.',
+    'The stages of a field-to-fuel program are connected. A weakness at the farm or delivery location can affect the facility claim. A contractual or ledger gap can undermine an otherwise valid calculation. An attractive modeled value can disappear if only a small portion of supply is supportable.',
+  ],
+  performanceCategories: [
+    { title: 'Lower Feedstock and Fuel Carbon Intensity', items: ['More accurate identification of lower-CI feedstock opportunities', 'Improved agricultural data and source documentation', 'Reduced lifecycle emissions from eligible field, supply-chain, or facility changes', 'More reliable connection between feedstock inputs and the applicable fuel pathway', 'Better understanding of uncertainty and sensitivity'] },
+    { title: 'More Valuable Feedstock Origination', items: ['Targeted sourcing from commercially attractive supply sheds', 'Improved producer and supplier propositions', 'Better visibility into verifiable versus untraceable volume', 'Stronger contracting, premium, and value-sharing models', 'Differentiated feedstock and customer offerings'] },
+    { title: 'Stronger Program Controls', items: ['Complete and reproducible calculations', 'Consistent units, assumptions, versions, and source records', 'Traceable physical volume and attributes', 'Clear treatment of commingling, mass balance, conversions, and exceptions', 'Reduced risk of unsupported, duplicate, or non-verifiable claims'] },
+    { title: 'Improved Facility and Transaction Economics', items: ['Clearer relationship between CI improvement and per-unit value', 'Better decisions about premiums, investment, sourcing, and process changes', 'Improved allocation of value among producers, originators, intermediaries, and facilities', 'Stronger tax-credit, investor, buyer, and transaction diligence', 'More durable margin and commercial structures'] },
+    { title: 'Greater Market and Verification Readiness', items: ['Evidence packages that match the intended regulatory or customer use', 'Operating procedures capable of recurring delivery', 'Clearer responsibilities among agronomy, origination, LCA, tax, legal, technology, finance, and assurance teams', 'Fewer unresolved issues during formal review', 'Stronger ability to scale across volume, facilities, crops, and geographies'] },
+  ],
+  systemSteps: [
+    { title: 'Evaluate the Opportunity', body: 'Identify addressable feedstock and facility CI opportunities; compare crops, sourcing regions, facilities, and interventions; estimate potential incentive, premium, margin, and strategic value; test traceability, volume, market, and timing assumptions; and determine whether to build, buy, partner, or participate.' },
+    { title: 'Assess Current Readiness', body: 'Review sourcing, producer relationships, delivery flows, systems, and contracts; assess field evidence, calculations, units, assumptions, and versions; evaluate chain-of-custody, mass-balance, inventory, and attribute controls; identify regulatory, tax, transaction, fraud, and verification risks; and distinguish supportable supply from incomplete or non-verifiable claims.' },
+    { title: 'Design the Program', body: 'Define the target operating model; design producer, originator, intermediary, and facility roles; establish eligibility, evidence, calculation, and record requirements; structure premiums, value sharing, ownership, and risk allocation; and define chain-of-custody, ledger, reconciliation, exception, and assurance processes.' },
+    { title: 'Build the Infrastructure', body: 'Develop tools, workpapers, data structures, and calculation workflows; configure field-to-fuel scenario and value models; establish program and attribute ledgers; define roles, approvals, segregation of duties, and document retention; and select and coordinate agronomy, technology, LCA, tax, legal, certification, and verification partners.' },
+    { title: 'Launch and Test', body: 'Onboard producers, originators, facilities, and service providers; collect and review initial evidence; execute calculation and eligible-volume workflows; test first feedstock deliveries, transfers, reconciliations, and claims packages; and resolve gaps before larger commercial commitments.' },
+    { title: 'Scale and Manage', body: 'Expand across producers, delivery locations, facilities, crops, and geographies; manage recurring evidence, calculations, ledgers, and reporting; improve automation and administrative efficiency; monitor exceptions, fraud indicators, unsupported data, and changing requirements; and maintain consistency as program volume and complexity increase.' },
+    { title: 'Prepare for Verification and Transaction Scrutiny', body: 'Organize source evidence and audit trails; reproduce and test calculations; review units, assumptions, versions, conversions, and claims; reconcile field, feedstock, transaction, inventory, and facility records; perform readiness assessments and corrective action; and coordinate questions from tax, customer, investor, auditor, or verification teams.' },
+  ],
+  audiencePathways: [
+    { title: 'Biofuel Producers', description: 'Biofuel producers need to understand both the potential value and the conditions required to realize it. Terra Nexus helps producers quantify the potential value of feedstock and facility CI improvements; compare sourcing regions, crops, practices, and supply scenarios; estimate how traceability and eligible volume affect the business case; determine producer, originator, intermediary, and facility requirements; connect feedstock analysis with lifecycle pathway and facility economics; establish chain-of-custody, recordkeeping, and internal controls; evaluate agronomy, data, LCA, technology, tax, legal, and assurance partners; design pilot, launch, scale, and managed-service models; and prepare calculations and evidence for verification and transaction diligence.' },
+    { title: 'Commodity Traders and Originators', description: 'Commodity traders may become suppliers, aggregators, program administrators, data coordinators, commercial intermediaries, or managed-service providers. Terra Nexus helps originators identify commercially attractive reduced-CI feedstock opportunities; prioritize producers, supply sheds, delivery locations, and customers; design producer enrollment, evidence, and incentive workflows; establish field, volume, transaction, and chain-of-custody diligence; define mass-balance, inventory, allocation, and eligible-volume controls; structure premiums, value sharing, contracts, and representations; manage incomplete, untraceable, or non-verifiable supply; connect reduced-CI feedstock with downstream facility demand; prepare customer, tax, audit, and verifier documentation; and manage recurring program operations across locations and participants.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Value', items: ['Which feedstock, geography, and facility opportunities fit the strategy?', 'What value is available per unit and at total commercial volume?', 'What premium can be paid and how should value be shared?', 'Who owns the attribute and makes each representation?'] },
+    { heading: 'Supply, Evidence & Traceability', items: ['How much supply is commercially available and verifiable?', 'Which producer data must be direct, documented, modeled, or independently reviewed?', 'How should existing practices, new adoption, and untraceable supply be treated?', 'What chain-of-custody and eligible-volume controls apply at each delivery point?'] },
+    { heading: 'Pathway & Operations', items: ['How does feedstock CI connect to the applicable fuel pathway and facility assumptions?', 'What recurring operating model is required for tax, customer, regulatory, and assurance scrutiny?'] },
+  ],
+  workstreams: [
+    { title: 'Strategy & Innovation', items: ['Market-entry and competitive strategy', 'Low-carbon feedstock and fuel business models', 'Commercialization pathways', 'Product, program, and customer-offering design', 'Build-buy-partner and partner strategy'] },
+    { title: 'Financial Investments & New Venture Development', items: ['Financial planning and scenario analysis', 'Business cases and initiative prioritization', 'Value-sharing, premium, and margin models', 'Facility, technology, transaction, and investor diligence', 'Venture, partnership, and capital decisions'] },
+    { title: 'Sustainable Supply Chain & Operations', items: ['Reduced-CI feedstock sourcing and origination strategy', 'Producer and supplier programs', 'Traceability, chain of custody, and mass balance', 'Digital supply-chain and data requirements', 'Controls, workflows, ledgers, reconciliation, and managed operations'] },
+    { title: 'Corporate Sustainability', items: ['Lifecycle and corporate GHG-accounting alignment', 'Claims boundaries and governance', 'Value-chain emissions and product accounting', 'Internal roles, controls, and stakeholder communication'] },
+    { title: 'Carbon & Ecosystem Services', items: ['Market-mechanism and pathway assessment', 'Program design and management', 'Commercialization and environmental-asset valuation', 'Impact verification and claims translation', 'Audit and assurance readiness'] },
+    { title: 'Field-to-Fuel Diligence', items: ['Crop and feedstock eligibility', 'Field-level source documents', 'Yield, nutrient, energy, and practice substantiation', 'Calculation integrity, units, and version control', 'Source-data and transaction reconciliation', 'Chain-of-custody and mass-balance systems', 'Physical-volume and environmental-attribute controls', 'Contracts, rights, representations, and liabilities', 'Program governance and segregation of duties', 'Anomaly, fraud, duplication, and unsupported-claim indicators', 'Tax-credit, investor, buyer, and transaction diligence', 'Verification and audit readiness'] },
+  ],
+  valuePathways: [
+    { label: 'Federal and state low-carbon fuel program incentives' },
+    { label: 'Tax credit value under Section 45Z and similar provisions' },
+    { label: 'Renewable Fuel Standard and RIN markets' },
+    { label: 'Certification and product differentiation' },
+    { label: 'Customer requirements and sustainability reporting' },
+    { label: 'International renewable-energy market access' },
+    { label: 'Environmental-attribute transactions' },
+    { label: 'Commercial contracts and feedstock premiums' },
+  ],
+  validationRows: [
+    { category: 'Feasibility', pitfall: 'The business case assumes every sourced bushel or tonne is traceable.', validation: 'Test traceability assumptions against real sourcing conditions before building the business case.' },
+    { category: 'Feasibility', pitfall: 'Field inputs are accepted without adequate source documentation.', validation: 'Require adequate source documentation for field inputs before accepting them.' },
+    { category: 'Viability', pitfall: 'Feedstock CI is analyzed separately from the facility pathway and commercial volume.', validation: 'Analyze feedstock CI alongside facility pathway and commercial volume as one integrated model.' },
+    { category: 'Viability', pitfall: 'Premiums are based on nominal credit value rather than realizable margin.', validation: 'Base premiums on realizable margin, not nominal credit value, before pricing transactions.' },
+    { category: 'Strategic Fit', pitfall: 'Producer, originator, intermediary, and facility responsibilities are unclear.', validation: 'Clarify producer, originator, intermediary, and facility responsibilities before contracting.' },
+    { category: 'Feasibility', pitfall: 'Mass-balance rules do not match actual delivery, storage, and inventory operations.', validation: 'Design mass-balance rules to match actual delivery, storage, and inventory operations.' },
+    { category: 'Strategic Fit', pitfall: 'Contracts do not allocate environmental attributes and representations clearly.', validation: 'Allocate environmental attributes and representations clearly in every contract.' },
+    { category: 'Feasibility', pitfall: 'Spreadsheet, platform, tax, and lifecycle-model boundaries are inconsistent.', validation: 'Align spreadsheet, platform, tax, and lifecycle-model boundaries before launch.' },
+    { category: 'Feasibility', pitfall: 'Exceptions, corrections, version changes, and unsupported supply are not governed.', validation: 'Establish governance for exceptions, corrections, version changes, and unsupported supply.' },
+    { category: 'Strategic Fit', pitfall: 'Verification is treated as a final document exercise rather than a program-design requirement.', validation: 'Design verification into the program from the start, not as a final document exercise.' },
+    { category: 'Feasibility', pitfall: 'Recurring operations are underestimated after the initial pilot.', validation: 'Resource recurring operations adequately beyond the initial pilot phase.' },
+  ],
+  ctaHeading: 'Start Your Soil-to-Cash Journey',
+  ctaBody: 'Whether you are evaluating an opportunity, designing a sourcing program, building field-to-fuel controls, launching reduced-CI feedstock transactions, scaling an existing program, or preparing for verification, Terra Nexus helps identify the next steps that protect value and reduce execution risk.',
+  ctaButton: { label: 'Discuss Your Next Step', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

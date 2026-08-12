@@ -1,0 +1,81 @@
+---
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Prevent, Redistribute, Repurpose & Recover',
+  title: 'Keep Food and Resources at Their Highest Value',
+  lead: 'Terra Nexus helps food businesses prevent loss, redesign operations, create markets for surplus and byproducts, select recovery pathways, and build circular programs that improve economics and environmental performance.',
+  heroImage: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Food-Waste Opportunity', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Food Waste: Prevention, Diversion & Recovery | Terra Nexus',
+  metaDescription: 'Terra Nexus helps food businesses prevent loss, redesign operations, create markets for surplus and byproducts, select recovery pathways, and build circular programs that improve economics and environmental performance.',
+  orientation: [
+    'Food loss and waste can occur before harvest, during storage and transportation, in processing, in manufacturing, at retail, in foodservice, or after purchase. The causes and solutions are different at every stage. A forecasting problem should not be treated like a processing byproduct. An edible surplus should not be managed like contaminated material. A valuable ingredient stream should not be sent to a lower-value recovery pathway because the market, logistics, or quality requirements were never developed.',
+    'The most effective approach is to understand where food, nutrients, materials, energy, labor, and money are being lost and then prioritize the highest practical use. Once food or a byproduct leaves its intended use, part of its value has often already been lost — the business has paid for raw materials, production, labor, energy, water, packaging, storage, transportation, and management. A lower-value recovery pathway may reduce disposal cost or create revenue, but it rarely recovers the full value embedded in the original product. Terra Nexus helps clients treat food waste as an integrated portfolio of prevention, redistribution, product, operational, market, and recovery opportunities, and compare prevention with downstream pathways using the complete economics rather than only the disposal fee or revenue per tonne.',
+  ],
+  performanceCategories: [
+    { title: 'Lower Cost and Better Yield', items: ['Reduced raw-material loss, giveaway, overproduction, spoilage, and rework', 'Improved process yield, inventory turns, and shelf life', 'Lower hauling, treatment, disposal, and compliance cost', 'Improved labor, energy, water, packaging, and asset utilization', 'Fewer quality failures and write-offs'] },
+    { title: 'More Food Kept in Use', items: ['Better matching of supply and demand', 'Earlier identification of surplus', 'Stronger donation, rescue, markdown, and secondary-market pathways', 'Improved logistics and cold-chain coordination', 'Reduced loss across farms, processors, distribution, retail, and foodservice'] },
+    { title: 'New Revenue and Product Value', items: ['Sale of co-products and byproducts', 'New ingredients, feedstocks, food products, feed, materials, or services', 'Improved valuation of side streams', 'New customer and channel relationships', 'Licensing, partnership, or venture opportunities'] },
+    { title: 'Improved Environmental Performance', items: ['Reduced embedded land, water, energy, and emissions associated with wasted food', 'Lower disposal and treatment impacts', 'Recovery of nutrients, energy, and materials', 'Improved circularity and resource efficiency', 'Stronger corporate target and reporting performance where supported by evidence'] },
+    { title: 'Greater Resilience and Collaboration', items: ['More flexible outlets for surplus and byproducts', 'Stronger coordination among suppliers, operations, customers, recovery partners, community organizations, and regulators', 'Reduced exposure to disposal capacity, commodity volatility, and changing rules', 'Better visibility into material flows and root causes'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Objective and Scope', body: 'The starting point may be cost reduction, waste targets, operational excellence, new revenue, a byproduct challenge, regulatory change, food donation, circularity, facility investment, or a new technology.', detail: 'Terra Nexus helps define the facilities, products, materials, geographies, participants, data, commercial objective, and decision boundary.' },
+    { title: 'Measure Material and Value Flows', body: 'A useful assessment shows where material comes from, why it is lost, what quality it retains, where it goes, what it costs, and who controls the decision. Relevant information may include material type, quantity, composition, and variability; edible versus inedible portions; quality, safety, contamination, and shelf life; process, product, line, shift, location, supplier, and customer; seasonality and timing; handling, storage, and transportation; current outlet, treatment, cost, revenue, and contractual terms; embedded raw-material and processing value; and root causes, ownership, and decision rights.', detail: 'Terra Nexus helps create a material-and-value baseline that supports operational, commercial, investment, and reporting decisions.' },
+    { title: 'Prioritize Prevention and Highest-Value Pathways', body: 'Opportunities should be compared using more than environmental preference. Relevant factors include avoidable cost and recoverable value; food safety, quality, and legal requirements; customer and market demand; material consistency and scale; logistics and infrastructure; capital and operating requirements; partner capability and counterparty risk; emissions and environmental performance; implementation timing and scalability; and organizational ownership and change required.', detail: 'Terra Nexus helps clients build a prioritized portfolio rather than forcing every material into one technology or outlet.' },
+    { title: 'Develop the Business Case and Market', body: 'A potential byproduct or surplus market must work for both the generator and the buyer.', detail: 'Terra Nexus helps evaluate product or feedstock specifications; processing, stabilization, testing, packaging, and storage; volume, seasonality, and reliability; customer applications and alternatives; pricing, avoided cost, revenue, margin, and logistics; capital, working capital, and payback; contractual responsibilities, liability, and quality; ownership of claims, credits, or environmental attributes; and partner, customer, and route-to-market strategy.' },
+    { title: 'Select Technology and Partners Around the Operating Need', body: 'Technology may support forecasting, measurement, resale, donation, separation, processing, upcycling, composting, digestion, treatment, or resource recovery. Technology is selected after the material, operating, and commercial problem is clear — not as the starting point.', detail: 'Terra Nexus helps clients evaluate technology readiness, feedstock fit, integration, performance claims, utilities, maintenance, permitting, output markets, vendor quality, financing, and scale.' },
+    { title: 'Build and Launch the Operating Model', body: 'Implementation may require new procedures, segregation, quality controls, inventory rules, training, equipment, data capture, contracts, logistics, customer development, partner coordination, and reporting.', detail: 'Terra Nexus helps design roles, workflows, controls, decision rights, pilots, implementation plans, and scale gates. We can also manage recurring workstreams within client-owned programs.' },
+    { title: 'Measure Financial, Operational, and Environmental Performance', body: 'Programs should track the outcomes relevant to the decision, which may include tonnes prevented, redistributed, repurposed, recycled, or recovered; product and process yield; cost avoided and revenue created; edible food kept in use; material quality and outlet reliability; emissions, energy, water, nutrients, or landfill diversion; customer, community, and partner outcomes; and capital performance and operating reliability.', detail: 'Terra Nexus helps align measurement, accounting, claims, and management review so reported results match the actual operating system.' },
+  ],
+  audiencePathways: [
+    { title: 'Food & Beverage Companies', description: 'Facility and portfolio assessment, operational improvement, byproduct and co-product strategy, product development, partner selection, business cases, measurement, claims, and managed programs.' },
+    { title: 'Retailers & Distributors', description: 'Forecasting, inventory, markdown, donation, supplier and customer programs, private-label design, logistics, reporting, and recovery partnerships.' },
+    { title: 'Ingredient, Feed & Processing Companies', description: 'Yield and resource efficiency, byproduct markets, feed and ingredient pathways, processing, allocation, customer development, product claims, and investment.' },
+    { title: 'Agricultural Producers & Integrated Protein Companies', description: 'Harvest and production loss, surplus and secondary markets, feed, nutrients, manure and organics, infrastructure, partnerships, and value recovery.' },
+    { title: 'Commodity Traders', description: 'Market development, aggregation, quality and specifications, logistics, commercial contracts, secondary commodities, feedstocks, environmental attributes, and diligence.' },
+    { title: 'Technology & Solution Providers', description: 'Market entry, customer discovery, feedstock and workflow fit, technical and commercial diligence, pilots, partnerships, channel strategy, and investor or buyer support.' },
+    { title: 'Investors & Capital Providers', description: 'Technology, facility, company, project, and market diligence; feedstock and output risk; business cases; value-creation planning; and portfolio strategy.' },
+    { title: 'Food-Rescue, Recovery & Community Organizations', description: 'Program design, corporate partnerships, logistics, data, measurement, commercial models, governance, and scale planning.' },
+  ],
+  decisionGroups: [
+    { heading: 'Assessment & Prevention', items: ['Where is food or material value being lost and why?', 'Which losses can be prevented rather than managed downstream?', 'What is edible, safe, stable, and commercially usable?'] },
+    { heading: 'Pathway & Commercial Decisions', items: ['Which outlet preserves the highest practical value?', 'Is the material consistent enough to support a customer or technology?', 'What quality, safety, legal, logistics, and liability requirements apply?', 'What are the complete economics, including embedded value and avoided cost?'] },
+    { heading: 'Technology, Partners & Scale', items: ['Which technologies and partners fit the operating environment?', 'Who owns the material, output, claim, and environmental attribute?', 'How will the program scale without shifting cost or impact elsewhere?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Material-flow and value-loss assessment', 'Root-cause and operational analysis', 'Market, customer, technology, and partner research', 'Business cases and initiative prioritization', 'Project, company, technology, and investment diligence'] },
+    { title: 'Design the Portfolio and Business Model', items: ['Prevention, redistribution, upcycling, feed, recycling, and recovery strategy', 'Product and co-product business models', 'Customer, partner, pricing, and route-to-market design', 'Capital, operating, value-allocation, and financing models', 'Program targets, measurement, claims, and governance'] },
+    { title: 'Build the Operating Infrastructure', items: ['Facility, supplier, customer, and partner workflows', 'Segregation, quality, safety, data, and inventory controls', 'Contracts, logistics, specifications, and documentation', 'Technology and vendor selection', 'Reporting, accounting, and claim-support systems'] },
+    { title: 'Launch and Scale', items: ['Pilot design and decision gates', 'Partner and customer onboarding', 'Operational rollout and training', 'First transactions and performance review', 'Expansion across sites, materials, products, and markets'] },
+    { title: 'Manage Delivery', items: ['Recurring data and performance review', 'Partner, customer, and facility coordination', 'Material and outlet reconciliation', 'Exception, quality, and corrective-action management', 'Reporting, claims support, and continuous improvement'] },
+  ],
+  valuePathways: [
+    { label: 'Prevention of avoidable loss' },
+    { label: 'Edible-food redistribution and rescue' },
+    { label: 'Upcycling and new product development' },
+    { label: 'Animal feed and agricultural inputs' },
+    { label: 'Organics recycling and biological recovery' },
+    { label: 'Energy and resource recovery' },
+  ],
+  validationRows: [
+    { category: 'Desirability', pitfall: 'The company begins with disposal rather than root causes and prevention.', validation: 'Start with root-cause analysis and prevention before evaluating disposal options.' },
+    { category: 'Viability', pitfall: 'Total embedded product value is ignored in favor of hauling cost.', validation: 'Account for total embedded product value, not just hauling cost, in the business case.' },
+    { category: 'Viability', pitfall: 'Materials are grouped together despite different quality and market potential.', validation: 'Segment materials by quality and market potential to capture the highest value pathway.' },
+    { category: 'Desirability', pitfall: 'Technology is selected before feedstock and output markets are validated.', validation: 'Validate feedstock availability and output market demand before selecting technology.' },
+    { category: 'Feasibility', pitfall: 'Expected volume is inconsistent, seasonal, contaminated, or unavailable.', validation: 'Profile volume, seasonality, contamination, and availability before committing to a pathway.' },
+    { category: 'Feasibility', pitfall: 'Food safety, liability, quality, and permitting are addressed too late.', validation: 'Address food safety, liability, quality, and permitting early in the design phase.' },
+    { category: 'Viability', pitfall: 'Logistics consume the value of the proposed pathway.', validation: 'Model logistics costs against pathway value before committing to a location.' },
+    { category: 'Strategic Fit', pitfall: 'The buyer and generator have mismatched specifications or incentives.', validation: 'Align buyer and generator specifications and incentives before contracting.' },
+    { category: 'Strategic Fit', pitfall: 'Waste and circularity claims use inconsistent boundaries.', validation: 'Define consistent boundaries for waste and circularity claims from the outset.' },
+    { category: 'Feasibility', pitfall: 'Pilots launch without recurring ownership, data, or performance management.', validation: 'Establish recurring ownership, data, and performance management before pilot launch.' },
+  ],
+  ctaHeading: 'Build a Food-Waste Portfolio That Protects Value',
+  ctaBody: 'Whether the starting point is operational loss, surplus food, a processing byproduct, a new technology, a recovery facility, a circular product, or a corporate target, Terra Nexus helps clients identify the highest-value practical path and build the systems needed to deliver it.',
+  ctaButton: { label: 'Discuss Your Food-Waste Opportunity', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />
