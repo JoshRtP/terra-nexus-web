@@ -1,0 +1,40 @@
+---
+// See Figure.astro for why each image is a plain public/-relative URL string.
+interface Props {
+  images: Array<{ image: string; alt: string; caption?: string }>;
+}
+
+const { images } = Astro.props;
+---
+
+<div class="mdx-gallery">
+  {images.map((item) => (
+    <figure>
+      <img src={item.image} alt={item.alt} loading="lazy" decoding="async" />
+      {item.caption && <figcaption>{item.caption}</figcaption>}
+    </figure>
+  ))}
+</div>
+
+<style>
+  .mdx-gallery {
+    margin-block: var(--space-8);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+  .mdx-gallery figure {
+    margin: 0;
+  }
+  .mdx-gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    display: block;
+  }
+  .mdx-gallery figcaption {
+    margin-top: var(--space-2);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+</style>

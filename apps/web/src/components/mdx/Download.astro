@@ -1,0 +1,41 @@
+---
+interface Props {
+  file: string;
+  label?: string;
+  description?: string;
+}
+
+const { file, label = 'Download', description } = Astro.props;
+---
+
+<div class="mdx-download">
+  <div>
+    <a class="mdx-download-link" href={file} download>{label}</a>
+    {description && <p class="mdx-download-description">{description}</p>}
+  </div>
+</div>
+
+<style>
+  .mdx-download {
+    margin-block: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+  .mdx-download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-semibold);
+    color: var(--color-accent);
+  }
+  .mdx-download-link:hover {
+    color: var(--color-accent-hover);
+  }
+  .mdx-download-description {
+    margin: var(--space-2) 0 0;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+</style>

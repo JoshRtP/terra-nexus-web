@@ -1,0 +1,47 @@
+---
+interface Props {
+  heading: string;
+  body?: string;
+  buttonLabel: string;
+  buttonHref: string;
+}
+
+const { heading, body, buttonLabel, buttonHref } = Astro.props;
+---
+
+<div class="mdx-cta">
+  <div class="mdx-cta-copy">
+    <p class="mdx-cta-heading">{heading}</p>
+    {body && <p class="mdx-cta-body">{body}</p>}
+  </div>
+  <a class="btn btn-primary" href={buttonHref}>{buttonLabel}</a>
+</div>
+
+<style>
+  .mdx-cta {
+    margin-block: var(--space-10);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+    background: var(--color-dark);
+    color: var(--color-text-inverse);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  .mdx-cta-heading {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    color: var(--color-text-inverse);
+  }
+  .mdx-cta-body {
+    margin: var(--space-2) 0 0;
+    color: var(--color-text-inverse);
+    opacity: 0.85;
+  }
+  .mdx-cta :global(.btn) {
+    flex-shrink: 0;
+  }
+</style>

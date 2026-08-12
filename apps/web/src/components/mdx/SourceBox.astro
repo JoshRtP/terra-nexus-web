@@ -1,0 +1,44 @@
+---
+interface Props {
+  title?: string;
+  sourceName: string;
+  sourceUrl?: string;
+  note?: string;
+}
+
+const { title = 'Sources', sourceName, sourceUrl, note } = Astro.props;
+---
+
+<div class="mdx-sourcebox">
+  <p class="mdx-sourcebox-title">{title}</p>
+  <p class="mdx-sourcebox-entry">
+    {sourceUrl ? <a href={sourceUrl}>{sourceName}</a> : sourceName}
+  </p>
+  {note && <p class="mdx-sourcebox-note">{note}</p>}
+</div>
+
+<style>
+  .mdx-sourcebox {
+    margin-block: var(--space-8);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+  }
+  .mdx-sourcebox-title {
+    margin: 0 0 var(--space-2);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+  .mdx-sourcebox-entry {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .mdx-sourcebox-note {
+    margin: var(--space-2) 0 0;
+    color: var(--color-text-secondary);
+  }
+</style>

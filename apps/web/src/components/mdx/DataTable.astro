@@ -1,0 +1,60 @@
+---
+interface Props {
+  caption?: string;
+  headers: string[];
+  rows: Array<{ cells: string[] }>;
+}
+
+const { caption, headers, rows } = Astro.props;
+---
+
+<div class="mdx-datatable-wrap">
+  <table class="mdx-datatable">
+    {caption && <caption>{caption}</caption>}
+    <thead>
+      <tr>
+        {headers.map((header) => <th scope="col">{header}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          {row.cells.map((cell) => <td>{cell}</td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .mdx-datatable-wrap {
+    margin-block: var(--space-8);
+    overflow-x: auto;
+  }
+  .mdx-datatable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  .mdx-datatable caption {
+    text-align: left;
+    margin-bottom: var(--space-2);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+  .mdx-datatable th,
+  .mdx-datatable td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .mdx-datatable th {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-border-strong);
+  }
+  .mdx-datatable td {
+    color: var(--color-text-secondary);
+  }
+</style>

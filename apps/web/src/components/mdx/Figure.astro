@@ -1,0 +1,63 @@
+---
+// Rendering counterpart of the Keystatic "Figure" MDX content component
+// (see apps/web/keystatic.content-components.tsx). Props must match its
+// schema exactly.
+//
+// `image` arrives as a public/-relative URL string (e.g. "/images/mdx/foo.png"),
+// not ImageMetadata — Astro's content-layer `image()` schema helper (which
+// gives optimized, imported images) only applies to a collection's own
+// frontmatter fields, not to arbitrary props on components embedded inside
+// an MDX body. A plain <img> is the correct, honest rendering here; see the
+// keystatic.content-components.tsx comment on Figure's `image` field.
+interface Props {
+  image: string;
+  alt: string;
+  caption?: string;
+  sourceName?: string;
+  sourceUrl?: string;
+}
+
+const { image, alt, caption, sourceName, sourceUrl } = Astro.props;
+---
+
+<figure class="mdx-figure">
+  <img src={image} alt={alt} loading="lazy" decoding="async" />
+  {(caption || sourceName) && (
+    <figcaption>
+      {caption && <span class="mdx-figure-caption">{caption}</span>}
+      {sourceName && (
+        <span class="mdx-figure-source">
+          Source:{' '}
+          {sourceUrl ? <a href={sourceUrl}>{sourceName}</a> : sourceName}
+        </span>
+      )}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .mdx-figure {
+    margin-block: var(--space-8);
+  }
+  .mdx-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    display: block;
+  }
+  figcaption {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+  .mdx-figure-source {
+    color: var(--color-text-muted);
+  }
+  .mdx-figure-source a {
+    color: var(--color-text-muted);
+    text-decoration: underline;
+  }
+</style>

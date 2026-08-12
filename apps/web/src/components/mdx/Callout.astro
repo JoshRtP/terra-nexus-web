@@ -1,0 +1,51 @@
+---
+// A "wrapper" content component (see keystatic.content-components.tsx) —
+// its MDX body content arrives as slotted children, not a prop.
+interface Props {
+  variant?: 'info' | 'insight' | 'warning';
+  title?: string;
+}
+
+const { variant = 'info', title } = Astro.props;
+const defaultTitle = { info: 'Info', insight: 'Insight', warning: 'Warning' }[variant];
+---
+
+<aside class={`mdx-callout mdx-callout-${variant}`}>
+  <p class="mdx-callout-title">{title || defaultTitle}</p>
+  <div class="mdx-callout-body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .mdx-callout {
+    margin-block: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-md);
+    border-inline-start: 3px solid var(--color-border-strong);
+    background: var(--color-surface);
+  }
+  .mdx-callout-insight {
+    border-inline-start-color: var(--color-accent);
+    background: var(--color-accent-bg);
+  }
+  .mdx-callout-warning {
+    border-inline-start-color: var(--color-eyebrow);
+    background: var(--color-accent-bg);
+  }
+  .mdx-callout-title {
+    margin: 0 0 var(--space-2);
+    font-weight: var(--font-semibold);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+  }
+  .mdx-callout-body :global(p) {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .mdx-callout-body :global(p + p) {
+    margin-top: var(--space-3);
+  }
+</style>

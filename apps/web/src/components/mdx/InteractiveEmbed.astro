@@ -1,0 +1,43 @@
+---
+// Controlled escape hatch for approved interactive Astro/React components
+// (calculators, maps, charts) — a closed allow-list, not arbitrary
+// component execution from editorial content. Extend `embedType` here and
+// in keystatic.content-components.tsx together, only for a real, reviewed
+// component; never accept a free-text component name.
+interface Props {
+  embedType: string;
+  title: string;
+}
+
+const { embedType, title } = Astro.props;
+
+// No approved interactive embeds exist yet — this renders a clearly-marked
+// placeholder rather than silently doing nothing, so an unapproved/unbuilt
+// embedType is visible in review rather than invisible in production.
+const approved: Record<string, undefined> = {};
+const isApproved = embedType in approved;
+---
+
+{isApproved ? (
+  <div class="mdx-embed" aria-label={title} />
+) : (
+  <div class="mdx-embed mdx-embed-placeholder" role="note">
+    <p>Interactive embed &ldquo;{title}&rdquo; ({embedType}) is not yet an approved component.</p>
+  </div>
+)}
+
+<style>
+  .mdx-embed {
+    margin-block: var(--space-8);
+  }
+  .mdx-embed-placeholder {
+    padding: var(--space-5) var(--space-6);
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+  .mdx-embed-placeholder p {
+    margin: 0;
+  }
+</style>

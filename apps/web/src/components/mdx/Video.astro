@@ -1,0 +1,47 @@
+---
+interface Props {
+  url: string;
+  poster?: string;
+  caption?: string;
+  transcriptOrCaptionsNote?: string;
+}
+
+const { url, poster, caption, transcriptOrCaptionsNote } = Astro.props;
+---
+
+<figure class="mdx-video">
+  <video controls poster={poster} preload="metadata">
+    <source src={url} />
+    Your browser does not support embedded video.
+    <a href={url}>Watch the video directly</a>.
+  </video>
+  {(caption || transcriptOrCaptionsNote) && (
+    <figcaption>
+      {caption && <span>{caption}</span>}
+      {transcriptOrCaptionsNote && <span class="mdx-video-a11y">{transcriptOrCaptionsNote}</span>}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .mdx-video {
+    margin-block: var(--space-8);
+  }
+  .mdx-video video {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    background: var(--color-dark);
+    display: block;
+  }
+  figcaption {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+  .mdx-video-a11y {
+    color: var(--color-text-muted);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+interface Props {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+const { value, label, description } = Astro.props;
+---
+
+<div class="mdx-stat">
+  <p class="mdx-stat-value">{value}</p>
+  <p class="mdx-stat-label">{label}</p>
+  {description && <p class="mdx-stat-description">{description}</p>}
+</div>
+
+<style>
+  .mdx-stat {
+    margin-block: var(--space-8);
+    padding: var(--space-6) var(--space-8);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .mdx-stat-value {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: var(--font-bold);
+    color: var(--color-accent);
+    margin: 0;
+    line-height: 1;
+  }
+  .mdx-stat-label {
+    margin-top: var(--space-2);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+  .mdx-stat-description {
+    margin-top: var(--space-2);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+</style>
