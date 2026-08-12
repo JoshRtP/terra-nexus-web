@@ -35,6 +35,7 @@ dist/
 apps/web/.generated/
 apps/web/.test-tmp/
 apps/web/.astro/
+.playwright-mcp/
 
 # Deployment / environment (never commit real secrets)
 .env.local
