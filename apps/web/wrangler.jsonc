@@ -6,12 +6,17 @@
   // Wrangler's own default config and derives the Worker name from
   // package.json ("@terra-nexus/web" -> "terra-nexus-web"). Every deploy so
   // far has overridden that on the command line with
-  // `wrangler deploy --name terra-nexus-web-preview`, which Cloudflare
-  // Workers Builds' dashboard-driven Git deploys cannot do (no place to pass
-  // a CLI flag). Committing the real name here is required before
-  // connecting Git — otherwise Workers Builds would either fail to match
-  // the existing `terra-nexus-web-preview` Worker or create a second,
-  // wrongly-named one.
+  // `wrangler deploy --name terra-nexus-web-preview`. Workers Builds' deploy
+  // commands are themselves customizable in the Cloudflare dashboard, so a
+  // `--name` override could in principle be added there too — but that would
+  // make the Worker's identity a hidden, dashboard-only setting, invisible
+  // to anyone reading this repo and easy to drift from what local/manual
+  // deploys use. Committing the real name here instead means local, CI, and
+  // Workers-Builds-generated deploys all resolve the same Worker from the
+  // same source of truth — and it's required before connecting Git either
+  // way, since the default dashboard deploy commands (no `--name` override)
+  // would otherwise fail to match the existing `terra-nexus-web-preview`
+  // Worker or create a second, wrongly-named one.
   //
   // Verified this file is actually READ, not ignored: @cloudflare/vite-plugin
   // locates a project-root wrangler.jsonc/.json/.toml via `findWranglerConfig`
