@@ -81,8 +81,9 @@ the baseline.
 Fully static, no server rendering, no API routes besides a dynamic
 `robots.txt`.
 
-- `/` — homepage
-- `/homepage-alt` — draft alternate homepage (this branch only; not linked from nav)
+- `/` — homepage (the former `/homepage-alt` draft layout, canonicalized 2026-08-12)
+- `/homepage-alt` — redirects to `/` (kept for anyone who bookmarked the
+  pre-canonicalization draft-review URL; not a live page, not linked from nav)
 - `/about`
 - `/capabilities`, `/capabilities/{5 offering slugs}`
 - `/case-studies`, `/case-studies/[slug]` (dynamic, `getStaticPaths()` from OKF graph, `prerender = true`)
@@ -134,7 +135,7 @@ preserving before OKF is retired.
   reinvent them. See also `knowledge` brand references and
   `brand/brand-color-palette.md` if present.
 - GSAP is not installed. Add it only when cinematic/scroll work actually
-  starts (homepage hero, `homepage-alt` refinement), not preemptively.
+  starts on the homepage hero (M8), not preemptively.
 
 ## 6. Cloudflare direction
 

@@ -1,11 +1,21 @@
 ---
+// Terra Nexus homepage. Merges the section order/structure of the live
+// terra.nexus site (photo hero, value-chain diagram break, brand banner)
+// with this repo's homepage content and components (expertise grid,
+// segment slider, approach rail, track record stats, final CTA).
+//
+// Canonicalized here 2026-08-12, replacing the earlier CSS-gradient-hero
+// layout that lived at this path — that version was developed side by side
+// at /homepage-alt for owner review; the review concluded and this is now
+// the one production homepage. See docs/architecture/web-platform-architecture.md
+// §3 and CLAUDE.md §5 for the promotion record.
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 
 const mode = getBuildMode();
 
-// Portfolio-wide stats for the "Our Track Record" section below. Real,
-// confirmed figures (approved 2026-08-10) — not placeholders, no NOI flag.
+// Portfolio-wide stats for the "Our Track Record" section below. Same figures
+// as the current homepage (approved 2026-08-10).
 const portfolioStats = [
   { value: '$3B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
   { value: '25+', label: 'Global Projects Across 25+ Countries' },
@@ -49,40 +59,41 @@ const valueChainSegments = [
 ];
 
 // Condensed for the homepage — the full workstream detail (bullet lists) lives on /capabilities/.
-// `caps` names the capability slugs (see `capabilities` above) each step draws on, driving the
-// highlight state in the interactive rail below. Step 6 sets `loop: true` — rather than
-// highlighting one or two capabilities, it lights up all five in a neutral grey sweep to signal
-// "end-to-end value creation" (closing the loop back to Step 1) instead of "this step relates to
-// this capability" (the maroon treatment steps 1-5 use).
 const allCapSlugs = capabilities.map((cap) => cap.slug);
 const approachSteps = [
   {
     title: 'Evaluate the Opportunity',
+    short: 'Evaluate',
     description: 'Assess the market, economics, and strategic fit before committing to a path.',
-    caps: ['strategy-and-innovation', 'financial-investments-and-new-venture-development'],
+    caps: ['strategy-and-innovation'],
   },
   {
     title: 'Design the Program',
+    short: 'Design',
     description: 'Define the commercial model, governance, and route to market.',
-    caps: ['financial-investments-and-new-venture-development', 'sustainable-supply-chain-and-operations', 'corporate-sustainability'],
+    caps: ['strategy-and-innovation', 'financial-investments-and-new-venture-development'],
   },
   {
     title: 'Build the Operating Infrastructure',
+    short: 'Build',
     description: 'Stand up the workflows, data, and controls a program needs to run.',
-    caps: ['sustainable-supply-chain-and-operations', 'corporate-sustainability', 'carbon-and-ecosystem-services'],
+    caps: ['financial-investments-and-new-venture-development', 'sustainable-supply-chain-and-operations', 'corporate-sustainability'],
   },
   {
     title: 'Launch and Scale',
+    short: 'Launch & Scale',
     description: 'Pilot, prove, and expand across partners, geographies, and products.',
-    caps: ['carbon-and-ecosystem-services'],
+    caps: ['sustainable-supply-chain-and-operations', 'corporate-sustainability', 'carbon-and-ecosystem-services'],
   },
   {
     title: 'Manage Client-Owned Programs',
+    short: 'Manage & Verify',
     description: 'Run the recurring operations, ledgers, and reporting clients own.',
     caps: allCapSlugs,
   },
   {
     title: 'Connect Performance to Claims and Market Value',
+    short: 'Unlock Shared Value',
     description: 'Translate results into credible claims and commercial value. This step closes the loop — connecting performance back to the original opportunity to drive continuous improvement toward best-in-class performance and profitability.',
     caps: allCapSlugs,
     loop: true,
@@ -95,19 +106,32 @@ const approachSteps = [
   description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
   preview={mode === 'preview'}
 >
-  <!-- Hero -->
-  <section class="hero" aria-labelledby="hero-heading">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-grid" aria-hidden="true"></div>
-    <div class="container hero-content">
-      <span class="hero-eyebrow">An Innovation &amp; Insights Studio</span>
-      <h1 id="hero-heading">Impact at the Intersection of <span class="hero-highlight">Food &amp; Climate</span></h1>
-      <p class="hero-engagement">We help food and agribusiness companies create commercial sustainability programs at scale.</p>
-      <p class="hero-supporting">
-        Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system.
-      </p>
+  <!-- Photo Hero -->
+  <section class="photo-hero" aria-labelledby="hero-heading">
+    <img
+      class="photo-hero-bg"
+      src="/images/live-site/hero-canyon.jpg"
+      alt=""
+      aria-hidden="true"
+    />
+    <div class="photo-hero-scrim" aria-hidden="true"></div>
+    <img class="photo-hero-star" src="/brand/star-mark.png" alt="" aria-hidden="true" />
+    <div class="container photo-hero-content">
+      <img class="photo-hero-wordmark" src="/images/live-site/logo-stacked.png" alt="Terra Nexus" />
+      <h1 id="hero-heading" class="photo-hero-tagline">Impact at the Intersection of <span>Food &amp; Climate</span></h1>
+    </div>
+    <p class="photo-hero-band">Developing a more resilient, sustainable, &amp; prosperous food system</p>
+  </section>
+
+  <!-- Engagement panel — sits directly under the photo hero, light-blue field -->
+  <section class="engagement-panel" aria-labelledby="engagement-heading">
+    <div class="container engagement-inner">
+      <div>
+        <h2 id="engagement-heading">Innovation &amp; Insights for Environmental Markets and Scope 3 Investments that Scale</h2>
+        <p>Terra Nexus provides the insights, tools, and supporting capabilities that food and agribusinesses need to achieve commercial success on the path to a more resilient, sustainable, and prosperous food system.</p>
+      </div>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary btn-lg">Discuss Your Challenge</a>
+        <a href="/contact/" class="btn btn-primary btn-lg">Discuss Your Opportunity</a>
         <a href="/expertise/" class="btn btn-secondary btn-lg">Explore Our Expertise</a>
       </div>
     </div>
@@ -116,10 +140,14 @@ const approachSteps = [
   <!-- Expertise -->
   <section class="section" aria-labelledby="expertise-heading">
     <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">What We Are Known For</span>
-        <h2 id="expertise-heading">Expertise Across the Food and Agriculture System</h2>
-        <p class="section-lead">We bring specialized food-and-climate knowledge to the production systems, supply chains, markets, products, and recovery pathways where change can create the greatest value.</p>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">What We Are Known For</span>
+        <div class="split-header-title">
+          <h2 id="expertise-heading">Holistic Food Systems that Generate Real Value</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">We are highly specialized experts with a deep understanding of the production systems, supply chains, products, services, and markets that produce the greatest returns.</p>
+        </div>
       </header>
 
       <ul class="expertise-grid" role="list">
@@ -150,69 +178,33 @@ const approachSteps = [
     </div>
   </section>
 
-  <!-- How We Work: Approach + Capabilities, merged -->
-  <section class="section" aria-labelledby="approach-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">How We Work</span>
-        <h2 id="approach-heading">Terra Nexus Manages Every Step from Cultivation to Claim</h2>
-        <p class="section-lead">We connect strategy, investments, operations, and sustainability to generate market value.</p>
-        <p class="section-lead">Food-and-climate opportunities rarely fit inside one business function. Terra Nexus enables clients to make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value.</p>
-      </header>
-
-      <div class="approach-card">
-        <div class="approach-rail">
-          <div class="approach-track" role="tablist" aria-label="Approach steps">
-            {approachSteps.map((step, i) => (
-              <button
-                type="button"
-                class="approach-stop"
-                class:list={{ 'is-active': i === 0 }}
-                role="tab"
-                aria-selected={i === 0 ? 'true' : 'false'}
-                aria-controls="approach-panel"
-                id={`approach-tab-${i}`}
-                data-index={i}
-                data-loop={step.loop ? 'true' : 'false'}
-                data-caps={step.caps.join(',')}
-                data-desc={step.description}
-              >
-                <span class="dot" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span class="label">{step.title}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div class="approach-panel" id="approach-panel" role="tabpanel" aria-labelledby="approach-tab-0">
-          <p class="approach-desc" id="approach-desc">
-            <strong>{approachSteps[0].title}</strong> — {approachSteps[0].description}
-          </p>
-
-          <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
-            {capabilities.map((cap) => (
-              <a href={`/capabilities/${cap.slug}/`} class="approach-cap" data-cap={cap.slug} class:list={{ 'is-linked': approachSteps[0].caps.includes(cap.slug) }}>
-                <h4>{cap.title}</h4>
-                <p>{cap.description}</p>
-              </a>
-            ))}
-          </div>
-        </div>
+  <!-- Food & Agribusiness — Integration & Operating Partner (value-chain diagram break) -->
+  <section class="section section-alt" aria-labelledby="integration-heading">
+    <div class="container integration-grid">
+      <div class="integration-copy">
+        <span class="eyebrow">Food &amp; Agribusiness Support</span>
+        <h2 id="integration-heading">Insights Studio & Operating Partner</h2>
+        <p>Terra Nexus is an Innovation &amp; Insight Studio that invests in visionaries, changemakers, and doers that are willing to redefine our current food system.  We provide fully integrated support from industry executives and proprietary digital solutions to advise, manage, and operate climate programs.</p>
       </div>
-
-      <div class="section-cta">
-        <a href="/capabilities/" class="btn btn-secondary">Explore Our Approach &amp; Capabilities</a>
-      </div>
+      <img
+        class="integration-diagram"
+        src="/images/live-site/value-chain-diagram.png"
+        alt="Diagram of the food and agribusiness value chain: inputs, agricultural production, commodity trading, ingredient and feed processing, food and beverage, and retail and distribution, connected to energy and biofuels and waste diversion, and enabled by environmental markets, technology and solution providers, private equity and impact investors."
+      />
     </div>
   </section>
 
   <!-- Who We Work With -->
   <section class="section" aria-labelledby="audiences-heading">
     <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Who We Work With</span>
-        <h2 id="audiences-heading">We Work Across the Food and Agribusiness System</h2>
-        <p class="section-lead">Terra Nexus works with every node of the food and agribusiness value chain — from inputs and agricultural production through trading, processing, brands, retail, energy, and resource recovery. We also work with the environmental markets, technology providers, assurance organizations, and capital partners that enable the system to change.</p>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Who We Work With</span>
+        <div class="split-header-title">
+          <h2 id="audiences-heading">We Work Across the Food and Ag Value Chain to Unlock Shared Value</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead"> Terra Nexus integrates proven solutions at every node in the food and agribusiness value chain to enhance transparency, facilitate collaboration, and establish the market mechanisms needed to build trust and reward performance across the entire food system. Because what you buy matters. Who you buy it from matters. Where it comes from, how it was produced, how it was delivered, and how it was consumed—it all matters.</p>
+        </div>
       </header>
 
       <div class="segment-slider">
@@ -267,39 +259,107 @@ const approachSteps = [
         </div>
       </div>
 
-      <div class="card-grid">
-        <a href="/who-we-work-with/food-and-agribusiness-value-chain/" class="card-link">
-          <article class="card">
-            <h3>Food &amp; Agribusiness Value Chain</h3>
-            <p>Work with the organizations that produce, move, transform, sell, distribute, and recover food and agricultural materials.</p>
-          </article>
-        </a>
-        <a href="/who-we-work-with/enabling-markets-technology-and-capital/" class="card-link">
-          <article class="card">
-            <h3>Enabling Markets, Technology &amp; Capital</h3>
-            <p>Work with the organizations that provide environmental markets, data, technology, assurance, partnerships, and investment.</p>
-          </article>
-        </a>
-      </div>
-
       <div class="section-cta">
         <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
       </div>
     </div>
   </section>
 
-  <!-- Our Track Record -->
-  <section class="section section-alt" aria-labelledby="track-record-heading">
+  <!-- How We Work: Approach + Capabilities, merged -->
+  <section class="section" aria-labelledby="approach-heading">
     <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Our Track Record</span>
-        <h2 id="track-record-heading">Impact Across Every Engagement We've Taken On</h2>
-        <p class="section-lead">One case study only shows one outcome. Across every client relationship since Terra Nexus started, our work spans a growing range of geographies, commodities, certification systems, and environmental markets — and has created measurable value throughout.</p>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">How We Work</span>
+        <div class="split-header-title">
+          <h2 id="approach-heading">Terra Nexus Manages the Full Development Lifecycle</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">Most companies lack the dedicated resources, and specialized knowledge that's required to navigate today's complex regulations and market dynamics.  This leads to frequent delays, expensive vendor lock-in, and unmanageable programs that fail.</p>
+          <p class="section-lead">As an integrated services provider we create long-term continuity and interoperability between partners.  We proactively manage audit and marketplace risks throughout the full commercialization lifecycle.  That means high-quality, commercially viable, and audit-ready assets from the start.</p>
+        </div>
       </header>
 
-      <div class="stat-grid">
+      <div class="approach-card">
+        <div class="approach-rail">
+          <div class="approach-track" role="tablist" aria-label="Approach steps">
+            {approachSteps.map((step, i) => (
+              <button
+                type="button"
+                class="approach-stop"
+                class:list={{ 'is-active': i === 0 }}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls="approach-panel"
+                id={`approach-tab-${i}`}
+                data-index={i}
+                data-loop={step.loop ? 'true' : 'false'}
+                data-caps={step.caps.join(',')}
+                data-desc={step.description}
+                data-title={step.title}
+              >
+                <span class="dot" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span class="label">{step.short}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="approach-panel" id="approach-panel" role="tabpanel" aria-labelledby="approach-tab-0">
+          <p class="approach-desc" id="approach-desc">
+            <strong>{approachSteps[0].title}</strong> — {approachSteps[0].description}
+          </p>
+
+          <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
+            {capabilities.map((cap) => (
+              <a href={`/capabilities/${cap.slug}/`} class="approach-cap" data-cap={cap.slug} class:list={{ 'is-linked': approachSteps[0].caps.includes(cap.slug) }}>
+                <h4>{cap.title}</h4>
+                <p>{cap.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="section-cta">
+        <a href="/capabilities/" class="btn btn-secondary">Explore Our Approach &amp; Capabilities</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Digital Solutions -->
+  <section class="section section-alt" aria-labelledby="digital-solutions-heading">
+    <div class="container digital-solutions-grid">
+      <img
+        class="digital-solutions-mockup"
+        src="/images/live-site/terranexus-slate-family-16x9-dark.png"
+        alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown."
+      />
+      <div class="digital-solutions-copy">
+        <span class="eyebrow">Designed to Deliver</span>
+        <h2 id="digital-solutions-heading">Digital Solutions that Catalyze Change</h2>
+        <p>Delivery is in the details.  It's not what you do, but where, how, and who you partner with that drives results. That's why leading consulting firms and solution providers utilize our expertise to close the gap between advice and action.</p>
+        <p>From digital MRV to next generation verification systems, we provide fit-for-purpose solutions that build market integrity.  Every verifiable claim or GHG translation is supported by investment level emissions accounting that's expected by 3rd party verifiers, regulators, investors, and premium buyers.</p>
+        <a href="/capabilities/" class="btn btn-primary">See our Digital Solutions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Proven Track Record -->
+  <section class="section section-alt" aria-labelledby="track-record-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Our Track Record</span>
+        <div class="split-header-title">
+          <h2 id="track-record-heading">Proven Porfolio of Successful Impact</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">There is absolutely no legitimate reason that creating a better planet should be so damn complicated, especially when it means the world to so many.</p>
+        </div>
+      </header>
+
+      <div class="stat-strip">
         {portfolioStats.map((stat) => (
-          <div class="stat-cell">
+          <div class="stat-item">
             <p class="stat-value">{stat.value}</p>
             <p class="stat-label">{stat.label}</p>
           </div>
@@ -316,9 +376,9 @@ const approachSteps = [
   <section class="section section-dark" aria-labelledby="final-cta-heading">
     <div class="container text-center">
       <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
-      <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next and how the participants required to deliver it can share in the value.</p>
+      <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress .</p>
       <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
+        <a href="/contact/" class="btn btn-primary">Discuss Your Opportunity</a>
       </div>
     </div>
   </section>
@@ -384,7 +444,7 @@ const approachSteps = [
         stop.setAttribute('aria-selected', String(active));
       });
       const step = stops[index];
-      const title = step.querySelector('.label')?.textContent ?? '';
+      const title = step.dataset.title ?? '';
       const desc = step.dataset.desc ?? '';
       panelEl?.setAttribute('aria-labelledby', `approach-tab-${index}`);
       descEl.innerHTML = `<strong>${title}</strong> — ${desc}`;
@@ -409,238 +469,535 @@ const approachSteps = [
   })();
 </script>
 
+<script>
+  // Photo hero — reproduces two scroll-tied effects from the live terra.nexus
+  // site: (1) the header starts transparent over the hero photo and swaps to
+  // the header's normal solid navy once you scroll past the hero, and (2) a
+  // small star mark drifts and grows across the hero as you scroll, echoing
+  // the live site's Elementor "scroll effects" on its star graphic.
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 1. Transparent-over-photo header. Scoped to this page via a body class
+    // (see the is:global style below) so /index.astro and every other page
+    // keep the header's normal always-solid look. The header is normally
+    // `position: sticky`, which still reserves its own row above the hero —
+    // switching it to `fixed` here (see the global style) removes it from
+    // flow so the hero photo can run full-bleed underneath it, then this
+    // pulls the hero up by the header's measured height to close the gap.
+    document.body.classList.add('has-photo-hero');
+    const header = document.getElementById('site-header');
+    const heroSection = document.querySelector<HTMLElement>('.photo-hero');
+    function syncHeaderHeight() {
+      if (header && heroSection) {
+        heroSection.style.marginTop = `-${header.offsetHeight}px`;
+      }
+    }
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
+
+    // Header.astro's own script flips #site-header to data-scrolled="true"
+    // after just 20px of scroll — fine for its normal always-solid look,
+    // but far too early here: it was solidifying the header while the
+    // canyon photo (and the star/logo scroll effects on it) were still the
+    // whole screen. This page needs its own, later threshold instead: stay
+    // transparent for the entire hero and only solidify once the user has
+    // scrolled past .photo-hero-band (the "Developing a more resilient…"
+    // bar, now pinned to the very bottom of the hero — see its CSS) so the
+    // solid header reads as picking up right where that bar left off. Adds
+    // body.past-hero, which the is:global style below keys off instead of
+    // the shared data-scrolled attribute.
+    const heroBand = document.querySelector<HTMLElement>('.photo-hero-band');
+    function syncPastHero() {
+      if (!heroBand) return;
+      const bandBottom = heroBand.getBoundingClientRect().bottom + window.scrollY;
+      const solidifyAt = bandBottom - (header ? header.offsetHeight : 0);
+      document.body.classList.toggle('past-hero', window.scrollY >= solidifyAt);
+    }
+
+    // 2 & 3. Star and wordmark — both read directly off screenshots of the
+    // live site's own Motion Effects panels:
+    //
+    //   Star vertical    — Direction: Up,      Speed: 6,  Viewport: 35%–70%
+    //   Star horizontal  — Direction: To Left, Speed: 50, Viewport: 35%–80%
+    //   Star scale       — Speed: 20, Viewport: 60%–100% ("out-in")
+    //
+    //   Logo vertical    — Direction: Down, Speed: 5, Viewport: 55%–80%
+    //   Logo transparency— Fade Out, Level: 8, Viewport: 61%–100%
+    //   Logo blur        — Fade Out, Level: 5, Viewport: 67%–100%
+    //   Logo scale       — Speed: 3, Viewport: 53%–70%
+    //
+    // All of Elementor's "Viewport" ranges are percentages of the
+    // element's own transit through the viewport (0% = entering at the
+    // bottom edge, 100% = reached the top edge). The star is `position:
+    // fixed` and moved entirely by this script, so it has no "real"
+    // geometry of its own to measure — it uses `progress` (0–1.3 across
+    // this hero) as a stand-in timeline instead, which keeps every range's
+    // relative order and spacing intact while guaranteeing it starts at
+    // rest. The wordmark is a normal in-flow element that really does
+    // travel through the viewport as the page scrolls, so it uses its own
+    // measured position (see wordmarkViewportPct below) rather than the
+    // same proxy — using the hero-height proxy for it too, as an earlier
+    // version of this did, meant its 53–100% window didn't finish
+    // ramping until the user had scrolled nearly the entire (very tall)
+    // hero, by which point the wordmark had already scrolled off-screen —
+    // technically running, but never actually visible happening.
+    const star = document.querySelector<HTMLElement>('.photo-hero-star');
+    const wordmark = document.querySelector<HTMLElement>('.photo-hero-wordmark');
+    const hero = document.querySelector<HTMLElement>('.photo-hero');
+    if (!star || !hero) return;
+
+    const rampBetween = (value: number, start: number, end: number) =>
+      Math.min(Math.max((value - start) / (end - start), 0), 1);
+
+    // The wordmark's ramps need real geometry, not the hero-height proxy
+    // used for the star below: driving them off `progress` (scroll ÷ full
+    // hero height) meant the effect's 53–100% window didn't finish until
+    // the user had scrolled nearly the whole hero — by which point the
+    // wordmark itself (an ordinary in-flow element, not fixed) had almost
+    // always already scrolled off-screen, so the fade/blur/scale was
+    // technically running but never actually visible. Tracking its own
+    // on-screen travel instead ties the ramp to when it's still visible.
+    // `wordmarkBasePct` is captured once, from its resting position on
+    // load, so the ramp is guaranteed to start at exactly 0 (full
+    // strength) and then fills the 55–100% range over what's left of its
+    // real trip to the top of the viewport — rather than either measuring
+    // raw position (which starts pre-faded, since it rests mid-viewport,
+    // not at the bottom edge) or using the hero-height proxy (which
+    // starts safely but runs too slowly to ever be seen).
+    let wordmarkBasePct: number | null = null;
+    function wordmarkViewportPct(): number {
+      if (!wordmark) return 0;
+      const rect = wordmark.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      const raw = ((vh - rect.top) / vh) * 100;
+      if (wordmarkBasePct === null) wordmarkBasePct = raw;
+      return rampBetween(raw, wordmarkBasePct, 100) * 100;
+    }
+
+    function update() {
+      if (!hero) return;
+      const heroHeight = hero.offsetHeight || 1;
+      const viewportWidth = window.innerWidth;
+      const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1.3);
+      const timeline = progress * 100; // stand-in for Elementor's 0–100% "Viewport" scale
+
+      if (!reduceMotion) {
+        // Straight shot from bottom-right to top-left — one shooting star,
+        // not three independently-timed motions. The previous version gave
+        // rise (0–60%), sweep (15–85%), and scale (40–90%) each their own
+        // window; mathematically every one of them was still monotonic,
+        // but because they finished at different points, the *path* bent —
+        // vertical motion would lock in place while horizontal motion kept
+        // going, which reads as an arc even though nothing was ever
+        // reversing. A single ramp driving all three in lockstep keeps
+        // them moving together the whole time, so the path is one straight
+        // diagonal line. `eased` applies smoothstep (ease-in, ease-out) to
+        // that ramp for a natural shooting-star deceleration instead of a
+        // constant-speed, robotic one.
+        //
+        // transform-origin is set to bottom-right in this element's CSS,
+        // matching the X:Right / Y:Bottom anchor point from the reference
+        // settings — scale grows away from that corner rather than from
+        // its own center, so it reads as trailing off from where it
+        // started rather than swelling in place.
+        const travel = rampBetween(timeline, 10, 85);
+        const eased = travel * travel * (3 - 2 * travel); // smoothstep
+        const fadeInRamp = rampBetween(timeline, 0, 6);
+        const fadeOutRamp = rampBetween(timeline, 88, 98);
+        const ty = -eased * (window.innerHeight * 0.85);
+        const tx = -eased * (viewportWidth * 0.55);
+        const scale = 1 + eased * 1.1;
+        const starOpacity = Math.min(fadeInRamp, 1 - fadeOutRamp);
+        star!.style.setProperty('--star-tx', `${tx.toFixed(1)}px`);
+        star!.style.setProperty('--star-ty', `${ty.toFixed(1)}px`);
+        star!.style.setProperty('--star-scale', scale.toFixed(3));
+        star!.style.setProperty('--star-opacity', starOpacity.toFixed(3));
+      }
+
+      if (wordmark) {
+        const wmPct = wordmarkViewportPct();
+        const verticalRamp = rampBetween(wmPct, 55, 80); // Speed 5, Down
+        const opacityRamp = rampBetween(wmPct, 61, 100); // Level 8, Fade Out
+        const blurRamp = rampBetween(wmPct, 67, 100); // Level 5, Fade Out
+        const scaleRamp = rampBetween(wmPct, 53, 70); // Speed 3
+
+        const logoLift = verticalRamp * (5 * 8);
+        const logoOpacity = 1 - opacityRamp;
+        const logoBlur = blurRamp * 5;
+        const logoScale = 1 + scaleRamp * 0.45;
+
+        wordmark.style.setProperty('--logo-opacity', logoOpacity.toFixed(3));
+        wordmark.style.setProperty('--logo-blur', `${logoBlur.toFixed(2)}px`);
+        wordmark.style.setProperty('--logo-ty', `${logoLift.toFixed(1)}px`);
+        wordmark.style.setProperty('--logo-scale', logoScale.toFixed(3));
+      }
+
+      syncPastHero();
+    }
+    // A continuous rAF loop rather than only recalculating from 'scroll'
+    // events — under a fast flick or trackpad fling, scroll events can
+    // fire in an uneven burst, and event-driven updates (even throttled
+    // to one per frame) can end up applying several scroll-position's
+    // worth of change in a single jump instead of gliding through the
+    // positions in between. Reading window.scrollY fresh every animation
+    // frame regardless of event timing keeps the star's motion tied to
+    // actual elapsed frames rather than to however the browser happens to
+    // batch scroll events, which is what "gliding" actually requires.
+    function loop() {
+      update();
+      window.requestAnimationFrame(loop);
+    }
+    window.addEventListener('resize', syncPastHero);
+    window.requestAnimationFrame(loop);
+  })();
+</script>
+
+<style is:global>
+  /* Transparent-over-photo header — scoped to this page only via
+     body.has-photo-hero (set in the script above). Header.astro's own
+     data-scrolled attribute flips after just 20px of scroll, which is
+     right for its normal always-solid look elsewhere on the site but far
+     too early here — this keys off body.past-hero instead (also set in
+     the script above, once the user has scrolled past .photo-hero-band),
+     so the header stays transparent for the entire photo hero. Header.astro
+     itself is untouched, so every other page keeps its default behavior. */
+  body.has-photo-hero .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+  }
+  body.has-photo-hero.past-hero .site-header {
+    background: var(--color-dark);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+  }
+  /* The shared wordmark is a thin outline mark tuned for the header's normal
+     solid-navy background — over the busy photo it needs more contrast. */
+  body.has-photo-hero .site-header .wordmark-logo {
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.5));
+  }
+  /* The hero already carries its own giant "TERRA NEXUS" wordmark front
+     and center — showing the header's small copy too, on top of the same
+     photo, would be a redundant second logo on screen at once. Hidden
+     while transparent, then revealed at exactly the same moment the header
+     itself solidifies (body.past-hero), so the logo "arrives" together
+     with the bar it's sitting on rather than as a separate beat. */
+  body.has-photo-hero .site-header .wordmark-logo {
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  body.has-photo-hero.past-hero .site-header .wordmark-logo {
+    opacity: 1;
+  }
+</style>
+
 <style>
-  /* Hero */
-  .hero {
-    position: relative; overflow: hidden;
-    padding-block: var(--space-24) var(--space-20);
+  /* ── Photo Hero ───────────────────────────────────── */
+  .photo-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 44rem;
+    height: 86vh;
+    display: flex;
+    flex-direction: column;
+    /* No justify-content: center here — .photo-hero-content below takes
+       flex: 1 and centers itself within it, which leaves .photo-hero-band
+       (the "Developing a more resilient…" bar) as a normal sibling that
+       lands at the very bottom of the hero instead of directly under the
+       tagline. That's deliberate: it puts the band right where the header
+       switches from transparent to solid (see the script + is:global style
+       below), so the transparent-over-photo menu holds for the entire
+       canyon photo and only turns solid navy once the user scrolls past
+       the band — reading as the band handing off into the header rather
+       than the two being unrelated elements. */
+  }
+  @media (max-width: 48rem) {
+    .photo-hero { height: auto; min-height: 38rem; }
+  }
+  .photo-hero-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 46%;
+  }
+  .photo-hero-scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(19, 31, 72, 0.55) 0%, rgba(19, 31, 72, 0.35) 45%, rgba(19, 31, 72, 0.85) 100%);
+  }
+  .photo-hero-content {
+    /* Deliberately no z-index here (position: relative alone doesn't open a
+       new stacking context). The tagline's mix-blend-mode below needs to
+       blend against .photo-hero-bg/.photo-hero-scrim behind it — an
+       explicit z-index would wall this off into its own isolated paint
+       layer and the blend would only ever see black, not the photo. Paint
+       order still puts this above the photo because it comes later in the
+       DOM; .photo-hero-star stays on top because it carries its own
+       positive z-index. */
+    position: relative;
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding-block: var(--space-20) var(--space-10);
+  }
+  .photo-hero-wordmark {
+    width: min(27.5rem, 77vw); height: auto; margin-bottom: var(--space-8);
+    --logo-opacity: 1; --logo-blur: 0px; --logo-ty: 0px; --logo-scale: 1;
+    opacity: var(--logo-opacity);
+    transform: translateY(var(--logo-ty)) scale(var(--logo-scale));
+    filter: drop-shadow(0 2px 12px rgba(0,0,0,0.45)) blur(var(--logo-blur));
+    transition: opacity 100ms linear, transform 100ms linear, filter 100ms linear;
+    will-change: opacity, transform, filter;
+  }
+  /* Star that drifts up-and-left, grows, and fades across the hero on
+     scroll — mirrors the live site's Elementor scroll-effect on its star
+     graphic. `position: fixed` (not absolute) is the fix that makes this
+     visible at all: an absolutely-positioned element inside the hero still
+     scrolls with the page, so it was leaving the viewport from ordinary
+     scrolling alone before the scroll-linked transform below ever got a
+     chance to show. Fixed to the viewport, its percentage top/left resolve
+     against the viewport too. Rests low and to the right, past the bottom
+     edge of the screen — matching the live site, where the star starts
+     hidden below the fold and off toward the right margin rather than
+     sitting up by the logo — then only comes into view once the
+     Up/To Left scroll effects below start carrying it up and across.
+     --star-* custom properties are written from the script on every
+     scroll frame. */
+  .photo-hero-star {
+    /* z-index: 20, not 2 — this is `position: fixed`, so as the user
+       scrolls it can end up visually overlapping any later section on the
+       page, and several (.engagement-panel among them) set z-index: 3.
+       At z-index: 2 the star was losing that stacking fight and briefly
+       vanishing behind them before its own fade-out ever kicked in, which
+       read as flickering/erratic on top of the motion itself. Still below
+       the header's z-index: 50, so it correctly tucks behind the nav bar
+       once scrolled near the top. */
+    position: fixed; z-index: 20;
+    top: 102%; left: 90%;
+    width: 2.75rem; height: auto;
+    /* Matches the reference settings' X:Right / Y:Bottom anchor point —
+       scale grows away from this corner instead of from the star's own
+       center, so it reads as trailing off from where it started. */
+    transform-origin: bottom right;
+    --star-tx: 0px; --star-ty: 0px; --star-scale: 1; --star-opacity: 0;
+    transform: translate(var(--star-tx), var(--star-ty)) scale(var(--star-scale));
+    opacity: var(--star-opacity);
+    transition: transform 100ms linear, opacity 100ms linear;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .photo-hero-star { display: none; }
+  }
+  .photo-hero-tagline {
+    /* Matches the live site's heading treatment exactly: color-dodge blend
+       mode against a dark-orange base color (computed from terra.nexus:
+       rgb(204, 65, 0)) rather than a flat fill — the blend mode lets the
+       photo underneath "burn through" the letterforms, so the text's
+       apparent color and brightness shift with the sky/rock behind it
+       instead of sitting as a flat overlay. */
+    color: #cc4100;
+    mix-blend-mode: color-dodge;
+    font-size: clamp(1.8rem, 4.8vw, calc(var(--text-4xl) * 1.2));
+    font-weight: var(--font-medium);
+    letter-spacing: 0.04em; text-transform: uppercase; max-width: 34ch;
+    /* Extra breathing room below the wordmark, on top of the wordmark's own
+       margin-bottom — pushes the tagline further down toward the bend of
+       the canyon per creative direction, without touching .photo-hero's
+       height/min-height or .photo-hero-content's padding-block, which are
+       what keep the engagement panel in view on load. Because
+       .photo-hero-content centers this stack via justify-content: center
+       inside a fixed-height flex:1 area (not one sized by its own
+       content), growing the gap here only redistributes space within that
+       stack — it doesn't change .photo-hero-band's position below it. */
+    margin-top: var(--space-24);
+  }
+  .photo-hero-tagline span { color: #cc4100; }
+  .photo-hero-band {
+    position: relative; z-index: 1; margin: 0;
+    background: rgba(19, 31, 72, 0.92);
+    color: #d7deef; text-align: center;
+    font-size: var(--text-sm); font-weight: var(--font-medium);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-inline: var(--space-4);
+    /* Extra bottom padding — this bar now sits at the very bottom edge of
+       the hero (see .photo-hero's comment above), and .engagement-panel
+       overlaps upward by 2rem to form its rounded shelf. That overlap used
+       to land on plain photo; now it would cut directly into this bar's
+       own text unless it has 2rem of its own background to spare below
+       the label first. */
+    padding-block: var(--space-4) calc(var(--space-4) + 2rem);
+  }
+
+  /* ── Engagement panel ─────────────────────────────────
+     Floats up over the hero's bottom band as a rounded, shadowed shelf —
+     borrowed from how doktar.com and cultivo.land land a card over their
+     photo hero instead of butting a flat-edged section straight up
+     against it. Kept modest (2rem of overlap) so the band's own text
+     stays legible. */
+  .engagement-panel {
+    position: relative; z-index: 3;
     background: linear-gradient(135deg, var(--c-sky-200) 0%, var(--c-sky-300) 100%);
-    color: var(--color-dark);
+    padding-block: var(--space-12);
+    margin-top: -2rem;
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.18);
   }
-  .hero-bg {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(231, 215, 127, 0.22) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
-    pointer-events: none;
+  .engagement-inner {
+    display: grid; gap: var(--space-8);
+    grid-template-columns: 1.4fr auto;
+    align-items: center;
   }
-  .hero-grid {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-      linear-gradient(rgba(19, 31, 72, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(19, 31, 72, 0.05) 1px, transparent 1px);
-    background-size: 4rem 4rem;
-    mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
-    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 0%, transparent 70%);
-    pointer-events: none;
+  .engagement-inner h2 { font-size: var(--text-2xl); color: var(--color-dark); margin-bottom: var(--space-3); max-width: 34ch; }
+  .engagement-inner p { color: var(--c-sky-700); max-width: var(--max-width-text); line-height: var(--line-relaxed); }
+  .engagement-inner .hero-actions { display: flex; flex-direction: column; gap: var(--space-3); }
+  @media (max-width: 56rem) {
+    .engagement-inner { grid-template-columns: 1fr; }
+    .engagement-inner .hero-actions { flex-direction: row; flex-wrap: wrap; }
   }
-  .hero-content { position: relative; }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: var(--space-2);
-    font-size: var(--text-xs); font-weight: var(--font-semibold);
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--color-eyebrow); margin-bottom: var(--space-5);
-  }
-  .hero-eyebrow::before {
-    content: ''; display: inline-block; width: 1.5rem; height: 2px;
-    background: var(--color-eyebrow); border-radius: var(--radius-full);
-  }
-  .hero h1 {
-    font-size: clamp(2.25rem, 5.5vw, var(--text-6xl));
-    color: var(--color-dark); line-height: 1.05; max-width: 24ch;
-    margin-bottom: var(--space-5);
-  }
-  .hero-highlight {
-    /* The light-blue hero has plenty of contrast for the literal button
-       maroon, unlike the old navy background it was tuned to avoid. */
-    background: var(--gradient-accent);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .hero-engagement {
-    font-size: var(--text-2xl); font-weight: var(--font-medium);
-    color: var(--color-dark); margin-bottom: var(--space-4);
-    max-width: var(--max-width-text);
-  }
-  .hero-supporting {
-    font-size: var(--text-lg); color: var(--c-sky-700);
-    max-width: var(--max-width-text); line-height: var(--line-relaxed);
-  }
-  .hero .hero-actions { margin-top: var(--space-10); }
   .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
 
-  /* ── Expertise grid ──────────────────────────────── */
+  /* ── Expertise grid (shared with current homepage) ── */
   .expertise-grid {
-    display: grid;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    gap: 1.5rem;
-    grid-template-columns: repeat(1, 1fr);
+    display: grid; list-style: none; padding: 0; margin: 0;
+    gap: 1.5rem; grid-template-columns: repeat(1, 1fr);
   }
-  @media (min-width: 640px) {
-    .expertise-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 1024px) {
-    .expertise-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-  }
+  @media (min-width: 640px) { .expertise-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .expertise-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
 
-  /* ── Tile ─────────────────────────────────────────── */
   .expertise-tile {
-    display: flex;
-    align-items: flex-end;
-    position: relative;
-    aspect-ratio: 4 / 3;
-    border-radius: 14px;
-    overflow: hidden;
-    text-decoration: none;
-    color: #fff;
-    background-color: #131f48;
+    display: flex; align-items: flex-end; position: relative;
+    aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden;
+    text-decoration: none; color: #fff; background-color: #131f48;
     box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.15);
-    transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-tile:hover {
-    box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.35);
-    transform: translateY(-4px);
-  }
-  .expertise-tile:focus-visible {
-    outline: 3px solid #427e90;
-    outline-offset: 3px;
-  }
+  .expertise-tile:hover { box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.35); transform: translateY(-4px); }
+  .expertise-tile:focus-visible { outline: 3px solid #427e90; outline-offset: 3px; }
   .tile-bg-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    z-index: 0;
-    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;
+    z-index: 0; transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
   }
   .expertise-tile:hover .tile-bg-img { transform: scale(1.06); }
-
-  /* ── Gradient overlay ─────────────────────────────── */
   .tile-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(15, 23, 42, 0.90) 0%,
-      rgba(15, 23, 42, 0.50) 50%,
-      rgba(15, 23, 42, 0.15) 100%
-    );
-    transition: background 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1;
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.90) 0%, rgba(15, 23, 42, 0.50) 50%, rgba(15, 23, 42, 0.15) 100%);
+    transition: background 250ms cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
   }
   .expertise-tile:hover .tile-overlay {
-    background: linear-gradient(
-      to top,
-      rgba(15, 23, 42, 0.95) 0%,
-      rgba(15, 23, 42, 0.65) 55%,
-      rgba(15, 23, 42, 0.30) 100%
-    );
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.65) 55%, rgba(15, 23, 42, 0.30) 100%);
   }
-
-  /* ── Content ──────────────────────────────────────── */
-  .tile-content {
-    position: relative;
-    z-index: 2;
-    padding: 1.5rem;
-    width: 100%;
-  }
-  .tile-title {
-    color: #fff;
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 1.3;
-    margin: 0 0 0.5rem;
-    text-shadow: 0 1px 6px rgba(15, 23, 42, 0.5);
-  }
+  .tile-content { position: relative; z-index: 2; padding: 1.5rem; width: 100%; }
+  .tile-title { color: #fff; font-size: 1.125rem; font-weight: 600; line-height: 1.3; margin: 0 0 0.5rem; text-shadow: 0 1px 6px rgba(15, 23, 42, 0.5); }
   .tile-desc {
-    color: rgba(248, 250, 252, 0.88);
-    font-size: 0.875rem;
-    line-height: 1.6;
-    margin: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 300ms cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                margin-bottom 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(248, 250, 252, 0.88); font-size: 0.875rem; line-height: 1.6; margin: 0;
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-tile:hover .tile-desc,
-  .expertise-tile:focus-visible .tile-desc {
-    max-height: 8rem;
-    opacity: 1;
-    margin-bottom: 0.75rem;
-  }
+  .expertise-tile:hover .tile-desc, .expertise-tile:focus-visible .tile-desc { max-height: 8rem; opacity: 1; margin-bottom: 0.75rem; }
   .tile-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #e7d77f;
-    letter-spacing: 0.01em;
-    opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 600;
+    color: #e7d77f; letter-spacing: 0.01em; opacity: 0; transform: translateY(6px);
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .expertise-tile:hover .tile-cta,
-  .expertise-tile:focus-visible .tile-cta {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  /* ── Mobile: always show desc + CTA ──────────────── */
+  .expertise-tile:hover .tile-cta, .expertise-tile:focus-visible .tile-cta { opacity: 1; transform: translateY(0); }
   @media (max-width: 639px) {
     .tile-desc { max-height: 12rem; opacity: 1; margin-bottom: 0.75rem; }
     .tile-cta { opacity: 1; transform: translateY(0); }
   }
-  /* ── Reduced motion ───────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
-    .expertise-tile, .tile-bg-img,
-    .tile-overlay, .tile-desc, .tile-cta { transition: none; }
+    .expertise-tile, .tile-bg-img, .tile-overlay, .tile-desc, .tile-cta { transition: none; }
     .expertise-tile:hover { transform: none; }
     .expertise-tile:hover .tile-bg-img { transform: none; }
   }
 
-  /* Who We Work With — segment slider */
-  .segment-slider {
-    margin-bottom: var(--space-8);
-    position: relative;
-    overflow: hidden;
-    background: var(--gradient-dark);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-2xl);
-    padding: var(--space-10) var(--space-10) var(--space-10);
+  /* ── Split section headers ────────────────────────────
+     Two problems with the plain .section-header pattern here: (1) its lead
+     paragraph caps at --max-width-text, leaving an unbalanced gap of empty
+     space to the right whenever the content below it (segment slider,
+     approach card, stat grid) runs full width; (2) putting the eyebrow
+     inside the same column as the title pushed the lead paragraph's top
+     edge up to align with the small eyebrow tag instead of the headline
+     itself, so title and body copy looked like two unrelated blocks
+     instead of one aligned row.
+     Fixed with a two-row grid: the eyebrow spans the full width on its
+     own row, then title and lead sit side by side on the row below,
+     sharing the same top edge — and the lead column fills the remaining
+     width so the header's right edge lines up with the full-width content
+     beneath it. */
+  .split-header {
     display: grid;
-    gap: var(--space-10);
-    grid-template-columns: 0.82fr 1.3fr;
+    grid-template-columns: minmax(16rem, 25rem) 1fr;
+    grid-template-areas: "eyebrow eyebrow" "title lead";
+    column-gap: var(--space-10);
+    row-gap: var(--space-4);
     align-items: start;
   }
+  .split-header-eyebrow { grid-area: eyebrow; margin-bottom: 0; }
+  .split-header-title { grid-area: title; }
+  .split-header-lead { grid-area: lead; }
+  .split-header-title h2 { margin-top: 0; }
+  .split-header-lead .section-lead {
+    max-width: none;
+    margin-top: 0;
+  }
+  .split-header-lead .section-lead + .section-lead { margin-top: var(--space-3); }
+  @media (max-width: 56rem) {
+    .split-header {
+      grid-template-columns: 1fr;
+      grid-template-areas: "eyebrow" "title" "lead";
+      row-gap: var(--space-3);
+    }
+  }
+
+  /* ── Integration & Operating Partner (value-chain diagram) ── */
+  .integration-grid {
+    display: grid; grid-template-columns: 0.85fr 1.7fr; gap: var(--space-10); align-items: center;
+  }
+  @media (max-width: 72rem) { .integration-grid { grid-template-columns: 1fr; gap: var(--space-8); } }
+  .integration-copy p { color: var(--color-text-secondary, var(--c-sky-700)); line-height: var(--line-relaxed); margin-top: var(--space-4); }
+  .integration-copy h2 { margin-top: var(--space-2); }
+  .integration-diagram {
+    width: 100%; height: auto; border-radius: var(--radius-xl);
+    background: #fff; padding: var(--space-6);
+    box-shadow: var(--shadow-lg); border: 1px solid var(--color-border);
+  }
+
+  /* ── Digital Solutions (product family break) ── */
+  .digital-solutions-grid {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: var(--space-10); align-items: center;
+  }
+  @media (max-width: 72rem) { .digital-solutions-grid { grid-template-columns: 1fr; gap: var(--space-8); } }
+  .digital-solutions-mockup {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);
+  }
+  @media (max-width: 72rem) { .digital-solutions-mockup { order: -1; } }
+  .digital-solutions-copy p { color: var(--color-text-secondary, var(--c-sky-700)); line-height: var(--line-relaxed); margin-top: var(--space-4); }
+  .digital-solutions-copy h2 { margin-top: var(--space-2); }
+  .digital-solutions-copy .btn { margin-top: var(--space-6); }
+
+  /* ── Who We Work With — segment slider (shared with current homepage) ── */
+  .segment-slider {
+    margin-bottom: var(--space-8); position: relative; overflow: hidden;
+    background: var(--gradient-dark); border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl);
+    padding: var(--space-10); display: grid; gap: var(--space-10);
+    grid-template-columns: 0.82fr 1.3fr; align-items: start;
+  }
   .segment-slider::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.1) 0%, transparent 60%);
     pointer-events: none;
   }
-  @media (max-width: 64rem) {
-    .segment-slider { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-8) var(--space-6); }
-  }
-
+  @media (max-width: 64rem) { .segment-slider { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-8) var(--space-6); } }
   .segment-slider-nav { position: relative; }
   .segment-slider-label {
     display: inline-flex; align-items: center; gap: var(--space-2);
-    font-size: var(--text-xs); font-weight: var(--font-semibold);
-    letter-spacing: 0.12em; text-transform: uppercase;
+    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--c-accent-400); margin-bottom: var(--space-5);
   }
-  .segment-tabs {
-    display: flex; flex-direction: column;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
+  .segment-tabs { display: flex; flex-direction: column; border-top: 1px solid rgba(255, 255, 255, 0.1); }
   .segment-tab {
     display: block; width: 100%; text-align: left; background: none; cursor: pointer;
     border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); border-left: 2px solid transparent;
@@ -654,31 +1011,19 @@ const approachSteps = [
     color: #fff; font-weight: var(--font-semibold); border-left-color: var(--c-accent-400);
     background: linear-gradient(90deg, rgba(231, 215, 127, 0.08), transparent);
   }
-
   .segment-slider-panel { position: relative; }
-  .segment-frame {
-    position: relative; border-radius: var(--radius-lg); overflow: hidden;
-    aspect-ratio: 16 / 11; box-shadow: var(--shadow-xl);
-  }
+  .segment-frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16 / 11; box-shadow: var(--shadow-xl); }
   @media (max-width: 30rem) { .segment-frame { aspect-ratio: 4 / 5; } }
-  .segment-slide {
-    position: absolute; inset: 0; opacity: 0; visibility: hidden;
-    transition: opacity var(--transition-slow); pointer-events: none;
-  }
+  .segment-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow); pointer-events: none; }
   .segment-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
-  .segment-slide-img {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;
-  }
+  .segment-slide-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
   .segment-slide::after {
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(0deg, rgba(13, 21, 48, 0.92) 0%, rgba(13, 21, 48, 0.25) 50%, transparent 80%);
   }
   .segment-slide-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8); z-index: 1; }
   .segment-slide-copy h3 { color: #fff; font-size: var(--text-xl); margin-bottom: var(--space-3); }
-  .segment-slide-copy p {
-    color: #d7deef; font-size: var(--text-sm); max-width: 30rem;
-    margin-bottom: var(--space-6); line-height: var(--line-relaxed);
-  }
+  .segment-slide-copy p { color: #d7deef; font-size: var(--text-sm); max-width: 30rem; margin-bottom: var(--space-6); line-height: var(--line-relaxed); }
   .segment-explore {
     display: inline-flex; align-items: center; gap: var(--space-2);
     background: #fff; color: var(--color-dark); font-size: var(--text-sm); font-weight: var(--font-semibold);
@@ -686,38 +1031,45 @@ const approachSteps = [
     transition: background var(--transition-fast), transform var(--transition-fast);
   }
   .segment-explore:hover { background: var(--c-sky-100); color: var(--color-dark); transform: translateX(2px); }
-  @media (prefers-reduced-motion: reduce) {
-    .segment-slide { transition: none; }
+  @media (prefers-reduced-motion: reduce) { .segment-slide { transition: none; } }
+
+  /* ── Track record stat strip ──────────────────────────
+     Boxed cards (the previous version) put six labels of very different
+     lengths inside equal-width cards, and the short one-line labels sat
+     tight against the card edge while the two-line ones stretched theirs
+     — same card grid, visibly uneven bottoms. Dropping the card chrome
+     altogether sidesteps that: a plain rule above each number (echoing
+     the small eyebrow-dash mark used throughout the page) instead of a
+     box means labels are free to run one or two lines without any
+     container edge to look uneven against. */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--space-10);
+    row-gap: var(--space-10);
+  }
+  @media (max-width: 56rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
+  .stat-item {
+    padding-top: var(--space-4);
+    border-top: 3px solid var(--color-eyebrow);
+  }
+  .stat-item .stat-value {
+    margin-top: var(--space-3);
+    font-size: var(--text-4xl);
+    color: var(--color-dark);
+  }
+  .stat-item .stat-label {
+    margin-top: var(--space-2);
+    max-width: 26rem;
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
   }
 
-  /* Our Track Record — portfolio stat band. Extends the sitewide .stat-value
-     /.stat-label pattern (design-system.css) into a bordered 3x2 grid rather
-     than the flex .stat-group, since six figures need a firmer structure
-     than two. Deliberately light (.section-alt), not another dark card —
-     "Who We Work With" and "How We Work" above already use that device for
-     interactive content, so a third one in a row would read as the default
-     rather than a choice; a plain stat band also reads more like an audited
-     credibility strip than a feature pitch. */
-  .stat-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-    background: var(--color-border); border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg); overflow: hidden;
-  }
-  @media (max-width: 56rem) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 30rem) { .stat-grid { grid-template-columns: 1fr; } }
-  .stat-cell { background: var(--color-surface-elevated); padding: var(--space-8) var(--space-6); }
-  .stat-cell .stat-value { font-size: var(--text-4xl); }
-  .stat-cell .stat-label { margin-top: var(--space-2); line-height: var(--line-relaxed); }
-
-  /* How We Work — Approach + Capabilities, merged into one interactive dark
-     card. Reuses the same embedded-dark-card device as .segment-slider and
-     .case-study below, so the page has one consistent "detail view" pattern
-     rather than three different ones. */
+  /* ── How We Work — approach rail (shared with current homepage) ── */
   .approach-card {
-    position: relative; overflow: hidden;
-    background: var(--gradient-dark);
-    border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl);
-    padding: var(--space-10);
+    position: relative; overflow: hidden; background: var(--gradient-dark);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl); padding: var(--space-10);
   }
   .approach-card::before {
     content: ''; position: absolute; inset: 0;
@@ -725,7 +1077,6 @@ const approachSteps = [
     pointer-events: none;
   }
   @media (max-width: 48rem) { .approach-card { padding: var(--space-8) var(--space-6); } }
-
   .approach-track { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; }
   .approach-track::before {
     content: ''; position: absolute; top: 22px; left: 8.3%; right: 8.3%; height: 2px;
@@ -752,14 +1103,12 @@ const approachSteps = [
     .approach-track { grid-template-columns: repeat(3, 1fr); row-gap: var(--space-8); }
     .approach-track::before { display: none; }
   }
-
   .approach-desc {
     text-align: center; margin: var(--space-8) 0 var(--space-10); font-size: var(--text-sm); line-height: var(--line-relaxed);
     width: 100%; background: rgba(231, 215, 127, 0.08); border: 1px solid rgba(231, 215, 127, 0.3);
     border-radius: var(--radius-lg); padding: var(--space-5) var(--space-8); color: #d7deef;
   }
   .approach-desc strong { color: #fff; }
-
   .approach-cap-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); }
   @media (max-width: 64rem) { .approach-cap-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 40rem) { .approach-cap-grid { grid-template-columns: 1fr; } }
@@ -775,10 +1124,6 @@ const approachSteps = [
   .approach-cap-grid.is-filtering .approach-cap.is-linked {
     opacity: 1; border-color: var(--c-accent-400); box-shadow: 0 0 0 1px var(--c-accent-400); transform: translateY(-2px);
   }
-
-  /* Step 6 — "end-to-end value creation": every card lights up in a left-to-
-     right sweep, in white/neutral rather than the gold single-step highlight,
-     so it reads as a distinct, culminating moment. */
   @keyframes approach-loop-sweep {
     0% { border-color: rgba(255, 255, 255, 0.14); box-shadow: none; transform: translateY(0); }
     45% { border-color: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); transform: translateY(-3px); }
@@ -794,5 +1139,4 @@ const approachSteps = [
     .approach-cap { transition: none; }
     .approach-cap-grid.is-loop .approach-cap { animation: none; border-color: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4); }
   }
-
 </style>

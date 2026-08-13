@@ -76,6 +76,13 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  // /homepage-alt was the pre-2026-08-12 draft-review URL for what is now
+  // the canonical homepage at /. Kept as a redirect (not removed outright)
+  // in case anyone bookmarked it during the review period; a 301 carries no
+  // duplicate-content risk the way leaving a second live page would.
+  redirects: {
+    '/homepage-alt': '/',
+  },
   server: {
     host: true,
     port: 4321,

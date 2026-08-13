@@ -9,10 +9,11 @@ description: GSAP/CSS motion conventions, SVG animation, scroll choreography, he
 
 No GSAP or animation library is installed. Existing motion is plain CSS
 `transition:` properties only (in `design-system.css`, `Header.astro`,
-`Footer.astro`). `apps/web/src/pages/homepage-alt.astro` is the current
-sanctioned draft space for homepage/hero exploration — it's reachable only
-at `/homepage-alt`, not linked from nav, so it's safe to iterate on without
-touching the live homepage.
+`Footer.astro`). `apps/web/src/pages/index.astro` is the live homepage (the
+former `/homepage-alt` draft layout, canonicalized 2026-08-12) — it already
+carries the photo-hero scroll effects (star drift, header transparency)
+described below in plain CSS/JS; GSAP work on it is future M8 scope, not
+something to stage on a separate draft page.
 
 ## Rules
 
