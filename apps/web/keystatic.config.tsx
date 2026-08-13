@@ -8,16 +8,45 @@
 // type, not yet populated or routed; see
 // docs/architecture/okf-migration-inventory.md.
 //
-// GitHub-storage mode (deployed CMS editing) is not configured — it needs
-// an owner-created GitHub App/OAuth application. See cloudflare-deployment
-// and keystatic-mdx skills for what's required before that can happen.
+// GitHub-storage mode (deployed CMS editing, M6): a build-time toggle, not a
+// deployed-request-time one — this config is bundled both into the
+// browser-side Keystatic UI and into the on-demand /api/keystatic route's
+// workerd bundle, and neither target statically inlines bare
+// `process.env.*` reads (Node-only prerendered pages elsewhere in this repo
+// can use `process.env` because they're evaluated during the Node prerender
+// step; this file is not). `import.meta.env.PUBLIC_*` is Astro/Vite's
+// supported mechanism for a value that must be baked into both the client
+// and server bundles at build time — see
+// docs/architecture/web-platform-architecture.md §6.1. Local storage stays
+// the default everywhere (including this repo's own `wrangler dev`/build
+// unless explicitly opted in) so local development is never silently broken
+// by a missing GitHub App. Hosted builds opt in by setting
+// `PUBLIC_KEYSTATIC_STORAGE_KIND=github` in the shell that runs the build
+// that gets deployed (see .claude/skills/keystatic-mdx/SKILL.md).
 import { config, fields, collection } from '@keystatic/core';
 import { mdxContentComponents } from './keystatic.content-components';
 
+const storage =
+  import.meta.env.PUBLIC_KEYSTATIC_STORAGE_KIND === 'github'
+    ? // pathPrefix is required here because this is a monorepo: the repo
+      // root is JoshRtP/terra-nexus-web, but all Keystatic-managed content
+      // (collection `path`s below, e.g. 'src/content/posts/*') actually
+      // lives under apps/web/. Local storage mode "just works" without this
+      // because it resolves paths relative to process.cwd() (apps/web, when
+      // dev is run from there) — GitHub storage mode has no cwd concept and
+      // reads from the literal repo root over the GitHub API instead.
+      // Confirmed empirically: without pathPrefix, the hosted GitHub-mode
+      // dashboard showed the Insights collection as 0 entries despite a real
+      // article being committed on main at apps/web/src/content/posts/.
+      ({
+          kind: 'github',
+          repo: { owner: 'JoshRtP', name: 'terra-nexus-web' },
+          pathPrefix: 'apps/web',
+        } as const)
+    : ({ kind: 'local' } as const);
+
 export default config({
-  storage: {
-    kind: 'local',
-  },
+  storage,
   ui: {
     brand: { name: 'Terra Nexus' },
     navigation: {
@@ -33,7 +62,7 @@ export default config({
       entryLayout: 'content',
       format: { contentField: 'content' },
       previewUrl: '/insights/{slug}',
-      columns: ['title', 'author', 'featured', 'draft'],
+      columns: ['title', 'author', 'featured', 'editorialStatus'],
       schema: {
         title: fields.slug({ name: { label: 'Title', validation: { length: { min: 1 } } } }),
         excerpt: fields.text({
@@ -42,13 +71,30 @@ export default config({
           validation: { isRequired: true, length: { max: 240 } },
           description: 'Shown in listings and used as a fallback SEO description.',
         }),
-        publishDate: fields.date({ label: 'Publish date', validation: { isRequired: true } }),
-        updatedDate: fields.date({ label: 'Updated date' }),
-        draft: fields.checkbox({
-          label: 'Draft',
-          defaultValue: true,
-          description: 'Draft posts are excluded from /insights until unchecked.',
+        // Publication model (see docs/architecture/web-platform-architecture.md
+        // §Publication model and src/lib/publication.ts, the single source of
+        // truth for deriving draft/scheduled/published from these two
+        // fields). Replaces the old `draft` checkbox + date-only
+        // `publishDate` — that pairing had no way to hold "approved, goes
+        // live at a specific future moment" at the same time, which is
+        // exactly what real editorial scheduling needs.
+        editorialStatus: fields.select({
+          label: 'Editorial status',
+          description:
+            'Draft = never publicly visible, regardless of Publish at. Approved = publicly visible once Publish at has passed — this is what actually gates visibility, not this dropdown alone.',
+          options: [
+            { label: 'Draft', value: 'draft' },
+            { label: 'Approved', value: 'approved' },
+          ],
+          defaultValue: 'draft',
         }),
+        publishAt: fields.datetime({
+          label: 'Publish at (Mountain Time)',
+          description:
+            'Earliest time this becomes public once Editorial status is Approved. Enter in Mountain Time (America/Denver) — Terra Nexus\'s site-wide publication-timezone convention (this field has no timezone selector of its own; see src/lib/publication.ts). Approved + a past Publish at means "publish immediately."',
+          validation: { isRequired: true },
+        }),
+        updatedDate: fields.date({ label: 'Updated date' }),
         author: fields.relationship({
           label: 'Author',
           collection: 'authors',

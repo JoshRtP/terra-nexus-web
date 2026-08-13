@@ -2,19 +2,29 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import PageHero from '../../components/PageHero.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../lib/build-mode.js';
+import { getPublicBuildMode } from '../../lib/build-mode.js';
+import { isPubliclyVisible, zonedWallClockToUtc } from '../../lib/publication.js';
 
-const mode = getBuildMode();
+// On-demand, not static: publication visibility depends on "now", which a
+// build-time prerender can never re-evaluate after the fact. See
+// src/lib/publication.ts and docs/architecture/web-platform-architecture.md
+// §Publication model. Preview deployments (PUBLIC_TNX_BUILD_MODE=preview)
+// bypass gating entirely so an editor can review drafts/scheduled posts —
+// preview responses already carry noindex via SiteLayout, and robots.txt
+// disallows the whole preview site, so this never leaks into search.
+export const prerender = false;
+
+const mode = getPublicBuildMode();
 const allPosts: CollectionEntry<'posts'>[] = await getCollection('posts');
+const now = new Date();
 const posts = allPosts
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  .filter((post) => mode === 'preview' || isPubliclyVisible(post.data, now))
+  .sort(
+    (a, b) =>
+      zonedWallClockToUtc(b.data.publishAt).valueOf() - zonedWallClockToUtc(a.data.publishAt).valueOf()
+  );
 
-// timeZone: 'UTC' — publishDate is a date-only value (no time component),
-// parsed as UTC midnight; formatting in the viewer's local zone can roll it
-// back a day west of UTC. Format in UTC to keep the displayed date matching
-// what was entered in Keystatic.
-const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
+const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/Denver' });
 ---
 
 <SiteLayout
@@ -37,7 +47,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
               <a href={`/insights/${post.id}/`}>
                 <img src={post.data.heroImage} alt={post.data.heroImageAlt} loading="lazy" />
                 <div class="insight-card-body">
-                  <p class="insight-card-date">{dateFormatter.format(post.data.publishDate)}</p>
+                  <p class="insight-card-date">{dateFormatter.format(zonedWallClockToUtc(post.data.publishAt))}</p>
                   <h2>{post.data.title}</h2>
                   <p class="insight-card-excerpt">{post.data.excerpt}</p>
                 </div>

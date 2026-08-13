@@ -31,7 +31,13 @@ async function fingerprint(directory: string): Promise<string> {
 function build(mode: 'production' | 'preview'): void {
   const result = spawnSync(process.execPath, [resolve(APP_ROOT, 'scripts/run-astro.mjs'), 'build'], {
     cwd: APP_ROOT,
-    env: { ...process.env, TNX_BUILD_MODE: mode, ASTRO_TELEMETRY_DISABLED: '1' },
+    // PUBLIC_TNX_BUILD_MODE, not just TNX_BUILD_MODE: the Insights routes
+    // (src/pages/insights/) are on-demand (prerender: false) and read the
+    // PUBLIC_-prefixed var via getPublicBuildMode() — see
+    // src/lib/build-mode.ts and docs/architecture/web-platform-architecture.md
+    // §6.1 for why bare process.env doesn't reliably inline into on-demand
+    // (workerd) bundles the way it does for prerendered pages.
+    env: { ...process.env, TNX_BUILD_MODE: mode, PUBLIC_TNX_BUILD_MODE: mode, ASTRO_TELEMETRY_DISABLED: '1' },
     encoding: 'utf8',
   });
   expect(result.status, `${result.error?.message ?? ''}\n${result.stdout}\n${result.stderr}`).toBe(0);
@@ -41,10 +47,27 @@ describe('Astro static foundation', () => {
   it('builds production and preview safely with no source mutation', { timeout: 120_000 }, async () => {
     const beforeKnowledge = await fingerprint(resolve(REPOSITORY_ROOT, 'knowledge'));
     const beforeSchemas = await fingerprint(resolve(REPOSITORY_ROOT, 'schemas'));
-    const dist = resolve(APP_ROOT, 'dist');
+    // The Cloudflare adapter (added 2026-08-12) splits build output into
+    // dist/client (the deployable static assets Wrangler serves) and
+    // dist/server (worker/prerender internals) — even with output: 'static'.
+    // dist/client is the equivalent of the old flat dist/ this test checks.
+    const dist = resolve(APP_ROOT, 'dist/client');
     const pilotRoute = 'commercial-pathways-lower-emissions-beef-2025';
 
     build('production');
+    // dist/server/entry.mjs (the actual worker script) DOES exist now, even
+    // in a default production build (SKIP_KEYSTATIC=true, as here) — this
+    // is an intentional change from the pre-2026-08-12 invariant. The
+    // Insights routes (src/pages/insights/) became on-demand (prerender:
+    // false) as part of the publication/scheduling model (see
+    // docs/architecture/web-platform-architecture.md §Publication model):
+    // whether a post is publicly visible depends on "now" vs. its
+    // publishAt, which only an on-demand route can re-evaluate after the
+    // build that shipped it. The rest of the site (checked below) remains
+    // fully static — this is deliberately NOT a switch to output: 'server'
+    // sitewide, just per-route opt-in on the two routes where publication
+    // timing matters.
+    expect(existsSync(resolve(APP_ROOT, 'dist/server/entry.mjs'))).toBe(true);
     const productionIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');

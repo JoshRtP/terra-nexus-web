@@ -65,9 +65,12 @@ Do not assume this is a greenfield scaffold. As of the last audit
    React, GSAP, Keystatic, Cloudflare, or Wrangler — these move fast; do not
    rely on memorized syntax.
 5. **Preserve the current visual implementation** unless a task explicitly
-   calls for redesign. `homepage-alt-draft` (a new draft page reachable only
-   at `/homepage-alt`, not linked from nav) is the sanctioned place for
-   homepage redesign exploration — it does not touch `index.astro`.
+   calls for redesign. The homepage (`apps/web/src/pages/index.astro`,
+   canonicalized at `/` on 2026-08-12 — see
+   `docs/architecture/web-platform-architecture.md` §3) is the one production
+   homepage; there is no separate "alt" homepage concept anymore. `/homepage-alt`
+   is kept only as a redirect to `/` for anyone who bookmarked it during the
+   pre-canonicalization review period.
 6. **Never bake critical copy or final Terra Nexus logo artwork into
    cinematic video.** Logo = real SVG layer. Copy = real HTML. Video = media
    layer only.

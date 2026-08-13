@@ -41,6 +41,13 @@ apps/web/.astro/
 .env.local
 .env.production
 .env.*.local
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Cloudflare / Wrangler local state (auth tokens, local KV/D1 simulation)
+.wrangler/
+apps/web/.wrangler/
 
 # OS
 .DS_Store

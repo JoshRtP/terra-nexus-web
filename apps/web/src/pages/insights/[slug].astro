@@ -1,7 +1,8 @@
 ---
-import { getCollection, getEntries, getEntry, render, type CollectionEntry } from 'astro:content';
+import { getEntries, getEntry, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { getBuildMode } from '../../lib/build-mode.js';
+import { getPublicBuildMode } from '../../lib/build-mode.js';
+import { isPubliclyVisible, zonedWallClockToUtc } from '../../lib/publication.js';
 import Callout from '../../components/mdx/Callout.astro';
 import CTA from '../../components/mdx/CTA.astro';
 import DataTable from '../../components/mdx/DataTable.astro';
@@ -15,19 +16,22 @@ import RelatedContent from '../../components/mdx/RelatedContent.astro';
 import SourceBox from '../../components/mdx/SourceBox.astro';
 import Stat from '../../components/mdx/Stat.astro';
 
-export const prerender = true;
+// On-demand, not static: same reasoning as src/pages/insights/index.astro —
+// publication visibility depends on request time, not build time.
+export const prerender = false;
 
-export async function getStaticPaths() {
-  const posts = await getCollection('posts', ({ data }: CollectionEntry<'posts'>) => !data.draft);
-  return posts.map((post: CollectionEntry<'posts'>) => ({ params: { slug: post.id }, props: { post } }));
+const mode = getPublicBuildMode();
+const { slug } = Astro.params;
+const post: CollectionEntry<'posts'> | undefined = slug ? await getEntry('posts', slug) : undefined;
+
+// Unpublished direct URLs 404 rather than leaking existence/content —
+// applies uniformly to a nonexistent slug, a draft, and an approved post
+// whose publishAt hasn't passed yet. Preview builds bypass gating (see
+// index.astro's comment) so an editor can review via the preview URL.
+if (!post || (mode !== 'preview' && !isPubliclyVisible(post.data))) {
+  return new Response(null, { status: 404 });
 }
 
-interface Props {
-  post: CollectionEntry<'posts'>;
-}
-
-const { post } = Astro.props;
-const mode = getBuildMode();
 const { Content } = await render(post);
 // `reference()` fields resolve to `{ collection, id }` objects, not plain
 // strings — getEntry/getEntries take the resolved reference directly.
@@ -54,8 +58,7 @@ const mdxComponents = {
   Stat,
 };
 
-// See src/pages/insights/index.astro for why timeZone is pinned to UTC.
-const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' });
+const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/Denver' });
 ---
 
 <SiteLayout
@@ -75,7 +78,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
         <p class="insight-excerpt">{post.data.excerpt}</p>
         <div class="insight-meta">
           {author && <span>By {author.data.name}</span>}
-          <span>{dateFormatter.format(post.data.publishDate)}</span>
+          <span>{dateFormatter.format(zonedWallClockToUtc(post.data.publishAt))}</span>
           {post.data.updatedDate && (
             <span>Updated {dateFormatter.format(post.data.updatedDate)}</span>
           )}

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,9 +23,34 @@ import type {
   RelationshipEdge,
 } from './types.js';
 
+// Repository root is found by walking up from this module's own location
+// looking for the `knowledge/` + `schemas/` markers, rather than assuming a
+// fixed relative depth from import.meta.url or a fixed process.cwd(). Both
+// of those assumptions break in practice: import.meta.url points somewhere
+// different once a bundler (e.g. the Cloudflare adapter, which nests this
+// file into dist/server/.prerender/chunks/) re-packages this module, and
+// cwd varies by invocation path — run-astro.mjs spawns Astro with cwd =
+// apps/web, but content-cli.ts is invoked directly via tsx with cwd = repo
+// root. Walking the filesystem for the real markers is correct regardless
+// of either.
+function findRepositoryRoot(startDirectory: string): string {
+  let directory = startDirectory;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (existsSync(resolve(directory, 'knowledge')) && existsSync(resolve(directory, 'schemas'))) {
+      return directory;
+    }
+    const parent = dirname(directory);
+    if (parent === directory) {
+      throw new Error(`Could not locate repository root (knowledge/ + schemas/) above ${startDirectory}`);
+    }
+    directory = parent;
+  }
+}
+
 const MODULE_DIRECTORY = dirname(fileURLToPath(import.meta.url));
-const APP_ROOT = resolve(MODULE_DIRECTORY, '../../..');
-const REPOSITORY_ROOT = resolve(APP_ROOT, '../..');
+const REPOSITORY_ROOT = findRepositoryRoot(MODULE_DIRECTORY);
+const APP_ROOT = resolve(REPOSITORY_ROOT, 'apps/web');
 
 const VALID_STATUSES = new Set(['draft', 'stable', 'deprecated']);
 const VALID_AUDIENCES = new Set(['internal', 'proposal-only', 'public']);

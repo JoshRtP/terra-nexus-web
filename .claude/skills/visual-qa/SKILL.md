@@ -35,7 +35,7 @@ description: Browser QA matrix, screenshots, interaction/console checks, and com
 ## Artifacts
 
 Store screenshots under `artifacts/qa/` (created at repo root). Name files
-so they're traceable to the change (e.g. `artifacts/qa/2026-08-12-homepage-alt-1440.png`).
+so they're traceable to the change (e.g. `artifacts/qa/2026-08-12-homepage-1440.png`).
 
 ## Hard rule
 

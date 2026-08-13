@@ -1,0 +1,30 @@
+# Cloudflare Wrangler local-dev secrets template.
+#
+# Copy to `.dev.vars` (gitignored) ONLY once the owner has created the
+# GitHub App described in docs/architecture/web-platform-architecture.md
+# §Cloudflare direction / the session's Keystatic GitHub-mode boundary
+# report. Do not fill these in speculatively — CLAUDE.md explicitly
+# prohibits installing GitHub-storage Keystatic mode before real
+# credentials exist, and keystatic.config.tsx's `storage.kind` stays
+# `'local'` until they do.
+#
+# Real values are NEVER committed here or anywhere in this repo — only in
+# `.dev.vars` locally (gitignored) and as Wrangler/Cloudflare secrets in
+# deployed environments (`wrangler secret put <NAME>`).
+
+# From the GitHub App's "General" settings page.
+KEYSTATIC_GITHUB_CLIENT_ID=
+
+# From the GitHub App's "General" settings page (generate a new client
+# secret) — treat as a real secret, not just a config value.
+KEYSTATIC_GITHUB_CLIENT_SECRET=
+
+# Keystatic's own session-signing secret. Generate a fresh random value
+# per environment (e.g. `openssl rand -hex 32`) — do not reuse the same
+# value across local/preview/production.
+KEYSTATIC_SECRET=
+
+# Public — the GitHub App's slug (from its settings URL), NOT a secret.
+# Astro-specific env var name (differs from Keystatic's Next.js docs,
+# which use NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG).
+PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=
