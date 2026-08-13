@@ -31,7 +31,13 @@ async function fingerprint(directory: string): Promise<string> {
 function build(mode: 'production' | 'preview'): void {
   const result = spawnSync(process.execPath, [resolve(APP_ROOT, 'scripts/run-astro.mjs'), 'build'], {
     cwd: APP_ROOT,
-    env: { ...process.env, TNX_BUILD_MODE: mode, ASTRO_TELEMETRY_DISABLED: '1' },
+    // PUBLIC_TNX_BUILD_MODE, not just TNX_BUILD_MODE: the Insights routes
+    // (src/pages/insights/) are on-demand (prerender: false) and read the
+    // PUBLIC_-prefixed var via getPublicBuildMode() — see
+    // src/lib/build-mode.ts and docs/architecture/web-platform-architecture.md
+    // §6.1 for why bare process.env doesn't reliably inline into on-demand
+    // (workerd) bundles the way it does for prerendered pages.
+    env: { ...process.env, TNX_BUILD_MODE: mode, PUBLIC_TNX_BUILD_MODE: mode, ASTRO_TELEMETRY_DISABLED: '1' },
     encoding: 'utf8',
   });
   expect(result.status, `${result.error?.message ?? ''}\n${result.stdout}\n${result.stderr}`).toBe(0);
@@ -49,15 +55,19 @@ describe('Astro static foundation', () => {
     const pilotRoute = 'commercial-pathways-lower-emissions-beef-2025';
 
     build('production');
-    // The Keystatic/Cloudflare compat shim (src/lib/keystatic-cloudflare-shim.ts,
-    // see docs/architecture/web-platform-architecture.md §6.1) is injected
-    // only when Keystatic itself is mounted (SKIP_KEYSTATIC unset/false).
-    // Default production builds (SKIP_KEYSTATIC=true, as here) must stay
-    // fully static with zero on-demand routes — dist/server exists as an
-    // (empty) build-internals directory even for pure static builds, but
-    // entry.mjs (the actual worker script) must not — identical to pre-M6
-    // build output.
-    expect(existsSync(resolve(APP_ROOT, 'dist/server/entry.mjs'))).toBe(false);
+    // dist/server/entry.mjs (the actual worker script) DOES exist now, even
+    // in a default production build (SKIP_KEYSTATIC=true, as here) — this
+    // is an intentional change from the pre-2026-08-12 invariant. The
+    // Insights routes (src/pages/insights/) became on-demand (prerender:
+    // false) as part of the publication/scheduling model (see
+    // docs/architecture/web-platform-architecture.md §Publication model):
+    // whether a post is publicly visible depends on "now" vs. its
+    // publishAt, which only an on-demand route can re-evaluate after the
+    // build that shipped it. The rest of the site (checked below) remains
+    // fully static — this is deliberately NOT a switch to output: 'server'
+    // sitewide, just per-route opt-in on the two routes where publication
+    // timing matters.
+    expect(existsSync(resolve(APP_ROOT, 'dist/server/entry.mjs'))).toBe(true);
     const productionIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');

@@ -23,14 +23,22 @@ import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// `publishAt` stays a plain validated string, not z.coerce.date(): it's a
+// naive "YYYY-MM-DDTHH:mm" value with no timezone offset (Keystatic's
+// `fields.datetime` storage format), and coercing it to a Date here would
+// silently interpret it as UTC or the build machine's local zone — neither
+// is the site's actual Mountain Time convention. See src/lib/publication.ts
+// (zonedWallClockToUtc) for the one place that conversion happens.
+const publishAtPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+
 const posts = defineCollection({
   loader: glob({ pattern: '*.mdx', base: './src/content/posts' }),
   schema: z.object({
     title: z.string(),
     excerpt: z.string().max(240),
-    publishDate: z.coerce.date(),
+    editorialStatus: z.enum(['draft', 'approved']).default('draft'),
+    publishAt: z.string().regex(publishAtPattern, 'Expected "YYYY-MM-DDTHH:mm" (Mountain Time)'),
     updatedDate: z.coerce.date().optional(),
-    draft: z.boolean().default(true),
     author: reference('authors'),
     heroImage: z.string(),
     heroImageAlt: z.string(),

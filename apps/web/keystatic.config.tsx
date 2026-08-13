@@ -62,7 +62,7 @@ export default config({
       entryLayout: 'content',
       format: { contentField: 'content' },
       previewUrl: '/insights/{slug}',
-      columns: ['title', 'author', 'featured', 'draft'],
+      columns: ['title', 'author', 'featured', 'editorialStatus'],
       schema: {
         title: fields.slug({ name: { label: 'Title', validation: { length: { min: 1 } } } }),
         excerpt: fields.text({
@@ -71,13 +71,30 @@ export default config({
           validation: { isRequired: true, length: { max: 240 } },
           description: 'Shown in listings and used as a fallback SEO description.',
         }),
-        publishDate: fields.date({ label: 'Publish date', validation: { isRequired: true } }),
-        updatedDate: fields.date({ label: 'Updated date' }),
-        draft: fields.checkbox({
-          label: 'Draft',
-          defaultValue: true,
-          description: 'Draft posts are excluded from /insights until unchecked.',
+        // Publication model (see docs/architecture/web-platform-architecture.md
+        // §Publication model and src/lib/publication.ts, the single source of
+        // truth for deriving draft/scheduled/published from these two
+        // fields). Replaces the old `draft` checkbox + date-only
+        // `publishDate` — that pairing had no way to hold "approved, goes
+        // live at a specific future moment" at the same time, which is
+        // exactly what real editorial scheduling needs.
+        editorialStatus: fields.select({
+          label: 'Editorial status',
+          description:
+            'Draft = never publicly visible, regardless of Publish at. Approved = publicly visible once Publish at has passed — this is what actually gates visibility, not this dropdown alone.',
+          options: [
+            { label: 'Draft', value: 'draft' },
+            { label: 'Approved', value: 'approved' },
+          ],
+          defaultValue: 'draft',
         }),
+        publishAt: fields.datetime({
+          label: 'Publish at (Mountain Time)',
+          description:
+            'Earliest time this becomes public once Editorial status is Approved. Enter in Mountain Time (America/Denver) — Terra Nexus\'s site-wide publication-timezone convention (this field has no timezone selector of its own; see src/lib/publication.ts). Approved + a past Publish at means "publish immediately."',
+          validation: { isRequired: true },
+        }),
+        updatedDate: fields.date({ label: 'Updated date' }),
         author: fields.relationship({
           label: 'Author',
           collection: 'authors',
