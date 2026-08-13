@@ -509,73 +509,150 @@ Claude automates the Git/PR/merge mechanics when the owner asks to
 publish/approve content — the owner should not need to run Git commands to
 move a piece from draft to live.
 
-## 11. Cloudflare Workers Builds — recommended configuration (not yet applied)
+## 11. Cloudflare Workers Builds — repository side complete, owner Git connection still required (M6, 2026-08-12)
 
-Current state: deploys to `terra-nexus-web-preview` are manual
-(`wrangler deploy`, adapter-generated config — no committed
-`wrangler.jsonc`, see §6). The owner wants push/merge-to-`main` to
-auto-deploy that same Worker as the stable staging URL, with `feature/*`,
-`fix/*`, `content/*` branches getting Cloudflare's branch/version previews
-instead of touching the stable deployment.
+**Repository-owned config landed:** `apps/web/wrangler.jsonc` (branch
+`infra/m6-cloudflare-workers-builds`). Verified by inspecting
+`@astrojs/cloudflare`'s and `@cloudflare/vite-plugin`'s actual source (not
+assumed): a project-root `wrangler.jsonc`/`.json`/`.toml` is read via
+Wrangler's own `unstable_readConfig` and merged with the adapter's
+generated defaults via `defu`, with the committed file's values winning.
+Rebuilding after adding the file regenerates `dist/server/wrangler.json`
+with `"name": "terra-nexus-web-preview"` (previously the unset default,
+`"terra-nexus-web"`, derived from the `package.json` name) — confirmed by
+direct inspection of the regenerated file, not just by reading docs.
 
-Cloudflare Workers Builds (Git integration) supports exactly this split: a
-configured **production branch** deploys the Worker on every push, while
-other branches upload **preview versions** that don't replace it — confirm
-exact current UI labels against Cloudflare's own docs before configuring,
-per CLAUDE.md rule 4.
+**No Wrangler named environments used, deliberately.** This repo only ever
+targets one Worker (`terra-nexus-web-preview`) for both the stable `main`
+deploy and non-production branch previews of that same Worker — Wrangler
+environments would add Worker-name-expansion risk (e.g. an accidental
+`terra-nexus-web-preview-staging`) for no benefit here, since
+`wrangler versions upload` already gives the stable-vs-preview split
+without a second environment/Worker. `@cloudflare/vite-plugin`'s generated
+output is always a single flat config regardless — it does not preserve
+multiple `[env.*]` sections even if the source file had them, confirmed
+from its `getOutputConfig()` source.
 
-**What needs to be true before connecting Git, based on inspecting this
-repo (not the previously-suggested values, which weren't re-verified until
-now):**
+**Verified end-to-end against the real Cloudflare account (2026-08-12),
+not just locally:**
 
-- **Root directory:** `apps/web` — confirmed correct; this is where
-  `package.json`, `astro.config.ts`, and the build scripts live.
-- **Build command:** `npm run build` (run from `apps/web`, i.e.
-  equivalent to the repo-root `npm run web:build`) — confirmed correct.
-  Cloudflare Workers Builds treats production and preview builds
-  separately; both should use this same static/adapter build (there is no
-  separate "preview build command" concept needed here since
-  `TNX_BUILD_MODE`/`PUBLIC_TNX_BUILD_MODE` already exist for that — see
-  below).
-- **Worker name / project identity:** the adapter's auto-generated
-  `dist/client/wrangler.json` currently derives the placeholder name
-  `terra-nexus-web` (from... [inspected, no explicit `name` set anywhere
-  in `astro.config.ts` or either `package.json` — Astro/Wrangler's own
-  default heuristic]), **not** `terra-nexus-web-preview`, the actual
-  connected Worker. Every deploy so far has passed the real name via
-  `wrangler deploy --name terra-nexus-web-preview` on the command line,
-  which Git-based Workers Builds cannot do (there's no CLI flag to set in
-  a dashboard-driven build). **This needs a committed `wrangler.jsonc`**
-  with `"name": "terra-nexus-web-preview"` at `apps/web/` before connecting
-  Git — otherwise Workers Builds will either fail to match the existing
-  Worker or create a second, wrongly-named one. This is new work, not
-  something already done — flagging explicitly rather than assuming it.
-- **Environment variables:** `TNX_BUILD_MODE`/`PUBLIC_TNX_BUILD_MODE`
-  should be build-time variables set to `production` for the production
-  branch build and `preview` for non-production branch builds (mirrors
-  today's manual `TNX_BUILD_MODE=preview npm run build` convention, now
-  extended to `PUBLIC_TNX_BUILD_MODE` for the on-demand Insights routes —
-  §8). `KEYSTATIC_GITHUB_CLIENT_ID`/`KEYSTATIC_GITHUB_CLIENT_SECRET`/`KEYSTATIC_SECRET`
-  are already-set **runtime secrets** (`wrangler secret put`) — these are
-  request-time values the Worker reads via `cloudflare:workers`' `env`,
-  not build-time inputs, and must **not** be moved into Workers Builds'
-  build-time variable UI (a different storage class with different
-  visibility). `PUBLIC_KEYSTATIC_STORAGE_KIND=github` and
-  `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` are build-time, non-secret variables
-  (already documented in §6.2). None of these values change with this
-  configuration — only *where* the build is triggered from changes.
+- `wrangler deploy --dry-run` and `wrangler versions upload --dry-run`
+  from `apps/web` both resolve to the committed `wrangler.jsonc` (Wrangler
+  reports "Using redirected Wrangler configuration... Original user's
+  configuration: wrangler.jsonc") and produce the correct bindings
+  (`env.SESSION` KV, `env.ASSETS`) with no errors.
+- A real `wrangler versions upload` was run (owner-approved) — it uploaded
+  a new, unpromoted version of `terra-nexus-web-preview`
+  (`Worker Version ID: 6d01fcd8-...`, preview URL
+  `https://6d01fcd8-terra-nexus-web-preview.josh-242.workers.dev`).
+  Confirmed via `wrangler deployments list` that the Worker's live 100%
+  deployment (`bf5afb61-...`) was unaffected — the new version was never
+  promoted. Confirmed via `curl` that the preview URL serves `/` (200,
+  correct `<title>`), `/insights` (200), and `/homepage-alt` (301 → `/`)
+  correctly.
+- This test build used the plain `npm run build` (no env overrides), which
+  — per `apps/web/scripts/run-astro.mjs`'s own default — sets
+  `SKIP_KEYSTATIC=true` for anything other than `astro dev` unless the
+  caller overrides it. So `/keystatic` correctly 404'd on that specific
+  preview version. **This is expected for that build, not a config bug**
+  — see the Workers Builds variable requirement below, which is the actual
+  thing that must be set correctly to reproduce the currently-live
+  Keystatic-enabled build.
+
+**What Workers Builds needs, confirmed against current Cloudflare docs
+(fetched 2026-08-12, not from memory):**
+
+- **Root directory:** `apps/web` — confirmed correct (this is where
+  `package.json`, `astro.config.ts`, and now `wrangler.jsonc` live).
+- **Deploy command (production branch):** leave the Workers Builds
+  default, `npx wrangler deploy` — no override needed now that
+  `wrangler.jsonc` pins the correct name.
+- **Non-production branch deploy command:** leave the Workers Builds
+  default, `npx wrangler versions upload` — uploads a preview version of
+  the same `terra-nexus-web-preview` Worker without promoting it, exactly
+  matching the required "does NOT replace stable staging" behavior. No
+  separate Worker, no environments, nothing further to configure here.
+- **Production branch:** `main`.
+- **Non-production branch builds:** enable (checkbox) so `feature/*`,
+  `fix/*`, `content/*` get preview builds/URLs.
 - **GitHub repository:** `JoshRtP/terra-nexus-web` — confirmed correct.
 
-**Owner dashboard action still required** (Claude cannot do this — it's a
-Cloudflare account-level connection): once the `wrangler.jsonc` fix above
-is committed, connect Git in the Cloudflare dashboard for the existing
-`terra-nexus-web-preview` Worker, set production branch to `main`, build
-command `npm run build`, root directory `apps/web`, enable
-non-production branch builds/previews, and set the build-time variables
-above. Exact click-by-click steps to be provided once the `wrangler.jsonc`
-change lands and is verified locally (`wrangler deploy --dry-run` or
-equivalent) — not before, per CLAUDE.md's "verify exact values before
-asking the owner to click anything."
+**Build command must be branch-aware — a plain global `npm run build` is
+wrong here, found by independent security review before connecting Git.**
+Workers Builds' "Build variables and secrets" panel is confirmed global
+(no per-branch override) from live Cloudflare docs. The first draft of
+this plan set `SKIP_KEYSTATIC=false` there to reproduce the
+currently-live Keystatic-enabled `main` build — but because that panel
+applies to every branch, it would have shipped the Keystatic admin UI and
+`/api/keystatic/*` into every `feature/*`/`fix/*`/`content/*` preview
+version too, not just `main`. That contradicts `astro.config.ts`'s own
+stated intent (only `main`/stable should ever carry the on-demand admin
+routes) and needlessly expands attack surface on throwaway preview
+versions. Cloudflare does inject a real, documented per-build variable
+that isn't subject to the global-panel limitation —
+`WORKERS_CI_BRANCH` — so the **Build command** field itself (not a
+dashboard variable) branches on it:
+
+```sh
+if [ "$WORKERS_CI_BRANCH" = "main" ]; then export SKIP_KEYSTATIC=false PUBLIC_KEYSTATIC_STORAGE_KIND=github PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=terra-nexus-keystatic TNX_BUILD_MODE=production PUBLIC_TNX_BUILD_MODE=production; else export TNX_BUILD_MODE=preview PUBLIC_TNX_BUILD_MODE=preview; fi && npm run build
+```
+
+Verified locally by simulating both branches (`WORKERS_CI_BRANCH=main` vs
+`WORKERS_CI_BRANCH=feature/test` set before invoking the same build
+script): the `main` simulation's `dist/server/` contains the
+`keystatic-*` chunks and both builds still resolve
+`dist/server/wrangler.json`'s `name` to `terra-nexus-web-preview`
+correctly; the non-`main` simulation's `dist/server/` has none — no
+`/keystatic` or `/api/keystatic/*` route, matching the existing
+`SKIP_KEYSTATIC=true` default and its regression test
+(`apps/web/test/astro-foundation.test.ts`). Nothing in this changes
+application source — it's purely how Workers Builds invokes the existing
+build script. `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=terra-nexus-keystatic`
+above is the GitHub App's name from §6.2; **confirm the exact slug against
+the app's own settings page URL** (`github.com/settings/apps/<slug>`)
+before entering this — the name and slug usually match but haven't been
+independently re-verified in this session.
+
+No Workers Builds "Build variables and secrets" panel entries are needed
+at all with this approach — the build command sets everything itself,
+per branch, correctly.
+
+**Runtime secrets — already set, not touched by this change, do not
+re-enter:** `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`,
+`KEYSTATIC_SECRET` (all three set via `wrangler secret put ... --name
+terra-nexus-web-preview`, confirmed still present and independent of the
+Git connection — Cloudflare's own docs confirm secrets persist across
+redeploys unless explicitly overwritten with `--secrets-file` or deleted).
+`KEYSTATIC_GITHUB_CLIENT_ID` is currently treated as a secret (not a var)
+even though the value itself isn't inherently sensitive — preserved as-is,
+matching current working behavior; no reason found to change it.
+
+**Owner dashboard action still required** (Cloudflare account-level
+connection, cannot be done from this repository): see the session's exact
+click-by-click instructions for connecting Git to the existing
+`terra-nexus-web-preview` Worker with the values above.
+
+### 11.1 Rollback
+
+- **Disable Git auto-deploy:** Worker → Settings → Builds → disconnect the
+  repository. Manual `wrangler deploy` / `wrangler versions upload` from a
+  local authenticated shell continues to work exactly as before —
+  `wrangler.jsonc` now makes that simpler (no `--name` flag needed).
+- **Revert to a known-good version:** `wrangler versions list --name
+  terra-nexus-web-preview` (or the dashboard's Deployments tab) to find a
+  prior version ID, then `wrangler rollback --name terra-nexus-web-preview
+  --version-id <id>` (or "Rollback" in the dashboard) to restore it as the
+  live 100% deployment without a rebuild.
+- **Revert the repository config:** `git revert` the commit that adds
+  `apps/web/wrangler.jsonc` (or delete the file) — the adapter falls back
+  to its prior auto-generated config; the next *manual* deploy would then
+  need `--name terra-nexus-web-preview` again, as before this change.
+- **Runtime secrets are never affected by any of the above** — they live
+  on the Worker independent of Git connection state, code version, or this
+  config file.
+- **WordPress production (`terra.nexus`) is never in the blast radius** —
+  nothing in this rollback path touches DNS, a custom domain, or the
+  production `terra-nexus-web` Worker (not yet created).
 
 ## 12. Reference
 

@@ -1,6 +1,6 @@
 ---
 name: cloudflare-deployment
-description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is fully working as of 2026-08-12 — compat shim, GitHub App/credentials, and publishing loop all verified. Cloudflare Git auto-deploy still pending.
+description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is fully working as of 2026-08-12 — compat shim, GitHub App/credentials, and publishing loop all verified. Repository-owned apps/web/wrangler.jsonc landed 2026-08-12 (M6 close-out, branch infra/m6-cloudflare-workers-builds) — resolves the Worker to terra-nexus-web-preview, verified via a real wrangler versions upload. Cloudflare Git auto-deploy still needs the owner to connect it in the dashboard — see docs/architecture/web-platform-architecture.md §11.
 ---
 
 # Cloudflare Deployment
@@ -48,6 +48,25 @@ image round-trip issue that were found and fixed along the way (neither was
 a Keystatic defect). **Still outstanding:** Cloudflare Git auto-deploy, so
 the public site rebuilds automatically on a CMS save instead of needing a
 manual `wrangler deploy` — owner dashboard action, not yet done.
+
+**M6 close-out — Workers Builds (Git integration), repository side done
+(2026-08-12).** `apps/web/wrangler.jsonc` now pins `"name":
+"terra-nexus-web-preview"` so Wrangler no longer needs a manual `--name`
+flag — confirmed by inspecting `@astrojs/cloudflare`/`@cloudflare/vite-plugin`
+source (a project-root wrangler config is read and merged, not ignored) and
+by rebuilding and seeing the regenerated `dist/server/wrangler.json` pick
+up the name. No Wrangler named environments — one flat config, one Worker,
+`wrangler versions upload` (Workers Builds' default non-production deploy
+command) gives the stable-vs-preview split without needing a second
+environment. A real `wrangler versions upload` against the live account
+proved the Worker targeting, bindings, and preview URL all work correctly
+without touching the stable 100% deployment. The Workers Builds **build
+command** (not the global build-variables panel, which cannot vary by
+branch) needs to be branch-aware so only `main` gets the Keystatic admin
+routes — see `docs/architecture/web-platform-architecture.md` §11 for the
+exact command and why the naive global-variable approach was rejected
+after independent security review. Owner still needs to connect Git in the
+Cloudflare dashboard — see §11 for exact values.
 
 ## Setup sequence (when this milestone starts)
 

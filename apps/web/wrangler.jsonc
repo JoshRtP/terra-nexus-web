@@ -1,0 +1,54 @@
+{
+  // Terra Nexus — repository-owned Wrangler config (M6, added 2026-08-12).
+  //
+  // Why this file needs to exist at all: with no committed wrangler config,
+  // @astrojs/cloudflare's build (via @cloudflare/vite-plugin) falls back to
+  // Wrangler's own default config and derives the Worker name from
+  // package.json ("@terra-nexus/web" -> "terra-nexus-web"). Every deploy so
+  // far has overridden that on the command line with
+  // `wrangler deploy --name terra-nexus-web-preview`. Workers Builds' deploy
+  // commands are themselves customizable in the Cloudflare dashboard, so a
+  // `--name` override could in principle be added there too — but that would
+  // make the Worker's identity a hidden, dashboard-only setting, invisible
+  // to anyone reading this repo and easy to drift from what local/manual
+  // deploys use. Committing the real name here instead means local, CI, and
+  // Workers-Builds-generated deploys all resolve the same Worker from the
+  // same source of truth — and it's required before connecting Git either
+  // way, since the default dashboard deploy commands (no `--name` override)
+  // would otherwise fail to match the existing `terra-nexus-web-preview`
+  // Worker or create a second, wrongly-named one.
+  //
+  // Verified this file is actually READ, not ignored: @cloudflare/vite-plugin
+  // locates a project-root wrangler.jsonc/.json/.toml via `findWranglerConfig`
+  // and loads it with Wrangler's own `unstable_readConfig`; the adapter's
+  // config customizer only fills fields that are still unset (`config.main
+  // ?? "@astrojs/cloudflare/entrypoints/server"`, etc.) and the two results
+  // are merged with `defu`, where this file's values win. So this file's
+  // `name` deterministically becomes the deployed Worker name — confirmed
+  // by rebuilding and inspecting the regenerated dist/server/wrangler.json.
+  //
+  // Deliberately minimal — everything else (main entrypoint, assets
+  // directory/binding, the auto-provisioned SESSION KV namespace) is left
+  // to the adapter's own generation, which was already producing a working
+  // deploy before this file existed. Duplicating those here would just be
+  // two sources of truth that can drift.
+  //
+  // No Wrangler named environments ([env.staging] etc.) are used. This repo
+  // only ever targets one Worker (`terra-nexus-web-preview`) for both the
+  // stable `main` deploy and non-production branch preview *versions* of
+  // that same Worker — `wrangler versions upload` uploads a preview version
+  // of this Worker without promoting it, which already gives the
+  // stable-vs-preview split the architecture needs. Named environments would
+  // add Worker-name-resolution risk (accidental `-staging` name expansion)
+  // for no benefit here; reconsider only if/when a genuinely separate Worker
+  // (e.g. the future production `terra-nexus-web`) needs its own config in
+  // this same file.
+  "name": "terra-nexus-web-preview",
+
+  // Pinned to the compatibility_date the adapter has been defaulting to for
+  // every deploy so far (see apps/web/dist/server/wrangler.json pre-existing
+  // generated output). Committing it explicitly here freezes that value
+  // instead of letting it silently drift if a future Wrangler/adapter
+  // version changes its own default — bump deliberately, not incidentally.
+  "compatibility_date": "2026-04-15"
+}
