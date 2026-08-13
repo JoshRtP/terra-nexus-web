@@ -375,7 +375,90 @@ auto-deploy (so the public site rebuilds automatically on a CMS save,
 without a manual `wrangler deploy`) is still outstanding — see the session
 record for exact owner-facing dashboard steps.
 
-## 7. Migration phases (do these in order; each ends with a working build)
+## 7. Branch model (adopted 2026-08-12)
+
+`main` is the canonical baseline for the new site — reconciled from
+`origin/main` (legitimate hosted-Keystatic CMS commits) and
+`homepage-alt-draft` (homepage/application work, M5/M6 Cloudflare setup)
+via a normal merge (`homepage-alt-draft` merged `origin/main`, then that
+branch PR'd into `main` — no history rewrite; `homepage-alt-draft` had
+already been pushed/shared, so rebasing it was avoided). See the session
+record for the exact commit range.
+
+Going forward:
+
+- `main` — canonical new Terra Nexus website. Cloudflare Workers Builds'
+  production branch (see §11).
+- `feature/*` — Claude/owner development branches.
+- `fix/*` — bug fixes.
+- `content/*` — editorial drafts/review, when a change is large enough to
+  warrant review before landing on `main` (routine Keystatic saves commit
+  straight to `main` today — see §10).
+
+`homepage-alt-draft` is retired once its work lands on `main` — it was a
+temporary integration branch for the homepage-promotion + M5/M6 Cloudflare
+work, not a permanent parallel-development branch, and CLAUDE.md no longer
+references it as a development baseline.
+
+## 8. Publication model (adopted 2026-08-12)
+
+Two independent fields on the `posts` collection (`keystatic.config.tsx`
+and `src/content.config.ts`, kept in lockstep per that file's own header
+comment), replacing the earlier `draft` checkbox + date-only `publishDate`:
+
+- `editorialStatus`: `'draft' | 'approved'` — has an editor signed off?
+- `publishAt`: Keystatic `fields.datetime`, a naive `YYYY-MM-DDTHH:mm`
+  string with no timezone offset — earliest time it may go public.
+
+Derived state (never stored — computed on every read):
+
+```text
+draft     = editorialStatus is 'draft'
+scheduled = editorialStatus is 'approved' AND publishAt > now
+published = editorialStatus is 'approved' AND publishAt <= now
+```
+
+Implemented once, in `src/lib/publication.ts`
+(`getPublicationState`/`isPubliclyVisible`), and consumed by every route
+that lists or serves a post — currently `src/pages/insights/index.astro`
+and `src/pages/insights/[slug].astro`.
+
+**Timezone policy:** `publishAt` is entered and interpreted as **America/Denver**
+(Mountain Time — the owner's timezone) wall-clock time. Keystatic's
+`fields.datetime` input has no timezone selector of its own — this is a
+deliberate, documented site-wide convention, not an ambiguity left
+unresolved. `zonedWallClockToUtc()` in `src/lib/publication.ts` converts
+that naive string to a real UTC instant, correctly across the MST/MDT
+boundary (a fixed UTC offset would be wrong roughly half the year).
+Covered by `test/publication.test.ts`.
+
+**Automatic, not decorative:** `/insights` and `/insights/[slug]` are
+`prerender: false` (on-demand, served by the Cloudflare Worker) instead of
+build-time static, specifically so `isPubliclyVisible()` is evaluated
+against the actual request time. Once `main` contains an approved post
+with a future `publishAt`, no further action — no rebuild, no manual
+deploy, no one needing to be online — is required for it to become public
+exactly at that moment; the very next request after `publishAt` passes
+sees it. This is the smallest change that satisfies that requirement
+without moving the rest of the (fully static) site to server rendering —
+see §6 for why the site otherwise stays `output: 'static'`.
+
+**Gating behavior:**
+
+- `/insights/[slug]` 404s uniformly for a nonexistent slug, a draft, and
+  an approved-but-not-yet-published post — no signal distinguishes "this
+  doesn't exist" from "this isn't public yet."
+- `/insights` silently omits anything not `published`.
+- Preview deployments (`PUBLIC_TNX_BUILD_MODE=preview`, mirroring the
+  existing `TNX_BUILD_MODE` convention used by `robots.txt` — see
+  `src/lib/build-mode.ts`) bypass gating entirely, so an editor can review
+  drafts/scheduled posts via the preview URL. Preview responses already
+  carry `noindex,nofollow` and `robots.txt` disallows the whole preview
+  site, so this never leaks into search.
+- No RSS feed or sitemap exists yet (confirmed absent, not overlooked);
+  either would need to reuse `isPubliclyVisible()` if/when added.
+
+## 9. Migration phases (do these in order; each ends with a working build)
 
 | Phase | Exit criteria |
 | --- | --- |
@@ -383,15 +466,118 @@ record for exact owner-facing dashboard steps.
 | M1 — Green baseline + architecture docs (done 2026-08-12) | Known TS error + stale inventory fixed; `CLAUDE.md`/architecture doc/skills updated to state Keystatic is canonical, OKF is temporary |
 | M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
-| M4 — Progressive Tailwind/design-system normalization | Tailwind installed, `design-system.css` tokens ported to Tailwind config/tokens, no visual regression (Playwright QA at 4 viewports) |
+| M4 — Progressive Tailwind/design-system normalization | **Not started.** Deliberately deferred — see the session record for the repository-reconciliation session that closed out M5/M6/homepage canonicalization instead |
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow (credentials + publishing loop done; Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (Keystatic's guided flow is dev-only, can't run on a deployed Worker — §6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug investigated and fixed (not a Keystatic defect — a content-authoring convention mismatch, §6.2). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining before M6 is complete:** Cloudflare Git auto-deploy so the public site rebuilds automatically on a CMS save — see §6.2 and the session record |
+| M6 — GitHub-backed production Keystatic workflow (**partial** — publishing loop done, Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed. Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining:** Cloudflare Workers Builds Git integration, so the public Worker rebuilds automatically on push/CMS-save instead of a manual `wrangler deploy` — recommended configuration in §11, owner dashboard action still required |
+| M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
 | M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
 | M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
 | M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
 
-## 8. Reference
+## 10. CMS editorial workflow
+
+Two authoring paths, both landing in the same place (Git-backed MDX under
+`src/content/`, read by both Astro and Keystatic):
+
+- **Claude-first:** Claude creates/edits MDX directly on a branch → push →
+  Cloudflare branch preview (§11) → owner reviews the preview URL and, if
+  they want to touch formatting/images visually, opens hosted `/keystatic`
+  against that same branch (Keystatic supports GitHub branch selection in
+  its UI) → approves/merges. The owner is never required to open Keystatic
+  just to make Claude-created content visible — the files are already the
+  source of truth the moment they're committed.
+- **Keystatic-first:** owner opens hosted `/keystatic`, creates/edits an
+  article, saves → Keystatic commits directly to `main` (current default;
+  no `branchPrefix` configured — see §14 discussion in the session record
+  for why one wasn't added: it would force every hosted edit onto a
+  per-session branch the owner would then have to separately merge, adding
+  Git mechanics without a clear benefit today) → Cloudflare rebuilds `main`
+  automatically once §11's Git integration is in place.
+
+**Save vs. approval vs. publication** (draft/scheduled/published mechanics
+in §8):
+
+- *Save* = persisted to GitHub. Nothing more.
+- *Content/feature branch* = work in progress, not yet approved.
+- *Merge to `main`* = approved for the canonical site/deployment — but
+  **not necessarily immediately visible**, if `publishAt` is still future.
+- *`publishAt`* = earliest time public visitors may see it, independent of
+  when it merged.
+
+Claude automates the Git/PR/merge mechanics when the owner asks to
+publish/approve content — the owner should not need to run Git commands to
+move a piece from draft to live.
+
+## 11. Cloudflare Workers Builds — recommended configuration (not yet applied)
+
+Current state: deploys to `terra-nexus-web-preview` are manual
+(`wrangler deploy`, adapter-generated config — no committed
+`wrangler.jsonc`, see §6). The owner wants push/merge-to-`main` to
+auto-deploy that same Worker as the stable staging URL, with `feature/*`,
+`fix/*`, `content/*` branches getting Cloudflare's branch/version previews
+instead of touching the stable deployment.
+
+Cloudflare Workers Builds (Git integration) supports exactly this split: a
+configured **production branch** deploys the Worker on every push, while
+other branches upload **preview versions** that don't replace it — confirm
+exact current UI labels against Cloudflare's own docs before configuring,
+per CLAUDE.md rule 4.
+
+**What needs to be true before connecting Git, based on inspecting this
+repo (not the previously-suggested values, which weren't re-verified until
+now):**
+
+- **Root directory:** `apps/web` — confirmed correct; this is where
+  `package.json`, `astro.config.ts`, and the build scripts live.
+- **Build command:** `npm run build` (run from `apps/web`, i.e.
+  equivalent to the repo-root `npm run web:build`) — confirmed correct.
+  Cloudflare Workers Builds treats production and preview builds
+  separately; both should use this same static/adapter build (there is no
+  separate "preview build command" concept needed here since
+  `TNX_BUILD_MODE`/`PUBLIC_TNX_BUILD_MODE` already exist for that — see
+  below).
+- **Worker name / project identity:** the adapter's auto-generated
+  `dist/client/wrangler.json` currently derives the placeholder name
+  `terra-nexus-web` (from... [inspected, no explicit `name` set anywhere
+  in `astro.config.ts` or either `package.json` — Astro/Wrangler's own
+  default heuristic]), **not** `terra-nexus-web-preview`, the actual
+  connected Worker. Every deploy so far has passed the real name via
+  `wrangler deploy --name terra-nexus-web-preview` on the command line,
+  which Git-based Workers Builds cannot do (there's no CLI flag to set in
+  a dashboard-driven build). **This needs a committed `wrangler.jsonc`**
+  with `"name": "terra-nexus-web-preview"` at `apps/web/` before connecting
+  Git — otherwise Workers Builds will either fail to match the existing
+  Worker or create a second, wrongly-named one. This is new work, not
+  something already done — flagging explicitly rather than assuming it.
+- **Environment variables:** `TNX_BUILD_MODE`/`PUBLIC_TNX_BUILD_MODE`
+  should be build-time variables set to `production` for the production
+  branch build and `preview` for non-production branch builds (mirrors
+  today's manual `TNX_BUILD_MODE=preview npm run build` convention, now
+  extended to `PUBLIC_TNX_BUILD_MODE` for the on-demand Insights routes —
+  §8). `KEYSTATIC_GITHUB_CLIENT_ID`/`KEYSTATIC_GITHUB_CLIENT_SECRET`/`KEYSTATIC_SECRET`
+  are already-set **runtime secrets** (`wrangler secret put`) — these are
+  request-time values the Worker reads via `cloudflare:workers`' `env`,
+  not build-time inputs, and must **not** be moved into Workers Builds'
+  build-time variable UI (a different storage class with different
+  visibility). `PUBLIC_KEYSTATIC_STORAGE_KIND=github` and
+  `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` are build-time, non-secret variables
+  (already documented in §6.2). None of these values change with this
+  configuration — only *where* the build is triggered from changes.
+- **GitHub repository:** `JoshRtP/terra-nexus-web` — confirmed correct.
+
+**Owner dashboard action still required** (Claude cannot do this — it's a
+Cloudflare account-level connection): once the `wrangler.jsonc` fix above
+is committed, connect Git in the Cloudflare dashboard for the existing
+`terra-nexus-web-preview` Worker, set production branch to `main`, build
+command `npm run build`, root directory `apps/web`, enable
+non-production branch builds/previews, and set the build-time variables
+above. Exact click-by-click steps to be provided once the `wrangler.jsonc`
+change lands and is verified locally (`wrangler deploy --dry-run` or
+equivalent) — not before, per CLAUDE.md's "verify exact values before
+asking the owner to click anything."
+
+## 12. Reference
 
 Full owner-supplied source document:
 `Terra_Nexus_Astro_Keystatic_Cloudflare_Architecture.md` (attached in
