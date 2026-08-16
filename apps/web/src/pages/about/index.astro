@@ -3,35 +3,91 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import ExecutiveGroupPanel from '../../components/ExecutiveGroupPanel.astro';
 const mode = getBuildMode();
 
-// Studio Executives — placeholder data for the two team-section layout
-// options below. Names match what's live at terra.nexus today; everything
-// else (photo, bio, focus areas, social links) is a stand-in for review,
-// not final content — see CLAUDE.md on not inventing claims about real
-// people. Real headshots can drop straight into .exec-avatar/.exec-avatar-lg
-// (both already wired for the grayscale-on-hover treatment); LinkedIn URLs
-// can replace the disabled placeholder icons once confirmed.
-const teamPlaceholder = [
+// Studio Executives — placeholder data for the two team-section review
+// options below (component trial: feature/about-team-component-trial).
+// Names/titles match what's live or supplied for this trial today;
+// everything else (photo, bio, focus areas, social links) is a stand-in
+// for review, not final content — see CLAUDE.md and AGENTS.md on not
+// inventing claims about real people. Real headshots can drop straight
+// into .exec-avatar (already wired for the placeholder-initials
+// treatment); LinkedIn URLs can replace the disabled placeholder links
+// once confirmed. Isaac's title/name are exactly what was supplied — no
+// bio, credentials, or links exist yet, so his panel intentionally stays
+// minimal rather than inventing profile content. The Expert Network row is
+// a capability/network group, not an individual profile — its tags reuse
+// the real capabilities taxonomy (see capabilities/index.astro) purely as
+// an illustrative demo of how expertise tags could eventually appear here.
+const teamGroups: Array<{
+  id: string;
+  index: string;
+  rowTitle: string;
+  rowSubtitle: string;
+  kind: 'people' | 'person' | 'network';
+  people?: Array<{ name: string; title: string; initials: string; bio: string; focusAreas: Array<{ label: string; href: string }> }>;
+  person?: { name: string; title: string; initials: string; bio: string };
+  network?: { note: string; tags: Array<{ label: string; href: string }> };
+}> = [
   {
-    name: 'Laura Klein',
-    title: 'Studio Executive',
-    initials: 'LK',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
-      { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+    id: 'studio-executives',
+    index: '01',
+    rowTitle: 'Laura Klein + Josh Mellinger',
+    rowSubtitle: 'Studio Executives',
+    kind: 'people',
+    people: [
+      {
+        name: 'Laura Klein',
+        title: 'Studio Executive',
+        initials: 'LK',
+        bio: 'Full bio and areas of expertise coming soon.',
+        focusAreas: [
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+        ],
+      },
+      {
+        name: 'Josh Mellinger',
+        title: 'Studio Executive',
+        initials: 'JM',
+        bio: 'Full bio and areas of expertise coming soon.',
+        focusAreas: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+        ],
+      },
     ],
   },
   {
-    name: 'Josh Mellinger',
-    title: 'Studio Executive',
-    initials: 'JM',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
-      { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
-    ],
+    id: 'executive-in-residence',
+    index: '02',
+    rowTitle: 'Isaac',
+    rowSubtitle: 'Executive in Residence',
+    kind: 'person',
+    person: {
+      name: 'Isaac',
+      title: 'Executive in Residence',
+      initials: 'I',
+      bio: 'Full bio coming soon.',
+    },
+  },
+  {
+    id: 'expert-network',
+    index: '03',
+    rowTitle: 'Terra Nexus Expert Network',
+    rowSubtitle: '',
+    kind: 'network',
+    network: {
+      note: 'Network details coming soon.',
+      tags: [
+        { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+        { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+        { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+        { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+        { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
+      ],
+    },
   },
 ];
 ---
@@ -94,66 +150,102 @@ const teamPlaceholder = [
     </div>
   </section>
 
-  <!-- Studio Executives — two layout options for team review. Not a final
-       pick; see the code comment on teamPlaceholder above. Both stay in
-       place until the team decides which direction (or hybrid) to build
-       out fully, same "leave both up for review" approach as the homepage
-       nav-anchor trial. -->
+  <!-- Studio Executives — two component-trial options for team review
+       (feature/about-team-component-trial). Not a final pick; owner is
+       choosing the aesthetic direction — see CLAUDE.md. Both stay in
+       place until then, same "leave both up for review" approach as the
+       homepage nav-anchor trial. -->
   <section class="section" aria-labelledby="team-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Studio Executives</span>
+        <span class="eyebrow">Leadership</span>
         <h2 id="team-heading">Food Systems Leadership Team</h2>
-        <p class="section-lead">Two directions for the team section — one hover-forward and photo-led, one expertise-forward and read-first. <span class="draft-flag">Draft for internal review — photos, bios, and links are placeholders.</span></p>
+        <p class="section-lead">Two directions for the team section — one an editorial accordion inspired by leadership-roster conventions elsewhere, one an index-and-detail selector. <span class="draft-flag">Draft for internal review — names/titles for Laura, Josh, and Isaac are as supplied; bios, tags, and links are placeholders where noted.</span></p>
       </header>
 
+      <!-- OPTION A — Ogilvy-inspired Executive Accordion. Reuses the
+           dormant .accordion/.accordion-item/.accordion-trigger/
+           .accordion-content primitives from design-system.css (defined in
+           M7, previously unused anywhere in the codebase) as the
+           interaction backbone, restyled locally via .exec-accordion for
+           a wide-row editorial feel instead of the boxed default. -->
       <div class="team-option">
-        <h3 class="team-option-label">Option A — Photo Reveal</h3>
-        <p class="team-option-note">Closest to the current live site: black-and-white photo through hover, with a LinkedIn/email icon rail revealing on top. Compact and visual; bio depth lives on a future full profile page, not here.</p>
-        <ul class="exec-grid-a" role="list">
-          {teamPlaceholder.map((person) => (
-            <li class="exec-card-a">
-              <div class="exec-card-a-media">
-                <div class="exec-avatar" aria-hidden="true">{person.initials}</div>
-                <div class="exec-icon-rail">
-                  <span class="exec-icon is-placeholder" title="LinkedIn — link coming soon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="sans-serif">in</text></svg>
+        <h3 class="team-option-label">Option A — Executive Accordion</h3>
+        <p class="team-option-note">A compact leadership roster that opens into richer profile detail on selection — the interaction principle behind ogilvy.com/team, reinterpreted with Terra Nexus typography, color, and restraint (no photography, no borrowed layout).</p>
+        <div class="accordion exec-accordion" data-exec-accordion>
+          {teamGroups.map((group) => (
+            <div class="accordion-item exec-accordion-item">
+              <h4 class="exec-accordion-heading">
+                <button
+                  type="button"
+                  class="accordion-trigger exec-accordion-trigger"
+                  id={`a-trigger-${group.id}`}
+                  aria-expanded="true"
+                  aria-controls={`a-panel-${group.id}`}
+                >
+                  <span class="numbered-index exec-accordion-index">{group.index}</span>
+                  <span class="exec-accordion-titles">
+                    <span class="exec-accordion-name">{group.rowTitle}</span>
+                    {group.rowSubtitle && <span class="exec-accordion-role">{group.rowSubtitle}</span>}
                   </span>
-                  <a class="exec-icon" href="/contact/" aria-label={`Contact ${person.name}`} title="Email">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>
-                  </a>
-                </div>
+                </button>
+              </h4>
+              <div
+                class="accordion-content exec-accordion-content"
+                id={`a-panel-${group.id}`}
+                role="region"
+                aria-labelledby={`a-trigger-${group.id}`}
+              >
+                <ExecutiveGroupPanel group={group} />
               </div>
-              <h4>{person.name}</h4>
-              <p class="exec-role">{person.title}</p>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
 
+      <!-- OPTION B — Executive Index + Detail Panel. New page-local
+           pattern (not an existing primitive); reuses .numbered-index,
+           .card/.card-static, and .tag inside the shared
+           ExecutiveGroupPanel for its detail content. Renders as a real
+           WAI-ARIA tablist, progressively enhanced — see script below. -->
       <div class="team-option">
-        <h3 class="team-option-label">Option B — Expertise-Linked</h3>
-        <p class="team-option-note">Leads with credibility and depth: a short bio plus tags linking straight into the Capabilities that person owns — the connective tissue you described wanting between the team and the work.</p>
-        <div class="exec-list-b">
-          {teamPlaceholder.map((person) => (
-            <article class="exec-card-b">
-              <div class="exec-avatar-lg" aria-hidden="true">{person.initials}</div>
-              <div class="exec-card-b-body">
-                <h4>{person.name}</h4>
-                <p class="exec-role">{person.title}</p>
-                <p class="exec-bio">{person.bio}</p>
-                <ul class="exec-tags" role="list">
-                  {person.focusAreas.map((area) => (
-                    <li><a href={area.href} class="tag">{area.label}</a></li>
-                  ))}
-                </ul>
-                <div class="exec-socials">
-                  <span class="exec-social-link is-placeholder" title="LinkedIn — link coming soon">LinkedIn</span>
-                  <a class="exec-social-link" href="/contact/">Email</a>
-                </div>
+        <h3 class="team-option-label">Option B — Executive Index + Detail Panel</h3>
+        <p class="team-option-note">A large editorial index on one side, active profile detail on the other — closer to a portfolio selector than an accordion. Selecting a row changes what's shown; nothing scrolls or reflows the roster itself.</p>
+        <div class="exec-index" data-exec-index>
+          <div class="exec-index-list" role="tablist" aria-label="Leadership index" aria-orientation="vertical">
+            {teamGroups.map((group, i) => (
+              <button
+                type="button"
+                class="exec-index-item"
+                role="tab"
+                id={`b-tab-${group.id}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`b-panel-${group.id}`}
+                tabindex={i === 0 ? '0' : '-1'}
+              >
+                <span class="numbered-index exec-index-number">{group.index}</span>
+                <span class="exec-index-text">
+                  <span class="exec-index-name">{group.rowTitle}</span>
+                  {group.rowSubtitle && <span class="exec-index-role">{group.rowSubtitle}</span>}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div class="exec-index-detail">
+            {teamGroups.map((group) => (
+              <div
+                class="exec-index-panel"
+                role="tabpanel"
+                id={`b-panel-${group.id}`}
+                aria-labelledby={`b-tab-${group.id}`}
+                tabindex="0"
+              >
+                <p class="exec-index-panel-eyebrow">{group.rowSubtitle || 'Network'}</p>
+                <h4 class="exec-index-panel-title">{group.rowTitle}</h4>
+                <ExecutiveGroupPanel group={group} />
               </div>
-            </article>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -197,84 +289,170 @@ const teamPlaceholder = [
     line-height: var(--line-relaxed);
   }
 
-  /* Option A — photo reveal grid */
-  .exec-grid-a {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; gap: var(--space-6);
-    grid-template-columns: repeat(2, minmax(0, 14rem));
+  /* ── Option A — Executive Accordion ──
+     Backbone is the shared .accordion/.accordion-item/.accordion-trigger/
+     .accordion-content primitive (design-system.css); everything below is
+     an .exec-accordion modifier that strips the boxed/bordered default in
+     favor of wide rows, restrained dividers, and serif hierarchy. */
+  .exec-accordion {
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
   }
-  @media (max-width: 30rem) { .exec-grid-a { grid-template-columns: minmax(0, 14rem); } }
-  .exec-card-a { display: flex; flex-direction: column; }
-  .exec-card-a-media {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: var(--space-3);
-    box-shadow: var(--shadow-md);
+  .exec-accordion-item { border-bottom: 1px solid var(--color-border); }
+  .exec-accordion-item:first-child { border-top: 1px solid var(--color-border); }
+  .exec-accordion-heading { margin: 0; }
+  .exec-accordion-trigger {
+    padding: var(--space-6) var(--space-2);
+    gap: var(--space-6);
   }
-  .exec-avatar {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-slow, var(--transition-base));
+  .exec-accordion-trigger:hover { background: var(--color-surface); }
+  .exec-accordion-trigger::after {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-color: var(--color-eyebrow);
   }
-  .exec-card-a:hover .exec-avatar,
-  .exec-card-a:focus-within .exec-avatar { filter: grayscale(0); }
-  .exec-icon-rail {
-    position: absolute; top: var(--space-3); right: var(--space-3);
-    display: flex; flex-direction: column; gap: var(--space-2);
-    opacity: 0; transform: translateX(0.5rem);
-    transition: opacity var(--transition-base), transform var(--transition-base);
+  .exec-accordion-index {
+    font-size: var(--text-2xl);
+    color: var(--c-sky-500);
+    min-width: 2.5rem;
   }
-  .exec-card-a:hover .exec-icon-rail,
-  .exec-card-a:focus-within .exec-icon-rail { opacity: 1; transform: translateX(0); }
-  .exec-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 1.75rem; height: 1.75rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--color-dark);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-  }
-  .exec-icon.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
-  .exec-card-a h4 { font-family: var(--font-serif); }
-  .exec-role { font-size: var(--text-sm); color: var(--color-text-secondary); margin-top: var(--space-1); }
-
-  /* Option B — expertise-linked editorial rows */
-  .exec-list-b { display: flex; flex-direction: column; gap: var(--space-6); }
-  .exec-card-b {
-    display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-6);
-    padding: var(--space-6);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-  }
-  @media (max-width: 30rem) { .exec-card-b { grid-template-columns: 1fr; } }
-  .exec-avatar-lg {
-    width: 7rem; height: 7rem;
-    border-radius: var(--radius-full);
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
+  .exec-accordion-titles { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
+  .exec-accordion-name {
     font-family: var(--font-serif);
     font-size: var(--text-2xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-base);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+    letter-spacing: -0.01em;
   }
-  .exec-card-b:hover .exec-avatar-lg,
-  .exec-card-b:focus-within .exec-avatar-lg { filter: grayscale(0); }
-  .exec-bio { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
-  .exec-tags { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .exec-socials { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
-  .exec-social-link {
-    font-size: var(--text-sm); font-weight: var(--font-medium);
-    color: var(--color-link); text-decoration: none;
+  .exec-accordion-role {
+    font-size: var(--text-sm);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
-  .exec-social-link:hover { color: var(--color-link-hover); }
-  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+  .exec-accordion-content { padding: 0 var(--space-2) var(--space-10) calc(2.5rem + var(--space-6) + var(--space-2)); }
+  @media (max-width: 30rem) {
+    .exec-accordion-trigger { gap: var(--space-4); }
+    .exec-accordion-name { font-size: var(--text-xl); }
+    .exec-accordion-content { padding-left: var(--space-2); }
+  }
+
+  /* ── Option B — Executive Index + Detail Panel ── */
+  .exec-index { display: grid; grid-template-columns: minmax(0, 20rem) 1fr; gap: var(--space-10); align-items: start; }
+  @media (max-width: 56rem) { .exec-index { grid-template-columns: minmax(0, 1fr); } }
+
+  .exec-index-list { display: flex; flex-direction: column; }
+  .exec-index-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    width: 100%;
+    padding: var(--space-5) var(--space-2);
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+  .exec-index-list .exec-index-item:first-child { border-top: 1px solid var(--color-border); }
+  .exec-index-item:hover { background: var(--color-surface); }
+  .exec-index-item:focus-visible { outline: var(--focus-ring); outline-offset: -2px; }
+  .exec-index-number { font-size: var(--text-lg); color: var(--color-text-muted); min-width: 1.75rem; }
+  .exec-index-item[aria-selected="true"] .exec-index-number { color: var(--c-sky-600); }
+  .exec-index-text { display: flex; flex-direction: column; gap: var(--space-1); }
+  .exec-index-name { font-family: var(--font-serif); font-size: var(--text-lg); color: var(--color-text); }
+  .exec-index-item[aria-selected="true"] .exec-index-name { color: var(--color-eyebrow); }
+  .exec-index-role { font-size: var(--text-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted); }
+
+  .exec-index-detail { min-width: 0; }
+  .exec-index-panel { padding-top: var(--space-2); }
+  .exec-index-panel-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-eyebrow);
+    margin-bottom: var(--space-2);
+  }
+  .exec-index-panel-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-6);
+  }
+
+  /* JS-enhanced state: index items become real tabs, only the active
+     detail panel is shown. Without JS (data-exec-index has no
+     [data-enhanced]), every panel stays visible/stacked and rows are
+     inert headings — a fully readable fallback, not a broken widget. */
+  [data-exec-index][data-enhanced] .exec-index-panel[hidden] { display: none; }
 </style>
+
+<script>
+  // Studio Executives team-section trial — progressive-enhancement
+  // interaction for Option A (Executive Accordion) and Option B (Executive
+  // Index + Detail Panel). Both render fully-visible, readable content with
+  // JavaScript disabled (see SSR defaults in the markup above); this script
+  // only layers on the collapse/select behavior once it runs. No animation
+  // library — plain attribute toggles, with all transition/hover motion
+  // already covered by design-system.css's global reduced-motion override.
+
+  // Option A — single-open accordion.
+  const accordionRoot = document.querySelector<HTMLElement>('[data-exec-accordion]');
+  if (accordionRoot) {
+    const triggers = Array.from(
+      accordionRoot.querySelectorAll<HTMLButtonElement>('.exec-accordion-trigger'),
+    );
+    const setOpen = (trigger: HTMLButtonElement, open: boolean) => {
+      trigger.setAttribute('aria-expanded', String(open));
+      const panel = document.getElementById(trigger.getAttribute('aria-controls') || '');
+      if (panel) panel.hidden = !open;
+    };
+    // Start closed (JS-enhanced roster look); no-JS visitors keep the
+    // SSR-default open/readable state above.
+    triggers.forEach((trigger) => setOpen(trigger, false));
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        triggers.forEach((other) => { if (other !== trigger) setOpen(other, false); });
+        setOpen(trigger, !isOpen);
+      });
+    });
+  }
+
+  // Option B — WAI-ARIA tablist (index selects detail panel).
+  const indexRoot = document.querySelector<HTMLElement>('[data-exec-index]');
+  if (indexRoot) {
+    const tabs = Array.from(indexRoot.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(indexRoot.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    const activate = (tab: HTMLButtonElement, focus: boolean) => {
+      tabs.forEach((t) => {
+        const selected = t === tab;
+        t.setAttribute('aria-selected', String(selected));
+        t.tabIndex = selected ? 0 : -1;
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.id !== tab.getAttribute('aria-controls');
+      });
+      if (focus) tab.focus();
+    };
+    indexRoot.setAttribute('data-enhanced', '');
+    if (tabs[0]) activate(tabs[0], false);
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activate(tab, false));
+      tab.addEventListener('keydown', (event: KeyboardEvent) => {
+        let next: HTMLButtonElement | null = null;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+        else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+        else if (event.key === 'Home') next = tabs[0];
+        else if (event.key === 'End') next = tabs[tabs.length - 1];
+        if (next) {
+          event.preventDefault();
+          activate(next, true);
+        }
+      });
+    });
+  }
+</script>
