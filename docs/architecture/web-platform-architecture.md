@@ -84,11 +84,16 @@ Fully static, no server rendering, no API routes besides a dynamic
 - `/` — homepage (the former `/homepage-alt` draft layout, canonicalized 2026-08-12)
 - `/homepage-alt` — redirects to `/` (kept for anyone who bookmarked the
   pre-canonicalization draft-review URL; not a live page, not linked from nav)
-- `/about`
+- `/about` — now includes a "Studio Executives" team section with two
+  placeholder layout options for review (added 2026-08-16; see §9 session
+  notes below)
 - `/capabilities`, `/capabilities/{5 offering slugs}`
 - `/case-studies`, `/case-studies/[slug]` (dynamic, `getStaticPaths()` from OKF graph, `prerender = true`)
 - `/expertise`, `/expertise/{9 topic slugs}`
 - `/who-we-work-with`, `/who-we-work-with/{2 segment slugs}`
+- `/digital-solutions` — placeholder product page (added 2026-08-16); the
+  homepage's "See our Digital Solutions" button now points here instead of
+  the previous `/capabilities/` placeholder
 - `/contact`
 - `/insights`, `/insights/[slug]` (added M3 — Keystatic `posts` collection,
   `getStaticPaths()` from Astro Content Collections, `prerender = true`)
@@ -98,6 +103,21 @@ Fully static, no server rendering, no API routes besides a dynamic
 
 Any route restructuring must preserve these paths or add explicit redirects
 before cutover — see §7.
+
+**Top-nav anchor trial (2026-08-16, not yet decided).** The top nav's
+Expertise, Capabilities, and Who We Work With links currently point at
+homepage sections (`/#expertise`, `/#capabilities`, `/#who-we-work-with`)
+instead of their standalone pages — the owner's read is that those pages
+don't have enough independent depth yet, and the homepage's own tiles
+already cover onward navigation. **This is a trial, not a decision:** the
+standalone `/expertise/`, `/capabilities/`, `/who-we-work-with/` pages and
+their sub-pages are all still live and still linked from the homepage
+itself — only the top-nav entry points changed. Do not remove those pages
+or their content until the owner confirms the anchor-nav approach. Also
+added: a global "Back to Top" button (`BackToTop.astro`, mounted in
+`SiteLayout.astro`) restoring the legacy WordPress site's own back-to-top
+behavior — on the homepage it lands at `#expertise` (past the photo hero)
+rather than the true top; elsewhere it goes to `scrollY 0`.
 
 ## 4. Content system: Keystatic (canonical), OKF (temporary/legacy)
 
@@ -470,6 +490,7 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
 | M6 — GitHub-backed production Keystatic workflow (**partial** — publishing loop done, Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed. Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining:** Cloudflare Workers Builds Git integration, so the public Worker rebuilds automatically on push/CMS-save instead of a manual `wrangler deploy` — recommended configuration in §11, owner dashboard action still required |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
+| M6.2 — Homepage nav trial + placeholder pages + team section options (2026-08-16, exploratory, not a milestone close-out) | `/digital-solutions/` placeholder page built and linked from the homepage; top-nav Expertise/Capabilities/Who We Work With trialed as homepage-section anchors (§3 note above) with a global Back to Top button; About page got two placeholder "Studio Executives" layout options for the owner/team to choose between. **Deliberately left open, not resolved**: nav-anchor trial outcome, which team-section option (if either) to build out fully. See `log.md` 2026-08-16 entry for full detail and next-session prompts. Deployed to the shared preview Worker for team review (see §11) |
 | M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
 | M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
 | M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |

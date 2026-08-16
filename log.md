@@ -116,3 +116,91 @@ A separate, standalone draft page — `apps/web/src/pages/homepage-alt.astro` �
 * **Verification**: every change in this session was checked with a real headless-browser pass (build + Playwright), not just read from the code — numeric assertions on the scroll-driven custom properties (opacity/blur/scale/transform at specific scroll positions) plus visual screenshots at each step. One methodological note for next time: rapid programmatic `scrollTo()` loops in headless testing can produce misleading readings (either from `scroll-behavior: smooth` interrupting itself, or from rAF throttling in a backgrounded page) — settle with `behavior: 'instant'` and ~1s waits when verifying scroll-linked motion this way, rather than trusting short-wait rapid sampling.
 * **Files touched**: `apps/web/src/pages/homepage-alt.astro` (new), `apps/web/public/images/live-site/*` (new, 3 files).
 * **Next up (queued, not started)**: Owner to review the star/logo motion and overall draft fresh (start of next session); no other open items from this session. If continuing this draft, a full copy pass on the adapted/condensed section copy (integration section, brand banner text — see the file's inline comments for what was adapted vs. sourced) is still outstanding before this could be considered production-ready, as is a decision on whether any of this draft's direction (photo hero, scroll effects, split headers, stat strip) should be merged back into the real `index.astro`.
+
+## 2026-08-16 (Homepage nav trial, Digital Solutions placeholder, Back to Top, team-section review options)
+
+Note: the site was canonicalized to `/`, and M5 (Cloudflare preview) + M6
+(hosted Keystatic) landed, between the last log entry (2026-08-11) and this
+one (2026-08-12) — see `docs/architecture/web-platform-architecture.md` §9
+for that work; it wasn't logged here at the time. This entry picks back up
+from current `main`.
+
+* **Footer copy updated**: mission-statement sentence in `Footer.astro`
+  (shared across every page) updated to the owner's revised copy and the
+  "sutainable" typo fixed to "sustainable".
+* **`/digital-solutions/` placeholder page added**: new static route —
+  hero, a full-width showcase of the existing `terranexus-terrain-family`
+  product mockup, and three placeholder solution cards (Herd Emissions
+  Intelligence, Grazing & Biomass Monitoring, Crop Carbon Intensity) each
+  flagged "Coming Soon" since full per-tool descriptions aren't ready. The
+  homepage's "See our Digital Solutions" button previously pointed at
+  `/capabilities/` as a stand-in; now points here. Reuses existing
+  design-system tokens/classes only, no new dependencies.
+* **Top-nav anchor trial (not decided — see architecture doc §3)**:
+  Expertise, Capabilities, and Who We Work With in the top nav now point
+  at homepage sections (`/#expertise`, `/#capabilities`,
+  `/#who-we-work-with`) instead of their standalone pages, per owner
+  observation that those pages don't yet have enough independent depth
+  and the homepage's own tiles (e.g. the Expertise grid's
+  Regenerative Agriculture / Regenerative Rangeland tiles) already carry
+  users onward better than a same-content standalone page does. The
+  standalone pages are **not removed** — still live, still linked from the
+  homepage — this is explicitly a trial pending owner confirmation.
+  Required a mobile-nav-drawer fix (close on any link click, since the new
+  anchor links don't unload the page the way a full navigation used to).
+* **Global "Back to Top" button added** (`BackToTop.astro`, mounted in
+  `SiteLayout.astro`): restores the legacy WordPress site's own
+  back-to-top behavior. First attempt scrolled to the header's
+  transparent→solid threshold, which the owner corrected mid-session —
+  the actual desired behavior (confirmed against an owner-supplied
+  screenshot) is landing at `#expertise`, the first real content section
+  past the photo hero, so the header reads as its normal solid navy and
+  the user lands on content rather than back at the hero. Every other
+  page (no transparent-header effect there) falls back to true `scrollY 0`.
+* **About page — "Studio Executives" team section, two review options**:
+  added below "What Makes Terra Nexus Different", per the owner's request
+  to prototype team-section directions before committing to full
+  development of each executive's profile. Both options use real names
+  (Laura Klein, Josh Mellinger, matching the live site) but placeholder
+  titles/bios/focus-area tags, clearly flagged "Draft for internal
+  review". **Option A (Photo Reveal)** is closest to the current live
+  site: grayscale-to-color avatar on hover, LinkedIn/email icon rail
+  revealing on top (LinkedIn is a visibly disabled placeholder — no real
+  URL yet; email links to `/contact/`). **Option B (Expertise-Linked)** is
+  a new, larger editorial format with a bio line and tags linking straight
+  into the relevant `/capabilities/{slug}/` pages, addressing the owner's
+  point that team depth should visibly connect to areas of expertise. The
+  live site's favorite-cocktail/favorite-wine hover popups were
+  intentionally **not** rebuilt this pass — owner explicitly said not
+  everything needed to be recreated for this review stage.
+* **Verification**: `web:typecheck` (0 errors/warnings), `web:build`,
+  `web:test` (25/25) all green after every change; Playwright checks for
+  hover/focus states, scroll-landing position and header state, mobile nav
+  drawer behavior, and responsive layout at 1440/1024/768/390.
+* **Shipped to the shared preview**: committed across four commits on
+  `feature/homepage-nav-trial-and-team-review` (branched from `main`) —
+  footer copy, Digital Solutions page, nav trial + Back to Top, About page
+  team options — pushed to `origin`, then deployed via `wrangler deploy`
+  from `apps/web` to the existing non-production Worker
+  (`terra-nexus-web-preview`, plain `npm run web:build` i.e.
+  `SKIP_KEYSTATIC=true`, matching how this shared preview URL has always
+  been built). Branch not merged to `main` — this is under-review work,
+  not yet owner-approved for the canonical site (see architecture doc §7).
+* **Files touched**: `apps/web/src/components/Footer.astro`,
+  `apps/web/src/components/Header.astro`,
+  `apps/web/src/components/BackToTop.astro` (new),
+  `apps/web/src/layouts/SiteLayout.astro`,
+  `apps/web/src/pages/index.astro`,
+  `apps/web/src/pages/about/index.astro`,
+  `apps/web/src/pages/digital-solutions/index.astro` (new),
+  `artifacts/qa/digital-solutions-*.png` (new).
+* **Next up (queued, not started)**: Owner/team decide (a) whether the
+  top-nav anchor trial replaces the standalone Expertise/Capabilities/Who
+  We Work With pages, gets reverted, or stays as-is with the pages kept as
+  deep links; (b) which Studio Executives layout option (or hybrid) to
+  build out fully, including real photos, bios, and confirmed LinkedIn
+  URLs; (c) whether to prototype the favorite-cocktail/wine hover popups
+  once a direction is picked. Longer-running and still open from before
+  this session: M4 (Tailwind/design-system normalization, not started),
+  the rest of M6 (Cloudflare Workers Builds Git integration — owner
+  dashboard action, see architecture doc §11), M7 onward.
