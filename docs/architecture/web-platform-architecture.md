@@ -1,7 +1,7 @@
 ---
 title: "Terra Nexus Web Platform Architecture (repo-native)"
 status: "Target architecture, adopted incrementally"
-updated: "2026-08-12"
+updated: "2026-08-16"
 supersedes_reference: "Terra_Nexus_Astro_Keystatic_Cloudflare_Architecture.md (owner-supplied source doc)"
 ---
 
@@ -25,11 +25,11 @@ for what has migrated and what remains.
 | --- | --- | --- |
 | Frontend | Astro 6.4.6, static output, zero integrations | Astro (unchanged) |
 | Interactive UI | None — no React/Vue/Svelte in the repo | React islands, added only where a component needs client state |
-| Styling | Hand-written CSS (`design-system.css`, `foundation.css`) | Tailwind CSS backed by the same design tokens |
+| Styling | Hand-written CSS (`design-system.css`, `foundation.css`) plus Tailwind CSS v4 (M4, this session) bridged to the same design tokens via a CSS-first `@theme` layer | Tailwind coverage expands progressively (M7); `design-system.css` remains the token source of truth |
 | Motion | Plain CSS transitions only | GSAP for cinematic/scroll sequences; CSS for simple motion |
-| Content | Keystatic + MDX (local storage) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
+| Content | Keystatic + MDX (GitHub storage mode live, M6) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
 | Repo/source of truth | GitHub (`JoshRtP/terra-nexus-web`, branch `main`; legacy history preserved read-only at `JoshRtP/Webservices`) | Unchanged |
-| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed, static output, `wrangler dev` verified locally; not yet deployed (owner Cloudflare auth pending) | Cloudflare Workers (preview live) |
+| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed and deployed (M5, 2026-08-12) to the non-production Worker `terra-nexus-web-preview`; repository-owned `apps/web/wrangler.jsonc` pins the Worker name (M6 close-out). Manual `wrangler deploy`/`wrangler versions upload` confirmed working end-to-end against the real Cloudflare account. Cloudflare dashboard Git auto-deploy connection (§11) is the one piece not yet verified from this environment — see §9 M6 status | Cloudflare Workers (preview live; Git auto-deploy owner action outstanding) |
 | Large files | Everything in `public/`, including a 16MB reference PNG | Cloudflare R2 for large/reusable assets |
 | Video | None in repo yet | Cloudflare Stream for substantial video |
 | App data | None | Cloudflare D1, only if/when a real relational-data need appears |
@@ -135,35 +135,38 @@ preserving before OKF is retired.
   reinvent them. See also `knowledge` brand references and
   `brand/brand-color-palette.md` if present.
 - GSAP is not installed. Add it only when cinematic/scroll work actually
-  starts on the homepage hero (M8), not preemptively.
+  starts on the homepage hero (M9, reordered after M8 content/SEO migration
+  — see §9), not preemptively.
 
 ## 6. Cloudflare direction
 
-**Adapter installed, preview deployment not yet proven (as of 2026-08-12).**
+**Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
+config landed at M6 close-out — current as of 2026-08-16.**
 `@astrojs/cloudflare` is pinned to `13.7.0` in `apps/web/package.json` — the
 last release whose peer range (`astro@^6.3.0`) covers this repo's Astro
 `6.4.6`; `@astrojs/cloudflare@14+` requires Astro 7 and is an explicit
 non-goal until an Astro 7 upgrade is its own deliberate milestone. `astro.config.ts`
-sets `output: 'static'` (the site stays fully prerendered — no route is
-server-rendered yet) with `adapter: cloudflare({ prerenderEnvironment: 'node' })`;
+sets `output: 'static'` (the site stays fully prerendered by default — the
+only on-demand routes are the Keystatic admin/API routes, gated out of
+production builds) with
+`adapter: cloudflare({ prerenderEnvironment: 'node', imageService: 'passthrough' })`;
 the `prerenderEnvironment` override is required because the OKF compiler
 (`apps/web/src/lib/okf/compiler.ts`) uses Node built-ins (`node:fs/promises`,
 `node:crypto`, `node:path`, `node:url`) at build time, which the adapter's
 default `workerd` prerender runtime doesn't provide.
 
-No hand-written `wrangler.jsonc` exists — the adapter auto-generates one
-into `dist/client/wrangler.json` at build time (worker name derived as
-`terra-nexus-web`), which is current recommended practice for a project
-with no custom bindings yet. Verified locally: `astro build` succeeds,
-`npx wrangler dev` serves the built worker correctly under `workerd`
-(spot-checked `/`, `/insights`, `/case-studies`, `/robots.txt`, a 404
-route). Deploying an actual preview (`wrangler deploy`) requires
-`wrangler login` against an owner Cloudflare account — not yet
-authenticated in this environment; see the session record for exact
-instructions. GitHub-mode Keystatic (M6) will need on-demand ("prerender:
-false") routes once implemented — those would run under `workerd`
-regardless of `prerenderEnvironment`, which only affects the static
-prerender step.
+`apps/web/wrangler.jsonc` is now a hand-written, repository-owned file (see
+§11) — it pins the Worker name to `terra-nexus-web-preview` and a fixed
+`compatibility_date`, deliberately minimal otherwise (main entrypoint,
+assets binding, and the auto-provisioned `SESSION` KV namespace are left to
+the adapter's own generation). Verified locally and against the real
+Cloudflare account: `astro build` succeeds, `npx wrangler dev` serves the
+built worker correctly under `workerd`, and `wrangler deploy` /
+`wrangler versions upload` both resolve to this file and deploy correctly
+(see §11 for the full verification record). GitHub-mode Keystatic (M6) adds
+on-demand (`prerender: false`) routes only when `SKIP_KEYSTATIC=false` is
+set at build time — those run under `workerd` regardless of
+`prerenderEnvironment`, which only affects the static prerender step.
 
 ### 6.1 Hosted Keystatic (GitHub storage) blocker — confirmed 2026-08-12
 
@@ -466,13 +469,13 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M1 — Green baseline + architecture docs (done 2026-08-12) | Known TS error + stale inventory fixed; `CLAUDE.md`/architecture doc/skills updated to state Keystatic is canonical, OKF is temporary |
 | M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
-| M4 — Progressive Tailwind/design-system normalization | **Not started.** Deliberately deferred — see the session record for the repository-reconciliation session that closed out M5/M6/homepage canonicalization instead |
+| M4 — Progressive Tailwind/design-system normalization (**this session, 2026-08-16**) | See the M4 session record (end of this document / commit history on `feature/m4-tailwind-foundation`) for exact scope: Tailwind v4 installed via `@tailwindcss/vite`, CSS-first `@theme` bridge to existing `design-system.css` tokens, one representative shared component migrated, build/typecheck/test/check green, browser QA at 4 viewports against the M4 baseline |
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow (**partial** — publishing loop done, Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed. Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining:** Cloudflare Workers Builds Git integration, so the public Worker rebuilds automatically on push/CMS-save instead of a manual `wrangler deploy` — recommended configuration in §11, owner dashboard action still required |
+| M6 — GitHub-backed production Keystatic workflow (repository side **done** 2026-08-12; Cloudflare Git auto-deploy connection **unverified as of 2026-08-16**, bounded re-check performed this session — see below) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **2026-08-16 bounded verification:** `wrangler deployments list --name terra-nexus-web-preview` shows every deployment through today sourced as `Upload`, `Secret Change`, or `Unknown (deployment)` — none sourced `Git`/Workers-Builds-triggered, including the window right after PR #2 (the `wrangler.jsonc` commit) merged to `main`. This is evidence the dashboard Git connection described in §11 has **not** been completed (or is not yet triggering builds), not proof it's broken — an owner-only dashboard action, not reproducible from this environment. Recorded accurately per instruction rather than re-attempted; does not block M4 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
-| M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
-| M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
-| M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |
+| M7 — Expanded reusable visual/design system (**NEXT**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation |
+| M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
+| M9 — Cinematic homepage hero + GSAP/motion system (reordered after M8, 2026-08-16) | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA, applied to the settled post-M8 content/IA |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
 
 ## 10. CMS editorial workflow

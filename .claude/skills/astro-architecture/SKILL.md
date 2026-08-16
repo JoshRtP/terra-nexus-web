@@ -5,11 +5,15 @@ description: Astro-first rendering, routing, component boundaries, React-island 
 
 # Astro Architecture
 
-## Current state (audited 2026-08-12)
+## Current state (audited 2026-08-16)
 
-- Astro 6.4.6, `output: 'static'`, no adapter. Integrations registered:
-  `@astrojs/mdx`, `@astrojs/react`, and `@keystatic/astro` (the last only
-  when `SKIP_KEYSTATIC` is unset — excluded from production builds).
+- Astro 6.4.6, `output: 'static'` (fully prerendered by default), with the
+  `@astrojs/cloudflare` adapter installed and deployed since M5
+  (2026-08-12) — see `cloudflare-deployment` skill. Integrations
+  registered: `@astrojs/mdx`, `@astrojs/react`, and `@keystatic/astro` (the
+  last only when `SKIP_KEYSTATIC` is unset — excluded from production
+  builds). Tailwind v4 (`@tailwindcss/vite`) was added in M4 (2026-08-16) —
+  see `terra-nexus-design-system` skill for the token-bridge strategy.
 - React exists in the repo for exactly one reason: the Keystatic admin UI
   (`/keystatic`, dev-only). No other page or component uses React — every
   public-facing page is still plain `.astro` + vanilla JS/TS. Don't treat
