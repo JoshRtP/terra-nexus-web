@@ -116,3 +116,90 @@ A separate, standalone draft page — `apps/web/src/pages/homepage-alt.astro` �
 * **Verification**: every change in this session was checked with a real headless-browser pass (build + Playwright), not just read from the code — numeric assertions on the scroll-driven custom properties (opacity/blur/scale/transform at specific scroll positions) plus visual screenshots at each step. One methodological note for next time: rapid programmatic `scrollTo()` loops in headless testing can produce misleading readings (either from `scroll-behavior: smooth` interrupting itself, or from rAF throttling in a backgrounded page) — settle with `behavior: 'instant'` and ~1s waits when verifying scroll-linked motion this way, rather than trusting short-wait rapid sampling.
 * **Files touched**: `apps/web/src/pages/homepage-alt.astro` (new), `apps/web/public/images/live-site/*` (new, 3 files).
 * **Next up (queued, not started)**: Owner to review the star/logo motion and overall draft fresh (start of next session); no other open items from this session. If continuing this draft, a full copy pass on the adapted/condensed section copy (integration section, brand banner text — see the file's inline comments for what was adapted vs. sourced) is still outstanding before this could be considered production-ready, as is a decision on whether any of this draft's direction (photo hero, scroll effects, split headers, stat strip) should be merged back into the real `index.astro`.
+
+## 2026-08-16 (M4 — Progressive Tailwind/design-system normalization + repo reconciliation)
+
+Resumed development per the owner's M4 session brief: reconciled stale
+current-state documentation, performed a bounded M6 (Cloudflare Git
+auto-deploy) verification, then implemented M4.
+
+* **Doc reconciliation** (`CLAUDE.md`, `docs/architecture/web-platform-architecture.md`,
+  `.claude/skills/astro-architecture/SKILL.md`, `.claude/skills/terra-nexus-design-system/SKILL.md`):
+  corrected stale claims that the Cloudflare adapter/`wrangler.jsonc` weren't
+  installed and that Tailwind was entirely absent — both were ahead of what
+  the docs said (M5/M6 had already shipped on `origin/main`). No content/
+  governance files touched.
+* **M6 bounded re-verification**: `wrangler deployments list --name
+  terra-nexus-web-preview` shows every deployment through today sourced as
+  `Upload`/`Secret Change`/`Unknown (deployment)` — none Git-triggered,
+  including the window after PR #2 (the `wrangler.jsonc` commit) merged to
+  `main`. Recorded as unverified/likely-not-connected rather than assumed
+  complete or re-attempted from this environment (owner-only Cloudflare
+  dashboard action). Did not block M4.
+* **Tailwind v4 installed**: `tailwindcss@4.3.3` + `@tailwindcss/vite@4.3.3`
+  via `astro.config.ts`'s `vite.plugins` — confirmed against current Astro/
+  Tailwind docs as the correct integration path for Astro `>=5.2.0`
+  (`@astrojs/tailwind` is deprecated for v4).
+* **Token bridge**: `apps/web/src/styles/tailwind.css` — CSS-first `@theme
+  inline` aliasing `design-system.css`'s existing custom properties into a
+  `tn-`-prefixed Tailwind theme namespace (colors, fonts, radii, shadows).
+  No values duplicated; `design-system.css` stays the token source of
+  truth. Spacing and max-widths deliberately left unbridged (spacing scale
+  already numerically matches Tailwind's defaults; widths stay on the
+  existing `.container` classes pending real M7 utility coverage).
+* **Representative migration**: `PageHero.astro` converted from a scoped
+  `<style>` block to Tailwind utilities backed by the `tn-` bridge —
+  visually unchanged (confirmed by browser QA below), proving the pattern
+  for M7's wider adoption. No other component/page touched.
+* **CSS inventory**: classified `design-system.css`/`foundation.css` into
+  canonical tokens / global base / reusable component patterns (M7
+  candidates) / page-specific (none found outside component scoped
+  styles) / genuinely dead (`foundation.css` + `FoundationLayout.astro`,
+  imported by nothing — flagged, not removed, since deleting them is
+  unrelated to the Tailwind migration).
+* **Verification**: `npm run web:build` / `web:typecheck` (0 errors) /
+  `web:test` (25/25 passed) / `npm run check` (pytest 25/25, skills sync,
+  content validate, build/typecheck/test) all green.
+* **Browser QA**: independent `visual-qa` agent captured a 20-screenshot
+  pre-M4 baseline (5 routes × 4 viewports: 1440/1024/768/390 — `/`,
+  `/capabilities`, `/expertise/agroforestry`, `/insights`, one Insight
+  article) from a temporary `main`-branch worktree, then a matching
+  post-M4 set from the current branch. Zero console errors/warnings, zero
+  broken network requests, and **no visual differences found** on any
+  route/viewport — including `PageHero`'s rendering on `/capabilities` and
+  `/expertise/agroforestry`, the one component actually migrated. All 40
+  screenshots stored under `artifacts/qa/` (`m4-baseline-*` / `m4-after-*`).
+  One operational note: the first baseline attempt hit a locked shared
+  Playwright MCP Chrome profile (an orphaned automation-Chrome process from
+  an earlier session); killing that process (PID 27252) resolved it —
+  worth knowing if a future session hits the same
+  `Browser is already in use ... use --isolated` error.
+* **Roadmap reordered** (owner direction, this session): M8 (WordPress
+  content/SEO/remaining CMS/OKF migration) now precedes M9 (cinematic
+  homepage/GSAP), so final visual polish responds to real content/IA
+  instead of placeholders. M10 (production cutover) unchanged as the final
+  step, always requiring explicit owner authorization.
+* **Orchestration used**: `terra-nexus-design-system` and
+  `astro-architecture` skills consulted before touching tokens/config;
+  Tailwind/Astro official docs fetched live (WebSearch/WebFetch) rather
+  than relying on memorized syntax; two `visual-qa` subagents (baseline +
+  post-change comparison) for independent browser verification. Tailwind
+  install/config/token-bridge/PageHero migration were implemented directly
+  in this session rather than delegated to a separate `frontend-builder`
+  agent, given the small, single-component scope.
+* **Explicitly not started**: M7 (expanded reusable visual system), M8
+  (WordPress/content/SEO/CMS migration), M9 (GSAP/cinematic homepage), M10
+  (production cutover). No GSAP installed, no production DNS/deploy
+  touched, no Case Studies/OKF changes, hosted Keystatic and publication
+  scheduling untouched.
+* **Files touched**: `CLAUDE.md`, `docs/architecture/web-platform-architecture.md`,
+  `.claude/skills/astro-architecture/SKILL.md`,
+  `.claude/skills/terra-nexus-design-system/SKILL.md`,
+  `apps/web/package.json`, `apps/web/astro.config.ts`,
+  `apps/web/src/styles/tailwind.css` (new),
+  `apps/web/src/layouts/SiteLayout.astro`,
+  `apps/web/src/components/PageHero.astro`, `artifacts/qa/m4-*.png` (40 new).
+* **Next up**: M7 — expand Tailwind coverage to the reusable component
+  vocabulary (section primitives, cards, buttons, stats, editorial blocks)
+  identified in the M4 CSS inventory's category C; not started this
+  session per explicit scope boundary.
