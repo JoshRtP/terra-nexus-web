@@ -165,15 +165,34 @@ auto-deploy) verification, then implemented M4.
   `/capabilities`, `/expertise/agroforestry`, `/insights`, one Insight
   article) from a temporary `main`-branch worktree, then a matching
   post-M4 set from the current branch. Zero console errors/warnings, zero
-  broken network requests, and **no visual differences found** on any
-  route/viewport — including `PageHero`'s rendering on `/capabilities` and
-  `/expertise/agroforestry`, the one component actually migrated. All 40
-  screenshots stored under `artifacts/qa/` (`m4-baseline-*` / `m4-after-*`).
-  One operational note: the first baseline attempt hit a locked shared
-  Playwright MCP Chrome profile (an orphaned automation-Chrome process from
-  an earlier session); killing that process (PID 27252) resolved it —
-  worth knowing if a future session hits the same
-  `Browser is already in use ... use --isolated` error.
+  broken network requests, and no visual differences found by
+  screenshot-eyeballing on any route/viewport. All 40 screenshots stored
+  under `artifacts/qa/` (`m4-baseline-*` / `m4-after-*`). One operational
+  note: the first baseline attempt hit a locked shared Playwright MCP
+  Chrome profile (an orphaned automation-Chrome process from an earlier
+  session); killing that process (PID 27252) resolved it — worth knowing
+  if a future session hits the same `Browser is already in use ...
+  use --isolated` error.
+* **Correction (same day, post-PR-review):** that screenshot-only QA pass
+  was not precise enough — it missed a real regression. Codex review of
+  PR #4 flagged that `PageHero.astro`'s `mb-4`/`mb-5` Tailwind utilities
+  could lose to unlayered `design-system.css` rules (`.eyebrow`'s own
+  `margin-bottom`, and the global `h1,h2,...{margin:0}` reset) because
+  Tailwind v4 utilities live inside `@layer utilities`, and per the CSS
+  cascade-layers spec *any* unlayered declaration beats *any* layered one
+  for the same property, regardless of specificity or source order.
+  Verified with actual browser computed styles (not inferred from source):
+  pre-M4 `main`, `/capabilities` at 1440 — eyebrow `margin-bottom: 16px`,
+  `h1 margin-bottom: 20px`; this branch before the fix — `12px` and `0px`
+  respectively, at every one of 1440/1024/768/390. A 20px vertical
+  collapse on the H1 is real and should have been visible in the
+  screenshots — the prior "no visual differences found" verdict was
+  wrong, not a false alarm. Root-caused, fixed, and re-verified with
+  computed styles at all 4 viewports plus fresh screenshots — see the
+  next log entry below for the fix and corrected verification. Lesson for
+  future M4/M7 QA: screenshot comparison alone isn't sufficient for
+  Tailwind-vs-legacy-CSS migrations; pull actual computed styles for the
+  specific properties a migration touches, not just a visual scan.
 * **Roadmap reordered** (owner direction, this session): M8 (WordPress
   content/SEO/remaining CMS/OKF migration) now precedes M9 (cinematic
   homepage/GSAP), so final visual polish responds to real content/IA
@@ -203,3 +222,72 @@ auto-deploy) verification, then implemented M4.
   vocabulary (section primitives, cards, buttons, stats, editorial blocks)
   identified in the M4 CSS inventory's category C; not started this
   session per explicit scope boundary.
+
+## 2026-08-16 (M4 PR #4 review fix — PageHero cascade-layer regression)
+
+Addressed two Codex P2 review threads on PR #4 before merge, per explicit
+owner instruction not to broaden into M7. Independently verified both
+findings with real browser computed styles rather than accepting the
+review at face value.
+
+* **Finding 1 — eyebrow/h1 margin-bottom, CONFIRMED VALID.** Tailwind v4
+  emits all utilities inside `@layer utilities`; unlayered CSS always
+  outranks layered CSS for the same property regardless of specificity
+  (CSS cascade-layers spec). `design-system.css`'s unlayered `.eyebrow {
+  margin-bottom: var(--space-3) }` and global `h1,h2,...{ margin: 0 }`
+  reset were silently beating `PageHero.astro`'s `mb-4`/`mb-5` utilities.
+  Computed-style evidence (`/capabilities`, 1440/1024/768/390, all four
+  identical): baseline (pre-M4 `main`) eyebrow `margin-bottom: 16px`, h1
+  `margin-bottom: 20px`; this branch before the fix, `12px` and `0px`.
+* **Finding 2 — mobile padding, CONFIRMED FALSE (no regression).** Codex
+  flagged that `design-system.css`'s `@media (max-width: 48rem) {
+  .page-hero { padding-block: var(--space-12) var(--space-10) } }` looks,
+  from source, like it should reduce padding under 768px, and the
+  migrated component's unconditional `pt-20 pb-16` looks like it dropped
+  that. Checked with real computed styles instead of trusting source
+  inference (per instruction, since the old scoped Astro `<style>` could
+  behave differently under cascade/specificity): the pre-M4 baseline's
+  own scoped `.page-hero { padding-block: var(--space-20) var(--space-16)
+  }` was *also* unlayered with equal-or-higher specificity (Astro's
+  scoping attribute), so it won that same media query at every viewport
+  too — computed `padding-top`/`padding-bottom` on `main` was `80px`/
+  `64px` at 1440, 768, *and* 390, never `48px`/`40px`. The mobile
+  reduction never applied to `PageHero` before or after M4. No fix
+  needed; documented in a code comment instead so a future reader doesn't
+  "fix" this into an actual regression.
+* **Fix chosen for Finding 1 — smallest correct pattern, not
+  `!important`.** Reintroduced a two-rule scoped `<style>` block in
+  `PageHero.astro` (`.page-hero-eyebrow { margin-bottom: var(--space-4) }`,
+  `.page-hero-title { margin-bottom: var(--space-5) }`) — the same
+  mechanism the pre-M4 component already used to win against these same
+  global rules (Astro's scoping attribute is unlayered and outranks the
+  plain global selectors). Only the two conflicting properties are
+  overridden this way; every other Tailwind utility on the component is
+  untouched, since nothing else on a bare `<section>`/`<div>` has a
+  competing unlayered rule. Rejected: `!important`/Tailwind's `!` modifier
+  (works but wrong general pattern, would need repeating everywhere M7
+  hits the same gotcha); moving all of `design-system.css` into cascade
+  layers (fixes it site-wide but is an unproven, large blast-radius
+  change explicitly out of M4 scope per owner instruction).
+* **QA methodology gap acknowledged**: the original M4 QA pass (screenshot
+  comparison only) reported "no visual differences" despite a real 20px
+  vertical collapse on H1 — see the correction appended to the prior log
+  entry above. This session's fix was verified with actual computed
+  styles (`padding-top`, `padding-bottom`, `margin-bottom`) at
+  1440/1024/768/390 on both real `PageHero`-using routes (`/capabilities`,
+  `/expertise` — note `/expertise/agroforestry`, used in the original QA
+  pass, renders via `ExpertisePage.astro`, a different, not-yet-migrated
+  component, and was never actually exercising `PageHero`), confirming
+  all four properties now match the pre-M4 baseline exactly at every
+  viewport. Fresh screenshots captured for both real PageHero routes at
+  all 4 viewports (`m4-fix-capabilities-*.png`, `m4-fix-expertise-index-*.png`).
+* **Validation**: `npm run web:build` / `web:typecheck` (0 errors) /
+  `web:test` (25/25) / `npm run check` (pytest 25/25, skills sync, content
+  validate, build/typecheck/test) all green after the fix.
+* **Scope discipline**: no M7 work started — only `PageHero.astro` and
+  this log/architecture documentation were touched; no other component
+  was migrated or audited for the same cascade-layer issue (flagged for
+  M7 to check systematically, not fixed preemptively here).
+* **Files touched**: `apps/web/src/components/PageHero.astro`, `log.md`,
+  `docs/architecture/web-platform-architecture.md`,
+  `artifacts/qa/m4-fix-*.png` (8 new).

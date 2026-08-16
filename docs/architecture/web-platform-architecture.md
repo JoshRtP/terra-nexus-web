@@ -172,15 +172,46 @@ and max-widths (still served by the existing `.container`/`.text-container`/
 different semantics from a plain max-width scale; real utility coverage
 here is M7 scope, not guessed at now).
 
-**Representative migration.** `PageHero.astro` — small, shared across every
-Capability/Expertise/case-study page — was converted from a scoped
-`<style>` block to Tailwind utilities backed by the `tn-` bridge, proving
-the pattern with a pixel-identical visual result (including using
+**Representative migration.** `PageHero.astro` — shared by the
+`/capabilities`, `/expertise`, `/insights`, `/about`, `/contact`,
+`/case-studies`, and `/who-we-work-with` index pages (individual
+Capability/Expertise sub-pages use the separate `CapabilityPage.astro`/
+`ExpertisePage.astro` components, not `PageHero`) — was converted from a
+scoped `<style>` block to Tailwind utilities backed by the `tn-` bridge,
+proving the pattern with a pixel-identical visual result (including using
 `leading-[var(--line-relaxed)]` instead of Tailwind's built-in
 `leading-relaxed`, because Tailwind's value, 1.625, differs from
 `design-system.css`'s `--line-relaxed`, 1.7). No other component/page was
 migrated in M4 — see CLAUDE.md/this session's boundary discussion; wider
 coverage is M7 scope.
+
+**Cascade-layer correction (post-PR-#4-review, same day).** The first pass
+above used plain `mb-4`/`mb-5` utilities on the eyebrow/h1, which is
+wrong: Tailwind v4 emits every utility inside `@layer utilities`, and per
+the CSS cascade-layers spec, any unlayered declaration always beats any
+layered one for the same property — regardless of selector specificity or
+source order. `design-system.css` has two unlayered rules that collide
+here (`.eyebrow`'s own `margin-bottom: var(--space-3)`, and the global
+`h1,h2,...{ margin: 0 }` reset), so those utilities were silently losing.
+Confirmed with real computed styles, not inferred: pre-M4 `main` had
+`margin-bottom: 16px`/`20px` on `/capabilities`; this branch had `12px`/
+`0px` at every viewport (1440/1024/768/390) before the fix. Fixed by
+reintroducing a two-rule scoped `<style>` block in `PageHero.astro` for
+just those two properties (the same mechanism — Astro's unlayered,
+higher-specificity scoping attribute — the pre-M4 component already used
+to win against the same global rules); `!important` and moving all of
+`design-system.css` into layers were both rejected as the wrong general
+pattern or too large a change for this fix. A second review claim (that
+the component also lost `design-system.css`'s `@media (max-width: 48rem)
+{ .page-hero { padding-block: ... } }` mobile padding reduction) was
+checked the same way and found **false**: the pre-M4 scoped style had
+already been winning that same media query via the identical specificity
+mechanism, so mobile padding was unconditionally `80px`/`64px` on `main`
+too — not a regression, left unchanged, documented in a code comment.
+This is a real gotcha any further Tailwind-utility migration in this repo
+can hit wherever `design-system.css` has an existing unlayered rule for
+the same element/property — M7 should check for it systematically rather
+than rediscovering it per-component.
 
 **CSS inventory (`design-system.css`, 627 lines; `foundation.css`, 211
 lines) — classified, not purged:**
