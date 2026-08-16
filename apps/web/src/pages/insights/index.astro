@@ -41,18 +41,18 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
   <section class="section" aria-label="Insight articles">
     <div class="container">
       {posts.length ? (
-        <div class="insight-grid">
+        <div class="card-grid card-grid-3">
           {posts.map((post) => (
-            <article class="insight-card">
-              <a href={`/insights/${post.id}/`}>
+            <a href={`/insights/${post.id}/`} class="card-link">
+              <article class="card card-media">
                 <img src={post.data.heroImage} alt={post.data.heroImageAlt} loading="lazy" />
-                <div class="insight-card-body">
+                <div class="card-media-body">
                   <p class="insight-card-date">{dateFormatter.format(zonedWallClockToUtc(post.data.publishAt))}</p>
                   <h2>{post.data.title}</h2>
                   <p class="insight-card-excerpt">{post.data.excerpt}</p>
                 </div>
-              </a>
-            </article>
+              </article>
+            </a>
           ))}
         </div>
       ) : (
@@ -63,35 +63,6 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
 </SiteLayout>
 
 <style>
-  .insight-grid {
-    display: grid;
-    gap: var(--space-8);
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 40rem) {
-    .insight-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (min-width: 64rem) {
-    .insight-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  .insight-card a {
-    color: inherit;
-    display: block;
-  }
-  .insight-card img {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border-radius: var(--radius-lg);
-    display: block;
-  }
-  .insight-card-body {
-    padding-top: var(--space-4);
-  }
   .insight-card-date {
     font-size: 0.8125rem;
     text-transform: uppercase;
@@ -99,7 +70,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
     color: var(--color-text-muted);
     margin: 0 0 var(--space-2);
   }
-  .insight-card h2 {
+  .card-media-body h2 {
     font-size: 1.125rem;
     margin: 0 0 var(--space-2);
   }

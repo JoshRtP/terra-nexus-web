@@ -1,6 +1,7 @@
 ---
 import CaseStudyCard from '../../components/CaseStudyCard.astro';
 import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import { compileForBuild } from '../../lib/okf/build.js';
@@ -34,15 +35,11 @@ const pages = selectCaseStudyPages(compilation);
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Have a Similar Challenge?</h2>
-      <p class="cta-description">Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Have a Similar Challenge?"
+    description="Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <style>

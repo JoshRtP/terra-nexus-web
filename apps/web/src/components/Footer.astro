@@ -93,4 +93,12 @@ const currentYear = new Date().getFullYear();
   @media (min-width: 48rem) {
     .footer-top { grid-template-columns: 1fr auto; }
   }
+
+  /* Safe-area clearance for the fixed BackToTop fab (bottom: var(--space-4),
+     2.75rem tall, at this same <=40rem breakpoint — see BackToTop.astro) so
+     it doesn't sit visually on top of the copyright line once the page is
+     scrolled to true bottom. */
+  @media (max-width: 40rem) {
+    .site-footer { padding-bottom: calc(var(--space-8) + 3.5rem); }
+  }
 </style>

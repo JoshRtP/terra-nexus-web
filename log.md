@@ -468,3 +468,199 @@ merged.
   footer approved? Digital Solutions approved? Back to Top approved?
   nav-anchor trial keep/revert/hybrid? Studio Executives option A/B/
   hybrid? Once decided, a final integration PR can retire PR #3 safely.
+
+## 2026-08-16 — M7 (session 1): design-system audit + card/tag/stat/CTA consolidation
+
+* **Scope of this session**: M7 is a large milestone (full spec in the
+  session brief covers layout primitives, section system, cards, stats,
+  CTA, PageHero evolution, every page family, editorial system,
+  Header/Footer/BackToTop, cleanup, and full responsive/a11y QA). This
+  session completed a real, verified first slice — Phase A (full audit)
+  and the highest-value part of Phase C (consolidating duplicated
+  card/tag/stat/CTA patterns the audit found) — not the full 35-point exit
+  criteria in one pass. Remaining M7 scope (page-family visual adoption
+  beyond what already used shared classes, PageHero variant work,
+  Header/Footer visual normalization, editorial typography pass, an
+  internal component showcase if warranted) is left for a follow-up M7
+  session, tracked against the same branch/PR.
+* **Audit findings** (`Explore` subagent, full repo read of
+  CapabilityPage/ExpertisePage/CaseStudyArticle/CaseStudyCard, all 13 mdx
+  components, About/Digital-Solutions/Capabilities/Expertise/Case-Studies/
+  Insights page families, layouts, foundation.css): found 5 independent
+  local reimplementations of `.card`'s base recipe, 2 identical
+  `.workstream-card` copy-pastes across unrelated files, 2 identical
+  `.eyebrow-light` copies, a `.btn-ghost` variant that existed in exactly
+  one component, 4 near-identical tag/pill implementations, 3 independent
+  stat displays with different type scales/colors, a real visual bug
+  (ExpertisePage's local `.cta-description` override silently rendering
+  that page's CTA copy in a different color than every other page), a
+  missing token (`--c-success-600`, silently backed by a hardcoded hex
+  fallback), a functional gap (the `Video` MDX component registered in
+  Keystatic but missing from `insights/[slug].astro`'s render map), and
+  confirmed (grep-verified) zero consumers for `foundation.css` /
+  `FoundationLayout.astro`.
+* **Primitives added** to `design-system.css`: `.eyebrow-light`,
+  `.btn-ghost`, `.card-static`, `.card-accent-start`, `.card-plain`,
+  `.tag`, `.numbered-index`, `.stat-value-accent`, `.stat-type`,
+  `--c-success-600`. All composable modifiers on top of the existing
+  `.card`/`.eyebrow`/`.btn`/`.stat-group` base recipes, not a second
+  competing system.
+* **Consumers migrated**: CaseStudyCard, CapabilityPage (offering-number,
+  segment-tag, dead duplicate `.text-center` removed), ExpertisePage
+  (eyebrow-light, cta-description bug fix, step-number, btn-ghost,
+  benefit-card, workstream-card, hardcoded-hex-to-token fixes),
+  CaseStudyArticle (eyebrow-light, sidebar-card, hardcoded-hex fix, plus
+  the `.case-body-grid` `1fr` → `minmax(0, 1fr)` overflow fix — a real
+  ~18-33px horizontal-overflow bug at exactly the 1024px QA viewport,
+  caught by M7 baseline QA, not present before this session), 
+  capabilities/index (workstream-card, pathway-tag), about/index
+  (exec-tags → `.tag` only — both Studio Executives review options
+  otherwise untouched), insights/[slug].astro (Video component
+  registered).
+* **Dead code removed** (grep-confirmed zero consumers before deletion):
+  `apps/web/src/styles/foundation.css`, `apps/web/src/layouts/FoundationLayout.astro`.
+* **Validation, all green**: `npm run web:build`, `npm run web:typecheck`
+  (75 files, 0 errors/warnings/hints), `npm run web:test` (25/25),
+  `npm run check` (OKF validator, tnx_validate, pytest 25/25, inventory
+  freshness, skills sync, content:validate). No `!important` introduced
+  anywhere.
+* **QA**: baseline screenshots captured before any change
+  (`artifacts/qa/m7-baseline/`, 45 images, 11 routes × 4 viewports,
+  zero console errors) via independent `visual-qa` subagent; after-QA
+  covering the same matrix plus targeted regression checks on the two
+  specific bug fixes above is running as a separate independent pass
+  (`artifacts/qa/m7-after/`).
+* **Branch/preview**: `feature/m7-visual-system`, created from
+  `origin/main` at `970dfcb` (confirmed clean, matching the expected PR #6
+  merge SHA — no drift). Pushed; Cloudflare Workers Builds produced a real
+  GitHub check run for the branch (non-production path — `wrangler
+  versions upload`, not `wrangler deploy` — stable `terra-nexus-web-preview`
+  untouched).
+
+## 2026-08-16 — M7 (session 2): PageHero evolution, compositions, editorial system, global UI — M7 complete
+
+* **Scope of this session**: continued `feature/m7-visual-system` /
+  PR #7 from session 1's head (`ce555f0`). Working tree was clean at
+  session start, branch confirmed current with PR #7. Addressed the
+  remaining M7 priority list from the session brief: PageHero evolution,
+  reusable composition patterns, broader page-family adoption, the
+  editorial/MDX visual pass, Header/Footer normalization, and BackToTop
+  verification. Preserved everything proven in session 1 (all primitives,
+  the CaseStudy grid `minmax(0, 1fr)` fix, the Expertise CTA color fix,
+  the Insights `Video` MDX registration, the `foundation.css`/
+  `FoundationLayout.astro` deletion) — nothing from session 1 was reverted
+  or replaced.
+* **Discovery** (`Explore` subagent, evidence-based, no speculation):
+  audited every PageHero consumer (9, already homogeneous) plus 4
+  hand-rolled hero treatments outside PageHero (ExpertisePage's
+  image-background hero, Insights' editorial hero, CaseStudyArticle's
+  dark/media hero, the homepage's cinematic hero — left alone, M9 scope);
+  found the closing-CTA banner pattern duplicated near-verbatim 10 times;
+  found three independent, non-identical stat-band implementations
+  (design-system's `.stat-group`, the homepage's local `.stat-strip`,
+  CaseStudyArticle's local `.stat-item`/`.stat-number`); found
+  CaseStudyCard's `.eyebrow` was a local re-implementation with a
+  different color token than the shared class; found the Insights card
+  grid didn't reuse `.card-grid`/`.card` like every other card grid in the
+  codebase did; found zero `:focus-visible` states anywhere in
+  `Header.astro`; confirmed `design-system.css`'s 4 `!important`
+  occurrences (all in the universal reduced-motion override block,
+  unchanged from session 1) and BackToTop's tokens already matched the
+  rest of the system.
+* **PageHero** gained `variant?: 'standard' | 'media'` (default
+  `'standard'`, zero behavior change for the 9 pre-existing consumers)
+  plus `heroImage?`/`heroImageAlt?`. `variant="media"` renders the
+  full-bleed background-image/scrim treatment moved out of
+  `ExpertisePage.astro`'s local `.expertise-hero` CSS (deleted after the
+  move — real consolidation, not a duplicate). Insights and Case Study
+  hero treatments deliberately left hand-rolled — their structural
+  elements (breadcrumb, byline, stat band) don't fit a small hero prop
+  API; forcing them in would have produced exactly the "giant prop
+  matrix" the M7 brief warned against.
+* **`ClosingCta.astro`** (new component) replaced the 10 duplicated
+  closing-CTA blocks across `about/index.astro`, `capabilities/index.astro`,
+  `case-studies/index.astro`, `digital-solutions/index.astro`,
+  `expertise/index.astro`, `index.astro`, `CapabilityPage.astro`,
+  `ExpertisePage.astro`, and both `who-we-work-with/*` sub-pages. Copy and
+  hrefs preserved exactly. `who-we-work-with/index.astro`'s lighter
+  single-button CTA left as-is — a genuinely different structural pattern,
+  not the same duplication.
+* **Stat bands** consolidated onto the shared `.stat-value`/`.stat-label`/
+  `.stat-value-accent`/`.stat-type` primitive set, extended with two new
+  size modifiers (`.stat-value-md`, `.stat-value-fluid`) to cover the two
+  real size differences found rather than leaving a third parallel
+  implementation. `CaseStudyCard.astro`'s local `.eyebrow` promoted to a
+  genuine third eyebrow variant, `.eyebrow-sky`, instead of staying a
+  duplicate. Insights card grid (`insights/index.astro`) migrated onto
+  `.card-grid` + a new `.card-media` modifier (accent-bar/padding-free,
+  for edge-to-edge thumbnails).
+* **Editorial/MDX pass** (`insights/[slug].astro`): article-body max-width
+  normalized onto the existing `--max-width-text` token (was four repeated
+  `42rem` magic numbers); added H2/H3 rhythm and list/paragraph spacing
+  using existing `--space-*` tokens. `DataTable.astro`'s pre-existing
+  `overflow-x: auto` wrapper (no 390px page-overflow bug found) got
+  accessible keyboard-scroll support (`role="region"`, `tabindex="0"`,
+  `aria-label`, focus-visible outline). The other 12 MDX components
+  audited, found already consistent, left unchanged.
+* **Real regression found by independent QA, fixed same session**: the
+  new `.insight-body :global(p)` color rule had higher effective
+  specificity than the MDX `CTA` component's own `.mdx-cta-heading`/
+  `.mdx-cta-body` color rules, rendering CTA blocks inside Insight
+  articles navy-on-navy (invisible) whenever one appeared. Fixed by
+  excluding the CTA's own classes from the blanket rule
+  (`:not(.mdx-cta-heading):not(.mdx-cta-body)`); independently re-verified
+  via computed styles (white `rgb(248,250,252)` text on navy
+  `rgb(19,31,72)` background, confirmed at both 1440 and 390) before this
+  session was called done.
+* **Header/Footer**: added `:focus-visible` to `Header.astro`'s
+  `.nav-link`/`.nav-toggle` (none existed before — a real a11y gap) using
+  the existing `--color-focus` token; added mobile-only `Footer.astro`
+  bottom padding so the fixed `BackToTop` button doesn't sit over the
+  copyright line at 390px. Homepage anchor-nav trial (`/#expertise` etc.)
+  explicitly preserved unchanged — still a trial. `BackToTop.astro`
+  inspected, not modified — tokens and functional behavior already
+  correct.
+* **Validation, all green** (re-run after the CTA fix, not just before
+  it): `npm run web:build`, `npm run web:typecheck` (76 files, 0
+  errors/warnings/hints), `npm run web:test` (25/25), `npm run check`
+  (OKF validator, tnx_validate, pytest 25/25, inventory freshness,
+  `content:validate`). `!important` count unchanged at 4, all confined to
+  the reduced-motion override block.
+* **QA**: independent `visual-qa` subagent pass across the full required
+  route matrix (`/`, `/digital-solutions/`, `/about/`, `/capabilities` +
+  a representative detail, `/expertise` + a representative detail,
+  `/insights` + a representative article, `/case-studies` + a
+  representative detail) at 1440/1024/768/390 — zero horizontal overflow
+  anywhere, zero broken images/404s, keyboard focus verified through the
+  header nav and mobile menu (including `Escape`-to-close with focus
+  return), footer link focus states verified, `BackToTop`/footer overlap
+  at 390px verified absent, standalone `/capabilities` and `/expertise`
+  routes confirmed to still render as full pages on direct navigation
+  (not just anchor-scroll targets). One real defect found (the CTA color
+  regression above); fixed and independently re-verified via a second QA
+  pass before sign-off. Screenshots under `artifacts/qa/m7-session2/` and
+  `artifacts/qa/2026-08-16-mdx-cta-fix-*.png`.
+* **Documentation updated**: `docs/architecture/web-platform-architecture.md`
+  (new §5.3, M7 row in §9's milestone table updated from IN PROGRESS to
+  COMPLETE), `.claude/skills/terra-nexus-design-system/SKILL.md`
+  (component-vocabulary section rewritten to cover both sessions' full
+  vocabulary — PageHero variants, `ClosingCta`, consolidated stats,
+  `.card-media`, `.eyebrow-sky`, Header/Footer/BackToTop guidance, the
+  MDX cascade-gotcha finding), this `log.md` entry.
+* **M8 readiness**: every audited page family (Capabilities, Expertise,
+  Digital Solutions, About, Case Studies, Insights) now has a real shared
+  vocabulary to build from — primitives (`.card`/`.tag`/`.numbered-index`/
+  `.stat-*`/`.btn-*`/`.eyebrow*`) plus compositions (`PageHero`,
+  `ClosingCta`, `.card-grid`) plus the editorial/MDX system. A future M8
+  agent migrating real content should reuse this vocabulary rather than
+  inventing a second one; it should not need to recreate PageHero, the
+  closing-CTA pattern, the stat-band system, or any of the 13 MDX
+  components. What M8 still owns entirely: the actual content/URL/SEO
+  migration itself, retiring the OKF/`knowledge/` pipeline once its
+  content has moved, and Case Study Keystatic schema migration (data
+  architecture, not visual — untouched this session per explicit scope).
+* **Scope discipline**: M8 not started (no content/SEO/redirect work), M9
+  not started (no GSAP installed, no cinematic/motion work), production
+  untouched, Studio Executives review options both preserved unchanged,
+  nav-anchor trial preserved as a trial, Case Study/OKF data architecture
+  untouched (visual/composition only). PR #7 not merged.

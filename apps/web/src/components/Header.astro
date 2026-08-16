@@ -87,7 +87,11 @@ function isActive(href: string): boolean {
   .nav-toggle {
     display: none; flex-direction: column; gap: 5px;
     padding: var(--space-2); background: none; border: none; cursor: pointer;
-    touch-action: manipulation;
+    touch-action: manipulation; border-radius: var(--radius-sm);
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
   .nav-toggle-bar {
     display: block; width: 22px; height: 2px;
@@ -111,6 +115,10 @@ function isActive(href: string): boolean {
     position: relative;
   }
   .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
   .nav-link-active { color: #fff; }
   .nav-link-active::after {
     content: ''; position: absolute; bottom: -2px; left: var(--space-3); right: var(--space-3);

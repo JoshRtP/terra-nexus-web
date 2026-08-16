@@ -1,5 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from './PageHero.astro';
+import ClosingCta from './ClosingCta.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 
 export interface Workstream {
@@ -72,26 +74,16 @@ const mode = getBuildMode();
 <SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
 
   <!-- Visual Hero -->
-  <section class="expertise-hero" aria-labelledby="hero-heading">
-    <div
-      class="hero-bg"
-      style={`background-image: url('${data.heroImage}')`}
-      role="img"
-      aria-label={data.heroImageAlt ?? data.title}
-    ></div>
-    <div class="hero-overlay" aria-hidden="true"></div>
-    <div class="container hero-content">
-      <span class="eyebrow eyebrow-light">{data.eyebrow}</span>
-      <h1 id="hero-heading">{data.title}</h1>
-      <p class="hero-lead">{data.lead}</p>
-      <div class="hero-actions">
-        <a href={data.primaryCta.href} class="btn btn-primary">{data.primaryCta.label}</a>
-        {data.secondaryCta && (
-          <a href={data.secondaryCta.href} class="btn btn-ghost">{data.secondaryCta.label}</a>
-        )}
-      </div>
-    </div>
-  </section>
+  <PageHero
+    variant="media"
+    heroImage={data.heroImage}
+    heroImageAlt={data.heroImageAlt}
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lead={data.lead}
+    primaryCta={data.primaryCta}
+    secondaryCta={data.secondaryCta}
+  />
 
   <!-- Overview + Benefits (split layout) -->
   <section class="section" aria-labelledby="overview-heading">
@@ -134,7 +126,7 @@ const mode = getBuildMode();
       </header>
       <div class="workstream-grid">
         {data.workstreams.map((ws) => (
-          <article class="workstream-card">
+          <article class="card-plain">
             <h3>{ws.title}</h3>
             <ul class="bullet-list">
               {ws.items.map((item) => <li>{item}</li>)}
@@ -155,7 +147,7 @@ const mode = getBuildMode();
       <ol class="steps-list" role="list">
         {data.systemSteps.map((step, i) => (
           <li class="step-item">
-            <span class="step-number">{String(i + 1).padStart(2, '0')}</span>
+            <span class="numbered-index">{String(i + 1).padStart(2, '0')}</span>
             <div class="step-content">
               <h3>{step.title}</h3>
               <p>{step.body}</p>
@@ -207,92 +199,20 @@ const mode = getBuildMode();
   </section>
 
   <!-- Final CTA -->
-  <section class="section section-dark" aria-labelledby="final-cta-heading">
-    <div class="container text-center">
-      <h2 id="final-cta-heading">{data.ctaHeading}</h2>
-      <p class="cta-description">{data.ctaBody}</p>
-      <div class="hero-actions">
-        <a href={data.ctaButton.href} class="btn btn-primary">{data.ctaButton.label}</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    headingId="final-cta-heading"
+    heading={data.ctaHeading}
+    description={data.ctaBody}
+    primaryCta={data.ctaButton}
+  />
 </SiteLayout>
 
 <style>
-  /* ── Visual Hero ── */
-  .expertise-hero {
-    position: relative;
-    min-height: clamp(28rem, 60vh, 48rem);
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center 40%;
-    transform: scale(1.03);
-    transition: transform 8s ease-out;
-  }
-  .expertise-hero:hover .hero-bg { transform: scale(1); }
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(15, 23, 42, 0.88) 0%,
-      rgba(15, 23, 42, 0.55) 50%,
-      rgba(15, 23, 42, 0.25) 100%
-    );
-  }
-  .hero-content {
-    position: relative;
-    padding-block: var(--space-16) var(--space-20);
-    z-index: 1;
-  }
-  .eyebrow-light {
-    color: var(--c-accent-300);
-  }
-  .eyebrow-light::before { background: var(--c-accent-300); }
-  .hero-content h1 {
-    color: #fff;
-    max-width: 40rem;
-    margin-bottom: var(--space-5);
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .hero-lead {
-    font-size: var(--text-lg);
-    color: rgba(248, 250, 252, 0.88);
-    max-width: 38rem;
-    line-height: var(--line-relaxed);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-top: var(--space-8);
-  }
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--space-3) var(--space-6);
-    border: 1.5px solid rgba(248, 250, 252, 0.5);
-    border-radius: var(--radius-sm);
-    font-size: var(--text-sm);
-    font-weight: var(--font-semibold);
-    color: rgba(248, 250, 252, 0.9);
-    background: transparent;
-    text-decoration: none;
-    transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
-  }
-  .btn-ghost:hover {
-    border-color: rgba(248, 250, 252, 0.9);
-    color: #fff;
-    background: rgba(255,255,255,0.08);
-  }
-
+  /* Hero is now PageHero's variant="media" (M7 session 2) — see
+     components/PageHero.astro. The final CTA is now ClosingCta.astro, which
+     supplies .section-dark/.cta-description/.hero-actions from
+     design-system.css directly, so no local override of those is needed
+     here either. */
   /* ── Overview + Benefits split ── */
   .overview-split {
     display: grid;
@@ -334,12 +254,15 @@ const mode = getBuildMode();
     font-size: var(--text-xl);
     margin-top: var(--space-2);
   }
+  /* .card-accent-start provides the left-accent-border/no-hover-lift recipe;
+     background, padding, and accent color here are genuinely distinct from
+     its defaults (surface vs surface-elevated, space-5/6 vs space-8, and a
+     darker sky-600 accent vs the primitive's sky-300), kept as local
+     overrides. */
   .benefit-card {
     padding: var(--space-5) var(--space-6);
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-left: 3px solid var(--c-sky-600);
-    border-radius: var(--radius-md);
+    border-inline-start-color: var(--c-sky-600);
   }
   .benefit-card h4 {
     font-size: var(--text-sm);
@@ -389,14 +312,10 @@ const mode = getBuildMode();
     border-bottom: 1px solid var(--color-border);
   }
   .step-item:last-child { border-bottom: 0; }
-  .step-number {
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
+  .numbered-index {
     font-weight: var(--font-semibold);
-    color: var(--c-sky-600);
     flex-shrink: 0;
     min-width: 3rem;
-    line-height: 1;
     letter-spacing: -0.02em;
   }
   .step-content { flex: 1; min-width: 0; }
@@ -460,22 +379,6 @@ const mode = getBuildMode();
   }
   @media (min-width: 40rem) { .workstream-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .workstream-grid { grid-template-columns: repeat(3, 1fr); } }
-  .workstream-card {
-    padding: var(--space-8);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-  .workstream-card:hover {
-    border-color: var(--c-sky-300);
-    box-shadow: var(--shadow-md);
-  }
-  .workstream-card h3 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-4);
-  }
-
   /* ── Validation Comparison Table ── */
   .validation-table-wrap {
     overflow-x: auto;
@@ -512,7 +415,7 @@ const mode = getBuildMode();
     margin-right: 0.3em;
   }
   .col-icon-x { background: var(--c-error-50); color: var(--c-error-500); }
-  .col-icon-check { background: var(--c-success-50); color: var(--c-success-600, #16a34a); }
+  .col-icon-check { background: var(--c-success-50); color: var(--c-success-600); }
   .validation-table tbody td {
     padding: var(--space-4) var(--space-5);
     font-size: var(--text-sm);
@@ -574,20 +477,10 @@ const mode = getBuildMode();
       font-weight: var(--font-bold);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--c-success-700, #15803d);
+      color: var(--c-success-700);
       margin-bottom: var(--space-1);
       margin-top: var(--space-2);
     }
   }
 
-  /* ── CTA section ── */
-  .text-center { text-align: center; }
-  .cta-description {
-    margin-top: var(--space-5);
-    font-size: var(--text-lg);
-    color: var(--c-secondary-400);
-    max-width: var(--max-width-text);
-    margin-inline: auto;
-    line-height: var(--line-relaxed);
-  }
 </style>

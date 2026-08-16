@@ -2,6 +2,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
 // Studio Executives — placeholder data for the two team-section layout
@@ -143,7 +144,7 @@ const teamPlaceholder = [
                 <p class="exec-bio">{person.bio}</p>
                 <ul class="exec-tags" role="list">
                   {person.focusAreas.map((area) => (
-                    <li><a href={area.href}>{area.label}</a></li>
+                    <li><a href={area.href} class="tag">{area.label}</a></li>
                   ))}
                 </ul>
                 <div class="exec-socials">
@@ -158,14 +159,10 @@ const teamPlaceholder = [
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Start a Conversation</h2>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Start a Conversation</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Start a Conversation"
+    primaryCta={{ label: 'Start a Conversation', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <style>
@@ -273,18 +270,6 @@ const teamPlaceholder = [
   .exec-card-b:focus-within .exec-avatar-lg { filter: grayscale(0); }
   .exec-bio { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
   .exec-tags { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .exec-tags a {
-    display: inline-block;
-    font-size: var(--text-xs);
-    padding: var(--space-1) var(--space-3);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-  }
-  .exec-tags a:hover { border-color: var(--c-sky-400); color: var(--color-text); }
   .exec-socials { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
   .exec-social-link {
     font-size: var(--text-sm); font-weight: var(--font-medium);

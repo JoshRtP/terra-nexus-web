@@ -1,0 +1,39 @@
+
+> @terra-nexus/web@0.2.0 dev
+> node scripts/run-astro.mjs dev --host --port 4325
+
+[Terra Nexus] static foundation build mode: production
+[2m15:47:10[22m [34m[@astrojs/cloudflare][39m Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+[33m[1m15:47:10[22m [WARN] [router][39m The route "/api/keystatic/[...params]" is defined in both "src/lib/keystatic-cloudflare-shim.ts" and "../../node_modules/@keystatic/astro/internal/keystatic-api.js" using SSR mode. A dynamic SSR route cannot be defined more than once.
+[33m[1m15:47:10[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[vite] connected.
+[33m[1m15:47:11[22m [WARN] [vite][39m [2mDefault inspector port 9229 not available, using 9233 instead
+[22m
+[vite] connected.
+[2m15:47:19[22m [34m[types][39m Generated [2m2ms[22m
+[2m15:47:19[22m [34m[content][39m Syncing content
+[2m15:47:19[22m [34m[content][39m Astro config changed
+[2m15:47:19[22m [34m[content][39m Clearing content store
+[33m[1m15:47:19[22m [WARN] [glob-loader][39m No files found matching "*.mdx" in directory "src\content\case-studies"
+[2m15:47:19[22m [34m[content][39m Synced content
+[42m[1m astro [22m[49m [32mv6.4.6[39m [2mready in[22m 12094 [2mms[22m
+[2m┃[22m Local    [36mhttp://localhost:4325/[39m
+[2m┃[22m Network  [36mhttp://10.7.0.1:4325/[39m
+           [36mhttp://10.0.0.199:4325/[39m
+[2m15:47:21[22m [32mwatching for file changes...[39m
+[2m15:47:22[22m [34m[200][39m / [2m42ms[22m
+[2m15:47:25[22m [34m[vite][39m [32m✨ new dependencies optimized: [33mastro/zod[32m[39m
+[2m15:47:25[22m [34m[vite][39m [32m✨ optimized dependencies changed. reloading[39m
+[2m15:47:25[22m [34m[vite][39m [vite] program reload
+[2m15:47:30[22m [34m[vite][39m [32m✨ new dependencies optimized: [33mastro/assets/services/noop[32m[39m
+[2m15:47:30[22m [34m[vite][39m [32m✨ optimized dependencies changed. reloading[39m
+[2m15:47:30[22m [34m[vite][39m [vite] program reload
+[33m[1m15:57:55[22m [WARN] [vite][39m The Workers runtime crashed unexpectedly and is being restarted (crash #1). Any additional runtime output above may indicate the cause.
+npm error Lifecycle script `dev` failed with error:
+npm error code 143
+npm error path D:\2. Mirror Dev\Dev Projects\1. TNex-Web\apps\web
+npm error workspace @terra-nexus/web@0.2.0
+npm error location D:\2. Mirror Dev\Dev Projects\1. TNex-Web\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c node scripts/run-astro.mjs dev --host --port 4325
+Terminated

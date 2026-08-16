@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
+import ClosingCta from '../../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
 const capabilityLinks: Record<string, string> = {
@@ -200,15 +201,11 @@ const segments: Segment[] = [
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Food or Agribusiness Opportunity</h2>
-      <p class="cta-description">Tell us where you sit in the value chain and what you are trying to change.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Food or Agribusiness Opportunity</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Discuss Your Food or Agribusiness Opportunity"
+    description="Tell us where you sit in the value chain and what you are trying to change."
+    primaryCta={{ label: 'Discuss Your Food or Agribusiness Opportunity', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <style>

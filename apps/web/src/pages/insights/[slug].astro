@@ -15,6 +15,7 @@ import PullQuote from '../../components/mdx/PullQuote.astro';
 import RelatedContent from '../../components/mdx/RelatedContent.astro';
 import SourceBox from '../../components/mdx/SourceBox.astro';
 import Stat from '../../components/mdx/Stat.astro';
+import Video from '../../components/mdx/Video.astro';
 
 // On-demand, not static: same reasoning as src/pages/insights/index.astro —
 // publication visibility depends on request time, not build time.
@@ -56,6 +57,7 @@ const mdxComponents = {
   RelatedContent,
   SourceBox,
   Stat,
+  Video,
 };
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/Denver' });
@@ -119,10 +121,10 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
     margin: 0 0 var(--space-3);
   }
   .insight-header h1 {
-    max-width: 42rem;
+    max-width: var(--max-width-text);
   }
   .insight-excerpt {
-    max-width: 42rem;
+    max-width: var(--max-width-text);
     font-size: 1.125rem;
     color: var(--color-text-secondary);
   }
@@ -140,15 +142,40 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
     display: block;
   }
   .insight-body {
-    max-width: 42rem;
+    max-width: var(--max-width-text);
     padding-block: var(--space-10);
   }
-  .insight-body :global(p) {
+  .insight-body :global(p:not(.mdx-cta-heading):not(.mdx-cta-body)) {
     color: var(--color-text);
-    line-height: 1.7;
+    line-height: var(--line-relaxed);
+  }
+  .insight-body :global(p + p) {
+    margin-top: var(--space-5);
+  }
+  .insight-body :global(h2) {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-4);
+  }
+  .insight-body :global(h3) {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-3);
+  }
+  .insight-body :global(ul),
+  .insight-body :global(ol) {
+    margin: var(--space-5) 0;
+    padding-inline-start: var(--space-6);
+    color: var(--color-text);
+    line-height: var(--line-relaxed);
+  }
+  .insight-body :global(li + li) {
+    margin-top: var(--space-2);
+  }
+  .insight-body :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
   .insight-author-card {
-    max-width: 42rem;
+    max-width: var(--max-width-text);
     margin: 0 auto var(--space-16);
     padding: var(--space-5) var(--space-6);
     border-top: 1px solid var(--color-border);

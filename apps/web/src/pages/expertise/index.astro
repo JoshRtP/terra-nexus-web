@@ -2,6 +2,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
 const expertiseAreas = [
@@ -99,16 +100,12 @@ const expertiseAreas = [
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Challenge</h2>
-      <p class="cta-description">Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Challenge</a>
-        <a href="/capabilities/" class="btn btn-secondary">Explore Our Capabilities</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Discuss Your Challenge"
+    description="Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
+  />
 </SiteLayout>
 
 <style>
@@ -146,7 +143,7 @@ const expertiseAreas = [
     /* background-image set inline per tile */
     background-size: cover;
     background-position: center;
-    background-color: #131f48; /* fallback while image loads */
+    background-color: var(--color-dark); /* fallback while image loads */
     box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.15);
     transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -156,7 +153,7 @@ const expertiseAreas = [
     transform: translateY(-4px);
   }
   .expertise-tile:focus-visible {
-    outline: 3px solid #427e90;
+    outline: 3px solid var(--color-focus);
     outline-offset: 3px;
   }
 
@@ -240,7 +237,7 @@ const expertiseAreas = [
     gap: 0.375rem;
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #e7d77f; /* gold-400 */
+    color: var(--c-accent-400); /* gold-400 */
     letter-spacing: 0.01em;
     opacity: 0;
     transform: translateY(6px);

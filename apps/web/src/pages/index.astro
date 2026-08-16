@@ -11,6 +11,7 @@
 // §3 and CLAUDE.md §5 for the promotion record.
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
+import ClosingCta from '../components/ClosingCta.astro';
 
 const mode = getBuildMode();
 
@@ -360,7 +361,7 @@ const approachSteps = [
       <div class="stat-strip">
         {portfolioStats.map((stat) => (
           <div class="stat-item">
-            <p class="stat-value">{stat.value}</p>
+            <p class="stat-value stat-value-md">{stat.value}</p>
             <p class="stat-label">{stat.label}</p>
           </div>
         ))}
@@ -373,15 +374,12 @@ const approachSteps = [
   </section>
 
   <!-- Final CTA -->
-  <section class="section section-dark" aria-labelledby="final-cta-heading">
-    <div class="container text-center">
-      <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
-      <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress .</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Opportunity</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    headingId="final-cta-heading"
+    heading="Build the Right Path from Opportunity to Value"
+    description="Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress ."
+    primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <script>
@@ -1061,11 +1059,9 @@ const approachSteps = [
     padding-top: var(--space-4);
     border-top: 3px solid var(--color-eyebrow);
   }
-  .stat-item .stat-value {
-    margin-top: var(--space-3);
-    font-size: var(--text-4xl);
-    color: var(--color-dark);
-  }
+  /* .stat-value-md (design-system.css) supplies the font-size; margin-top
+     here is this layout's own spacing, not a typography override. */
+  .stat-item .stat-value { margin-top: var(--space-3); }
   .stat-item .stat-label {
     margin-top: var(--space-2);
     max-width: 26rem;
