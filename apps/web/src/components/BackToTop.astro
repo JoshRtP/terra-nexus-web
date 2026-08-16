@@ -1,0 +1,94 @@
+---
+// Global "back to top" fab, mounted once in SiteLayout.astro so it appears
+// on every page.
+//  - On the homepage, scrolling all the way to scrollY 0 would re-reveal
+//    the full-bleed photo hero and its transparent-over-photo header (see
+//    index.astro's body.has-photo-hero script) — landing the user back
+//    where they started rather than "back to the top of the content". This
+//    instead scrolls to #expertise ("What We Are Known For"), the first
+//    section after the hero: the header reads as its normal solid navy
+//    (body.past-hero is already true well before this point) and the user
+//    lands on real content, matching the legacy WordPress site's own
+//    "back to top" behavior.
+//  - On every other page there's no photo hero to skip past, so this falls
+//    back to the true top (scrollY 0).
+---
+
+<button
+  type="button"
+  id="back-to-top"
+  class="back-to-top"
+  aria-label="Back to top"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+    <path d="M18 15l-6-6-6 6" />
+  </svg>
+</button>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    right: var(--space-6);
+    bottom: var(--space-6);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: var(--c-accent-400);
+    color: var(--color-dark);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.5rem);
+    transition: opacity var(--transition-base), transform var(--transition-base),
+                visibility var(--transition-base), background var(--transition-fast);
+  }
+  .back-to-top:hover { background: var(--c-accent-500); }
+  .back-to-top:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  @media (max-width: 40rem) {
+    .back-to-top { right: var(--space-4); bottom: var(--space-4); width: 2.75rem; height: 2.75rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top { transition: opacity var(--transition-fast); transform: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    const button = document.getElementById('back-to-top');
+    if (!button) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Show once the user has scrolled roughly a viewport down — a plain
+    // "appear immediately" fab is just noise while the hero is still on
+    // screen.
+    function updateVisibility() {
+      button!.classList.toggle('is-visible', window.scrollY > window.innerHeight * 0.6);
+    }
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    window.addEventListener('resize', updateVisibility);
+    updateVisibility();
+
+    button.addEventListener('click', () => {
+      const firstSection = document.getElementById('expertise');
+      if (firstSection) {
+        // scrollIntoView respects the target's scroll-margin-top (set in
+        // index.astro for exactly this purpose), so this lands the same
+        // place the "Expertise" nav link does.
+        firstSection.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      }
+    });
+  })();
+</script>
