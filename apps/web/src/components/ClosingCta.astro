@@ -1,0 +1,27 @@
+---
+// Shared closing CTA banner (`.section.section-dark` > centered heading +
+// optional description + one or two buttons). Extracted in M7 session 2
+// from ten near-identical hand-rolled copies across page components — see
+// docs/architecture/web-platform-architecture.md and the
+// terra-nexus-design-system skill for the pattern this replaces.
+interface Props {
+  heading: string;
+  description?: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  headingId?: string;
+}
+
+const { heading, description, primaryCta, secondaryCta, headingId } = Astro.props;
+---
+
+<section class="section section-dark" aria-labelledby={headingId ?? 'closing-cta-heading'}>
+  <div class="container text-center">
+    <h2 id={headingId ?? 'closing-cta-heading'}>{heading}</h2>
+    {description && <p class="cta-description">{description}</p>}
+    <div class="hero-actions">
+      <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>
+      {secondaryCta && <a href={secondaryCta.href} class="btn btn-secondary">{secondaryCta.label}</a>}
+    </div>
+  </div>
+</section>

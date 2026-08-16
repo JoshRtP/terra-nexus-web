@@ -60,7 +60,7 @@ const overviewItems = [
       <section class="stats-band" aria-label="Key results">
         {page.quantifiedResults!.map((stat) => (
           <div class="stat-item">
-            <span class="stat-number">{stat.value}</span>
+            <span class="stat-value stat-value-accent stat-value-fluid">{stat.value}</span>
             <span class="stat-label">{stat.metric}</span>
             {stat.resultType && <span class="stat-type">{stat.resultType}</span>}
           </div>
@@ -255,6 +255,11 @@ const overviewItems = [
   @media (min-width: 40rem) {
     .stats-band { grid-template-columns: repeat(2, 1fr); }
   }
+  /* Typography for .stat-value/.stat-label/.stat-type comes from the
+     shared primitives in design-system.css (.stat-value-accent for the sky
+     color, .stat-value-fluid for this card's clamped size); only the
+     card-chrome (border/padding/gap) and this component's specific
+     .stat-label weight and .stat-type position are local. */
   .stat-item {
     display: flex;
     flex-direction: column;
@@ -262,24 +267,15 @@ const overviewItems = [
     padding: var(--space-4);
     border-left: 3px solid var(--c-sky-600);
   }
-  .stat-number {
-    font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 3vw, var(--text-3xl));
-    font-weight: var(--font-semibold);
-    color: var(--c-sky-600);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-  .stat-label {
-    font-size: var(--text-sm);
+  .stat-item .stat-label {
     color: var(--color-text-secondary);
     font-weight: var(--font-medium);
+    margin-top: 0;
   }
-  .stat-type {
-    font-size: var(--text-xs);
+  .stat-item .stat-type {
     color: var(--color-text-muted);
-    text-transform: uppercase;
     letter-spacing: 0.05em;
+    margin-bottom: 0;
     margin-top: var(--space-1);
   }
 

@@ -1,5 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from './PageHero.astro';
+import ClosingCta from './ClosingCta.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 
 export interface Workstream {
@@ -72,26 +74,16 @@ const mode = getBuildMode();
 <SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
 
   <!-- Visual Hero -->
-  <section class="expertise-hero" aria-labelledby="hero-heading">
-    <div
-      class="hero-bg"
-      style={`background-image: url('${data.heroImage}')`}
-      role="img"
-      aria-label={data.heroImageAlt ?? data.title}
-    ></div>
-    <div class="hero-overlay" aria-hidden="true"></div>
-    <div class="container hero-content">
-      <span class="eyebrow eyebrow-light">{data.eyebrow}</span>
-      <h1 id="hero-heading">{data.title}</h1>
-      <p class="hero-lead">{data.lead}</p>
-      <div class="hero-actions">
-        <a href={data.primaryCta.href} class="btn btn-primary">{data.primaryCta.label}</a>
-        {data.secondaryCta && (
-          <a href={data.secondaryCta.href} class="btn btn-ghost">{data.secondaryCta.label}</a>
-        )}
-      </div>
-    </div>
-  </section>
+  <PageHero
+    variant="media"
+    heroImage={data.heroImage}
+    heroImageAlt={data.heroImageAlt}
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lead={data.lead}
+    primaryCta={data.primaryCta}
+    secondaryCta={data.secondaryCta}
+  />
 
   <!-- Overview + Benefits (split layout) -->
   <section class="section" aria-labelledby="overview-heading">
@@ -207,69 +199,20 @@ const mode = getBuildMode();
   </section>
 
   <!-- Final CTA -->
-  <section class="section section-dark" aria-labelledby="final-cta-heading">
-    <div class="container text-center">
-      <h2 id="final-cta-heading">{data.ctaHeading}</h2>
-      <p class="cta-description">{data.ctaBody}</p>
-      <div class="hero-actions">
-        <a href={data.ctaButton.href} class="btn btn-primary">{data.ctaButton.label}</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    headingId="final-cta-heading"
+    heading={data.ctaHeading}
+    description={data.ctaBody}
+    primaryCta={data.ctaButton}
+  />
 </SiteLayout>
 
 <style>
-  /* ── Visual Hero ── */
-  .expertise-hero {
-    position: relative;
-    min-height: clamp(28rem, 60vh, 48rem);
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center 40%;
-    transform: scale(1.03);
-    transition: transform 8s ease-out;
-  }
-  .expertise-hero:hover .hero-bg { transform: scale(1); }
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(15, 23, 42, 0.88) 0%,
-      rgba(15, 23, 42, 0.55) 50%,
-      rgba(15, 23, 42, 0.25) 100%
-    );
-  }
-  .hero-content {
-    position: relative;
-    padding-block: var(--space-16) var(--space-20);
-    z-index: 1;
-  }
-  .hero-content h1 {
-    color: var(--color-text-inverse);
-    max-width: 40rem;
-    margin-bottom: var(--space-5);
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .hero-lead {
-    font-size: var(--text-lg);
-    color: rgba(248, 250, 252, 0.88);
-    max-width: 38rem;
-    line-height: var(--line-relaxed);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-top: var(--space-8);
-  }
+  /* Hero is now PageHero's variant="media" (M7 session 2) — see
+     components/PageHero.astro. The final CTA is now ClosingCta.astro, which
+     supplies .section-dark/.cta-description/.hero-actions from
+     design-system.css directly, so no local override of those is needed
+     here either. */
   /* ── Overview + Benefits split ── */
   .overview-split {
     display: grid;

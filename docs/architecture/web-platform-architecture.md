@@ -334,6 +334,110 @@ surfaced — real duplication, not speculative refactoring. See `log.md`'s
   component showcase (optional per the M7 brief). See `log.md` for the
   full list.
 
+### 5.3 M7 session 2 — PageHero evolution, compositions, editorial system, global UI (2026-08-16)
+
+Session 2 completed the remaining M7 priority list from the session brief:
+PageHero API evolution, a shared closing-CTA composition, stat-band
+consolidation, broader page-family adoption, an editorial/MDX visual pass,
+and Header/Footer/BackToTop normalization. Full record in `log.md`'s
+second 2026-08-16 M7 entry; summary:
+
+- **PageHero** gained a small `variant?: 'standard' | 'media'` prop (default
+  `'standard'`, zero behavior change for the 9 pre-existing consumers) plus
+  optional `heroImage`/`heroImageAlt`. `variant="media"` renders the
+  full-bleed background-image/scrim treatment that `ExpertisePage.astro`
+  previously hand-rolled locally (moved into `PageHero`, not duplicated).
+  `ExpertisePage.astro` now consumes it — real consolidation, not a new
+  competing hero system. Evidence-driven: audited every hero treatment in
+  the repo (9 PageHero consumers, plus 3 hand-rolled hero blocks in
+  `ExpertisePage`, `insights/[slug].astro`, `CaseStudyArticle`) before
+  adding anything; the Insights and Case Study hero treatments were left
+  hand-rolled — they carry structural elements (breadcrumb, byline, stat
+  band) that don't fit a small, deliberate hero prop API, and forcing them
+  in would have meant the "giant prop matrix" the M7 brief explicitly
+  warned against. Homepage's cinematic photo hero untouched (out of scope
+  — M9).
+- **`ClosingCta.astro`** (new component) extracted the closing-CTA banner
+  pattern (`heading`, `description?`, `primaryCta`, `secondaryCta?`) that
+  was duplicated near-verbatim across 10 pages/components. All 10 migrated;
+  copy/hrefs preserved exactly. One deliberately left as hand-rolled markup
+  (`who-we-work-with/index.astro`'s lighter single-button variant — a real
+  structural difference, not the same pattern).
+- **Stat bands**: three independent implementations of the same idea
+  (`design-system.css`'s `.stat-group`, the homepage's local `.stat-strip`,
+  `CaseStudyArticle`'s local `.stat-item`/`.stat-number`) consolidated onto
+  the one shared `.stat-value`/`.stat-label`/`.stat-value-accent`/
+  `.stat-type` primitive set, extended with two small modifiers
+  (`.stat-value-md`, `.stat-value-fluid`) to cover the two real size
+  differences found — not a fourth parallel implementation.
+- **`CaseStudyCard.astro`**'s locally re-implemented `.eyebrow` (different
+  color token than the shared eyebrow) promoted to a genuine third eyebrow
+  variant, `.eyebrow-sky`, rather than left as a duplicate.
+- **Insights card grid** (`insights/index.astro`) migrated from a bespoke
+  `.insight-grid`/`.insight-card` recipe onto the shared `.card-grid` +
+  `.card.card-media` (new modifier: `.card`'s recipe minus padding/accent
+  bar, for edge-to-edge thumbnail images).
+- **Editorial/MDX visual pass** (`insights/[slug].astro`): article-body
+  max-width normalized onto the existing `--max-width-text` token
+  (previously four repeated `42rem` magic numbers), H2/H3 rhythm, list and
+  paragraph spacing added using existing `--space-*` tokens.
+  `DataTable.astro`'s pre-existing `overflow-x: auto` wrapper (no page
+  overflow found at 390px) got accessible keyboard-scroll support
+  (`role="region"`, `tabindex`, `aria-label`, focus-visible outline). The
+  other 12 MDX components were audited and found already visually
+  consistent — not changed. **Regression found and fixed during
+  independent QA**: the new article-body paragraph color rule
+  (`.insight-body :global(p)`) had higher specificity than the MDX `CTA`
+  component's own text-color rule, making its heading/body text render
+  navy-on-navy (invisible) whenever a `CTA` block appeared inside an
+  Insight article. Fixed by excluding the CTA's own text classes from the
+  blanket rule (`:not(.mdx-cta-heading):not(.mdx-cta-body)`); confirmed
+  via computed-style re-check (white `rgb(248,250,252)` on navy background)
+  before this session was called done.
+- **Header.astro** / **Footer.astro**: `:focus-visible` states added to
+  `.nav-link` and `.nav-toggle` (none existed before — a real a11y gap,
+  not present anywhere in the header) using the existing `--color-focus`
+  token, matching `BackToTop`'s pre-existing pattern. Footer copy/links/IA
+  untouched (canonical baseline, not this session's to change); mobile
+  bottom padding added so the fixed `BackToTop` button doesn't sit over
+  the copyright line at 390px. The homepage anchor-nav trial
+  (`/#expertise` etc.) was explicitly preserved unchanged — still a trial,
+  not converted into permanent IA this session.
+- **`BackToTop.astro`**: inspected, not modified — its tokens
+  (`--radius-md`, `--shadow-xl`, `--color-focus`) already matched the rest
+  of the system; functional behavior (homepage → `#expertise`, elsewhere →
+  true top, reduced-motion handling) confirmed correct and untouched.
+- **Validation, all green after every change including the CTA fix**:
+  `web:build`, `web:typecheck` (76 files, 0 errors/warnings/hints),
+  `web:test` (25/25), `npm run check` (OKF validator, tnx_validate, pytest
+  25/25, inventory freshness, `content:validate`). `!important` count in
+  `design-system.css`: 4, unchanged from session 1 — all four confined to
+  the single universal `@media (prefers-reduced-motion: reduce)` override
+  block (a standard, necessary pattern to beat component-level transition
+  specificity for accessibility; not a component-specific hack, and not
+  newly introduced this session).
+- **QA**: independent `visual-qa` subagent pass across the full required
+  route list (`/`, `/digital-solutions/`, `/about/`, `/capabilities` +
+  detail, `/expertise` + detail, `/insights` + article, `/case-studies` +
+  detail) at 1440/1024/768/390, plus targeted checks: keyboard focus
+  through the header nav and mobile menu, footer link focus states,
+  `BackToTop`/footer overlap at 390px, standalone `/capabilities` and
+  `/expertise` routes rendering correctly on direct navigation. One real
+  defect found (the CTA color regression above) and fixed, then
+  independently re-verified. Screenshots under
+  `artifacts/qa/m7-session2/`.
+- **M8 readiness**: the shared vocabulary (§5.2 primitives +
+  `ClosingCta`, PageHero's two variants, consolidated stat/tag/eyebrow
+  system) now covers every page family audited (Capabilities, Expertise,
+  Digital Solutions, About, Case Studies, Insights). A future agent
+  building a new page in any of these families should reach for these
+  first rather than inventing page-local CSS — see the updated component
+  vocabulary in `.claude/skills/terra-nexus-design-system/SKILL.md`. The
+  end-of-page CTA is still real markup per page (via `ClosingCta`, not a
+  page-family template), which is intentional — M7 explicitly avoided
+  forcing pages into a rigid shared template that would prevent visual
+  storytelling differences between page families.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
@@ -672,7 +776,7 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
 | M6 — GitHub-backed production Keystatic workflow + Cloudflare Git auto-deploy (**COMPLETE, 2026-08-16**) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Git auto-deploy connected and proven end-to-end 2026-08-16** (owner completed the Cloudflare dashboard connection; this session verified it, not assumed): merging PR #4 to `main` at commit `07e80a7` triggered a real GitHub check run (`Workers Builds: terra-nexus-web-preview`, Cloudflare's own GitHub App, `conclusion: success`) that deployed Version ID `3aee1200` and promoted it to the stable `terra-nexus-web-preview` Worker at 100% — confirmed via `wrangler deployments list` and live routes (`/`, `/insights`, `/keystatic` all 200; `/homepage-alt` 301→`/`). A throwaway branch (`test/m6-workers-build-preview`, deleted after the test) proved the non-production path separately: its build produced a distinct, unpromoted Version ID (`107b0bf4`) with its own preview URL (`noindex` `robots.txt`, confirmed serving), while `wrangler deployments list` showed no new 100% entry — the stable deployment (`3aee1200`) and its `robots.txt` (indexable) were unchanged throughout. Full record: §11 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
-| M7 — Expanded reusable visual/design system (**IN PROGRESS**, session 1 landed 2026-08-16 on `feature/m7-visual-system`) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation. Session 1: full repo audit + card/tag/stat/CTA primitive consolidation — see §5.2 and `log.md`'s 2026-08-16 M7 entry. Remaining scope (page-family visual adoption, PageHero variants, Header/Footer normalization, editorial typography pass) tracked for a follow-up session against the same branch |
+| M7 — Expanded reusable visual/design system (**COMPLETE, both sessions landed 2026-08-16 on `feature/m7-visual-system`, PR #7**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation. Session 1: full repo audit + card/tag/stat/CTA primitive consolidation (§5.2). Session 2: PageHero `media` variant, `ClosingCta` composition, stat-band consolidation, broader page-family adoption (Capabilities/Expertise/Digital Solutions/About/Case Studies/Insights), editorial/MDX typography pass, Header/Footer `:focus-visible` a11y fix, BackToTop verified consistent — see §5.3 and `log.md`'s second 2026-08-16 M7 entry. Full validation green both sessions; independent `visual-qa` browser QA at 1440/1024/768/390 across the required route matrix, one regression found and fixed (MDX CTA color contrast) and re-verified |
 | M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
 | M9 — Cinematic homepage hero + GSAP/motion system (reordered after M8, 2026-08-16) | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA, applied to the settled post-M8 content/IA |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |

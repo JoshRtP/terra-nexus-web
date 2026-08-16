@@ -2,6 +2,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
 // Studio Executives — placeholder data for the two team-section layout
@@ -158,14 +159,10 @@ const teamPlaceholder = [
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Start a Conversation</h2>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Start a Conversation</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Start a Conversation"
+    primaryCta={{ label: 'Start a Conversation', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <style>

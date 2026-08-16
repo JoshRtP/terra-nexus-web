@@ -8,7 +8,7 @@ interface Props {
 const { caption, headers, rows } = Astro.props;
 ---
 
-<div class="mdx-datatable-wrap">
+<div class="mdx-datatable-wrap" role="region" tabindex="0" aria-label={caption || 'Data table, scrollable horizontally'}>
   <table class="mdx-datatable">
     {caption && <caption>{caption}</caption>}
     <thead>
@@ -30,6 +30,11 @@ const { caption, headers, rows } = Astro.props;
   .mdx-datatable-wrap {
     margin-block: var(--space-8);
     overflow-x: auto;
+  }
+  .mdx-datatable-wrap:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius: var(--radius-xs);
   }
   .mdx-datatable {
     width: 100%;

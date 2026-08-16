@@ -5,9 +5,16 @@ interface Props {
   lead?: string;
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
+  /** 'standard' (default) is the plain gradient-surface hero used site-wide.
+   * 'media' renders a full-bleed background-image hero with a dark scrim
+   * and light-on-dark text/CTAs — the treatment ExpertisePage.astro used to
+   * hand-roll locally (M7 session 2 consolidation). */
+  variant?: 'standard' | 'media';
+  heroImage?: string;
+  heroImageAlt?: string;
 }
 
-const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
+const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', heroImage, heroImageAlt } = Astro.props;
 ---
 
 {/*
@@ -59,39 +66,116 @@ const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
   1440/768/390 was 80px/64px on both the pre-M4 `main` branch and this
   branch — unconditional `pt-20 pb-16` below is correct, not a bug.
 */}
-<section class="relative overflow-hidden border-b border-tn-border bg-[image:var(--gradient-surface)] pt-20 pb-16">
-  <div
-    class="pointer-events-none absolute -top-[30%] -right-[15%] h-[50rem] w-[50rem] bg-[radial-gradient(circle,rgba(168,208,219,0.4)_0%,transparent_65%)]"
-    aria-hidden="true"
-  >
-  </div>
-  <div class="container relative">
-    {eyebrow && <span class="eyebrow page-hero-eyebrow">{eyebrow}</span>}
-    <h1 class="page-hero-title max-w-[var(--max-width-text)]">{title}</h1>
-    {lead && (
-      // leading-[var(--line-relaxed)], not Tailwind's built-in leading-relaxed
-      // (1.625) — design-system.css's --line-relaxed is 1.7, a different
-      // value; using the token keeps this pixel-identical to the pre-M4 CSS.
-      <p class="max-w-[var(--max-width-text)] text-lg text-tn-text-secondary leading-[var(--line-relaxed)]">{lead}</p>
-    )}
-    {(primaryCta || secondaryCta) && (
-      <div class="mt-8 flex flex-wrap gap-4">
-        {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
-        {secondaryCta && <a href={secondaryCta.href} class="btn btn-secondary">{secondaryCta.label}</a>}
-      </div>
-    )}
-  </div>
-</section>
+{variant === 'media' ? (
+  <section class="expertise-hero" aria-labelledby="hero-heading">
+    <div
+      class="hero-bg"
+      style={`background-image: url('${heroImage}')`}
+      role="img"
+      aria-label={heroImageAlt ?? title}
+    ></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="container hero-content">
+      {eyebrow && <span class="eyebrow eyebrow-light">{eyebrow}</span>}
+      <h1 id="hero-heading">{title}</h1>
+      {lead && <p class="hero-lead">{lead}</p>}
+      {(primaryCta || secondaryCta) && (
+        <div class="hero-actions">
+          {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
+          {secondaryCta && <a href={secondaryCta.href} class="btn btn-ghost">{secondaryCta.label}</a>}
+        </div>
+      )}
+    </div>
+  </section>
+) : (
+  <section class="relative overflow-hidden border-b border-tn-border bg-[image:var(--gradient-surface)] pt-20 pb-16">
+    <div
+      class="pointer-events-none absolute -top-[30%] -right-[15%] h-[50rem] w-[50rem] bg-[radial-gradient(circle,rgba(168,208,219,0.4)_0%,transparent_65%)]"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="container relative">
+      {eyebrow && <span class="eyebrow page-hero-eyebrow">{eyebrow}</span>}
+      <h1 class="page-hero-title max-w-[var(--max-width-text)]">{title}</h1>
+      {lead && (
+        // leading-[var(--line-relaxed)], not Tailwind's built-in leading-relaxed
+        // (1.625) — design-system.css's --line-relaxed is 1.7, a different
+        // value; using the token keeps this pixel-identical to the pre-M4 CSS.
+        <p class="max-w-[var(--max-width-text)] text-lg text-tn-text-secondary leading-[var(--line-relaxed)]">{lead}</p>
+      )}
+      {(primaryCta || secondaryCta) && (
+        <div class="mt-8 flex flex-wrap gap-4">
+          {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
+          {secondaryCta && <a href={secondaryCta.href} class="btn btn-secondary">{secondaryCta.label}</a>}
+        </div>
+      )}
+    </div>
+  </section>
+)}
 
 <style>
   /* Unlayered on purpose — see the cascade-layer comment above. These are
-     the only two overrides this component needs; everything else is a
-     Tailwind utility. Values are the same tokens design-system.css itself
-     defines, not new/hardcoded ones. */
+     the only two overrides the 'standard' variant needs; everything else on
+     that branch is a Tailwind utility. Values are the same tokens
+     design-system.css itself defines, not new/hardcoded ones. */
   .page-hero-eyebrow {
     margin-bottom: var(--space-4);
   }
   .page-hero-title {
     margin-bottom: var(--space-5);
+  }
+
+  /* ── 'media' variant — moved verbatim from ExpertisePage.astro (M7
+     session 2 consolidation), plain scoped CSS rather than Tailwind so the
+     visual result is byte-for-byte identical to what it replaces. ── */
+  .expertise-hero {
+    position: relative;
+    min-height: clamp(28rem, 60vh, 48rem);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 40%;
+    transform: scale(1.03);
+    transition: transform 8s ease-out;
+  }
+  .expertise-hero:hover .hero-bg { transform: scale(1); }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(15, 23, 42, 0.88) 0%,
+      rgba(15, 23, 42, 0.55) 50%,
+      rgba(15, 23, 42, 0.25) 100%
+    );
+  }
+  .hero-content {
+    position: relative;
+    padding-block: var(--space-16) var(--space-20);
+    z-index: 1;
+  }
+  .hero-content h1 {
+    color: var(--color-text-inverse);
+    max-width: 40rem;
+    margin-bottom: var(--space-5);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .hero-lead {
+    font-size: var(--text-lg);
+    color: rgba(248, 250, 252, 0.88);
+    max-width: 38rem;
+    line-height: var(--line-relaxed);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
   }
 </style>

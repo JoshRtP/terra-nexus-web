@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
+import ClosingCta from '../../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
 const capabilityLinks: Record<string, string> = {
@@ -82,15 +83,11 @@ const enablers: Enabler[] = [
     </div>
   </section>
 
-  <section class="section section-dark">
-    <div class="container text-center">
-      <h2>Discuss Your Platform, Program, or Investment</h2>
-      <p class="cta-description">Tell us what you are building, evaluating, or financing.</p>
-      <div class="hero-actions">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Platform, Program, or Investment</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCta
+    heading="Discuss Your Platform, Program, or Investment"
+    description="Tell us what you are building, evaluating, or financing."
+    primaryCta={{ label: 'Discuss Your Platform, Program, or Investment', href: '/contact/' }}
+  />
 </SiteLayout>
 
 <style>

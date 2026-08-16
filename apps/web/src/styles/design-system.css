@@ -356,6 +356,16 @@ ul, ol { margin: 0; padding: 0; }
   background: var(--c-accent-300);
 }
 
+/* Eyebrow — sky variant, for use over light surfaces where the maroon
+   default reads too heavy against a card (e.g. CaseStudyCard.astro). M7
+   session 2: promoted from a local one-off override to a shared modifier. */
+.eyebrow-sky {
+  color: var(--c-sky-600);
+}
+.eyebrow-sky::before {
+  background: var(--c-sky-600);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -502,6 +512,30 @@ ul, ol { margin: 0; padding: 0; }
   transform: none;
 }
 
+/* .card-media — image-topped card, M7 session 2. Reuses .card's base
+   recipe (surface/border/radius/shadow/hover-lift) with padding removed so
+   a thumbnail image can bleed to the card edges; the top accent bar is
+   hidden (the image already reads as the card's visual "cap") and
+   `.card-media-body` carries the text padding instead. Consolidates the
+   Insights index card, which previously duplicated .card's border/radius/
+   shadow/hover recipe locally as `.insight-card`. */
+.card-media {
+  padding: 0;
+}
+.card-media::before {
+  display: none;
+}
+.card-media img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.card-media-body {
+  padding: var(--space-6) var(--space-8) var(--space-8);
+}
+
 /* Tag / pill — M7. Consolidated from four near-identical local
    implementations (segment-tag, pathway-tag, exec-tags a, tag) that all
    built the same rounded-pill-with-border-hover-to-sky treatment. */
@@ -621,6 +655,14 @@ a.tag:hover {
   text-transform: uppercase;
   color: var(--c-sky-600);
   margin-bottom: var(--space-1);
+}
+/* M7 session 2: two more size modifiers, extracted while migrating the
+   homepage stat strip and CaseStudyArticle's stats band onto this shared
+   pair instead of re-declaring .stat-value/.stat-label locally in each. */
+.stat-value-md { font-size: var(--text-4xl); }
+.stat-value-fluid {
+  font-size: clamp(1.75rem, 3vw, var(--text-3xl));
+  line-height: 1.1;
 }
 
 /* Page hero */
