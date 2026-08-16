@@ -1,10 +1,16 @@
 ---
 const currentPath = Astro.url.pathname;
 
+// Expertise, Capabilities, and Who We Work With point at homepage sections
+// rather than their standalone pages — the homepage's own tiles/links cover
+// that depth better than a separate landing page does. This is a trial;
+// the standalone pages (/expertise/, /capabilities/, /who-we-work-with/)
+// stay in place and stay linked from the homepage until the anchor-nav
+// approach is confirmed. See CLAUDE.md — don't remove those routes yet.
 const navLinks = [
-  { label: 'Expertise', href: '/expertise/' },
-  { label: 'Capabilities', href: '/capabilities/' },
-  { label: 'Who We Work With', href: '/who-we-work-with/' },
+  { label: 'Expertise', href: '/#expertise' },
+  { label: 'Capabilities', href: '/#capabilities' },
+  { label: 'Who We Work With', href: '/#who-we-work-with' },
   { label: 'Case Studies', href: '/case-studies/' },
   { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },
@@ -153,6 +159,21 @@ function isActive(href: string): boolean {
         document.body.style.overflow = '';
         (toggle as HTMLElement).focus();
       }
+    });
+
+    // Close the mobile drawer on link click. Full-page links already close
+    // it via the resulting page unload, but the new homepage-section anchor
+    // links (#expertise etc.) don't unload the page, so this is required
+    // for those and harmless for the rest.
+    nav.querySelectorAll('.nav-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (nav.getAttribute('data-open') === 'true') {
+          nav.setAttribute('data-open', 'false');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          document.body.style.overflow = '';
+        }
+      });
     });
   }
 
