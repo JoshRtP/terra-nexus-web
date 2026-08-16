@@ -138,7 +138,7 @@ const approachSteps = [
   </section>
 
   <!-- Expertise -->
-  <section class="section" aria-labelledby="expertise-heading">
+  <section class="section" id="expertise" aria-labelledby="expertise-heading">
     <div class="container">
       <header class="section-header split-header">
         <span class="eyebrow split-header-eyebrow">What We Are Known For</span>
@@ -195,7 +195,7 @@ const approachSteps = [
   </section>
 
   <!-- Who We Work With -->
-  <section class="section" aria-labelledby="audiences-heading">
+  <section class="section" id="who-we-work-with" aria-labelledby="audiences-heading">
     <div class="container">
       <header class="section-header split-header">
         <span class="eyebrow split-header-eyebrow">Who We Work With</span>
@@ -266,7 +266,7 @@ const approachSteps = [
   </section>
 
   <!-- How We Work: Approach + Capabilities, merged -->
-  <section class="section" aria-labelledby="approach-heading">
+  <section class="section" id="capabilities" aria-labelledby="approach-heading">
     <div class="container">
       <header class="section-header split-header">
         <span class="eyebrow split-header-eyebrow">How We Work</span>
@@ -339,7 +339,7 @@ const approachSteps = [
         <h2 id="digital-solutions-heading">Digital Solutions that Catalyze Change</h2>
         <p>Delivery is in the details.  It's not what you do, but where, how, and who you partner with that drives results. That's why leading consulting firms and solution providers utilize our expertise to close the gap between advice and action.</p>
         <p>From digital MRV to next generation verification systems, we provide fit-for-purpose solutions that build market integrity.  Every verifiable claim or GHG translation is supported by investment level emissions accounting that's expected by 3rd party verifiers, regulators, investors, and premium buyers.</p>
-        <a href="/capabilities/" class="btn btn-primary">See our Digital Solutions</a>
+        <a href="/digital-solutions/" class="btn btn-primary">See our Digital Solutions</a>
       </div>
     </div>
   </section>
@@ -962,6 +962,13 @@ const approachSteps = [
     width: 100%; height: auto; border-radius: var(--radius-xl);
     background: #fff; padding: var(--space-6);
     box-shadow: var(--shadow-lg); border: 1px solid var(--color-border);
+  }
+
+  /* ── In-page nav anchors (Expertise / Capabilities / Who We Work With) —
+     offsets the scroll target below the sticky header. Same value as the
+     existing precedent in who-we-work-with/food-and-agribusiness-value-chain. ── */
+  #expertise, #capabilities, #who-we-work-with {
+    scroll-margin-top: 6rem;
   }
 
   /* ── Digital Solutions (product family break) ── */

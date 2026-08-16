@@ -84,11 +84,16 @@ Fully static, no server rendering, no API routes besides a dynamic
 - `/` — homepage (the former `/homepage-alt` draft layout, canonicalized 2026-08-12)
 - `/homepage-alt` — redirects to `/` (kept for anyone who bookmarked the
   pre-canonicalization draft-review URL; not a live page, not linked from nav)
-- `/about`
+- `/about` — includes a "Studio Executives" team section with two
+  placeholder layout options for owner/team review (reconciled onto main
+  2026-08-16 — see the review-stop note below and CLAUDE.md §5)
 - `/capabilities`, `/capabilities/{5 offering slugs}`
 - `/case-studies`, `/case-studies/[slug]` (dynamic, `getStaticPaths()` from OKF graph, `prerender = true`)
 - `/expertise`, `/expertise/{9 topic slugs}`
 - `/who-we-work-with`, `/who-we-work-with/{2 segment slugs}`
+- `/digital-solutions` — placeholder product page (reconciled onto main
+  2026-08-16); the homepage's "See our Digital Solutions" button points
+  here instead of the earlier `/capabilities/` stand-in
 - `/contact`
 - `/insights`, `/insights/[slug]` (added M3 — Keystatic `posts` collection,
   `getStaticPaths()` from Astro Content Collections, `prerender = true`)
@@ -98,6 +103,32 @@ Fully static, no server rendering, no API routes besides a dynamic
 
 Any route restructuring must preserve these paths or add explicit redirects
 before cutover — see §7.
+
+**Top-nav anchor trial (owner review pending, reconciled onto main
+2026-08-16).** The top nav's Expertise, Capabilities, and Who We Work With
+links currently point at homepage sections (`/#expertise`, `/#capabilities`,
+`/#who-we-work-with`) instead of their standalone pages — the idea being
+those standalone pages don't yet have enough independent depth, and the
+homepage's own tiles already cover onward navigation. **This is a trial,
+not a decision:** the standalone `/expertise/`, `/capabilities/`,
+`/who-we-work-with/` pages and all their sub-pages are still live and still
+linked from the homepage itself — only the top-nav entry points changed.
+Do not remove those pages/routes until the owner confirms the anchor-nav
+approach (keep / revert / hybrid — see the review-stop note below). Also
+reconciled: a global "Back to Top" button (`BackToTop.astro`, mounted once
+in `SiteLayout.astro`) restoring the legacy WordPress site's own
+back-to-top behavior — on the homepage it lands at `#expertise` (past the
+photo/hero section) rather than the true top; every other page falls back
+to `scrollY 0`.
+
+**Owner review stop point (2026-08-16):** the nav-anchor trial and the two
+`/about` Studio Executives layout options are both explicitly undecided —
+first developed on `feature/homepage-nav-trial-and-team-review` (PR #3,
+kept open as historical reference) and reconciled onto the current
+M4/M6 architecture on `feature/reconcile-pr3-site-developments` for a
+fresh preview. Do not treat either as approved IA/design direction until
+the owner decides keep/revert/hybrid for the nav trial and picks an
+executives layout (or a hybrid).
 
 ## 4. Content system: Keystatic (canonical), OKF (temporary/legacy)
 
