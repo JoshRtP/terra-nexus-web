@@ -21,12 +21,14 @@ with a Cloudflare Workers adapter, with:
   specifically to support the Keystatic admin UI and MDX editorial
   content — not as general-purpose additions. The Cloudflare Workers
   adapter landed 2026-08-12 (M5) and hosted GitHub-storage-mode Keystatic
-  landed the same day (M6) — see `docs/architecture/web-platform-architecture.md`
-  §9 for exact milestone status, including the one remaining owner-only
-  action (Cloudflare dashboard Git auto-deploy connection). Tailwind and
-  GSAP are still not installed as of the start of the M4 session; Tailwind
-  is being introduced deliberately in M4 (this milestone) per §Migration
-  phases below — not all at once.
+  landed the same day (M6). Cloudflare Workers Builds Git auto-deploy is
+  connected and verified end-to-end as of 2026-08-16 — `main` auto-deploys
+  to the stable `terra-nexus-web-preview` Worker, non-production branches
+  auto-build unpromoted preview versions — see
+  `docs/architecture/web-platform-architecture.md` §9/§11.1–§11.3 for the
+  full verification record. M4 (Tailwind v4, progressive design-system
+  normalization) landed 2026-08-16. GSAP is still not installed —
+  introduce it only when M9 cinematic/motion work actually starts.
 - A bespoke, well-tested **OKF governed-content pipeline**
   (`apps/web/src/lib/okf/*`) that compiles `knowledge/` (repo root) into
   routes at build time. This is NOT Astro Content Collections and is NOT
@@ -134,15 +136,17 @@ required viewports and inspect console output before reporting completion.
 ## Milestone-scoped work (do not skip ahead)
 
 See `docs/architecture/web-platform-architecture.md` §9 for the full,
-current sequence and status of every milestone. Summary as of 2026-08-16:
-M0–M3 (baseline, Keystatic + MDX local mode, browser CMS POC) done; M5
-(Cloudflare Workers preview) done; M6 (hosted GitHub-mode Keystatic) done on
-the repository side, with one owner-only action outstanding (Cloudflare
-dashboard Git auto-deploy connection — see §11 of the architecture doc); M4
-(progressive Tailwind/design-system normalization) is the current milestone.
-The roadmap was deliberately reordered on 2026-08-16 so real content/SEO
-migration (M8) precedes cinematic homepage/motion work (M9) — see §9 for the
-reasoning. Do not install GSAP, change the Cloudflare adapter/Keystatic
+current sequence and status of every milestone. Summary as of 2026-08-16
+(M6 closeout): M0–M3 (baseline, Keystatic + MDX local mode, browser CMS
+POC) done; M5 (Cloudflare Workers preview) done; M6 (hosted GitHub-mode
+Keystatic + Cloudflare Workers Builds Git auto-deploy) **COMPLETE and
+verified end-to-end** — no owner-only action remaining, see §11.1–§11.3
+of the architecture doc; M4 (progressive Tailwind/design-system
+normalization) done. M7 (expanded reusable visual system) is next — not
+started. The roadmap was deliberately reordered on 2026-08-16 so real
+content/SEO migration (M8) precedes cinematic homepage/motion work (M9) —
+see §9 for the reasoning. Do not install GSAP, change the Cloudflare
+adapter/Keystatic
 architecture, or skip ahead to M7/M8/M9/M10 speculatively — introduce each
 as its own reviewable phase with a working build/test/QA loop before and
 after.

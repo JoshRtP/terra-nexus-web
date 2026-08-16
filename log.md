@@ -291,3 +291,67 @@ review at face value.
 * **Files touched**: `apps/web/src/components/PageHero.astro`, `log.md`,
   `docs/architecture/web-platform-architecture.md`,
   `artifacts/qa/m4-fix-*.png` (8 new).
+
+## 2026-08-16 (M6 closeout — Cloudflare Workers Builds Git auto-deploy verified end-to-end)
+
+Owner connected Cloudflare Workers Builds' Git integration to the
+existing staging Worker (`terra-nexus-web-preview`) in the Cloudflare
+dashboard. This session's task was narrowly scoped to verifying that
+connection end-to-end, documenting the result, and closing M6 — not
+starting M7.
+
+* **`main` → stable staging, PROVEN.** Proof commit: PR #4 (M4 Tailwind
+  foundation) merged to `main` at `07e80a753ff5fd3d138702500b17c2ccfeea8baa`.
+  A real GitHub check run from Cloudflare's own GitHub App
+  (`Workers Builds: terra-nexus-web-preview`, `conclusion: success`,
+  started ~2 minutes after the merge) deployed Version ID `3aee1200` and
+  promoted it to the stable `terra-nexus-web-preview` Worker at 100% —
+  confirmed via `wrangler deployments list` (not just the check run).
+  Live routes verified: `/` (200, correct title), `/insights` (200,
+  correct title), `/keystatic` (200 — confirms the branch-aware build
+  command correctly enabled Keystatic for `main`), `/homepage-alt` (301 →
+  `/`). Stable domain's `robots.txt` returns the indexable (production)
+  value. No production DNS or WordPress production touched — confirmed
+  `terra.nexus` still resolves to its existing production host, 200,
+  unaffected.
+* **Non-production branch → preview only, PROVEN.** Created
+  `test/m6-workers-build-preview` from `main`, one harmless non-application
+  commit (a standalone Markdown note, no source/config changes), pushed.
+  Cloudflare's check run on that branch's commit produced a **distinct**
+  Version ID (`107b0bf4`) with its own dedicated preview URL and a
+  `noindex` `robots.txt` — the `wrangler versions upload` shape, not
+  `wrangler deploy`. `wrangler deployments list` immediately after showed
+  **no new 100% entry** — the branch build never touched the promoted
+  deployment; the stable Worker (`3aee1200`, indexable `robots.txt`) was
+  unchanged throughout. Branch deleted after the proof (`git push origin
+  --delete test/m6-workers-build-preview`), not merged to `main`; the
+  unpromoted Cloudflare version itself was left as-is (harmless, no
+  cleanup needed).
+* **Documentation updated** to remove all "partial"/"pending"/"owner
+  action required" M6 language now that it's verified complete:
+  `docs/architecture/web-platform-architecture.md` (§1 hosting row, §6
+  intro, §9 M6 table row — now marked **COMPLETE** — §10's Keystatic-first
+  workflow description, and a new §11.1–§11.3 with the full verification
+  record and the confirmed final deployment model), `CLAUDE.md` (current-state
+  summary + milestone-scoped-work section), and
+  `.claude/skills/cloudflare-deployment/SKILL.md` (frontmatter description
+  + current-state section). `AGENTS.md`/content-governance rules
+  untouched — out of scope for infra/deployment work.
+* **Final deployment model, confirmed (not aspirational):**
+  ```
+  main → Workers Builds → wrangler deploy → stable terra-nexus-web-preview
+  non-production branches → Workers Builds → wrangler versions upload →
+    preview/version URL → stable staging unchanged
+  future production → separate terra-nexus-web Worker/environment →
+    NOT implemented yet
+  ```
+* **Validation**: `npm run web:build` / `web:typecheck` (0 errors) /
+  `web:test` (25/25) / `npm run check` (pytest 25/25, skills sync, content
+  validate, build/typecheck/test) all green — documentation-only changes,
+  no application code touched this session.
+* **Scope discipline**: no M7 work started. Only verification (Cloudflare
+  API/CLI reads, a throwaway test branch that was deleted, not merged) and
+  documentation were performed.
+* **M6 status: COMPLETE.**
+* **Next milestone: M7 — Expanded reusable visual/design system** (not
+  started this session).
