@@ -25,12 +25,14 @@
     "@astrojs/react": "^6.0.2",
     "@keystatic/astro": "^5.2.0",
     "@keystatic/core": "^0.6.5",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "astro": "6.4.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "set-cookie-parser": "^2.7.2",
+    "tailwindcss": "^4.3.3",
     "wrangler": "^4.121.0"
   },
   "devDependencies": {
