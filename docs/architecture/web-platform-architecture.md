@@ -1,7 +1,7 @@
 ---
 title: "Terra Nexus Web Platform Architecture (repo-native)"
 status: "Target architecture, adopted incrementally"
-updated: "2026-08-16"
+updated: "2026-08-16 (M6 closeout)"
 supersedes_reference: "Terra_Nexus_Astro_Keystatic_Cloudflare_Architecture.md (owner-supplied source doc)"
 ---
 
@@ -29,7 +29,7 @@ for what has migrated and what remains.
 | Motion | Plain CSS transitions only | GSAP for cinematic/scroll sequences; CSS for simple motion |
 | Content | Keystatic + MDX (GitHub storage mode live, M6) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
 | Repo/source of truth | GitHub (`JoshRtP/terra-nexus-web`, branch `main`; legacy history preserved read-only at `JoshRtP/Webservices`) | Unchanged |
-| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed and deployed (M5, 2026-08-12) to the non-production Worker `terra-nexus-web-preview`; repository-owned `apps/web/wrangler.jsonc` pins the Worker name (M6 close-out). Manual `wrangler deploy`/`wrangler versions upload` confirmed working end-to-end against the real Cloudflare account. Cloudflare dashboard Git auto-deploy connection (§11) is the one piece not yet verified from this environment — see §9 M6 status | Cloudflare Workers (preview live; Git auto-deploy owner action outstanding) |
+| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed and deployed (M5, 2026-08-12) to the non-production Worker `terra-nexus-web-preview`; repository-owned `apps/web/wrangler.jsonc` pins the Worker name (M6 close-out). Cloudflare Workers Builds Git integration is connected and verified end-to-end (M6, 2026-08-16): `main` pushes/merges auto-deploy via `wrangler deploy` to stable `terra-nexus-web-preview`; non-production branches auto-build a `wrangler versions upload` preview without touching stable. See §11 for the verification record | Cloudflare Workers (M5 preview + M6 Git auto-deploy both live). Future: separate production `terra-nexus-web` Worker/environment, not yet implemented |
 | Large files | Everything in `public/`, including a 16MB reference PNG | Cloudflare R2 for large/reusable assets |
 | Video | None in repo yet | Cloudflare Stream for substantial video |
 | App data | None | Cloudflare D1, only if/when a real relational-data need appears |
@@ -260,7 +260,9 @@ retained exactly as they were before this session, other than the new
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
-config landed at M6 close-out — current as of 2026-08-16.**
+config landed at M6 close-out; Cloudflare Workers Builds Git integration
+connected and verified end-to-end (M6, 2026-08-16) — current as of
+2026-08-16.**
 `@astrojs/cloudflare` is pinned to `13.7.0` in `apps/web/package.json` — the
 last release whose peer range (`astro@^6.3.0`) covers this repo's Astro
 `6.4.6`; `@astrojs/cloudflare@14+` requires Astro 7 and is an explicit
@@ -492,10 +494,11 @@ rediscovered from scratch next time someone needs local Keystatic editing.
 login → dashboard/collection reads (after the `pathPrefix` fix) → edit +
 save an existing Insight → real commit lands on `JoshRtP/terra-nexus-web`
 `main` → content correctly reflects in the hosted editor on reload,
-including image fields uploaded through the UI. Cloudflare Git
-auto-deploy (so the public site rebuilds automatically on a CMS save,
-without a manual `wrangler deploy`) is still outstanding — see the session
-record for exact owner-facing dashboard steps.
+including image fields uploaded through the UI. Cloudflare Git auto-deploy
+(so the public site rebuilds automatically on a CMS save, without a manual
+`wrangler deploy`) was outstanding at the time this paragraph was written
+(2026-08-12) and is now connected and verified end-to-end as of
+2026-08-16 — see §11.1–§11.3.
 
 ## 7. Branch model (adopted 2026-08-12)
 
@@ -590,7 +593,7 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
 | M4 — Progressive Tailwind/design-system normalization (**done 2026-08-16**) | Tailwind v4 installed via `@tailwindcss/vite`; CSS-first `@theme inline` bridge (`apps/web/src/styles/tailwind.css`) aliases existing `design-system.css` tokens under a `tn-` prefix, no values duplicated; `PageHero.astro` migrated as the representative component proving the pattern; full `design-system.css`/`foundation.css` inventory classified (§5.1); `build`/`typecheck`/`test`/`check` all green; independent `visual-qa` browser pass at 1440/1024/768/390 across 5 representative routes found zero console errors, zero broken requests, and no visual differences vs. the pre-M4 baseline. See `log.md`'s 2026-08-16 entry and §5.1 for full detail |
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow (repository side **done** 2026-08-12; Cloudflare Git auto-deploy connection **unverified as of 2026-08-16**, bounded re-check performed this session — see below) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **2026-08-16 bounded verification:** `wrangler deployments list --name terra-nexus-web-preview` shows every deployment through today sourced as `Upload`, `Secret Change`, or `Unknown (deployment)` — none sourced `Git`/Workers-Builds-triggered, including the window right after PR #2 (the `wrangler.jsonc` commit) merged to `main`. This is evidence the dashboard Git connection described in §11 has **not** been completed (or is not yet triggering builds), not proof it's broken — an owner-only dashboard action, not reproducible from this environment. Recorded accurately per instruction rather than re-attempted; does not block M4 |
+| M6 — GitHub-backed production Keystatic workflow + Cloudflare Git auto-deploy (**COMPLETE, 2026-08-16**) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Git auto-deploy connected and proven end-to-end 2026-08-16** (owner completed the Cloudflare dashboard connection; this session verified it, not assumed): merging PR #4 to `main` at commit `07e80a7` triggered a real GitHub check run (`Workers Builds: terra-nexus-web-preview`, Cloudflare's own GitHub App, `conclusion: success`) that deployed Version ID `3aee1200` and promoted it to the stable `terra-nexus-web-preview` Worker at 100% — confirmed via `wrangler deployments list` and live routes (`/`, `/insights`, `/keystatic` all 200; `/homepage-alt` 301→`/`). A throwaway branch (`test/m6-workers-build-preview`, deleted after the test) proved the non-production path separately: its build produced a distinct, unpromoted Version ID (`107b0bf4`) with its own preview URL (`noindex` `robots.txt`, confirmed serving), while `wrangler deployments list` showed no new 100% entry — the stable deployment (`3aee1200`) and its `robots.txt` (indexable) were unchanged throughout. Full record: §11 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
 | M7 — Expanded reusable visual/design system (**NEXT**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation |
 | M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
@@ -614,8 +617,10 @@ Two authoring paths, both landing in the same place (Git-backed MDX under
   no `branchPrefix` configured — see §14 discussion in the session record
   for why one wasn't added: it would force every hosted edit onto a
   per-session branch the owner would then have to separately merge, adding
-  Git mechanics without a clear benefit today) → Cloudflare rebuilds `main`
-  automatically once §11's Git integration is in place.
+  Git mechanics without a clear benefit today) → Cloudflare Workers Builds
+  rebuilds and redeploys `main` automatically (§11, verified 2026-08-16) —
+  no manual `wrangler deploy` needed for a routine Keystatic save to go
+  live.
 
 **Save vs. approval vs. publication** (draft/scheduled/published mechanics
 in §8):
@@ -631,7 +636,7 @@ Claude automates the Git/PR/merge mechanics when the owner asks to
 publish/approve content — the owner should not need to run Git commands to
 move a piece from draft to live.
 
-## 11. Cloudflare Workers Builds — repository side complete, owner Git connection still required (M6, 2026-08-12)
+## 11. Cloudflare Workers Builds — Git integration COMPLETE and verified end-to-end (M6, closed 2026-08-16)
 
 **Repository-owned config landed:** `apps/web/wrangler.jsonc` (branch
 `infra/m6-cloudflare-workers-builds`). Verified by inspecting
@@ -749,12 +754,93 @@ redeploys unless explicitly overwritten with `--secrets-file` or deleted).
 even though the value itself isn't inherently sensitive — preserved as-is,
 matching current working behavior; no reason found to change it.
 
-**Owner dashboard action still required** (Cloudflare account-level
-connection, cannot be done from this repository): see the session's exact
-click-by-click instructions for connecting Git to the existing
-`terra-nexus-web-preview` Worker with the values above.
+**Owner completed the Cloudflare dashboard Git connection between
+2026-08-16's M4 PR merge and this verification pass.** The remainder of
+this section (as of the M6 close-out session record above, 2026-08-12)
+predates that connection and is retained for the exact configuration it
+specifies — the connection was made using those values. What follows is
+this session's (2026-08-16) end-to-end proof that it actually works, not
+an assumption.
 
-### 11.1 Rollback
+### 11.1 Verification — `main` → stable staging (2026-08-16)
+
+Proof commit: PR #4 (M4 Tailwind foundation) merged to `main` at
+`07e80a753ff5fd3d138702500b17c2ccfeea8baa`.
+
+- **GitHub check run** on that exact commit SHA: `Workers Builds:
+  terra-nexus-web-preview`, app `cloudflare-workers-and-pages` (Cloudflare's
+  own GitHub App — not a manual status, not a generic CI job),
+  `status: completed`, `conclusion: success`, output: `Version ID:
+  3aee1200-8fdd-491a-b4a5-3870a2712920`. Started ~2 minutes after the merge
+  commit's timestamp (`2026-08-16T20:21:45Z` merge → `20:23:33Z` build
+  start), consistent with a push-triggered build, not a coincidental
+  unrelated deploy.
+- **`wrangler deployments list --name terra-nexus-web-preview`** confirms
+  the same Version ID, `3aee1200-8fdd-491a-b4a5-3870a2712920`, at **100%**
+  — i.e. promoted to the live, stable deployment, exactly matching the
+  build command's `wrangler deploy` (not `versions upload`) for the
+  production branch.
+- **Live routes verified** against `https://terra-nexus-web-preview.josh-242.workers.dev`:
+  `/` → 200, correct `<title>`; `/insights` → 200, correct `<title>`;
+  `/keystatic` → 200 (confirms the branch-aware build command correctly
+  set `SKIP_KEYSTATIC=false` for `main`, matching §11's documented
+  build-command logic); `/homepage-alt` → 301 → `/`. `robots.txt` on the
+  stable domain returns `Disallow:` (empty — indexable), confirming this
+  is the production build mode, not a preview build.
+- **No production DNS or WordPress production touched** — this Worker is
+  `terra-nexus-web-preview` on its `*.workers.dev` subdomain, unrelated to
+  the `terra.nexus` production domain (verified still resolving to its
+  existing production host, unaffected, `200`).
+
+### 11.2 Verification — non-production branch → preview only, stable unaffected (2026-08-16)
+
+A throwaway branch, `test/m6-workers-build-preview`, was created from
+`main` at the M4 merge commit with one harmless, non-application commit
+(a new standalone Markdown file, no source/config changes) and pushed,
+then deleted after the test. Not merged to `main`.
+
+- **GitHub check run** on that branch's commit: same
+  `Workers Builds: terra-nexus-web-preview` app, `conclusion: success`,
+  output: `Version ID: 107b0bf4-55bc-4ea0-b094-09be9a65bf35`, **`Preview
+  URL: https://107b0bf4-terra-nexus-web-preview.josh-242.workers.dev`**,
+  **`Preview Alias URL: https://test-m6-workers-build-preview-terra-nexus-web-preview.josh-242.workers.dev`**
+  — a distinct Version ID and a dedicated preview URL is exactly the
+  `wrangler versions upload` shape (an uploaded-but-unpromoted version),
+  not `wrangler deploy`.
+- **Preview URL verified live:** `/` → 200, correct `<title>`; `robots.txt`
+  → `Disallow: /` (fully noindexed — correct preview-build behavior, not
+  the production build).
+- **Stable deployment unaffected:** `wrangler deployments list` immediately
+  after this branch's build still ends at `3aee1200-...` at 100% — **no
+  new entry appears** for the branch build, proving it never touched the
+  promoted/stable deployment. The stable domain's `robots.txt` was
+  re-checked and still returns the indexable (production) `Disallow:`
+  (empty) value throughout, unchanged.
+- Branch deleted (`git push origin --delete test/m6-workers-build-preview`)
+  after the proof; the uploaded Cloudflare version itself (`107b0bf4-...`)
+  was left as-is (harmless, unpromoted, no cleanup required for an
+  unpromoted Worker version).
+
+### 11.3 Final deployment model (confirmed, not aspirational)
+
+```text
+main
+  → Cloudflare Workers Builds (Git push/merge trigger)
+  → wrangler deploy
+  → stable terra-nexus-web-preview (100% deployment)
+
+non-production branches (feature/*, fix/*, content/*, test/*, ...)
+  → Cloudflare Workers Builds (Git push trigger)
+  → wrangler versions upload
+  → preview/version URL (noindex, unpromoted)
+  → stable terra-nexus-web-preview deployment unchanged
+
+future production
+  → separate terra-nexus-web Worker/environment
+  → NOT implemented yet — no production DNS, no production Worker exists
+```
+
+### 11.4 Rollback
 
 - **Disable Git auto-deploy:** Worker → Settings → Builds → disconnect the
   repository. Manual `wrangler deploy` / `wrangler versions upload` from a

@@ -1,11 +1,11 @@
 ---
 name: cloudflare-deployment
-description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is fully working as of 2026-08-12 — compat shim, GitHub App/credentials, and publishing loop all verified. Repository-owned apps/web/wrangler.jsonc landed 2026-08-12 (M6 close-out, branch infra/m6-cloudflare-workers-builds) — resolves the Worker to terra-nexus-web-preview, verified via a real wrangler versions upload. Cloudflare Git auto-deploy still needs the owner to connect it in the dashboard — see docs/architecture/web-platform-architecture.md §11.
+description: Workers/Wrangler/R2/Stream/D1 environment conventions, preview/production rules, deployment verification. Cloudflare Workers preview is live as of 2026-08-12 (M5); hosted Keystatic (M6) is fully working as of 2026-08-12 — compat shim, GitHub App/credentials, and publishing loop all verified. Repository-owned apps/web/wrangler.jsonc landed 2026-08-12 (M6 close-out). Cloudflare Workers Builds Git auto-deploy is connected and verified end-to-end as of 2026-08-16 — main auto-deploys via wrangler deploy to stable terra-nexus-web-preview; non-production branches auto-build a wrangler versions upload preview without touching stable. See docs/architecture/web-platform-architecture.md §11.1-§11.3.
 ---
 
 # Cloudflare Deployment
 
-## Current state (audited 2026-08-12)
+## Current state (audited 2026-08-16)
 
 **M5 done.** Deployed via `wrangler deploy` (adapter-generated config, no
 hand-written `wrangler.jsonc`) to a non-production Worker at
@@ -45,12 +45,11 @@ reads → edit + save → real commit on `main` → correct reflection back in t
 editor. See `docs/architecture/web-platform-architecture.md` §6.2 for the
 full record, including a monorepo `pathPrefix` bug and a content-component
 image round-trip issue that were found and fixed along the way (neither was
-a Keystatic defect). **Still outstanding:** Cloudflare Git auto-deploy, so
-the public site rebuilds automatically on a CMS save instead of needing a
-manual `wrangler deploy` — owner dashboard action, not yet done.
+a Keystatic defect).
 
-**M6 close-out — Workers Builds (Git integration), repository side done
-(2026-08-12).** `apps/web/wrangler.jsonc` now pins `"name":
+**M6 close-out — Workers Builds (Git integration), COMPLETE (repository
+side 2026-08-12, Cloudflare dashboard connection + full verification
+2026-08-16).** `apps/web/wrangler.jsonc` pins `"name":
 "terra-nexus-web-preview"` so Wrangler no longer needs a manual `--name`
 flag — confirmed by inspecting `@astrojs/cloudflare`/`@cloudflare/vite-plugin`
 source (a project-root wrangler config is read and merged, not ignored) and
@@ -58,15 +57,24 @@ by rebuilding and seeing the regenerated `dist/server/wrangler.json` pick
 up the name. No Wrangler named environments — one flat config, one Worker,
 `wrangler versions upload` (Workers Builds' default non-production deploy
 command) gives the stable-vs-preview split without needing a second
-environment. A real `wrangler versions upload` against the live account
-proved the Worker targeting, bindings, and preview URL all work correctly
-without touching the stable 100% deployment. The Workers Builds **build
-command** (not the global build-variables panel, which cannot vary by
-branch) needs to be branch-aware so only `main` gets the Keystatic admin
-routes — see `docs/architecture/web-platform-architecture.md` §11 for the
-exact command and why the naive global-variable approach was rejected
-after independent security review. Owner still needs to connect Git in the
-Cloudflare dashboard — see §11 for exact values.
+environment. The Workers Builds **build command** (not the global
+build-variables panel, which cannot vary by branch) is branch-aware so only
+`main` gets the Keystatic admin routes — see
+`docs/architecture/web-platform-architecture.md` §11 for the exact command.
+
+**Owner connected Git in the Cloudflare dashboard; verified end-to-end
+2026-08-16, not assumed.** Merging PR #4 to `main` (commit `07e80a7`)
+produced a real GitHub check run from Cloudflare's own GitHub App
+(`Workers Builds: terra-nexus-web-preview`, `conclusion: success`) that
+deployed and promoted Version ID `3aee1200` to the stable `100%`
+deployment — confirmed via `wrangler deployments list` and live routes
+(`/`, `/insights`, `/keystatic` all 200; `/homepage-alt` redirects). A
+throwaway branch (`test/m6-workers-build-preview`, deleted after) proved
+the non-production path separately: its build produced a distinct,
+unpromoted version with its own `noindex` preview URL, while the stable
+100% deployment and its (indexable) `robots.txt` were confirmed unchanged
+throughout. Full record and the confirmed final deployment model:
+`docs/architecture/web-platform-architecture.md` §11.1–§11.3.
 
 ## Setup sequence (when this milestone starts)
 
