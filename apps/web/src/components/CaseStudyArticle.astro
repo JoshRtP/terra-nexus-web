@@ -116,7 +116,7 @@ const overviewItems = [
 
   <aside class="case-sidebar" aria-label="Case study details">
     {overviewItems.length > 0 && (
-      <div class="sidebar-card">
+      <div class="card card-static sidebar-card">
         <h3 class="sidebar-heading">At a Glance</h3>
         <dl class="sidebar-list">
           {overviewItems.map((item) => (
@@ -130,7 +130,7 @@ const overviewItems = [
     )}
 
     {profileItems.length > 0 && (
-      <div class="sidebar-card">
+      <div class="card card-static sidebar-card">
         <h3 class="sidebar-heading">Engagement Profile</h3>
         <dl class="sidebar-list">
           {profileItems.map((item) => (
@@ -144,7 +144,7 @@ const overviewItems = [
     )}
 
     {hasFrameworks && (
-      <div class="sidebar-card">
+      <div class="card card-static sidebar-card">
         <h3 class="sidebar-heading">Frameworks Reviewed</h3>
         <ul class="framework-list">
           {page.frameworksReviewed!.map((fw) => (
@@ -158,7 +158,7 @@ const overviewItems = [
     )}
 
     {page.marketMechanisms && page.marketMechanisms.length > 0 && (
-      <div class="sidebar-card">
+      <div class="card card-static sidebar-card">
         <h3 class="sidebar-heading">Market Mechanisms</h3>
         <div class="tag-cloud">
           {page.marketMechanisms!.map((mech) => <span class="tag">{mech}</span>)}
@@ -200,12 +200,8 @@ const overviewItems = [
     color: var(--c-accent-300); font-weight: var(--font-medium);
   }
   .case-hero .breadcrumb a:hover { color: var(--c-accent-200); }
-  .case-hero .eyebrow-light {
-    color: var(--c-accent-300);
-  }
-  .case-hero .eyebrow-light::before { background: var(--c-accent-300); }
   .case-hero h1 {
-    color: #fff;
+    color: var(--color-text-inverse);
     font-size: clamp(1.75rem, 4vw, var(--text-4xl));
     max-width: 44rem;
     margin-bottom: var(--space-4);
@@ -226,13 +222,23 @@ const overviewItems = [
   }
   @media (min-width: 56rem) {
     .case-body-grid {
-      grid-template-columns: 1fr 20rem;
+      /* minmax(0, 1fr), not a bare 1fr — a bare `1fr` grid track's implicit
+         min-width is `auto` (its content's min-content size), not 0. At
+         1024px (this breakpoint's low end) .case-main's content min-content
+         width could exceed the space actually available once the 20rem
+         sidebar + 40px gap are subtracted, pushing .case-sidebar past the
+         container edge (confirmed via computed getBoundingClientRect() in
+         M7 baseline QA: ~18-33px horizontal overflow at exactly 1024px).
+         minmax(0, 1fr) lets the main column actually shrink to the
+         available space instead of forcing the grid wider than its
+         container. */
+      grid-template-columns: minmax(0, 1fr) 20rem;
       gap: var(--space-10);
       align-items: start;
     }
   }
   @media (min-width: 72rem) {
-    .case-body-grid { grid-template-columns: 1fr 22rem; }
+    .case-body-grid { grid-template-columns: minmax(0, 1fr) 22rem; }
   }
 
   /* ── Stats band ── */
@@ -360,11 +366,12 @@ const overviewItems = [
   @media (max-width: 55rem) {
     .case-sidebar { position: static; }
   }
+  /* .card-static provides the non-hover base recipe; padding (smaller than
+     .card's default) and background (surface, not surface-elevated) are
+     genuinely distinct here and kept as local overrides. */
   .sidebar-card {
     padding: var(--space-6);
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
   }
   .sidebar-heading {
     font-size: var(--text-sm);

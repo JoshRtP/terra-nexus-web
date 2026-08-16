@@ -75,7 +75,7 @@ const mode = getBuildMode();
         {data.offerings.map((offering, i) => (
           <article class="offering-card" id={`offering-${i + 1}`}>
             <div class="offering-header">
-              <span class="offering-number">{String(i + 1).padStart(2, '0')}</span>
+              <span class="numbered-index">{String(i + 1).padStart(2, '0')}</span>
               <div class="offering-title-area">
                 <h3>{offering.name}</h3>
                 <p class="offering-description">{offering.description}</p>
@@ -111,7 +111,7 @@ const mode = getBuildMode();
       </header>
       <div class="tag-row">
         {data.relatedExpertise.map((tag) => (
-          <a href={tag.href} class="segment-tag">{tag.label}</a>
+          <a href={tag.href} class="tag">{tag.label}</a>
         ))}
       </div>
     </div>
@@ -178,14 +178,10 @@ const mode = getBuildMode();
     padding: var(--space-8);
     align-items: flex-start;
   }
-  .offering-number {
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
+  .numbered-index {
     font-weight: var(--font-semibold);
-    color: var(--c-sky-600);
     flex-shrink: 0;
     min-width: 3rem;
-    line-height: 1;
     letter-spacing: -0.02em;
   }
   .offering-title-area { flex: 1; min-width: 0; }
@@ -249,21 +245,6 @@ const mode = getBuildMode();
     flex-wrap: wrap;
     gap: var(--space-2);
   }
-  .segment-tag {
-    display: inline-block;
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    transition: border-color var(--transition-fast), color var(--transition-fast);
-  }
-  .segment-tag:hover {
-    border-color: var(--c-sky-300);
-    color: var(--c-sky-600);
-  }
-
   /* Proof */
   .proof-text {
     color: var(--color-text-secondary);
@@ -275,8 +256,4 @@ const mode = getBuildMode();
     display: flex;
     justify-content: flex-start;
   }
-
-  /* CTA section */
-  .text-center { text-align: center; }
-  .text-center .hero-actions { justify-content: center; }
 </style>

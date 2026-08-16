@@ -43,7 +43,7 @@ const workstreams = [
       </header>
       <div class="workstream-grid">
         {workstreams.map((ws) => (
-          <article class="workstream-card">
+          <article class="card-plain">
             <h3>{ws.title}</h3>
             <ul class="bullet-list">
               {ws.items.map((item) => <li>{item}</li>)}
@@ -81,11 +81,11 @@ const workstreams = [
         <p class="section-lead">A single engagement may require strategy, finance, operations, sustainability, and environmental-market capabilities working together. Terra Nexus organizes the work around the client functions that own each decision while integrating the complete path to value.</p>
       </header>
       <div class="pathway-tags">
-        <span class="pathway-tag">Strategy</span>
-        <span class="pathway-tag">Investment</span>
-        <span class="pathway-tag">Operations</span>
-        <span class="pathway-tag">Sustainability</span>
-        <span class="pathway-tag">Environmental Markets</span>
+        <span class="tag">Strategy</span>
+        <span class="tag">Investment</span>
+        <span class="tag">Operations</span>
+        <span class="tag">Sustainability</span>
+        <span class="tag">Environmental Markets</span>
       </div>
     </div>
   </section>
@@ -103,14 +103,6 @@ const workstreams = [
 
 <style>
   .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 var(--space-4); }
-  .pathway-tag {
-    font-size: var(--text-sm);
-    padding: var(--space-3) var(--space-5);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-  }
   /* ── Our Approach ── */
   .workstream-grid {
     display: grid;
@@ -119,21 +111,6 @@ const workstreams = [
   }
   @media (min-width: 40rem) { .workstream-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .workstream-grid { grid-template-columns: repeat(3, 1fr); } }
-  .workstream-card {
-    padding: var(--space-8);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-  .workstream-card:hover {
-    border-color: var(--c-sky-300);
-    box-shadow: var(--shadow-md);
-  }
-  .workstream-card h3 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-4);
-  }
   .bullet-list {
     list-style: none;
     padding: 0;

@@ -15,6 +15,7 @@ import PullQuote from '../../components/mdx/PullQuote.astro';
 import RelatedContent from '../../components/mdx/RelatedContent.astro';
 import SourceBox from '../../components/mdx/SourceBox.astro';
 import Stat from '../../components/mdx/Stat.astro';
+import Video from '../../components/mdx/Video.astro';
 
 // On-demand, not static: same reasoning as src/pages/insights/index.astro —
 // publication visibility depends on request time, not build time.
@@ -56,6 +57,7 @@ const mdxComponents = {
   RelatedContent,
   SourceBox,
   Stat,
+  Video,
 };
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'America/Denver' });

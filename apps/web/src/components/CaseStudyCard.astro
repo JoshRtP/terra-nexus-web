@@ -8,7 +8,7 @@ interface Props {
 const { page } = Astro.props;
 ---
 
-<a href={page.route} class="case-study-card">
+<a href={page.route} class="card case-study-card">
   <article>
     <p class="eyebrow">{page.label}</p>
     <h2>{page.title}</h2>
@@ -20,21 +20,16 @@ const { page } = Astro.props;
 <style>
   .case-study-card {
     display: block; text-decoration: none; color: inherit;
-    padding: var(--space-8); background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
-    position: relative; overflow: hidden;
   }
+  /* .card's default top accent bar is --gradient-sky; case studies use the
+     maroon --gradient-accent instead — the one genuinely distinct part of
+     this card's recipe, kept as a local override. */
   .case-study-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: var(--gradient-accent); transform: scaleX(0); transform-origin: left;
-    transition: transform var(--transition-base);
+    background: var(--gradient-accent);
   }
   .case-study-card:hover {
-    border-color: var(--c-sky-300); box-shadow: var(--shadow-lg); transform: translateY(-2px);
     color: inherit;
   }
-  .case-study-card:hover::before { transform: scaleX(1); }
   .eyebrow {
     display: inline-flex; align-items: center; gap: var(--space-2);
     font-size: var(--text-xs); font-weight: var(--font-semibold);
