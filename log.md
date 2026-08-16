@@ -355,3 +355,116 @@ starting M7.
 * **M6 status: COMPLETE.**
 * **Next milestone: M7 — Expanded reusable visual/design system** (not
   started this session).
+
+## 2026-08-16 (Reconcile PR #3 site developments onto current main)
+
+PR #3 (`feature/homepage-nav-trial-and-team-review`) developed real
+site features before M4 (Tailwind foundation) and the M6 Cloudflare
+Workers Builds closeout landed, and had diverged from `main`. This
+session reconciled every intentional application change from that
+branch onto the current, post-M4/M6 architecture on a fresh branch
+(`feature/reconcile-pr3-site-developments`), rather than merging the
+stale branch directly. PR #3 itself and its source branch were left
+open/intact as historical reference — nothing was deleted or force-
+merged.
+
+* **Starting point**: created from `origin/main` (`07e80a7`, M4 merged).
+  Immediately merged in `origin/chore/m6-closeout` (PR #5, verified but
+  not yet merged to `main` at session start) so this branch's
+  documentation states current truth (M4 complete, M6 complete, M7
+  next) rather than the pre-closeout "M6 partial" wording still on
+  `main` — flagged per this session's own instructions rather than
+  silently worked around.
+* **Full PR #3 inventory** (5 commits on the old branch beyond its
+  merge-base with `origin/main`, plus one QA-screenshot/log commit not
+  ported — see below):
+  - **Footer copy fix** (`8f7cb3e`) — cherry-picked clean, no conflicts
+    (base state matched current `main` exactly). Mission-statement
+    sentence updated to the owner-provided copy; `sutainable` →
+    `sustainable` typo fixed.
+  - **Digital Solutions page** (`a9e288d`) — cherry-picked the page and
+    the homepage button-link change; the 4 stale pre-M4 QA screenshots
+    from that commit were intentionally dropped (superseded — captured
+    fresh ones instead, see below). `/digital-solutions/` uses
+    `PageHero`, so it automatically inherits M4's Tailwind-migrated
+    component (including the post-PR-#4-review cascade-layer fix) with
+    zero extra work. Referenced product-mockup image
+    (`terranexus-terrain-family-16x9-dark.png`) already exists on
+    `main` from an earlier session — no missing asset.
+  - **Nav trial + Back to Top** (`00f46ad`) — cherry-picked with one
+    real (clean, auto-merged) conflict: `SiteLayout.astro` had diverged
+    because M4 added the Tailwind CSS import there. Git's merge
+    resolved it correctly (M4's import block and PR #3's `BackToTop`
+    import/mount are on non-overlapping lines) — verified by reading
+    the resulting file, not just trusting the auto-merge.
+  - **Studio Executives / About page** (`cf20f45`) — cherry-picked
+    clean; the About page's pre-existing content was byte-identical
+    between PR #3's branch-point and current `main`, so this was a
+    pure addition.
+  - **NOT ported as-is**: PR #3's own `log.md` entry and its
+    `docs/architecture/web-platform-architecture.md` diff (stale M6
+    "partial"/M6.2-milestone-numbering language, written before M4/M6
+    closed) — the *intent* of that diff (documenting `/about`,
+    `/digital-solutions`, and the nav trial in §3) was reconciled
+    forward as fresh prose against the current document instead of
+    copied verbatim; see the "Document reconciled PR #3 routes/trial"
+    commit on this branch.
+* **Cascade-layer / Tailwind safety check** (per this session's explicit
+  scope): searched every reconciled file (`about/index.astro`,
+  `BackToTop.astro`, `digital-solutions/index.astro`, `Header.astro`)
+  for Tailwind utility classes — none use any (`card-grid`, `exec-grid-a`
+  etc. are pre-existing plain design-system class names, not Tailwind
+  utilities), so none of PR #3's restored styling can hit the
+  unlayered-vs-`@layer utilities` gotcha documented in M4's PR #4 review
+  fix. No opportunistic Tailwind migration was performed on any of this
+  restored code, per this task's explicit scope.
+* **Validation**: `npm run web:build` / `web:typecheck` (0 errors) /
+  `web:test` (25/25) / `npm run check` (pytest 25/25, skills sync,
+  content validate) all green after reconciliation.
+* **Browser QA**: manual interaction checks (this session) plus an
+  independent `visual-qa` subagent sweep, both against the reconciled
+  branch's dev server. Manually verified: top-nav links (`/#expertise`,
+  `/#capabilities`, `/#who-we-work-with`), corrected footer text, the
+  homepage "See our Digital Solutions" button → `/digital-solutions/`,
+  and Back to Top's actual scroll landing — on the homepage it lands at
+  `scrollY 823`, exactly `#expertise`'s offset (919px) minus its 96px
+  (`6rem`) `scroll-margin-top`; on `/about` it lands at `scrollY 0` (true
+  top). Zero console errors/warnings on every check. The independent
+  subagent then captured all 24 required screenshots (6 routes ×
+  4 viewports: `/`, `/digital-solutions/`, `/about/`, `/capabilities`,
+  `/expertise`, `/insights` at 1440/1024/768/390 — stored under
+  `artifacts/qa/reconcile-*.png`; stale PR #3 screenshots not carried
+  forward, per above) and independently confirmed: zero console
+  errors/warnings and zero broken/404 network requests across all 24
+  combinations; zero horizontal-overflow instances
+  (`scrollWidth > innerWidth` false everywhere); `/digital-solutions/`
+  hero/showcase-image/three "Coming Soon" cards all render correctly;
+  both About Studio Executives options (A "Photo Reveal", B
+  "Expertise-Linked") render with their "Draft for internal review" flag
+  visible; `/capabilities` and `/expertise` still resolve as full
+  standalone pages when navigated to directly (only the top-nav *links*
+  changed, not the routes themselves — footer nav still points at the
+  standalone routes too); footer text confirmed correct and
+  typo-free on every page checked.
+* **Cloudflare preview, PROVEN**: pushed
+  `feature/reconcile-pr3-site-developments` to origin. Workers Builds
+  produced a real GitHub check run (`conclusion: success`) with a
+  **distinct, unpromoted Version ID `49da8fb0-ea7f-4ee0-914d-5c2eea03f7c6`**
+  and a dedicated preview URL —
+  `https://49da8fb0-terra-nexus-web-preview.josh-242.workers.dev` (plus a
+  branch-name alias URL) — the `wrangler versions upload` shape, not
+  `wrangler deploy`. Verified live: `/` and `/digital-solutions/` both
+  200, `/digital-solutions/` `<title>` correct, `robots.txt` returns
+  `Disallow: /` (fully noindexed, correct preview-build behavior).
+  `wrangler deployments list` immediately after still ends at
+  `3aee1200-...` at 100% — **no new entry**, confirming the stable
+  `terra-nexus-web-preview` deployment was not touched. This branch was
+  not manually deployed over stable at any point.
+* **Scope discipline**: no M7 work started. PR #3 and
+  `feature/homepage-nav-trial-and-team-review` left open/intact, not
+  closed. This reconciliation branch is explicitly for owner review, not
+  an auto-merge — nav-anchor trial and Studio Executives layout choice
+  both remain undecided. Owner reviews the preview URL above and decides:
+  footer approved? Digital Solutions approved? Back to Top approved?
+  nav-anchor trial keep/revert/hybrid? Studio Executives option A/B/
+  hybrid? Once decided, a final integration PR can retire PR #3 safely.
