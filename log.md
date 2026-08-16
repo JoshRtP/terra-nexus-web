@@ -468,3 +468,71 @@ merged.
   footer approved? Digital Solutions approved? Back to Top approved?
   nav-anchor trial keep/revert/hybrid? Studio Executives option A/B/
   hybrid? Once decided, a final integration PR can retire PR #3 safely.
+
+## 2026-08-16 — M7 (session 1): design-system audit + card/tag/stat/CTA consolidation
+
+* **Scope of this session**: M7 is a large milestone (full spec in the
+  session brief covers layout primitives, section system, cards, stats,
+  CTA, PageHero evolution, every page family, editorial system,
+  Header/Footer/BackToTop, cleanup, and full responsive/a11y QA). This
+  session completed a real, verified first slice — Phase A (full audit)
+  and the highest-value part of Phase C (consolidating duplicated
+  card/tag/stat/CTA patterns the audit found) — not the full 35-point exit
+  criteria in one pass. Remaining M7 scope (page-family visual adoption
+  beyond what already used shared classes, PageHero variant work,
+  Header/Footer visual normalization, editorial typography pass, an
+  internal component showcase if warranted) is left for a follow-up M7
+  session, tracked against the same branch/PR.
+* **Audit findings** (`Explore` subagent, full repo read of
+  CapabilityPage/ExpertisePage/CaseStudyArticle/CaseStudyCard, all 13 mdx
+  components, About/Digital-Solutions/Capabilities/Expertise/Case-Studies/
+  Insights page families, layouts, foundation.css): found 5 independent
+  local reimplementations of `.card`'s base recipe, 2 identical
+  `.workstream-card` copy-pastes across unrelated files, 2 identical
+  `.eyebrow-light` copies, a `.btn-ghost` variant that existed in exactly
+  one component, 4 near-identical tag/pill implementations, 3 independent
+  stat displays with different type scales/colors, a real visual bug
+  (ExpertisePage's local `.cta-description` override silently rendering
+  that page's CTA copy in a different color than every other page), a
+  missing token (`--c-success-600`, silently backed by a hardcoded hex
+  fallback), a functional gap (the `Video` MDX component registered in
+  Keystatic but missing from `insights/[slug].astro`'s render map), and
+  confirmed (grep-verified) zero consumers for `foundation.css` /
+  `FoundationLayout.astro`.
+* **Primitives added** to `design-system.css`: `.eyebrow-light`,
+  `.btn-ghost`, `.card-static`, `.card-accent-start`, `.card-plain`,
+  `.tag`, `.numbered-index`, `.stat-value-accent`, `.stat-type`,
+  `--c-success-600`. All composable modifiers on top of the existing
+  `.card`/`.eyebrow`/`.btn`/`.stat-group` base recipes, not a second
+  competing system.
+* **Consumers migrated**: CaseStudyCard, CapabilityPage (offering-number,
+  segment-tag, dead duplicate `.text-center` removed), ExpertisePage
+  (eyebrow-light, cta-description bug fix, step-number, btn-ghost,
+  benefit-card, workstream-card, hardcoded-hex-to-token fixes),
+  CaseStudyArticle (eyebrow-light, sidebar-card, hardcoded-hex fix, plus
+  the `.case-body-grid` `1fr` → `minmax(0, 1fr)` overflow fix — a real
+  ~18-33px horizontal-overflow bug at exactly the 1024px QA viewport,
+  caught by M7 baseline QA, not present before this session), 
+  capabilities/index (workstream-card, pathway-tag), about/index
+  (exec-tags → `.tag` only — both Studio Executives review options
+  otherwise untouched), insights/[slug].astro (Video component
+  registered).
+* **Dead code removed** (grep-confirmed zero consumers before deletion):
+  `apps/web/src/styles/foundation.css`, `apps/web/src/layouts/FoundationLayout.astro`.
+* **Validation, all green**: `npm run web:build`, `npm run web:typecheck`
+  (75 files, 0 errors/warnings/hints), `npm run web:test` (25/25),
+  `npm run check` (OKF validator, tnx_validate, pytest 25/25, inventory
+  freshness, skills sync, content:validate). No `!important` introduced
+  anywhere.
+* **QA**: baseline screenshots captured before any change
+  (`artifacts/qa/m7-baseline/`, 45 images, 11 routes × 4 viewports,
+  zero console errors) via independent `visual-qa` subagent; after-QA
+  covering the same matrix plus targeted regression checks on the two
+  specific bug fixes above is running as a separate independent pass
+  (`artifacts/qa/m7-after/`).
+* **Branch/preview**: `feature/m7-visual-system`, created from
+  `origin/main` at `970dfcb` (confirmed clean, matching the expected PR #6
+  merge SHA — no drift). Pushed; Cloudflare Workers Builds produced a real
+  GitHub check run for the branch (non-production path — `wrangler
+  versions upload`, not `wrangler deploy` — stable `terra-nexus-web-preview`
+  untouched).

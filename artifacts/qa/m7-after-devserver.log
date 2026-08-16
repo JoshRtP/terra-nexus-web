@@ -1,0 +1,61 @@
+
+> @terra-nexus/web@0.2.0 dev
+> node scripts/run-astro.mjs dev --host
+
+[Terra Nexus] static foundation build mode: production
+[2m15:45:03[22m [34m[@astrojs/cloudflare][39m Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+[33m[1m15:45:03[22m [WARN] [router][39m The route "/api/keystatic/[...params]" is defined in both "src/lib/keystatic-cloudflare-shim.ts" and "../../node_modules/@keystatic/astro/internal/keystatic-api.js" using SSR mode. A dynamic SSR route cannot be defined more than once.
+[33m[1m15:45:03[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[vite] connected.
+[33m[1m15:45:04[22m [WARN] [vite][39m [2mDefault inspector port 9229 not available, using 9233 instead
+[22m
+[vite] connected.
+[2m15:45:04[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+X [ERROR] Could not resolve "virtual:keystatic-config"
+
+    ../../node_modules/@keystatic/astro/internal/keystatic-api.js:3:19:
+      3 │ import config from 'virtual:keystatic-config';
+        ╵                    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "virtual:keystatic-config" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+[31m[1m15:45:04[22m [ERROR] [vite][39m [31merror while updating dependencies:
+Error: [31mError during dependency optimization:
+
+[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "virtual:keystatic-config"[0m
+
+    ../../node_modules/@keystatic/astro/internal/keystatic-api.js:3:19:
+[37m      3 │ import config from [32m'virtual:keystatic-config'[37m;
+        ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  You can mark the path "virtual:keystatic-config" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+
+    at failureErrorWithLog (D:\2. Mirror Dev\Dev Projects\1. TNex-Web\node_modules\esbuild\lib\main.js:1748:15)
+    at D:\2. Mirror Dev\Dev Projects\1. TNex-Web\node_modules\esbuild\lib\main.js:1207:25
+    at D:\2. Mirror Dev\Dev Projects\1. TNex-Web\node_modules\esbuild\lib\main.js:1626:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+[2m15:45:13[22m [34m[types][39m Generated [2m8ms[22m
+[2m15:45:13[22m [34m[content][39m Syncing content
+[33m[1m15:45:13[22m [WARN] [glob-loader][39m No files found matching "*.mdx" in directory "src\content\case-studies"
+[2m15:45:13[22m [34m[content][39m Synced content
+[2m15:45:13[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[2m15:45:13[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[2m15:45:14[22m [34m[vite][39m Port 4321 is in use, trying another one...
+[2m15:45:14[22m [34m[vite][39m Port 4322 is in use, trying another one...
+[42m[1m astro [22m[49m [32mv6.4.6[39m [2mready in[22m 12221 [2mms[22m
+[2m┃[22m Local    [36mhttp://localhost:4323/[39m
+[2m┃[22m Network  [36mhttp://10.7.0.1:4323/[39m
+           [36mhttp://10.0.0.199:4323/[39m
+[2m15:45:14[22m [32mwatching for file changes...[39m
+[Terra Nexus] OKF compiler: 105 scanned, 1 production-eligible.
+[2m15:45:17[22m [34m[200][39m /case-studies/commercial-pathways-lower-emissions-beef-2025/ [2m110ms[22m
+[33m[1m15:45:17[22m [WARN] [vite][39m The Workers runtime crashed unexpectedly and is being restarted (crash #1). Any additional runtime output above may indicate the cause.
+npm error Lifecycle script `dev` failed with error:
+npm error code 143
+npm error path D:\2. Mirror Dev\Dev Projects\1. TNex-Web\apps\web
+npm error workspace @terra-nexus/web@0.2.0
+npm error location D:\2. Mirror Dev\Dev Projects\1. TNex-Web\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c node scripts/run-astro.mjs dev --host
+Terminated

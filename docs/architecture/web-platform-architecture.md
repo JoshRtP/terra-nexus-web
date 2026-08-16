@@ -288,6 +288,52 @@ No CSS was deleted in M4. `design-system.css` and `foundation.css` are both
 retained exactly as they were before this session, other than the new
 `tailwind.css` file and `PageHero.astro`'s style-to-utility conversion.
 
+### 5.2 M7 session 1 — component consolidation (2026-08-16)
+
+M7's full scope (per its session brief) is large: layout/section primitives,
+button/card/stat/CTA vocabulary, PageHero evolution, every page family,
+editorial system, Header/Footer/BackToTop, cleanup, full responsive/a11y
+QA. Session 1 completed a full repository audit (every component and page
+family read and classified) plus the highest-value consolidation it
+surfaced — real duplication, not speculative refactoring. See `log.md`'s
+2026-08-16 M7 entry for the full record; summary:
+
+- Layout/section primitives from M4/pre-M4 (`.container`, `.section*`,
+  `.section-header`, `.eyebrow`) were confirmed still canonical — no gap,
+  no changes needed.
+- Five independent local reimplementations of `.card`'s base recipe
+  (CaseStudyCard, CapabilityPage offering-card, ExpertisePage benefit-card,
+  two identical `.workstream-card` copies, CaseStudyArticle sidebar-card)
+  consolidated onto `.card` plus three new composable modifiers
+  (`.card-static`, `.card-accent-start`, `.card-plain`) — same visual
+  recipes, one shared definition each instead of up to five.
+- Four near-identical tag/pill implementations consolidated onto one
+  `.tag` class; two identical "numbered index" implementations onto
+  `.numbered-index`; a single-component `.btn-ghost` and duplicated
+  `.eyebrow-light` promoted to the shared button/eyebrow system.
+- Two real bugs fixed in the process, not just style debt: ExpertisePage
+  had a local `.cta-description` override silently rendering that page's
+  CTA copy in a different color than every other page (removed — now uses
+  the shared global rule); `CaseStudyArticle`'s `.case-body-grid` used a
+  bare `1fr` main column (implicit min-width `auto`, not `0`), which
+  overflowed the container by ~18-33px at exactly the 1024px QA viewport —
+  caught by M7's own baseline QA pass, fixed with `minmax(0, 1fr)`.
+- `foundation.css` / `FoundationLayout.astro` (flagged possibly-dead at
+  M4, §5.1 category E) — re-verified zero consumers via grep, then
+  removed.
+- Full validation green: `web:build`, `web:typecheck` (0 errors/warnings),
+  `web:test` (25/25), `npm run check` (OKF + tnx_validate + pytest 25/25 +
+  inventory + skills sync). No `!important` introduced. Baseline QA
+  (`artifacts/qa/m7-baseline/`) captured before changes; after-QA
+  (`artifacts/qa/m7-after/`) verifies the two bug fixes plus general
+  non-regression across the same 11-route × 4-viewport matrix.
+- Not yet done (explicitly out of scope for session 1, not overlooked):
+  page-family visual adoption beyond what already used shared classes,
+  PageHero variant work for narrative/dark-hero page types, Header/Footer
+  visual normalization pass, editorial/MDX typography pass, an internal
+  component showcase (optional per the M7 brief). See `log.md` for the
+  full list.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
@@ -626,7 +672,7 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
 | M6 — GitHub-backed production Keystatic workflow + Cloudflare Git auto-deploy (**COMPLETE, 2026-08-16**) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Git auto-deploy connected and proven end-to-end 2026-08-16** (owner completed the Cloudflare dashboard connection; this session verified it, not assumed): merging PR #4 to `main` at commit `07e80a7` triggered a real GitHub check run (`Workers Builds: terra-nexus-web-preview`, Cloudflare's own GitHub App, `conclusion: success`) that deployed Version ID `3aee1200` and promoted it to the stable `terra-nexus-web-preview` Worker at 100% — confirmed via `wrangler deployments list` and live routes (`/`, `/insights`, `/keystatic` all 200; `/homepage-alt` 301→`/`). A throwaway branch (`test/m6-workers-build-preview`, deleted after the test) proved the non-production path separately: its build produced a distinct, unpromoted Version ID (`107b0bf4`) with its own preview URL (`noindex` `robots.txt`, confirmed serving), while `wrangler deployments list` showed no new 100% entry — the stable deployment (`3aee1200`) and its `robots.txt` (indexable) were unchanged throughout. Full record: §11 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
-| M7 — Expanded reusable visual/design system (**NEXT**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation |
+| M7 — Expanded reusable visual/design system (**IN PROGRESS**, session 1 landed 2026-08-16 on `feature/m7-visual-system`) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation. Session 1: full repo audit + card/tag/stat/CTA primitive consolidation — see §5.2 and `log.md`'s 2026-08-16 M7 entry. Remaining scope (page-family visual adoption, PageHero variants, Header/Footer normalization, editorial typography pass) tracked for a follow-up session against the same branch |
 | M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
 | M9 — Cinematic homepage hero + GSAP/motion system (reordered after M8, 2026-08-16) | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA, applied to the settled post-M8 content/IA |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
