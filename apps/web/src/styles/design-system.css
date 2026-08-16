@@ -70,6 +70,14 @@
   --c-error-500: #ef4444;
   --c-error-700: #b91c1c;
 
+  /* --c-success-600 — added M7. ExpertisePage.astro's outcome-status styling
+     was already using `var(--c-success-600, #16a34a)`/`var(--c-success-700,
+     #15803d)` as a literal-hex CSS custom-property fallback because this
+     step didn't exist; --c-success-700 did. Adding the missing step here
+     removes the silent hardcoded-hex dependency without changing the
+     rendered color (fallback value and this token are the same #16a34a). */
+  --c-success-600: #16a34a;
+
   /* Semantic tokens */
   --color-bg: #ffffff;
   --color-surface: #f3f8fa;
@@ -337,6 +345,17 @@ ul, ol { margin: 0; padding: 0; }
   border-radius: var(--radius-full);
 }
 
+/* Eyebrow — light variant, for use over dark/photo surfaces (narrative
+   heroes, dark CTA banners). M7: consolidated from two independent,
+   identically-named local copies (ExpertisePage.astro, CaseStudyArticle.astro)
+   into one canonical modifier — same values both had. */
+.eyebrow-light {
+  color: var(--c-accent-300);
+}
+.eyebrow-light::before {
+  background: var(--c-accent-300);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -387,6 +406,21 @@ ul, ol { margin: 0; padding: 0; }
   border-color: var(--c-sky-500);
 }
 
+/* Ghost — third button variant, for CTAs sitting directly on a dark photo/
+   gradient hero where .btn-secondary's default border would disappear.
+   M7: promoted from a single component-local implementation
+   (ExpertisePage.astro) to the canonical button system. */
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
 /* Cards */
 .card-grid {
   display: grid;
@@ -431,6 +465,77 @@ ul, ol { margin: 0; padding: 0; }
 .card-link { display: block; text-decoration: none; color: inherit; }
 .card-link:hover { color: inherit; }
 .card-link .card { height: 100%; }
+
+/* Card modifiers — M7. The audit found five independent local
+   reimplementations of .card's base recipe (background/border/radius, plus
+   assorted hover treatments) across CaseStudyCard, CapabilityPage,
+   ExpertisePage, capabilities/index, and CaseStudyArticle. Rather than one
+   component with many props, .card keeps its default (top accent bar +
+   hover-lift, for clickable/interactive cards) and gains two composable
+   modifiers for the two real variations found in practice — both apply on
+   top of the base .card recipe, not instead of it. */
+
+/* .card-static — no hover-lift, no accent bar. For non-interactive info
+   panels (case-study sidebar facts, static content containers). */
+.card-static {
+  transition: none;
+}
+.card-static::before { display: none; }
+.card-static:hover {
+  border-color: var(--color-border);
+  box-shadow: none;
+  transform: none;
+}
+
+/* .card-accent-start — left accent border instead of the top accent bar,
+   no lift. For dense benefit/outcome lists where a top bar per card reads
+   as too heavy. */
+.card-accent-start {
+  border-inline-start: 3px solid var(--c-sky-300);
+  transition: border-color var(--transition-base);
+}
+.card-accent-start::before { display: none; }
+.card-accent-start:hover {
+  border-color: var(--color-border);
+  border-inline-start-color: var(--c-sky-500);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Tag / pill — M7. Consolidated from four near-identical local
+   implementations (segment-tag, pathway-tag, exec-tags a, tag) that all
+   built the same rounded-pill-with-border-hover-to-sky treatment. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: color var(--transition-fast), background var(--transition-fast),
+              border-color var(--transition-fast);
+}
+a.tag:hover {
+  color: var(--c-sky-700);
+  background: var(--c-sky-50);
+  border-color: var(--c-sky-300);
+}
+
+/* Numbered index — M7. Consolidated from two identical local
+   implementations (CapabilityPage's offering-number, ExpertisePage's
+   step-number) of the same "large serif index numeral" treatment. */
+.numbered-index {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  color: var(--c-sky-600);
+  line-height: 1;
+}
 
 /* Accordion */
 .accordion {
@@ -501,6 +606,21 @@ ul, ol { margin: 0; padding: 0; }
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   margin-top: var(--space-2);
+}
+/* M7: three independent stat implementations existed (homepage stat-strip,
+   CaseStudyArticle stats-band, mdx Stat.astro) with different type scales
+   and accent colors. .stat-group/.stat-value/.stat-label above is the
+   canonical pair; these two additions cover the real variations found
+   without forking the base recipe again. */
+.stat-value-accent { color: var(--c-sky-600); }
+.stat-type {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-sky-600);
+  margin-bottom: var(--space-1);
 }
 
 /* Page hero */
@@ -594,6 +714,33 @@ ul, ol { margin: 0; padding: 0; }
 .section-dark .btn-secondary:hover {
   background: rgba(19, 31, 72, 0.06);
   border-color: var(--color-dark);
+}
+
+/* Workstream card — M7. Was byte-for-byte duplicated in two scoped <style>
+   blocks (ExpertisePage.astro, capabilities/index.astro): same padding/
+   background/border/radius/hover/h3 sizing, just copy-pasted twice.
+   Promoted to the shared system since it's the same recipe as .card without
+   the accent bar — expressed here as a .card modifier so both consumers
+   drop their local copies without a visual change. */
+.card-plain {
+  padding: var(--space-6);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.card-plain:hover {
+  border-color: var(--c-sky-300);
+  box-shadow: var(--shadow-md);
+}
+.card-plain h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+}
+.card-plain p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--line-relaxed);
 }
 
 /* Diagram */
