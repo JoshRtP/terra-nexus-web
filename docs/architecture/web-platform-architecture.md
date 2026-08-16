@@ -138,6 +138,94 @@ preserving before OKF is retired.
   starts on the homepage hero (M9, reordered after M8 content/SEO migration
   — see §9), not preemptively.
 
+### 5.1 Tailwind v4 (M4, 2026-08-16) — integration, token strategy, CSS inventory
+
+**Integration.** `tailwindcss@4.3.3` + `@tailwindcss/vite@4.3.3`, wired into
+`astro.config.ts` via `vite.plugins` — the current official integration
+path for Astro `>=5.2.0`/Vite-based projects (confirmed against current
+Astro and Tailwind docs, not memorized syntax); it replaces the older
+`@astrojs/tailwind` integration, which is deprecated for Tailwind v4. No
+`astro.config` integrations-array entry is needed; Tailwind hooks in purely
+through Vite plus a plain `@import "tailwindcss"` in a stylesheet.
+
+**Token strategy — CSS-first bridge, not a second source of truth.**
+`apps/web/src/styles/tailwind.css` uses Tailwind v4's `@theme inline` to
+*alias* existing `design-system.css` custom properties into Tailwind's
+theme namespace, all prefixed `tn-` (e.g. `--color-tn-accent: var(--color-accent)`)
+so generated utilities (`bg-tn-accent`, `text-tn-primary-500`, `rounded-tn-lg`,
+`shadow-tn-md`, `font-tn-serif`, …) resolve to the exact same CSS custom
+property `design-system.css` already defines — no raw values are
+duplicated. `design-system.css` remains the single source of design-token
+truth; a new token is always added there first, then optionally exposed in
+`tailwind.css` if a component actually needs the utility form. The `tn-`
+prefix is deliberate: it keeps bridged tokens visually distinct from
+Tailwind's own built-in scale and prevents silently redefining defaults
+other future Tailwind usage might assume (`rounded-lg`, `shadow-md`, etc.
+still mean Tailwind's own defaults, not Terra Nexus's).
+
+Two scales are deliberately **not** bridged, because they already interop
+without one: spacing (`design-system.css`'s `--space-*` scale is
+numerically identical to Tailwind's default spacing scale at every shared
+step — `--space-4`/Tailwind's `4` are both `1rem`, confirmed value-by-value)
+and max-widths (still served by the existing `.container`/`.text-container`/
+`.narrow-container` classes — Tailwind v4's `--container-*` namespace has
+different semantics from a plain max-width scale; real utility coverage
+here is M7 scope, not guessed at now).
+
+**Representative migration.** `PageHero.astro` — small, shared across every
+Capability/Expertise/case-study page — was converted from a scoped
+`<style>` block to Tailwind utilities backed by the `tn-` bridge, proving
+the pattern with a pixel-identical visual result (including using
+`leading-[var(--line-relaxed)]` instead of Tailwind's built-in
+`leading-relaxed`, because Tailwind's value, 1.625, differs from
+`design-system.css`'s `--line-relaxed`, 1.7). No other component/page was
+migrated in M4 — see CLAUDE.md/this session's boundary discussion; wider
+coverage is M7 scope.
+
+**CSS inventory (`design-system.css`, 627 lines; `foundation.css`, 211
+lines) — classified, not purged:**
+
+- **A. Canonical design tokens** — `design-system.css` `:root` block
+  (color ramps, semantic colors, typography, spacing, radii, shadows,
+  transitions, gradients). Now also the source the Tailwind `tn-` bridge
+  reads from. Keep indefinitely; this is the token source of truth.
+- **B. Global/base rules still needed** — `design-system.css`'s
+  `*`/`html`/`body`/heading/link/`img`/list resets, `.sr-only`,
+  `.skip-link`, reduced-motion block. Still load on every page via
+  `SiteLayout.astro`; not superseded by Tailwind's preflight (which loads
+  in a CSS layer and always loses to this unlayered CSS — see the
+  `SiteLayout.astro` import comment). Keep.
+- **C. Reusable component patterns (candidates for M7 Tailwind coverage)**
+  — `.container`/`.text-container`/`.narrow-container`, `.section`/
+  `.section-alt`/`.section-dark`, `.eyebrow`, `.btn`/`.btn-primary`/
+  `.btn-secondary`, `.card`/`.card-grid`, `.accordion*`, `.stat-group`/
+  `.stat-value`/`.stat-label`, `.page-hero` (now only referenced by
+  `PageHero.astro`'s wrapper classes, not its own scoped styles),
+  `.diagram-container`. All still actively used across the site (Header,
+  Footer, CapabilityPage, ExpertisePage, CaseStudyArticle,
+  CaseStudyCard, MDX components) — not touched in M4, real candidates for
+  M7's expanded component vocabulary.
+- **D. Page-specific/legacy CSS (later migration)** — none found as bare
+  page-level `<style>` blocks outside components; page-specific styling in
+  this repo already lives in per-component scoped `<style>` blocks
+  (`Header.astro`, `Footer.astro`, etc.), which is consistent with rule 2
+  in CLAUDE.md, not legacy debt. Revisit these component-scoped blocks
+  individually as M7 candidates, the same way `PageHero.astro` was handled
+  in M4.
+- **E. Genuinely dead CSS** — `apps/web/src/styles/foundation.css`
+  (211 lines) is imported by exactly one file, `FoundationLayout.astro`,
+  which is itself imported by zero pages or components (confirmed via
+  repo-wide search). Both appear to predate `design-system.css`/
+  `SiteLayout.astro` and are dead code today. **Not removed in M4** — this
+  is unrelated to the Tailwind migration and removing a whole
+  layout+stylesheet deserves its own reviewed change, not a drive-by
+  deletion inside an M4 commit. Flagged here for a future cleanup pass
+  (M7 or sooner, owner's call).
+
+No CSS was deleted in M4. `design-system.css` and `foundation.css` are both
+retained exactly as they were before this session, other than the new
+`tailwind.css` file and `PageHero.astro`'s style-to-utility conversion.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
