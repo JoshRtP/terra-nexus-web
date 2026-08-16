@@ -1,0 +1,118 @@
+/*
+  Terra Nexus — Tailwind v4 token bridge (M4, added 2026-08-16).
+
+  design-system.css remains the single source of truth for raw brand
+  values (colors, type, radii, shadows). This file does not duplicate any
+  of those values — it uses Tailwind v4's CSS-first `@theme inline` to
+  *alias* the existing custom properties into Tailwind's theme namespace,
+  so `bg-tn-accent`, `text-tn-primary-500`, etc. resolve to
+  `var(--color-accent)` / `var(--c-primary-500)` at the CSS level. Add a
+  token to design-system.css first; only expose it here if a component
+  actually needs the Tailwind utility form. See
+  docs/architecture/web-platform-architecture.md §5 and the
+  terra-nexus-design-system skill.
+
+  All bridged keys are prefixed `tn-` to keep them visually distinct from
+  Tailwind's own built-in scale and avoid silently overriding defaults.
+  Two scales are deliberately NOT bridged because they already interop
+  without one:
+    - Spacing: design-system.css's --space-* values (0.25rem, 0.5rem, ...,
+      10rem on an 8px-aligned scale) are numerically identical to
+      Tailwind's default spacing scale at the same step numbers (p-4 =
+      1rem in both systems) — Tailwind's built-in spacing utilities
+      already match Terra Nexus spacing with no bridge needed.
+    - Max-widths: still served by the existing `.container` /
+      `.text-container` / `.narrow-container` classes in design-system.css
+      (Tailwind v4's `--container-*` namespace has different semantics
+      from a plain max-width scale) — revisit if/when M7 justifies utility
+      coverage here.
+*/
+@import 'tailwindcss';
+
+@theme inline {
+  /* Brand color ramps (see design-system.css for the documented rationale
+     behind each ramp — primary is the live-site button maroon, sky is the
+     signature light-blue support color, accent is the gold ramp). */
+  --color-tn-primary-50: var(--c-primary-50);
+  --color-tn-primary-100: var(--c-primary-100);
+  --color-tn-primary-200: var(--c-primary-200);
+  --color-tn-primary-300: var(--c-primary-300);
+  --color-tn-primary-400: var(--c-primary-400);
+  --color-tn-primary-500: var(--c-primary-500);
+  --color-tn-primary-600: var(--c-primary-600);
+  --color-tn-primary-700: var(--c-primary-700);
+  --color-tn-primary-800: var(--c-primary-800);
+  --color-tn-primary-900: var(--c-primary-900);
+
+  --color-tn-sky-50: var(--c-sky-50);
+  --color-tn-sky-100: var(--c-sky-100);
+  --color-tn-sky-200: var(--c-sky-200);
+  --color-tn-sky-300: var(--c-sky-300);
+  --color-tn-sky-400: var(--c-sky-400);
+  --color-tn-sky-500: var(--c-sky-500);
+  --color-tn-sky-600: var(--c-sky-600);
+  --color-tn-sky-700: var(--c-sky-700);
+
+  --color-tn-gold-50: var(--c-accent-50);
+  --color-tn-gold-100: var(--c-accent-100);
+  --color-tn-gold-200: var(--c-accent-200);
+  --color-tn-gold-300: var(--c-accent-300);
+  --color-tn-gold-400: var(--c-accent-400);
+  --color-tn-gold-500: var(--c-accent-500);
+  --color-tn-gold-600: var(--c-accent-600);
+
+  /* Semantic tokens — mirror design-system.css's :root names 1:1 so the
+     mapping stays obvious at a glance. */
+  --color-tn-bg: var(--color-bg);
+  --color-tn-surface: var(--color-surface);
+  --color-tn-surface-alt: var(--color-surface-alt);
+  --color-tn-surface-elevated: var(--color-surface-elevated);
+  --color-tn-border: var(--color-border);
+  --color-tn-border-strong: var(--color-border-strong);
+
+  --color-tn-text: var(--color-text);
+  --color-tn-text-secondary: var(--color-text-secondary);
+  --color-tn-text-muted: var(--color-text-muted);
+  --color-tn-text-inverse: var(--color-text-inverse);
+
+  --color-tn-link: var(--color-link);
+  --color-tn-link-hover: var(--color-link-hover);
+
+  --color-tn-eyebrow: var(--color-eyebrow);
+  --color-tn-eyebrow-hover: var(--color-eyebrow-hover);
+
+  --color-tn-accent: var(--color-accent);
+  --color-tn-accent-hover: var(--color-accent-hover);
+  --color-tn-accent-bg: var(--color-accent-bg);
+  --color-tn-accent-border: var(--color-accent-border);
+  --color-tn-accent-soft: var(--color-accent-soft);
+
+  --color-tn-focus: var(--color-focus);
+  --color-tn-dark: var(--color-dark);
+  --color-tn-dark-surface: var(--color-dark-surface);
+  --color-tn-dark-border: var(--color-dark-border);
+
+  /* Typography */
+  --font-tn-sans: var(--font-sans);
+  --font-tn-serif: var(--font-serif);
+
+  /* Radius — Tailwind's own --radius-* default scale exists independently;
+     bridging under tn- avoids silently redefining `rounded-lg` etc. to a
+     different value than the rest of the ecosystem expects. */
+  --radius-tn-xs: var(--radius-xs);
+  --radius-tn-sm: var(--radius-sm);
+  --radius-tn-md: var(--radius-md);
+  --radius-tn-lg: var(--radius-lg);
+  --radius-tn-xl: var(--radius-xl);
+  --radius-tn-2xl: var(--radius-2xl);
+  --radius-tn-full: var(--radius-full);
+
+  /* Shadows — same rationale as radius above. */
+  --shadow-tn-xs: var(--shadow-xs);
+  --shadow-tn-sm: var(--shadow-sm);
+  --shadow-tn-md: var(--shadow-md);
+  --shadow-tn-lg: var(--shadow-lg);
+  --shadow-tn-xl: var(--shadow-xl);
+  --shadow-tn-2xl: var(--shadow-2xl);
+  --shadow-tn-accent: var(--shadow-accent);
+}

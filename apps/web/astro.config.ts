@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 import cloudflare from '@astrojs/cloudflare';
+import tailwindcss from '@tailwindcss/vite';
 
 const buildMode = process.env.TNX_BUILD_MODE === 'preview' ? 'preview' : 'production';
 
@@ -86,6 +87,17 @@ export default defineConfig({
   server: {
     host: true,
     port: 4321,
+  },
+  // Tailwind v4 (M4, added 2026-08-16) — the official Vite plugin
+  // (@tailwindcss/vite) is current recommended practice for Astro
+  // >=5.2.0/Vite-based projects, replacing the older @astrojs/tailwind
+  // integration (deprecated for Tailwind v4). No astro.config integrations
+  // entry needed; Tailwind hooks in purely through Vite via `@import
+  // "tailwindcss"` in src/styles/tailwind.css. See
+  // src/styles/tailwind.css and docs/architecture/web-platform-architecture.md
+  // §5 for the token-bridge strategy.
+  vite: {
+    plugins: [tailwindcss()],
   },
   integrations: [
     mdx(),

@@ -26,10 +26,17 @@ description: Brand tokens, typography, spacing, imagery and component vocabulary
    add it to the shared stylesheet, don't invent a local one-off.
 2. No page-specific style blocks that duplicate an existing pattern (card,
    stat, CTA, callout). Extend the shared component/class instead.
-3. Tailwind is not yet installed (target architecture, not current state —
-   see `docs/architecture/web-platform-architecture.md` M2). Until it lands,
-   keep using the existing plain-CSS token system consistently; don't start
-   a parallel utility-class system by hand.
+3. Tailwind v4 landed in M4 (2026-08-16), via `@tailwindcss/vite` and a
+   CSS-first `@theme inline` bridge in `apps/web/src/styles/tailwind.css`
+   that aliases existing `design-system.css` custom properties into
+   Tailwind's theme namespace (prefixed `tn-` to avoid colliding with
+   Tailwind's own default scale) — no token values are duplicated.
+   `design-system.css` stays the single source of truth for raw values; add
+   new tokens there first, then expose them in `tailwind.css` only if a
+   utility is actually needed. Adoption is progressive (M4 proved the
+   pattern on one representative component; M7 expands coverage) — most
+   existing plain-CSS component/page styles are untouched and that's
+   expected, not a gap.
 4. Responsive behavior is a component-level decision — design each
    surface's desktop/tablet/mobile behavior explicitly, don't rely on
    generic breakpoints copy-pasted from elsewhere without checking they fit.

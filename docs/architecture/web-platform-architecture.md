@@ -1,7 +1,7 @@
 ---
 title: "Terra Nexus Web Platform Architecture (repo-native)"
 status: "Target architecture, adopted incrementally"
-updated: "2026-08-12"
+updated: "2026-08-16"
 supersedes_reference: "Terra_Nexus_Astro_Keystatic_Cloudflare_Architecture.md (owner-supplied source doc)"
 ---
 
@@ -25,11 +25,11 @@ for what has migrated and what remains.
 | --- | --- | --- |
 | Frontend | Astro 6.4.6, static output, zero integrations | Astro (unchanged) |
 | Interactive UI | None — no React/Vue/Svelte in the repo | React islands, added only where a component needs client state |
-| Styling | Hand-written CSS (`design-system.css`, `foundation.css`) | Tailwind CSS backed by the same design tokens |
+| Styling | Hand-written CSS (`design-system.css`, `foundation.css`) plus Tailwind CSS v4 (M4, this session) bridged to the same design tokens via a CSS-first `@theme` layer | Tailwind coverage expands progressively (M7); `design-system.css` remains the token source of truth |
 | Motion | Plain CSS transitions only | GSAP for cinematic/scroll sequences; CSS for simple motion |
-| Content | Keystatic + MDX (local storage) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
+| Content | Keystatic + MDX (GitHub storage mode live, M6) for Posts/Authors/Topics, live under `apps/web/src/content/`, bridged via Astro Content Collections. Bespoke OKF pipeline reading `knowledge/` (repo root) still powers Case Studies only — retained temporarily as migration source, see `AGENTS.md` | Keystatic + MDX as the sole canonical CMS; OKF retired once remaining content/validation logic migrates |
 | Repo/source of truth | GitHub (`JoshRtP/terra-nexus-web`, branch `main`; legacy history preserved read-only at `JoshRtP/Webservices`) | Unchanged |
-| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed, static output, `wrangler dev` verified locally; not yet deployed (owner Cloudflare auth pending) | Cloudflare Workers (preview live) |
+| Hosting | `@astrojs/cloudflare@13.7.0` adapter installed and deployed (M5, 2026-08-12) to the non-production Worker `terra-nexus-web-preview`; repository-owned `apps/web/wrangler.jsonc` pins the Worker name (M6 close-out). Manual `wrangler deploy`/`wrangler versions upload` confirmed working end-to-end against the real Cloudflare account. Cloudflare dashboard Git auto-deploy connection (§11) is the one piece not yet verified from this environment — see §9 M6 status | Cloudflare Workers (preview live; Git auto-deploy owner action outstanding) |
 | Large files | Everything in `public/`, including a 16MB reference PNG | Cloudflare R2 for large/reusable assets |
 | Video | None in repo yet | Cloudflare Stream for substantial video |
 | App data | None | Cloudflare D1, only if/when a real relational-data need appears |
@@ -135,35 +135,157 @@ preserving before OKF is retired.
   reinvent them. See also `knowledge` brand references and
   `brand/brand-color-palette.md` if present.
 - GSAP is not installed. Add it only when cinematic/scroll work actually
-  starts on the homepage hero (M8), not preemptively.
+  starts on the homepage hero (M9, reordered after M8 content/SEO migration
+  — see §9), not preemptively.
+
+### 5.1 Tailwind v4 (M4, 2026-08-16) — integration, token strategy, CSS inventory
+
+**Integration.** `tailwindcss@4.3.3` + `@tailwindcss/vite@4.3.3`, wired into
+`astro.config.ts` via `vite.plugins` — the current official integration
+path for Astro `>=5.2.0`/Vite-based projects (confirmed against current
+Astro and Tailwind docs, not memorized syntax); it replaces the older
+`@astrojs/tailwind` integration, which is deprecated for Tailwind v4. No
+`astro.config` integrations-array entry is needed; Tailwind hooks in purely
+through Vite plus a plain `@import "tailwindcss"` in a stylesheet.
+
+**Token strategy — CSS-first bridge, not a second source of truth.**
+`apps/web/src/styles/tailwind.css` uses Tailwind v4's `@theme inline` to
+*alias* existing `design-system.css` custom properties into Tailwind's
+theme namespace, all prefixed `tn-` (e.g. `--color-tn-accent: var(--color-accent)`)
+so generated utilities (`bg-tn-accent`, `text-tn-primary-500`, `rounded-tn-lg`,
+`shadow-tn-md`, `font-tn-serif`, …) resolve to the exact same CSS custom
+property `design-system.css` already defines — no raw values are
+duplicated. `design-system.css` remains the single source of design-token
+truth; a new token is always added there first, then optionally exposed in
+`tailwind.css` if a component actually needs the utility form. The `tn-`
+prefix is deliberate: it keeps bridged tokens visually distinct from
+Tailwind's own built-in scale and prevents silently redefining defaults
+other future Tailwind usage might assume (`rounded-lg`, `shadow-md`, etc.
+still mean Tailwind's own defaults, not Terra Nexus's).
+
+Two scales are deliberately **not** bridged, because they already interop
+without one: spacing (`design-system.css`'s `--space-*` scale is
+numerically identical to Tailwind's default spacing scale at every shared
+step — `--space-4`/Tailwind's `4` are both `1rem`, confirmed value-by-value)
+and max-widths (still served by the existing `.container`/`.text-container`/
+`.narrow-container` classes — Tailwind v4's `--container-*` namespace has
+different semantics from a plain max-width scale; real utility coverage
+here is M7 scope, not guessed at now).
+
+**Representative migration.** `PageHero.astro` — shared by the
+`/capabilities`, `/expertise`, `/insights`, `/about`, `/contact`,
+`/case-studies`, and `/who-we-work-with` index pages (individual
+Capability/Expertise sub-pages use the separate `CapabilityPage.astro`/
+`ExpertisePage.astro` components, not `PageHero`) — was converted from a
+scoped `<style>` block to Tailwind utilities backed by the `tn-` bridge,
+proving the pattern with a pixel-identical visual result (including using
+`leading-[var(--line-relaxed)]` instead of Tailwind's built-in
+`leading-relaxed`, because Tailwind's value, 1.625, differs from
+`design-system.css`'s `--line-relaxed`, 1.7). No other component/page was
+migrated in M4 — see CLAUDE.md/this session's boundary discussion; wider
+coverage is M7 scope.
+
+**Cascade-layer correction (post-PR-#4-review, same day).** The first pass
+above used plain `mb-4`/`mb-5` utilities on the eyebrow/h1, which is
+wrong: Tailwind v4 emits every utility inside `@layer utilities`, and per
+the CSS cascade-layers spec, any unlayered declaration always beats any
+layered one for the same property — regardless of selector specificity or
+source order. `design-system.css` has two unlayered rules that collide
+here (`.eyebrow`'s own `margin-bottom: var(--space-3)`, and the global
+`h1,h2,...{ margin: 0 }` reset), so those utilities were silently losing.
+Confirmed with real computed styles, not inferred: pre-M4 `main` had
+`margin-bottom: 16px`/`20px` on `/capabilities`; this branch had `12px`/
+`0px` at every viewport (1440/1024/768/390) before the fix. Fixed by
+reintroducing a two-rule scoped `<style>` block in `PageHero.astro` for
+just those two properties (the same mechanism — Astro's unlayered,
+higher-specificity scoping attribute — the pre-M4 component already used
+to win against the same global rules); `!important` and moving all of
+`design-system.css` into layers were both rejected as the wrong general
+pattern or too large a change for this fix. A second review claim (that
+the component also lost `design-system.css`'s `@media (max-width: 48rem)
+{ .page-hero { padding-block: ... } }` mobile padding reduction) was
+checked the same way and found **false**: the pre-M4 scoped style had
+already been winning that same media query via the identical specificity
+mechanism, so mobile padding was unconditionally `80px`/`64px` on `main`
+too — not a regression, left unchanged, documented in a code comment.
+This is a real gotcha any further Tailwind-utility migration in this repo
+can hit wherever `design-system.css` has an existing unlayered rule for
+the same element/property — M7 should check for it systematically rather
+than rediscovering it per-component.
+
+**CSS inventory (`design-system.css`, 627 lines; `foundation.css`, 211
+lines) — classified, not purged:**
+
+- **A. Canonical design tokens** — `design-system.css` `:root` block
+  (color ramps, semantic colors, typography, spacing, radii, shadows,
+  transitions, gradients). Now also the source the Tailwind `tn-` bridge
+  reads from. Keep indefinitely; this is the token source of truth.
+- **B. Global/base rules still needed** — `design-system.css`'s
+  `*`/`html`/`body`/heading/link/`img`/list resets, `.sr-only`,
+  `.skip-link`, reduced-motion block. Still load on every page via
+  `SiteLayout.astro`; not superseded by Tailwind's preflight (which loads
+  in a CSS layer and always loses to this unlayered CSS — see the
+  `SiteLayout.astro` import comment). Keep.
+- **C. Reusable component patterns (candidates for M7 Tailwind coverage)**
+  — `.container`/`.text-container`/`.narrow-container`, `.section`/
+  `.section-alt`/`.section-dark`, `.eyebrow`, `.btn`/`.btn-primary`/
+  `.btn-secondary`, `.card`/`.card-grid`, `.accordion*`, `.stat-group`/
+  `.stat-value`/`.stat-label`, `.page-hero` (now only referenced by
+  `PageHero.astro`'s wrapper classes, not its own scoped styles),
+  `.diagram-container`. All still actively used across the site (Header,
+  Footer, CapabilityPage, ExpertisePage, CaseStudyArticle,
+  CaseStudyCard, MDX components) — not touched in M4, real candidates for
+  M7's expanded component vocabulary.
+- **D. Page-specific/legacy CSS (later migration)** — none found as bare
+  page-level `<style>` blocks outside components; page-specific styling in
+  this repo already lives in per-component scoped `<style>` blocks
+  (`Header.astro`, `Footer.astro`, etc.), which is consistent with rule 2
+  in CLAUDE.md, not legacy debt. Revisit these component-scoped blocks
+  individually as M7 candidates, the same way `PageHero.astro` was handled
+  in M4.
+- **E. Genuinely dead CSS** — `apps/web/src/styles/foundation.css`
+  (211 lines) is imported by exactly one file, `FoundationLayout.astro`,
+  which is itself imported by zero pages or components (confirmed via
+  repo-wide search). Both appear to predate `design-system.css`/
+  `SiteLayout.astro` and are dead code today. **Not removed in M4** — this
+  is unrelated to the Tailwind migration and removing a whole
+  layout+stylesheet deserves its own reviewed change, not a drive-by
+  deletion inside an M4 commit. Flagged here for a future cleanup pass
+  (M7 or sooner, owner's call).
+
+No CSS was deleted in M4. `design-system.css` and `foundation.css` are both
+retained exactly as they were before this session, other than the new
+`tailwind.css` file and `PageHero.astro`'s style-to-utility conversion.
 
 ## 6. Cloudflare direction
 
-**Adapter installed, preview deployment not yet proven (as of 2026-08-12).**
+**Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
+config landed at M6 close-out — current as of 2026-08-16.**
 `@astrojs/cloudflare` is pinned to `13.7.0` in `apps/web/package.json` — the
 last release whose peer range (`astro@^6.3.0`) covers this repo's Astro
 `6.4.6`; `@astrojs/cloudflare@14+` requires Astro 7 and is an explicit
 non-goal until an Astro 7 upgrade is its own deliberate milestone. `astro.config.ts`
-sets `output: 'static'` (the site stays fully prerendered — no route is
-server-rendered yet) with `adapter: cloudflare({ prerenderEnvironment: 'node' })`;
+sets `output: 'static'` (the site stays fully prerendered by default — the
+only on-demand routes are the Keystatic admin/API routes, gated out of
+production builds) with
+`adapter: cloudflare({ prerenderEnvironment: 'node', imageService: 'passthrough' })`;
 the `prerenderEnvironment` override is required because the OKF compiler
 (`apps/web/src/lib/okf/compiler.ts`) uses Node built-ins (`node:fs/promises`,
 `node:crypto`, `node:path`, `node:url`) at build time, which the adapter's
 default `workerd` prerender runtime doesn't provide.
 
-No hand-written `wrangler.jsonc` exists — the adapter auto-generates one
-into `dist/client/wrangler.json` at build time (worker name derived as
-`terra-nexus-web`), which is current recommended practice for a project
-with no custom bindings yet. Verified locally: `astro build` succeeds,
-`npx wrangler dev` serves the built worker correctly under `workerd`
-(spot-checked `/`, `/insights`, `/case-studies`, `/robots.txt`, a 404
-route). Deploying an actual preview (`wrangler deploy`) requires
-`wrangler login` against an owner Cloudflare account — not yet
-authenticated in this environment; see the session record for exact
-instructions. GitHub-mode Keystatic (M6) will need on-demand ("prerender:
-false") routes once implemented — those would run under `workerd`
-regardless of `prerenderEnvironment`, which only affects the static
-prerender step.
+`apps/web/wrangler.jsonc` is now a hand-written, repository-owned file (see
+§11) — it pins the Worker name to `terra-nexus-web-preview` and a fixed
+`compatibility_date`, deliberately minimal otherwise (main entrypoint,
+assets binding, and the auto-provisioned `SESSION` KV namespace are left to
+the adapter's own generation). Verified locally and against the real
+Cloudflare account: `astro build` succeeds, `npx wrangler dev` serves the
+built worker correctly under `workerd`, and `wrangler deploy` /
+`wrangler versions upload` both resolve to this file and deploy correctly
+(see §11 for the full verification record). GitHub-mode Keystatic (M6) adds
+on-demand (`prerender: false`) routes only when `SKIP_KEYSTATIC=false` is
+set at build time — those run under `workerd` regardless of
+`prerenderEnvironment`, which only affects the static prerender step.
 
 ### 6.1 Hosted Keystatic (GitHub storage) blocker — confirmed 2026-08-12
 
@@ -466,13 +588,13 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M1 — Green baseline + architecture docs (done 2026-08-12) | Known TS error + stale inventory fixed; `CLAUDE.md`/architecture doc/skills updated to state Keystatic is canonical, OKF is temporary |
 | M2 — Keystatic + MDX + editorial content architecture (done 2026-08-12) | Keystatic installed (local storage), `posts`/`authors`/`topics` collections live, `caseStudies` schema designed, 12 MDX content components built |
 | M3 — Browser CMS proof of concept (done 2026-08-12) | `/keystatic` works locally end-to-end; one representative Insight article renders through Astro at `/insights/[slug]`; build/typecheck/test/check green; browser QA at 4 viewports |
-| M4 — Progressive Tailwind/design-system normalization | **Not started.** Deliberately deferred — see the session record for the repository-reconciliation session that closed out M5/M6/homepage canonicalization instead |
+| M4 — Progressive Tailwind/design-system normalization (**done 2026-08-16**) | Tailwind v4 installed via `@tailwindcss/vite`; CSS-first `@theme inline` bridge (`apps/web/src/styles/tailwind.css`) aliases existing `design-system.css` tokens under a `tn-` prefix, no values duplicated; `PageHero.astro` migrated as the representative component proving the pattern; full `design-system.css`/`foundation.css` inventory classified (§5.1); `build`/`typecheck`/`test`/`check` all green; independent `visual-qa` browser pass at 1440/1024/768/390 across 5 representative routes found zero console errors, zero broken requests, and no visual differences vs. the pre-M4 baseline. See `log.md`'s 2026-08-16 entry and §5.1 for full detail |
 | M5 — Cloudflare Workers preview deployment (done 2026-08-12) | Deployed to `https://terra-nexus-web-preview.josh-242.workers.dev` via `wrangler deploy`; adapter `imageService` set to `'passthrough'` (no `astro:assets` usage in this repo, avoids provisioning an unused Cloudflare Images binding); build/typecheck/test/check all green; browser QA at 4 viewports, zero console errors; no production DNS touched |
-| M6 — GitHub-backed production Keystatic workflow (**partial** — publishing loop done, Cloudflare Git auto-deploy pending) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed. Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Remaining:** Cloudflare Workers Builds Git integration, so the public Worker rebuilds automatically on push/CMS-save instead of a manual `wrangler deploy` — recommended configuration in §11, owner dashboard action still required |
+| M6 — GitHub-backed production Keystatic workflow (repository side **done** 2026-08-12; Cloudflare Git auto-deploy connection **unverified as of 2026-08-16**, bounded re-check performed this session — see below) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **2026-08-16 bounded verification:** `wrangler deployments list --name terra-nexus-web-preview` shows every deployment through today sourced as `Upload`, `Secret Change`, or `Unknown (deployment)` — none sourced `Git`/Workers-Builds-triggered, including the window right after PR #2 (the `wrangler.jsonc` commit) merged to `main`. This is evidence the dashboard Git connection described in §11 has **not** been completed (or is not yet triggering builds), not proof it's broken — an owner-only dashboard action, not reproducible from this environment. Recorded accurately per instruction rather than re-attempted; does not block M4 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
-| M7 — Expanded reusable visual/design system | Reusable component vocabulary for sections/editorial blocks |
-| M8 — Cinematic homepage hero | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA |
-| M9 — WordPress content migration + SEO migration | WordPress content/URLs/metadata migrated where relevant; redirects validated; remaining OKF content (Expertise/Services/Audiences) migrated to Keystatic and OKF retired |
+| M7 — Expanded reusable visual/design system (**NEXT**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation |
+| M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
+| M9 — Cinematic homepage hero + GSAP/motion system (reordered after M8, 2026-08-16) | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA, applied to the settled post-M8 content/IA |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
 
 ## 10. CMS editorial workflow

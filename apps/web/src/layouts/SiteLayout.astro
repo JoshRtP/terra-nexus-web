@@ -1,5 +1,13 @@
 ---
 import '../styles/design-system.css';
+// Tailwind v4 (M4) — Tailwind's own reset/base rules load inside CSS
+// cascade layers (@layer theme/base/...), which always lose to
+// design-system.css's plain, unlayered base rules (html/body/headings)
+// regardless of import order — so this coexists safely either way. Kept
+// after design-system.css to match the "existing tokens first" mental
+// model. Both files stay indefinitely during progressive adoption (see
+// terra-nexus-design-system skill).
+import '../styles/tailwind.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getBuildMode } from '../lib/build-mode.js';

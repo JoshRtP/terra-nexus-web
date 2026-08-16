@@ -10,14 +10,72 @@ interface Props {
 const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
 ---
 
-<section class="page-hero">
-  <div class="hero-glow" aria-hidden="true"></div>
-  <div class="container hero-content">
-    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-    <h1>{title}</h1>
-    {lead && <p class="hero-lead">{lead}</p>}
+{/*
+  Representative M4 Tailwind migration (2026-08-16, corrected 2026-08-16
+  post-review) — see docs/architecture/web-platform-architecture.md §5.1
+  and the terra-nexus-design-system skill. Replaces this component's
+  scoped <style> block with Tailwind utilities backed by the tn- token
+  bridge in src/styles/tailwind.css, proving the pattern before wider (M7)
+  adoption. Visual output is intentionally unchanged from the plain-CSS
+  version: same gradient background, same glow, same spacing/typography —
+  this is a styling-mechanism swap, not a redesign. `.container`/`.eyebrow`/
+  `.btn` classes from design-system.css are kept as-is (not yet migrated;
+  M7 scope) since PageHero only owns the hero-specific wrapper/spacing.
+
+  Cascade-layer gotcha (found in post-implementation review, confirmed via
+  computed styles, fixed here): Tailwind v4 emits all utilities inside
+  `@layer utilities`. Per the CSS cascade-layers spec, ANY unlayered
+  declaration beats ANY layered one for the same property on the same
+  element, regardless of selector specificity or source order. Two
+  design-system.css rules are unlayered and target properties this
+  component also sets via utility classes — `.eyebrow { margin-bottom:
+  var(--space-3) }` and the global `h1,h2,h3,h4,h5,h6 { margin: 0 }` reset
+  — so plain `mb-4`/`mb-5` utility classes here were silently losing
+  (confirmed: computed margin-bottom was 12px and 0px respectively, not
+  the intended 16px/20px). Fixing this with `!important` (or Tailwind's
+  `!` important-modifier) would work but isn't the right general pattern.
+  Moving all of design-system.css into cascade layers would fix it site-
+  wide but is a large, unproven change out of M4's scope. The correct
+  local fix — same mechanism the pre-M4 scoped <style> block already used
+  to win against the same global rules — is a small scoped <style> block
+  below: Astro scopes it to a component-specific attribute selector, which
+  is unlayered and outranks the plain global selectors on specificity.
+  Only the two properties that actually conflict are overridden here;
+  every other utility class above is unaffected by this issue (no other
+  competing unlayered rule exists for gradients/padding/gap/etc. on a bare
+  `<section>`/`<div>`). Revisit whether this gotcha needs a more systemic
+  answer (e.g. wrapping design-system.css's *component-pattern* rules,
+  not its base reset, in a named layer) when M7 does its wider migration.
+
+  Mobile padding, checked (found NOT a regression): design-system.css has a
+  `@media (max-width: 48rem) { .page-hero { padding-block: var(--space-12)
+  var(--space-10) } }` rule that looks, from source alone, like it should
+  reduce padding on mobile. It never actually did for this component,
+  before or after M4 — confirmed via computed styles, not inferred: the
+  pre-M4 scoped <style> block's own `.page-hero { padding-block:
+  var(--space-20) var(--space-16) }` rule is unlayered with equal-or-higher
+  specificity (Astro's scoping attribute), so it won the media query too,
+  at every viewport including 390/768. Computed padding-top/bottom at
+  1440/768/390 was 80px/64px on both the pre-M4 `main` branch and this
+  branch — unconditional `pt-20 pb-16` below is correct, not a bug.
+*/}
+<section class="relative overflow-hidden border-b border-tn-border bg-[image:var(--gradient-surface)] pt-20 pb-16">
+  <div
+    class="pointer-events-none absolute -top-[30%] -right-[15%] h-[50rem] w-[50rem] bg-[radial-gradient(circle,rgba(168,208,219,0.4)_0%,transparent_65%)]"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="container relative">
+    {eyebrow && <span class="eyebrow page-hero-eyebrow">{eyebrow}</span>}
+    <h1 class="page-hero-title max-w-[var(--max-width-text)]">{title}</h1>
+    {lead && (
+      // leading-[var(--line-relaxed)], not Tailwind's built-in leading-relaxed
+      // (1.625) — design-system.css's --line-relaxed is 1.7, a different
+      // value; using the token keeps this pixel-identical to the pre-M4 CSS.
+      <p class="max-w-[var(--max-width-text)] text-lg text-tn-text-secondary leading-[var(--line-relaxed)]">{lead}</p>
+    )}
     {(primaryCta || secondaryCta) && (
-      <div class="hero-actions">
+      <div class="mt-8 flex flex-wrap gap-4">
         {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
         {secondaryCta && <a href={secondaryCta.href} class="btn btn-secondary">{secondaryCta.label}</a>}
       </div>
@@ -26,34 +84,14 @@ const { eyebrow, title, lead, primaryCta, secondaryCta } = Astro.props;
 </section>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding-block: var(--space-20) var(--space-16);
-    background: var(--gradient-surface);
-    border-bottom: 1px solid var(--color-border);
-    overflow: hidden;
+  /* Unlayered on purpose — see the cascade-layer comment above. These are
+     the only two overrides this component needs; everything else is a
+     Tailwind utility. Values are the same tokens design-system.css itself
+     defines, not new/hardcoded ones. */
+  .page-hero-eyebrow {
+    margin-bottom: var(--space-4);
   }
-  .hero-glow {
-    position: absolute;
-    top: -30%; right: -15%;
-    width: 50rem; height: 50rem;
-    background: radial-gradient(circle, rgba(168, 208, 219, 0.4) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .hero-content { position: relative; }
-  .hero-content .eyebrow { margin-bottom: var(--space-4); }
-  .hero-content h1 {
+  .page-hero-title {
     margin-bottom: var(--space-5);
-    max-width: var(--max-width-text);
-  }
-  .hero-lead {
-    font-size: var(--text-lg);
-    color: var(--color-text-secondary);
-    max-width: var(--max-width-text);
-    line-height: var(--line-relaxed);
-  }
-  .hero-actions {
-    display: flex; flex-wrap: wrap; gap: var(--space-4);
-    margin-top: var(--space-8);
   }
 </style>
