@@ -1,0 +1,210 @@
+---
+// ScrollPanel — sticky-stack "act" wrapper for the Regenerative
+// Agriculture scroll-story prototype (design-prototype branch,
+// feature/about-team-component-trial). Page-local, colocated next to the
+// one route that uses it — not a shared design-system primitive. Five
+// panels reuse it on this page, which is enough repetition to justify the
+// small abstraction without promoting it to components/ yet; if a second
+// page wants the same "stacking editorial chapters" effect, that's the
+// signal to move it.
+//
+// Mechanism: each panel is wrapped in an outer "act" block containing the
+// sticky panel PLUS a trailing sibling spacer. On desktop (>=64rem) the
+// panel is `position: sticky` with an increasing z-index, so later panels
+// slide up and visually cover earlier ones as the user scrolls — zero
+// JavaScript, zero scroll-hijacking (native browser scroll stays fully in
+// control).
+//
+// TWO bugs found and fixed in the correction pass (both verified live via
+// getBoundingClientRect() swept across scrollY, not assumed from reading
+// CSS):
+//
+// 1. A sticky element only gets a "stuck" scroll range for as long as its
+//    containing block (.scroll-act) is TALLER than the sticky element
+//    itself — the stuck window is exactly (containing-block height −
+//    sticky element height). The very first version gave `.scroll-act` a
+//    `min-height: 100svh` FLOOR, but since its only child (`.scroll-panel`)
+//    already determines the parent's height via normal flow, and every
+//    real panel's content is already taller than 100svh, that floor added
+//    nothing: parent height == child height, so the stuck range was
+//    exactly zero (confirmed: panel top tracked scroll 1:1, i.e. plain
+//    `position: static` behavior).
+//
+// 2. The obvious fix — giving `.scroll-act` extra height via
+//    `padding-bottom` instead of a `min-height` floor — turned out to
+//    ALSO produce a zero stuck window in this browser. Isolated with a
+//    synthetic side-by-side test (identical geometry, only the "extra
+//    space" mechanism changed): a `padding-bottom` on the sticky element's
+//    own parent, with the sticky element as the last child, is not
+//    respected by the sticky constraint calculation here — the sticky
+//    element still released immediately. A plain SIBLING spacer element
+//    after the sticky panel (same total extra height) worked correctly
+//    and matched the expected math exactly. That's what's implemented
+//    below — `.scroll-act-spacer`, not padding.
+//
+// `.scroll-panel` also gets its own `min-height` so a panel shorter than
+// the viewport still fills it completely while pinned, instead of
+// exposing a gap. Panels taller than one viewport (long chapters) are
+// unaffected — nothing is clipped, they just naturally take longer to
+// scroll through.
+// Below 64rem the sticky/stacking/shadow/spacer treatment is dropped
+// entirely in favor of plain document flow, per the prototype's
+// mobile-fallback requirement.
+interface Props {
+  /** Stacking order — later panels need a higher index to paint over earlier ones. */
+  index: number;
+  /** Alternates background surface, matching .section / .section-alt. */
+  tone?: 'base' | 'alt';
+  id?: string;
+  'aria-labelledby'?: string;
+}
+
+const { index, tone = 'base', id, 'aria-labelledby': ariaLabelledby } = Astro.props;
+---
+
+<div class="scroll-act">
+  <section
+    class:list={['scroll-panel', tone === 'alt' && 'scroll-panel-alt']}
+    style={`--panel-z: ${index};`}
+    id={id}
+    aria-labelledby={ariaLabelledby}
+  >
+    <div class="container scroll-panel-inner">
+      <slot />
+    </div>
+  </section>
+  <!-- Sibling spacer, NOT padding on .scroll-act — see the mechanism
+       comment above for why padding-bottom silently fails here. Inert to
+       assistive tech and empty of content, so it's not a reading-order
+       concern. -->
+  <div class="scroll-act-spacer" aria-hidden="true"></div>
+</div>
+
+<style>
+  .scroll-act {
+    position: relative;
+  }
+  .scroll-panel {
+    background: var(--color-bg);
+    padding-block: var(--space-20);
+  }
+  .scroll-panel-alt { background: var(--color-surface); }
+  .scroll-act-spacer { height: 0; }
+
+  /* Desktop: the actual sticky-stack effect. */
+  @media (min-width: 64rem) {
+    .scroll-act-spacer {
+      /* Real extra scroll room beyond the panel's own box — a sibling,
+         not padding on .scroll-act (see the mechanism comment above).
+         This is the distance during which the panel stays pinned while
+         the next act's panel travels up over it. */
+      height: 40vh;
+    }
+    .scroll-panel {
+      position: sticky;
+      /* Approximate site-header height (Header.astro: space-4 block
+         padding + 1.75rem logo + border) — a few px of slack is safer
+         than an exact match, since undershooting would let content slip
+         beneath the header. */
+      top: 4.5rem;
+      /* Fills the viewport while pinned even if this panel's own content
+         is shorter than one screen, so there's never a gap exposing
+         whatever is behind it. */
+      min-height: calc(100svh - 4.5rem);
+      z-index: var(--panel-z, 1);
+      border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+      /* Cast upward, onto whatever this panel is currently sliding over —
+         sells the "physical slide-over" read without being heavy-handed. */
+      box-shadow: 0 -1.5rem 2.5rem rgba(15, 23, 42, 0.12);
+      /* Scroll-linked scale (recession) is applied via inline style by the
+         script below — transform-origin here just makes that read as
+         "sinking straight back," and transition smooths out per-frame
+         scale jumps between rAF ticks without fighting the scroll-driven
+         values themselves. */
+      transform-origin: center top;
+      transition: transform 80ms linear;
+      /* Deliberately no `will-change: transform` here — it establishes a
+         new containing block for descendant `position: sticky`/`fixed`
+         elements (per spec, "as if a transform were applied," regardless
+         of whether one currently is), which breaks the Key Benefits
+         nested sticky mini-stack's viewport-relative offset math (its
+         sticky `top` was computing against this ancestor instead of the
+         viewport). The scale transition below is cheap enough (a single
+         80ms linear scale on a handful of panels) not to need the
+         compositing hint. */
+    }
+  }
+
+  /* Wider than the site-wide .container default (var(--max-width), 75rem)
+     — this page asked for more horizontal room, particularly for the
+     two-column DVF framework + content panel in the Market Validation
+     chapter. Reuses the existing --max-width-wide token (90rem) rather
+     than a one-off value. */
+  .scroll-panel-inner { max-width: var(--max-width-wide); }
+</style>
+
+<script>
+  // Scroll-linked recession — the previous panel subtly scales down
+  // (Larose-style "cards parallax" depth cue) as the next panel rises and
+  // covers it. Runs once per page regardless of how many ScrollPanel
+  // instances exist (Astro dedupes identical inline module scripts), and
+  // applies uniformly to every `.scroll-panel` on the page — both the
+  // per-chapter panels and the Key Benefits mini-chapters reuse this same
+  // component, so they get the same depth treatment for free.
+  //
+  // Mechanism: a panel's own `getBoundingClientRect().top` sits exactly at
+  // the sticky offset (72px, matching `top: 4.5rem` above) for the entire
+  // time it's genuinely stuck. The instant it starts releasing — the next
+  // panel's higher z-index already covering it — that top value starts
+  // decreasing below 72px. That decrease IS the scroll-driven signal: no
+  // separate "am I being covered" calculation needed, no dependency on the
+  // next sibling's position. Mapped over a fixed distance to a 0→1
+  // progress, then lerped to a subtle max scale reduction. Continuous and
+  // reversible (scrolling back up un-recedes it), exactly reflecting
+  // scroll position with no snapping/animation timers.
+  const STUCK_TOP = 72;
+  const RECEDE_DISTANCE = 220;
+  const MIN_SCALE = 0.97;
+
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('.scroll-panel'));
+  const desktopMQ = window.matchMedia('(min-width: 64rem)');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (panels.length > 1 && !prefersReducedMotion) {
+    let ticking = false;
+
+    const clearRecede = () => {
+      panels.forEach((panel) => { panel.style.transform = ''; });
+    };
+
+    const applyRecede = () => {
+      // Last panel has nothing covering it — never recedes.
+      for (let i = 0; i < panels.length - 1; i++) {
+        const panel = panels[i];
+        const top = panel.getBoundingClientRect().top;
+        const delta = Math.max(0, STUCK_TOP - top);
+        const progress = Math.min(1, delta / RECEDE_DISTANCE);
+        panel.style.transform = progress > 0 ? `scale(${1 - progress * (1 - MIN_SCALE)})` : '';
+      }
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!desktopMQ.matches) return;
+      if (!ticking) {
+        requestAnimationFrame(applyRecede);
+        ticking = true;
+      }
+    };
+
+    const onLayoutChange = () => {
+      if (desktopMQ.matches) applyRecede();
+      else clearRecede();
+    };
+
+    onLayoutChange();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onLayoutChange);
+    desktopMQ.addEventListener('change', onLayoutChange);
+  }
+</script>

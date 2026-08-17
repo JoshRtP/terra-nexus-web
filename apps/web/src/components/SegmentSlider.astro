@@ -1,0 +1,367 @@
+---
+// SegmentSlider — dark navy "tab list + photo panel" audience/segment
+// explorer. Extracted from the homepage's "Who We Work With" section
+// (2026-08-12) so other pages presenting a similar "pick a segment, see
+// its photo + description" list can reuse the exact same component
+// instead of re-implementing the pattern — first reused on
+// expertise/regenerative-agriculture's "Who We Support" chapter.
+//
+// Behavior: vertical tab list on the left selects a slide on the right
+// (photo + heading + description + optional "Explore" link). Auto-
+// advances on a 6s timer, pauses on hover, resets on manual selection.
+// Real `role="tablist"`/`role="tab"` semantics — keyboard/screen-reader
+// accessible independent of the auto-advance and hover behavior.
+// Respects `prefers-reduced-motion` by skipping the auto-advance timer
+// entirely (the CSS opacity crossfade itself is neutralized by
+// design-system.css's global reduced-motion override).
+export interface SegmentSliderAccordionGroup {
+  heading: string;
+  items: string[];
+  /** Optional link out (e.g. to that capability's own full page). */
+  href?: string;
+  hrefLabel?: string;
+}
+
+export interface SegmentSliderItem {
+  name: string;
+  description: string;
+  image: string;
+  /** Optional per-item link. Omit to render the slide without an "Explore" link. */
+  href?: string;
+  exploreLabel?: string;
+  /** Optional breakdown — when present, replaces the plain `description`
+   * paragraph with an in-panel accordion GROUP: one native <details> per
+   * entry, sharing a `name` so opening one closes the others (browser-
+   * native exclusive accordion, no JS). All entries start closed — only
+   * headings are visible until the user clicks one, so the underlying
+   * offerings stay a deliberate, click-to-reveal action rather than
+   * dumped on screen by default. Each entry can carry its own "See
+   * {heading}" link (e.g. out to that capability's own full page) — for
+   * pages like expertise/regenerative-agriculture's "Who We Support,"
+   * where there's no single per-participant detail page to link to
+   * (unlike the homepage's value-chain segments), but each *capability*
+   * referenced does have one. */
+  accordionGroups?: SegmentSliderAccordionGroup[];
+  /** Optional trailing note shown below the accordion group — for a
+   * caveat or qualifier that isn't itself a list item. */
+  note?: string;
+}
+
+export interface Props {
+  label: string;
+  items: SegmentSliderItem[];
+}
+
+const { label, items } = Astro.props;
+// Unique per instance so two SegmentSliders on the same page don't
+// collide on id-based aria-controls/aria-labelledby wiring.
+const uid = Math.random().toString(36).slice(2, 9);
+---
+
+<div class="segment-slider" data-segment-slider>
+  <div class="segment-slider-nav">
+    <span class="segment-slider-label">{label}</span>
+    <div class="segment-tabs" role="tablist" aria-label={label} aria-orientation="vertical">
+      {items.map((item, i) => (
+        <button
+          type="button"
+          class="segment-tab"
+          class:list={{ 'is-active': i === 0 }}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`segment-panel-${uid}-${i}`}
+          id={`segment-tab-${uid}-${i}`}
+          data-index={i}
+        >
+          {item.name}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="segment-slider-panel">
+    <div class="segment-frame">
+      {items.map((item, i) => (
+        <div
+          class="segment-slide"
+          class:list={{ 'is-active': i === 0 }}
+          id={`segment-panel-${uid}-${i}`}
+          role="tabpanel"
+          aria-labelledby={`segment-tab-${uid}-${i}`}
+        >
+          <img
+            src={item.image}
+            alt=""
+            aria-hidden="true"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            class="segment-slide-img"
+          />
+          {item.accordionGroups ? (
+            // Two-pane split: overview text | capability accordion, both
+            // inside the same photo frame instead of one narrow stacked
+            // column — uses the full panel width the photo already has,
+            // instead of leaving half of it as bare, unused image. No
+            // repeated participant-name heading in here: the tab list on
+            // the left (already visible, already bold/active) is the
+            // single place that names the current selection.
+            <div class="segment-slide-copy segment-slide-copy-split">
+              <div class="segment-copy-pane">
+                <span class="segment-copy-eyebrow">Overview</span>
+                <p class="segment-copy-description">{item.description}</p>
+                {item.note && <p class="segment-copy-note">{item.note}</p>}
+              </div>
+              <div class="segment-accordion-group">
+                {item.accordionGroups.map((group) => (
+                  <details class="segment-accordion" name={`segment-accordion-${uid}-${i}`}>
+                    <summary class="segment-accordion-toggle">
+                      <span>{group.heading}</span>
+                      <svg class="segment-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                    </summary>
+                    <div class="segment-accordion-body">
+                      <ul class="segment-accordion-list" role="list">
+                        {group.items.map((point) => <li>{point}</li>)}
+                      </ul>
+                      {group.href && (
+                        <a href={group.href} class="segment-accordion-link">
+                          {group.hrefLabel ?? `See ${group.heading}`}
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </a>
+                      )}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div class="segment-slide-copy">
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              {item.href && (
+                <a href={item.href} class="segment-explore">
+                  {item.exploreLabel ?? 'Explore'}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Segment slider ── */
+  .segment-slider {
+    margin-bottom: var(--space-8); position: relative; overflow: hidden;
+    background: var(--gradient-dark); border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl);
+    padding: var(--space-10); display: grid; gap: var(--space-10);
+    grid-template-columns: 0.82fr 1.3fr; align-items: start;
+  }
+  .segment-slider::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  @media (max-width: 64rem) { .segment-slider { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-8) var(--space-6); } }
+  .segment-slider-nav { position: relative; }
+  .segment-slider-label {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--c-accent-400); margin-bottom: var(--space-5);
+  }
+  .segment-tabs { display: flex; flex-direction: column; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+  .segment-tab {
+    display: block; width: 100%; text-align: left; background: none; cursor: pointer;
+    border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); border-left: 2px solid transparent;
+    padding: var(--space-4) 0 var(--space-4) var(--space-4); margin: 0;
+    font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--font-medium);
+    color: #8f9dc5; transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base);
+  }
+  .segment-tab:hover { color: #fff; }
+  .segment-tab:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: -2px; }
+  .segment-tab.is-active {
+    color: #fff; font-weight: var(--font-semibold); border-left-color: var(--c-accent-400);
+    background: linear-gradient(90deg, rgba(231, 215, 127, 0.08), transparent);
+  }
+  .segment-slider-panel { position: relative; }
+  .segment-frame {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    aspect-ratio: 16 / 14;
+    /* Floor beneath the aspect-ratio — at narrower panel widths (e.g. the
+       64rem tablet breakpoint, where the slider drops to one column but
+       .segment-frame is still fairly narrow) 16/12 alone isn't tall
+       enough for a fill-height accordion with several capability
+       sections plus one fully expanded, and that content would rather
+       get a bit more frame than force its own internal scrollbar. */
+    min-height: 32.5rem;
+    /* Outer drop shadow (unchanged) plus an inset vignette on all four
+       edges — without it, a bright photo's top/side edges sit as a hard
+       rectangle against the dark navy panel around it, which reads as an
+       unmasked cutout rather than something that belongs inside the
+       panel. The vignette tints those edges toward the panel's own
+       color so the photo feels set into the card, not pasted on top. */
+    box-shadow: var(--shadow-xl), inset 0 0 3.5rem rgba(9, 16, 34, 0.45);
+  }
+  @media (max-width: 30rem) { .segment-frame { aspect-ratio: 3 / 4; min-height: 32rem; } }
+  .segment-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow); pointer-events: none; }
+  .segment-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
+  .segment-slide-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .segment-slide::after {
+    content: ''; position: absolute; inset: 0;
+    /* Strong at the bottom (behind the copy), but never fully
+       transparent at the top either — a bright, busy photo (crop rows,
+       forests, warehouse shelving) left untinted at the top reads as a
+       raw, unmasked photo floating in the dark UI rather than a toned
+       background image. The 45% floor (up from 28%) accounts for
+       .segment-slide-copy-fill slides, where content can appear
+       anywhere in the frame, not just low down near the bottom. */
+    background: linear-gradient(0deg, rgba(13, 21, 48, 0.95) 0%, rgba(13, 21, 48, 0.68) 45%, rgba(13, 21, 48, 0.45) 100%);
+  }
+  .segment-slide-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8); z-index: 1; }
+  .segment-slide-copy h3 { color: #fff; font-size: var(--text-xl); margin-bottom: var(--space-3); }
+  .segment-slide-copy p { color: #d7deef; font-size: var(--text-sm); max-width: 30rem; margin-bottom: var(--space-6); line-height: var(--line-relaxed); }
+
+  /* Two-pane split — used whenever a slide has accordionGroups (this
+     page's "Who We Support," not the homepage's plain-paragraph
+     segments): overview text on the left, capability accordion on the
+     right, both inside the same photo frame. Spans the FULL frame
+     (top:0, not just bottom-anchored) and uses its whole width via
+     grid, instead of one narrow stacked column that left half the photo
+     bare with nothing on it. */
+  .segment-slide-copy-split {
+    top: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+  .segment-copy-pane { min-height: 0; overflow-y: auto; padding-right: var(--space-2); }
+  .segment-copy-eyebrow {
+    display: block; margin-bottom: var(--space-3);
+    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--c-accent-400);
+  }
+  .segment-copy-description { color: #d7deef; font-size: var(--text-sm); line-height: var(--line-relaxed); }
+  .segment-copy-note { margin-top: var(--space-4); font-size: var(--text-xs); color: #a9b4d6; font-style: italic; line-height: var(--line-relaxed); }
+
+  /* In-panel accordion GROUP — one native <details> per capability,
+     sharing a `name` so opening one closes the others (browser-native
+     exclusive accordion, no JS). All start closed (just the heading
+     row) — offerings only show once a user actually clicks one, a
+     deliberate click-to-reveal rather than everything dumped on screen
+     at once. Stretches to the grid row's full height by default (grid's
+     own `align-items: stretch`) — `overflow-y: auto` is a last-resort
+     safety net for unusually long content once a section is opened, not
+     the normal case, so it should essentially never engage in
+     practice. */
+  .segment-accordion-group {
+    min-height: 0; overflow-y: auto; scrollbar-gutter: stable;
+    padding-right: var(--space-2); margin-right: calc(-1 * var(--space-2));
+  }
+  .segment-accordion-toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    cursor: pointer; list-style: none;
+    color: #fff; font-size: var(--text-sm); font-weight: var(--font-semibold);
+    padding: var(--space-3) 0; border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .segment-accordion-toggle::-webkit-details-marker { display: none; }
+  .segment-accordion-toggle:hover { color: var(--c-sky-200); }
+  .segment-accordion-toggle:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: 2px; }
+  .segment-accordion-chevron { flex-shrink: 0; transition: transform var(--transition-base); }
+  .segment-accordion[open] .segment-accordion-chevron { transform: rotate(180deg); }
+  .segment-accordion-body { padding: var(--space-3) 0 var(--space-4); }
+  .segment-accordion-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .segment-accordion-list li {
+    position: relative; padding-left: var(--space-4);
+    font-size: var(--text-sm); color: #d7deef; line-height: var(--line-relaxed);
+  }
+  .segment-accordion-list li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--c-sky-300);
+  }
+  .segment-accordion-link {
+    display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3);
+    color: var(--c-sky-200); font-size: var(--text-xs); font-weight: var(--font-semibold);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    transition: color var(--transition-fast);
+  }
+  .segment-accordion-link:hover { color: #fff; }
+  .segment-accordion-note { margin-top: var(--space-3); font-size: var(--text-xs); color: #a9b4d6; font-style: italic; line-height: var(--line-relaxed); }
+  @media (prefers-reduced-motion: reduce) { .segment-accordion-chevron { transition: none; } }
+
+  .segment-explore {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    background: #fff; color: var(--color-dark); font-size: var(--text-sm); font-weight: var(--font-semibold);
+    padding: var(--space-3) var(--space-5); border-radius: var(--radius-full);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+  .segment-explore:hover { background: var(--c-sky-100); color: var(--color-dark); transform: translateX(2px); }
+  @media (prefers-reduced-motion: reduce) { .segment-slide { transition: none; } }
+
+  /* Two narrow columns (overview text | accordion) stop being readable
+     well before the slider's own 64rem/30rem breakpoints — collapse to
+     one column (text above accordion) here. Placed AFTER every base
+     rule it overrides (.segment-copy-pane, .segment-accordion-group) —
+     equal-specificity same-class selectors resolve by source order, so
+     an override declared earlier than the rule it's meant to override
+     loses the cascade regardless of whether its own media query
+     matches. */
+  @media (max-width: 40rem) {
+    /* display:flex (not grid-template-columns:1fr) — a single-column
+       CSS grid still sizes each row's auto track from its item's
+       intrinsic size while `overflow: visible` lets the rendered
+       content spill past that track without pushing subsequent rows
+       down, so the description text visually overlapped the accordion
+       below it instead of stacking above it. A flex column stacks each
+       child at its natural content height with no such quirk. */
+    .segment-slide-copy-split { display: flex; flex-direction: column; gap: var(--space-6); overflow-y: auto; }
+    /* One scroll boundary (the split container above), not two nested
+       ones — without this, each pane keeps its own `overflow-y: auto`
+       sized to its flex basis, so the overview text clips and scrolls
+       internally mid-sentence instead of the whole stack (text, then
+       accordion) scrolling together as one unit. */
+    .segment-copy-pane, .segment-accordion-group { overflow-y: visible; flex: none; }
+  }
+</style>
+
+<script>
+  // Mirrors the nav-toggle pattern in Header.astro. Scoped per-instance
+  // via closest('[data-segment-slider]') so multiple sliders on one page
+  // (or this component alongside the homepage's own copy, during
+  // migration) don't cross-wire each other's tabs/slides.
+  const sliders = Array.from(document.querySelectorAll<HTMLElement>('[data-segment-slider]'));
+  sliders.forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.segment-tab'));
+    const slides = Array.from(root.querySelectorAll<HTMLDivElement>('.segment-slide'));
+    const panel = root.querySelector('.segment-slider-panel');
+    if (!tabs.length || !slides.length) return;
+
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function activate(index: number) {
+      current = index;
+      tabs.forEach((tab, idx) => {
+        const active = idx === index;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
+      slides.forEach((slide, idx) => slide.classList.toggle('is-active', idx === index));
+    }
+    function advance() { activate((current + 1) % tabs.length); }
+    function resetAuto() {
+      if (timer) clearInterval(timer);
+      if (!reduceMotion) timer = setInterval(advance, 6000);
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => { activate(i); resetAuto(); });
+    });
+    if (panel) {
+      panel.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
+      panel.addEventListener('mouseleave', resetAuto);
+    }
+    resetAuto();
+  });
+</script>

@@ -12,6 +12,7 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import ClosingCta from '../components/ClosingCta.astro';
+import SegmentSlider from '../components/SegmentSlider.astro';
 
 const mode = getBuildMode();
 
@@ -208,57 +209,15 @@ const approachSteps = [
         </div>
       </header>
 
-      <div class="segment-slider">
-        <div class="segment-slider-nav">
-          <span class="segment-slider-label">By Value-Chain Segment</span>
-          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
-            {valueChainSegments.map((seg, i) => (
-              <button
-                type="button"
-                class="segment-tab"
-                class:list={{ 'is-active': i === 0 }}
-                role="tab"
-                aria-selected={i === 0 ? 'true' : 'false'}
-                aria-controls={`segment-panel-${seg.slug}`}
-                id={`segment-tab-${seg.slug}`}
-                data-index={i}
-              >
-                {seg.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div class="segment-slider-panel">
-          <div class="segment-frame">
-            {valueChainSegments.map((seg, i) => (
-              <div
-                class="segment-slide"
-                class:list={{ 'is-active': i === 0 }}
-                id={`segment-panel-${seg.slug}`}
-                role="tabpanel"
-                aria-labelledby={`segment-tab-${seg.slug}`}
-              >
-                <img
-                  src={seg.image}
-                  alt=""
-                  aria-hidden="true"
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  class="segment-slide-img"
-                />
-                <div class="segment-slide-copy">
-                  <h3>{seg.name}</h3>
-                  <p>{seg.description}</p>
-                  <a href={`/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`} class="segment-explore">
-                    Explore
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <SegmentSlider
+        label="By Value-Chain Segment"
+        items={valueChainSegments.map((seg) => ({
+          name: seg.name,
+          description: seg.description,
+          image: seg.image,
+          href: `/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`,
+        }))}
+      />
 
       <div class="section-cta">
         <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
@@ -381,44 +340,6 @@ const approachSteps = [
     primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
   />
 </SiteLayout>
-
-<script>
-  // Who We Work With — segment slider tabs (mirrors the nav-toggle pattern in Header.astro)
-  (function () {
-    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.segment-tab'));
-    const slides = Array.from(document.querySelectorAll<HTMLDivElement>('.segment-slide'));
-    const panel = document.querySelector('.segment-slider-panel');
-    if (!tabs.length || !slides.length) return;
-
-    let current = 0;
-    let timer: ReturnType<typeof setInterval> | null = null;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function activate(index: number) {
-      current = index;
-      tabs.forEach((tab, idx) => {
-        const active = idx === index;
-        tab.classList.toggle('is-active', active);
-        tab.setAttribute('aria-selected', String(active));
-      });
-      slides.forEach((slide, idx) => slide.classList.toggle('is-active', idx === index));
-    }
-    function advance() { activate((current + 1) % tabs.length); }
-    function resetAuto() {
-      if (timer) clearInterval(timer);
-      if (!reduceMotion) timer = setInterval(advance, 6000);
-    }
-
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => { activate(i); resetAuto(); });
-    });
-    if (panel) {
-      panel.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
-      panel.addEventListener('mouseleave', resetAuto);
-    }
-    resetAuto();
-  })();
-</script>
 
 <script>
   // How We Work — approach rail tabs. Step→capability relationships come from
@@ -983,60 +904,10 @@ const approachSteps = [
   .digital-solutions-copy h2 { margin-top: var(--space-2); }
   .digital-solutions-copy .btn { margin-top: var(--space-6); }
 
-  /* ── Who We Work With — segment slider (shared with current homepage) ── */
-  .segment-slider {
-    margin-bottom: var(--space-8); position: relative; overflow: hidden;
-    background: var(--gradient-dark); border-radius: var(--radius-xl); box-shadow: var(--shadow-2xl);
-    padding: var(--space-10); display: grid; gap: var(--space-10);
-    grid-template-columns: 0.82fr 1.3fr; align-items: start;
-  }
-  .segment-slider::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.1) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  @media (max-width: 64rem) { .segment-slider { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-8) var(--space-6); } }
-  .segment-slider-nav { position: relative; }
-  .segment-slider-label {
-    display: inline-flex; align-items: center; gap: var(--space-2);
-    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--c-accent-400); margin-bottom: var(--space-5);
-  }
-  .segment-tabs { display: flex; flex-direction: column; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-  .segment-tab {
-    display: block; width: 100%; text-align: left; background: none; cursor: pointer;
-    border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); border-left: 2px solid transparent;
-    padding: var(--space-4) 0 var(--space-4) var(--space-4); margin: 0;
-    font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--font-medium);
-    color: #8f9dc5; transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base);
-  }
-  .segment-tab:hover { color: #fff; }
-  .segment-tab:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: -2px; }
-  .segment-tab.is-active {
-    color: #fff; font-weight: var(--font-semibold); border-left-color: var(--c-accent-400);
-    background: linear-gradient(90deg, rgba(231, 215, 127, 0.08), transparent);
-  }
-  .segment-slider-panel { position: relative; }
-  .segment-frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16 / 11; box-shadow: var(--shadow-xl); }
-  @media (max-width: 30rem) { .segment-frame { aspect-ratio: 4 / 5; } }
-  .segment-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow); pointer-events: none; }
-  .segment-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
-  .segment-slide-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-  .segment-slide::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(0deg, rgba(13, 21, 48, 0.92) 0%, rgba(13, 21, 48, 0.25) 50%, transparent 80%);
-  }
-  .segment-slide-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8); z-index: 1; }
-  .segment-slide-copy h3 { color: #fff; font-size: var(--text-xl); margin-bottom: var(--space-3); }
-  .segment-slide-copy p { color: #d7deef; font-size: var(--text-sm); max-width: 30rem; margin-bottom: var(--space-6); line-height: var(--line-relaxed); }
-  .segment-explore {
-    display: inline-flex; align-items: center; gap: var(--space-2);
-    background: #fff; color: var(--color-dark); font-size: var(--text-sm); font-weight: var(--font-semibold);
-    padding: var(--space-3) var(--space-5); border-radius: var(--radius-full);
-    transition: background var(--transition-fast), transform var(--transition-fast);
-  }
-  .segment-explore:hover { background: var(--c-sky-100); color: var(--color-dark); transform: translateX(2px); }
-  @media (prefers-reduced-motion: reduce) { .segment-slide { transition: none; } }
+  /* Who We Work With segment slider styles now live in
+     src/components/SegmentSlider.astro (extracted 2026-08-17 so other
+     pages — e.g. expertise/regenerative-agriculture's "Who We Support"
+     chapter — can reuse the exact same component). */
 
   /* ── Track record stat strip ──────────────────────────
      Boxed cards (the previous version) put six labels of very different
