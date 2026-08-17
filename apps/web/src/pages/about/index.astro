@@ -3,56 +3,61 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
-import ExecutiveGroupPanel from '../../components/ExecutiveGroupPanel.astro';
+import ProfileRoster from '../../components/ProfileRoster.astro';
 const mode = getBuildMode();
 
-// Studio Executives — placeholder data for the two team-section review
-// options below (component trial: feature/about-team-component-trial).
-// Names/titles match what's live or supplied for this trial today;
-// everything else (photo, bio, focus areas, social links) is a stand-in
-// for review, not final content — see CLAUDE.md and AGENTS.md on not
-// inventing claims about real people. Real headshots can drop straight
-// into .exec-avatar (already wired for the placeholder-initials
-// treatment); LinkedIn URLs can replace the disabled placeholder links
-// once confirmed. Isaac's title/name are exactly what was supplied — no
-// bio, credentials, or links exist yet, so his panel intentionally stays
-// minimal rather than inventing profile content. The Expert Network row is
-// a capability/network group, not an individual profile — its tags reuse
-// the real capabilities taxonomy (see capabilities/index.astro) purely as
-// an illustrative demo of how expertise tags could eventually appear here.
-const teamGroups: Array<{
+// Studio Executives — the team section settled on the Executive Profile
+// Roster interaction (Option A from the component trial on
+// feature/about-team-component-trial; the alternate Executive Index +
+// Detail Panel option was removed once the owner picked this direction —
+// see ProfileRoster.astro for the component). Names/titles match what's
+// supplied today; bios/tags/links are placeholders, not final content —
+// see CLAUDE.md and AGENTS.md on not inventing claims about real people.
+// Real headshots can drop straight into ProfileRoster's portrait slot.
+// Isaac's name/title are exactly what was supplied — no bio, credentials,
+// or links exist yet, so his panel intentionally stays minimal. The
+// Expert Network group is a capability/network group, not an individual
+// profile — its tags reuse the real capabilities taxonomy (see
+// capabilities/index.astro) purely as an illustrative demo.
+const rosterGroups: Array<{
   id: string;
-  index: string;
-  rowTitle: string;
-  rowSubtitle: string;
-  kind: 'people' | 'person' | 'network';
-  people?: Array<{ name: string; title: string; initials: string; bio: string; focusAreas: Array<{ label: string; href: string }> }>;
-  person?: { name: string; title: string; initials: string; bio: string };
-  network?: { note: string; tags: Array<{ label: string; href: string }> };
+  heading: string;
+  members: Array<{
+    id: string;
+    name: string;
+    role: string;
+    initials: string;
+    variant?: 'person' | 'network';
+    bio: string;
+    tags?: Array<{ label: string; href: string }>;
+    tagsCaption?: string;
+    showLinkedIn?: boolean;
+  }>;
 }> = [
   {
     id: 'studio-executives',
-    index: '01',
-    rowTitle: 'Laura Klein + Josh Mellinger',
-    rowSubtitle: 'Studio Executives',
-    kind: 'people',
-    people: [
+    heading: 'Studio Executives',
+    members: [
       {
+        id: 'laura-klein',
         name: 'Laura Klein',
-        title: 'Studio Executive',
+        role: 'Studio Executive',
         initials: 'LK',
+        variant: 'person',
         bio: 'Full bio and areas of expertise coming soon.',
-        focusAreas: [
+        tags: [
           { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
           { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
         ],
       },
       {
+        id: 'josh-mellinger',
         name: 'Josh Mellinger',
-        title: 'Studio Executive',
+        role: 'Studio Executive',
         initials: 'JM',
+        variant: 'person',
         bio: 'Full bio and areas of expertise coming soon.',
-        focusAreas: [
+        tags: [
           { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
           { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
         ],
@@ -61,33 +66,40 @@ const teamGroups: Array<{
   },
   {
     id: 'executive-in-residence',
-    index: '02',
-    rowTitle: 'Isaac',
-    rowSubtitle: 'Executive in Residence',
-    kind: 'person',
-    person: {
-      name: 'Isaac',
-      title: 'Executive in Residence',
-      initials: 'I',
-      bio: 'Full bio coming soon.',
-    },
+    heading: 'Executive in Residence',
+    members: [
+      {
+        id: 'isaac',
+        name: 'Isaac',
+        role: 'Executive in Residence',
+        initials: 'I',
+        variant: 'person',
+        bio: 'Full bio coming soon.',
+      },
+    ],
   },
   {
     id: 'expert-network',
-    index: '03',
-    rowTitle: 'Terra Nexus Expert Network',
-    rowSubtitle: '',
-    kind: 'network',
-    network: {
-      note: 'Network details coming soon.',
-      tags: [
-        { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
-        { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
-        { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
-        { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
-        { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
-      ],
-    },
+    heading: 'Terra Nexus Expert Network',
+    members: [
+      {
+        id: 'expert-network',
+        name: 'Terra Nexus Expert Network',
+        role: '',
+        initials: 'TN',
+        variant: 'network',
+        bio: 'Network details coming soon.',
+        tags: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+          { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
+        ],
+        tagsCaption: 'Illustrative coverage areas — existing Terra Nexus capability taxonomy, shown for design-review purposes only.',
+        showLinkedIn: false,
+      },
+    ],
   },
 ];
 ---
@@ -150,104 +162,23 @@ const teamGroups: Array<{
     </div>
   </section>
 
-  <!-- Studio Executives — two component-trial options for team review
-       (feature/about-team-component-trial). Not a final pick; owner is
-       choosing the aesthetic direction — see CLAUDE.md. Both stay in
-       place until then, same "leave both up for review" approach as the
-       homepage nav-anchor trial. -->
+  <!-- Studio Executives — Executive Profile Roster (settled direction from
+       feature/about-team-component-trial). Interaction principle from
+       ogilvy.com/team (NOT its branding/layout/assets): a closed row of
+       portrait tiles; selecting one collapses the row to that portrait +
+       a large adjacent bio panel; a close control restores the roster.
+       See components/ProfileRoster.astro. -->
   <section class="section" aria-labelledby="team-heading">
     <div class="container">
       <header class="section-header">
         <span class="eyebrow">Leadership</span>
         <h2 id="team-heading">Food Systems Leadership Team</h2>
-        <p class="section-lead">Two directions for the team section — one an editorial accordion inspired by leadership-roster conventions elsewhere, one an index-and-detail selector. <span class="draft-flag">Draft for internal review — names/titles for Laura, Josh, and Isaac are as supplied; bios, tags, and links are placeholders where noted.</span></p>
+        <p class="section-lead">Select a profile to read more. <span class="draft-flag">Photos, bios, and links are placeholders pending final content.</span></p>
       </header>
 
-      <!-- OPTION A — Ogilvy-inspired Executive Accordion. Reuses the
-           dormant .accordion/.accordion-item/.accordion-trigger/
-           .accordion-content primitives from design-system.css (defined in
-           M7, previously unused anywhere in the codebase) as the
-           interaction backbone, restyled locally via .exec-accordion for
-           a wide-row editorial feel instead of the boxed default. -->
-      <div class="team-option">
-        <h3 class="team-option-label">Option A — Executive Accordion</h3>
-        <p class="team-option-note">A compact leadership roster that opens into richer profile detail on selection — the interaction principle behind ogilvy.com/team, reinterpreted with Terra Nexus typography, color, and restraint (no photography, no borrowed layout).</p>
-        <div class="accordion exec-accordion" data-exec-accordion>
-          {teamGroups.map((group) => (
-            <div class="accordion-item exec-accordion-item">
-              <h4 class="exec-accordion-heading">
-                <button
-                  type="button"
-                  class="accordion-trigger exec-accordion-trigger"
-                  id={`a-trigger-${group.id}`}
-                  aria-expanded="true"
-                  aria-controls={`a-panel-${group.id}`}
-                >
-                  <span class="numbered-index exec-accordion-index">{group.index}</span>
-                  <span class="exec-accordion-titles">
-                    <span class="exec-accordion-name">{group.rowTitle}</span>
-                    {group.rowSubtitle && <span class="exec-accordion-role">{group.rowSubtitle}</span>}
-                  </span>
-                </button>
-              </h4>
-              <div
-                class="accordion-content exec-accordion-content"
-                id={`a-panel-${group.id}`}
-                role="region"
-                aria-labelledby={`a-trigger-${group.id}`}
-              >
-                <ExecutiveGroupPanel group={group} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- OPTION B — Executive Index + Detail Panel. New page-local
-           pattern (not an existing primitive); reuses .numbered-index,
-           .card/.card-static, and .tag inside the shared
-           ExecutiveGroupPanel for its detail content. Renders as a real
-           WAI-ARIA tablist, progressively enhanced — see script below. -->
-      <div class="team-option">
-        <h3 class="team-option-label">Option B — Executive Index + Detail Panel</h3>
-        <p class="team-option-note">A large editorial index on one side, active profile detail on the other — closer to a portfolio selector than an accordion. Selecting a row changes what's shown; nothing scrolls or reflows the roster itself.</p>
-        <div class="exec-index" data-exec-index>
-          <div class="exec-index-list" role="tablist" aria-label="Leadership index" aria-orientation="vertical">
-            {teamGroups.map((group, i) => (
-              <button
-                type="button"
-                class="exec-index-item"
-                role="tab"
-                id={`b-tab-${group.id}`}
-                aria-selected={i === 0 ? 'true' : 'false'}
-                aria-controls={`b-panel-${group.id}`}
-                tabindex={i === 0 ? '0' : '-1'}
-              >
-                <span class="numbered-index exec-index-number">{group.index}</span>
-                <span class="exec-index-text">
-                  <span class="exec-index-name">{group.rowTitle}</span>
-                  {group.rowSubtitle && <span class="exec-index-role">{group.rowSubtitle}</span>}
-                </span>
-              </button>
-            ))}
-          </div>
-          <div class="exec-index-detail">
-            {teamGroups.map((group) => (
-              <div
-                class="exec-index-panel"
-                role="tabpanel"
-                id={`b-panel-${group.id}`}
-                aria-labelledby={`b-tab-${group.id}`}
-                tabindex="0"
-              >
-                <p class="exec-index-panel-eyebrow">{group.rowSubtitle || 'Network'}</p>
-                <h4 class="exec-index-panel-title">{group.rowTitle}</h4>
-                <ExecutiveGroupPanel group={group} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {rosterGroups.map((group) => (
+        <ProfileRoster heading={group.heading} members={group.members} />
+      ))}
     </div>
   </section>
 
@@ -268,7 +199,8 @@ const teamGroups: Array<{
   .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
   .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
 
-  /* ── Studio Executives — team section review options ── */
+  /* Studio Executives section — copy note only; roster styling lives in
+     components/ProfileRoster.astro (scoped to that component). */
   .draft-flag {
     display: inline-block;
     margin-top: var(--space-2);
@@ -276,183 +208,4 @@ const teamGroups: Array<{
     font-weight: var(--font-medium);
     color: var(--color-eyebrow);
   }
-  .team-option { margin-top: var(--space-12); }
-  .team-option:first-of-type { margin-top: var(--space-8); }
-  .team-option-label {
-    font-family: var(--font-serif);
-    margin-bottom: var(--space-2);
-  }
-  .team-option-note {
-    color: var(--color-text-secondary);
-    max-width: var(--max-width-text);
-    margin-bottom: var(--space-6);
-    line-height: var(--line-relaxed);
-  }
-
-  /* ── Option A — Executive Accordion ──
-     Backbone is the shared .accordion/.accordion-item/.accordion-trigger/
-     .accordion-content primitive (design-system.css); everything below is
-     an .exec-accordion modifier that strips the boxed/bordered default in
-     favor of wide rows, restrained dividers, and serif hierarchy. */
-  .exec-accordion {
-    border: none;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
-  }
-  .exec-accordion-item { border-bottom: 1px solid var(--color-border); }
-  .exec-accordion-item:first-child { border-top: 1px solid var(--color-border); }
-  .exec-accordion-heading { margin: 0; }
-  .exec-accordion-trigger {
-    padding: var(--space-6) var(--space-2);
-    gap: var(--space-6);
-  }
-  .exec-accordion-trigger:hover { background: var(--color-surface); }
-  .exec-accordion-trigger::after {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-color: var(--color-eyebrow);
-  }
-  .exec-accordion-index {
-    font-size: var(--text-2xl);
-    color: var(--c-sky-500);
-    min-width: 2.5rem;
-  }
-  .exec-accordion-titles { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
-  .exec-accordion-name {
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    font-weight: var(--font-medium);
-    color: var(--color-text);
-    letter-spacing: -0.01em;
-  }
-  .exec-accordion-role {
-    font-size: var(--text-sm);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
-  .exec-accordion-content { padding: 0 var(--space-2) var(--space-10) calc(2.5rem + var(--space-6) + var(--space-2)); }
-  @media (max-width: 30rem) {
-    .exec-accordion-trigger { gap: var(--space-4); }
-    .exec-accordion-name { font-size: var(--text-xl); }
-    .exec-accordion-content { padding-left: var(--space-2); }
-  }
-
-  /* ── Option B — Executive Index + Detail Panel ── */
-  .exec-index { display: grid; grid-template-columns: minmax(0, 20rem) 1fr; gap: var(--space-10); align-items: start; }
-  @media (max-width: 56rem) { .exec-index { grid-template-columns: minmax(0, 1fr); } }
-
-  .exec-index-list { display: flex; flex-direction: column; }
-  .exec-index-item {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-4);
-    width: 100%;
-    padding: var(--space-5) var(--space-2);
-    background: none;
-    border: none;
-    border-bottom: 1px solid var(--color-border);
-    text-align: left;
-    cursor: pointer;
-    transition: background var(--transition-fast);
-  }
-  .exec-index-list .exec-index-item:first-child { border-top: 1px solid var(--color-border); }
-  .exec-index-item:hover { background: var(--color-surface); }
-  .exec-index-item:focus-visible { outline: var(--focus-ring); outline-offset: -2px; }
-  .exec-index-number { font-size: var(--text-lg); color: var(--color-text-muted); min-width: 1.75rem; }
-  .exec-index-item[aria-selected="true"] .exec-index-number { color: var(--c-sky-600); }
-  .exec-index-text { display: flex; flex-direction: column; gap: var(--space-1); }
-  .exec-index-name { font-family: var(--font-serif); font-size: var(--text-lg); color: var(--color-text); }
-  .exec-index-item[aria-selected="true"] .exec-index-name { color: var(--color-eyebrow); }
-  .exec-index-role { font-size: var(--text-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted); }
-
-  .exec-index-detail { min-width: 0; }
-  .exec-index-panel { padding-top: var(--space-2); }
-  .exec-index-panel-eyebrow {
-    font-size: var(--text-xs);
-    font-weight: var(--font-semibold);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-eyebrow);
-    margin-bottom: var(--space-2);
-  }
-  .exec-index-panel-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-6);
-  }
-
-  /* JS-enhanced state: index items become real tabs, only the active
-     detail panel is shown. Without JS (data-exec-index has no
-     [data-enhanced]), every panel stays visible/stacked and rows are
-     inert headings — a fully readable fallback, not a broken widget. */
-  [data-exec-index][data-enhanced] .exec-index-panel[hidden] { display: none; }
 </style>
-
-<script>
-  // Studio Executives team-section trial — progressive-enhancement
-  // interaction for Option A (Executive Accordion) and Option B (Executive
-  // Index + Detail Panel). Both render fully-visible, readable content with
-  // JavaScript disabled (see SSR defaults in the markup above); this script
-  // only layers on the collapse/select behavior once it runs. No animation
-  // library — plain attribute toggles, with all transition/hover motion
-  // already covered by design-system.css's global reduced-motion override.
-
-  // Option A — single-open accordion.
-  const accordionRoot = document.querySelector<HTMLElement>('[data-exec-accordion]');
-  if (accordionRoot) {
-    const triggers = Array.from(
-      accordionRoot.querySelectorAll<HTMLButtonElement>('.exec-accordion-trigger'),
-    );
-    const setOpen = (trigger: HTMLButtonElement, open: boolean) => {
-      trigger.setAttribute('aria-expanded', String(open));
-      const panel = document.getElementById(trigger.getAttribute('aria-controls') || '');
-      if (panel) panel.hidden = !open;
-    };
-    // Start closed (JS-enhanced roster look); no-JS visitors keep the
-    // SSR-default open/readable state above.
-    triggers.forEach((trigger) => setOpen(trigger, false));
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-        triggers.forEach((other) => { if (other !== trigger) setOpen(other, false); });
-        setOpen(trigger, !isOpen);
-      });
-    });
-  }
-
-  // Option B — WAI-ARIA tablist (index selects detail panel).
-  const indexRoot = document.querySelector<HTMLElement>('[data-exec-index]');
-  if (indexRoot) {
-    const tabs = Array.from(indexRoot.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-    const panels = Array.from(indexRoot.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
-    const activate = (tab: HTMLButtonElement, focus: boolean) => {
-      tabs.forEach((t) => {
-        const selected = t === tab;
-        t.setAttribute('aria-selected', String(selected));
-        t.tabIndex = selected ? 0 : -1;
-      });
-      panels.forEach((panel) => {
-        panel.hidden = panel.id !== tab.getAttribute('aria-controls');
-      });
-      if (focus) tab.focus();
-    };
-    indexRoot.setAttribute('data-enhanced', '');
-    if (tabs[0]) activate(tabs[0], false);
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => activate(tab, false));
-      tab.addEventListener('keydown', (event: KeyboardEvent) => {
-        let next: HTMLButtonElement | null = null;
-        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
-        else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
-        else if (event.key === 'Home') next = tabs[0];
-        else if (event.key === 'End') next = tabs[tabs.length - 1];
-        if (next) {
-          event.preventDefault();
-          activate(next, true);
-        }
-      });
-    });
-  }
-</script>
