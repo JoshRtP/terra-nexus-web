@@ -279,10 +279,12 @@ for (const group of validationGroups) {
           {data.performanceCategories.map((cat, i) => (
             <div class="benefit-tile">
               <span class="numbered-index benefit-tile-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <h4 class="benefit-tile-title">{cat.title}</h4>
-              <ul class="tight-list" role="list">
-                {cat.items.map((item) => <li>{item}</li>)}
-              </ul>
+              <div class="benefit-tile-body">
+                <h4 class="benefit-tile-title">{cat.title}</h4>
+                <ul class="tight-list" role="list">
+                  {cat.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
@@ -419,7 +421,6 @@ for (const group of validationGroups) {
      Full-width, horizontal editorial intro — a two-column paragraph
      spread at desktop (magazine-lede read) instead of a narrow column,
      since Key Benefits no longer sits beside it. */
-  .overview-block { max-width: 62rem; }
   .overview-block h2 { margin-top: var(--space-2); margin-bottom: var(--space-6); }
   .overview-columns { display: grid; grid-template-columns: 1fr; gap: var(--space-6) var(--space-10); }
   @media (min-width: 56rem) {
@@ -454,11 +455,14 @@ for (const group of validationGroups) {
     .benefits-grid { grid-template-columns: repeat(2, 1fr); }
   }
   .benefit-tile {
+    display: flex;
+    gap: var(--space-5);
     padding-top: var(--space-6);
     border-top: 2px solid var(--color-border-strong);
   }
-  .benefit-tile-index { display: block; font-size: var(--text-2xl); color: var(--c-sky-500); margin-bottom: var(--space-2); }
-  .benefit-tile-title { font-size: var(--text-xl); margin-bottom: var(--space-4); max-width: 28ch; }
+  .benefit-tile-index { flex-shrink: 0; font-size: var(--text-2xl); color: var(--c-sky-500); }
+  .benefit-tile-body { min-width: 0; }
+  .benefit-tile-title { font-size: var(--text-xl); margin-bottom: var(--space-3); max-width: 28ch; }
 
   /* ── Our Approach 2-column grid ──
      Same numbered-index + title + bullet-list pattern as Key Questions
