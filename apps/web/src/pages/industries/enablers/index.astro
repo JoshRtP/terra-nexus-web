@@ -1,0 +1,57 @@
+---
+// Lightweight prototype child route — Industries/Insights IA prototype.
+// Not final editorial content; demonstrates the IA only. See CLAUDE.md.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+import PageHero from '../../../components/PageHero.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+const mode = getBuildMode();
+
+const categories = [
+  { title: 'Technology & Data', description: 'MRV technology, data platforms, traceability systems, modeling providers, and digital solutions.' },
+  { title: 'Markets & Ecosystem Services', description: 'Environmental markets, registries, marketplaces, and ecosystem-service infrastructure.' },
+  { title: 'Finance', description: 'Financiers, investors, private equity, venture capital, project and climate finance.' },
+  { title: 'Assurance & Specialist Services', description: 'Verification, certification infrastructure, and technical service providers.' },
+];
+---
+
+<SiteLayout
+  title="Enablers | Industries | Terra Nexus"
+  description="Technology, capital, markets, assurance, and specialized services that make environmental value creation and procurement possible at scale."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Industries — Enablers"
+    title="Infrastructure That Makes the System Work"
+    lead="Enablers provide the technology, capital, markets, assurance, and services that allow Producers and Buyers to create, transfer, validate, finance, procure, manage, and scale environmental value."
+    primaryCta={{ label: 'Discuss Your Program', href: '/contact/' }}
+    secondaryCta={{ label: 'Back to Industries', href: '/industries/' }}
+  />
+
+  <section class="section" aria-labelledby="categories-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Representative Categories</span>
+        <h2 id="categories-heading">How Enablers Support the System</h2>
+        <p class="section-lead">
+          A focused set of categories — not an exhaustive list of every company type.
+        </p>
+      </header>
+      <div class="card-grid card-grid-3">
+        {categories.map((cat) => (
+          <article class="card card-static">
+            <h3>{cat.title}</h3>
+            <p>{cat.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Building Infrastructure for Environmental Value?"
+    description="Tell us what you're building or investing in — Terra Nexus helps Enablers connect to the Producers and Buyers who need them."
+    primaryCta={{ label: 'Discuss Your Program', href: '/contact/' }}
+    secondaryCta={{ label: 'Back to Industries', href: '/industries/' }}
+  />
+</SiteLayout>
