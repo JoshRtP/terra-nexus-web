@@ -95,16 +95,27 @@ export const valueChainMenu: MenuItem[] = [
   { title: 'Food Waste Prevention, Diversion & Recovery', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-waste-prevention-diversion-recovery' },
 ];
 
-// Our Approach stages — the Capabilities mega menu's first column. Short
-// labels match the homepage's condensed approachSteps[].short (index.astro);
-// full stage titles live on capabilities/index.astro's workstreams array.
-// No per-stage anchor exists yet, so all six point at the Our Approach
-// section on the standalone Capabilities page.
+// Approach — the Capabilities mega menu's first column. Owner feedback
+// (2026-08-18): the six individual stages read as too much for a menu
+// column; collapsed to the one-line framing already used to describe the
+// approach as a whole. Points at the Our Approach section on the
+// standalone Capabilities page (no per-stage anchor exists).
 export const approachMenu: MenuItem[] = [
-  { title: 'Evaluate', href: '/capabilities/#approach-heading' },
-  { title: 'Design', href: '/capabilities/#approach-heading' },
-  { title: 'Build', href: '/capabilities/#approach-heading' },
-  { title: 'Launch & Scale', href: '/capabilities/#approach-heading' },
-  { title: 'Manage & Verify', href: '/capabilities/#approach-heading' },
-  { title: 'Unlock Shared Value', href: '/capabilities/#approach-heading' },
+  { title: 'Full Development Lifecycle', href: '/capabilities/#approach-heading' },
+];
+
+// Claims — the Capabilities mega menu's second column (new, 2026-08-18).
+// These are the evidence/attribute types Terra Nexus's Carbon & Ecosystem
+// Services capability creates, verifies, and commercializes — see that
+// page's own description ("...environmental assets, attributes, credits,
+// insets, offsets, and claims") and the Producers role definition in
+// CLAUDE.md, which these items are drawn from. No dedicated sub-pages
+// exist yet, so all six point at that capability page.
+export const claimsMenu: MenuItem[] = [
+  { title: 'Certifications', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Environmental Asset Certificates (EACs)', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Insets', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Scope 3 Reductions', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Assets/Offsets', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Product Claims / LCAs', href: '/capabilities/carbon-and-ecosystem-services/' },
 ];

@@ -10,7 +10,7 @@
 // (inline accordion inside the drawer) — one DOM per menu, toggled by the
 // same button/aria-expanded state; only the CSS positioning differs per
 // breakpoint. This keeps keyboard/AX behavior identical at both sizes.
-import { expertiseMenu, capabilitiesMenu, industriesMenu, insightsMenu, valueChainMenu, approachMenu } from '../data/nav-data';
+import { expertiseMenu, capabilitiesMenu, industriesMenu, insightsMenu, valueChainMenu, approachMenu, claimsMenu } from '../data/nav-data';
 
 const currentPath = Astro.url.pathname;
 
@@ -82,9 +82,9 @@ function isActive(href: string): boolean {
           </button>
           <div id="menu-capabilities" class="nav-menu-panel" data-menu-panel="capabilities" hidden>
             <div class="panel-inner">
-              <div class="panel-columns">
+              <div class="panel-columns panel-columns-3">
                 <div class="panel-col">
-                  <span class="panel-col-heading">Our Approach</span>
+                  <span class="panel-col-heading">Approach</span>
                   <ul class="panel-links" role="list">
                     {approachMenu.map((item) => (
                       <li>
@@ -96,7 +96,19 @@ function isActive(href: string): boolean {
                   </ul>
                 </div>
                 <div class="panel-col">
-                  <span class="panel-col-heading">Capabilities</span>
+                  <span class="panel-col-heading">Claims</span>
+                  <ul class="panel-links" role="list">
+                    {claimsMenu.map((item) => (
+                      <li>
+                        <a href={item.href} class="panel-link">
+                          <span class="panel-link-title">{item.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div class="panel-col">
+                  <span class="panel-col-heading">Offerings</span>
                   <ul class="panel-links" role="list">
                     {capabilitiesMenu.map((item) => (
                       <li>
@@ -279,7 +291,7 @@ function isActive(href: string): boolean {
     transform: translateX(-50%);
     width: max-content;
     min-width: 12rem;
-    max-width: min(44rem, calc(100vw - 2rem));
+    max-width: min(58rem, calc(100vw - 2rem));
     background: var(--color-surface-elevated, #fff);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-2xl);
@@ -297,14 +309,15 @@ function isActive(href: string): boolean {
     width: 16rem;
   }
 
-  /* Two-column groups — Industries (By Role / By Value-Chain Segment) and
-     Capabilities (Our Approach / Capabilities) — each column is itself a
+  /* Multi-column groups — Industries (By Role / By Value-Chain Segment) and
+     Capabilities (Approach / Claims / Offerings) — each column is itself a
      vertical list. */
   .panel-columns {
     display: grid;
     grid-template-columns: repeat(2, auto);
     gap: var(--space-2) var(--space-8);
   }
+  .panel-columns-3 { grid-template-columns: repeat(3, auto); }
   .panel-col-heading {
     display: block;
     font-size: var(--text-xs); font-weight: var(--font-semibold);
