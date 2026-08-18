@@ -7,22 +7,47 @@
 // src/data/market-mechanisms.ts — both consumers pass the same array so
 // content can't drift between them.
 //
-// Interaction: left column is a stacked flow diagram (Environmental
-// Performance → How Is the Value Carried? → Credible Claim & Market Value)
-// with the 4 mechanism cards in the middle; right column is the selected
-// mechanism's full deep-dive content. All 4 detail panels are pre-rendered
-// and toggled via [hidden] (same pattern as StrategyFrameworkDVF's content
-// panels on the Regenerative Agriculture page) — works without JS, no
-// innerHTML swapping, one aria-live region announces the change.
+// Interaction (variant="interactive", the default — Carbon & Ecosystem
+// Services capability page): left column is a stacked flow diagram
+// (Environmental Performance → How Is the Value Carried? → Credible Claim
+// & Market Value) with the 4 mechanism cards in the middle; right column is
+// the selected mechanism's full deep-dive content. All 4 detail panels are
+// pre-rendered and toggled via [hidden] (same pattern as
+// StrategyFrameworkDVF's content panels on the Regenerative Agriculture
+// page) — works without JS, no innerHTML swapping, one aria-live region
+// announces the change.
+//
+// variant="overview" (owner request/refinement, 2026-08-18, homepage "Our
+// Markets" only): a first-time visitor shouldn't land on one mechanism
+// already singled out, so it starts differently from the interactive
+// variant — all 4 cards begin "active," the "How Is the Value Carried?"
+// middle flow-label is dropped (the wrapping "Commercial & Decarbonization
+// Pathways" panel around the card stack, restored from the owner's
+// original mockup, now sits directly between Environmental Performance and
+// Credible Claim & Market Value), and the right side starts as a 2x2 grid
+// showing every mechanism's title/tagline/examples at once (grid cells
+// reuse the left cards' own number/title styling, not a separate heading,
+// so a long title like "Environmental Attribute Certificates" doesn't wrap
+// enough to misalign the row). The grid is decorative only (no links —
+// removed per owner feedback — but keeps its hover lift). The moment a
+// left card is clicked, though, this variant converts to work exactly like
+// the interactive one: the grid is swapped out for the same single-
+// mechanism deep-dive panel, and the left cards behave as a normal single-
+// select from then on. Both variants share one click handler/
+// selectMechanism() below — the only difference is that first click also
+// hides the grid and reveals the (identical) detail panel.
 import type { MarketMechanism } from '../data/market-mechanisms';
 
 interface Props {
   mechanisms: MarketMechanism[];
-  /** Which mechanism is shown/selected on load. Defaults to the first. */
+  /** Which mechanism is shown/selected on load. Defaults to the first.
+   * Ignored when variant="overview" (every mechanism shows at once until
+   * the first click). */
   initialId?: string;
+  variant?: 'interactive' | 'overview';
 }
 
-const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
+const { mechanisms, initialId = mechanisms[0]?.id, variant = 'interactive' } = Astro.props;
 ---
 
 <div class="mech-diagram card card-static">
@@ -30,43 +55,87 @@ const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
     <div class="mech-flow">
       <p class="mech-flow-label">Environmental Performance</p>
       <div class="mech-flow-rule" aria-hidden="true"></div>
-      <p class="mech-flow-label mech-flow-label-muted">How Is the Value Carried?</p>
-      <div class="mech-flow-rule" aria-hidden="true"></div>
+      {variant === 'interactive' && (
+        <>
+          <p class="mech-flow-label mech-flow-label-muted">How Is the Value Carried?</p>
+          <div class="mech-flow-rule" aria-hidden="true"></div>
+        </>
+      )}
 
-      <ul class="mech-selector-stack" role="list" data-mech-selector>
-        {mechanisms.map((m) => (
-          <li>
-            <button
-              type="button"
-              class="mech-selector-card"
-              data-mech-select={m.id}
-              aria-pressed={m.id === initialId ? 'true' : 'false'}
-            >
-              <span class="mech-selector-num">{m.num}</span>
-              <span class="mech-selector-title">{m.title}</span>
-              <span class="mech-selector-carrier">{m.carrier}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {variant === 'overview' ? (
+        <div class="mech-selector-panel">
+          <p class="mech-selector-panel-title">Commercial &amp; Decarbonization Pathways</p>
+          <ul class="mech-selector-stack" role="list" data-mech-selector>
+            {mechanisms.map((m) => (
+              <li>
+                <button
+                  type="button"
+                  class="mech-selector-card mech-selector-card-active"
+                  data-mech-select={m.id}
+                  aria-pressed="false"
+                >
+                  <span class="mech-selector-num">{m.num}</span>
+                  <span class="mech-selector-title">{m.title}</span>
+                  <span class="mech-selector-carrier">{m.carrier}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <ul class="mech-selector-stack" role="list" data-mech-selector>
+          {mechanisms.map((m) => (
+            <li id={m.id}>
+              <button
+                type="button"
+                class="mech-selector-card"
+                data-mech-select={m.id}
+                aria-pressed={m.id === initialId ? 'true' : 'false'}
+              >
+                <span class="mech-selector-num">{m.num}</span>
+                <span class="mech-selector-title">{m.title}</span>
+                <span class="mech-selector-carrier">{m.carrier}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div class="mech-flow-rule" aria-hidden="true"></div>
       <p class="mech-flow-label">Credible Claim &amp; Market Value</p>
     </div>
 
-    <div class="mech-detail-panel" aria-live="polite">
-      {mechanisms.map((m) => (
-        <div class="mech-detail-content" data-mech-detail={m.id} hidden={m.id !== initialId}>
-          <p class="mech-detail-deck">{m.headline}</p>
-          <div class="mech-examples">
-            <span class="mech-examples-label">Examples</span>
-            <p class="mech-examples-text">{m.examples}</p>
-          </div>
-          <div class="mech-detail-body">
-            {m.body.map((para) => <p>{para}</p>)}
-          </div>
+    <div class="mech-right">
+      {variant === 'overview' && (
+        <div class="mech-overview-grid" data-mech-overview-grid>
+          {mechanisms.map((m) => (
+            <div class="mech-overview-cell">
+              <span class="mech-selector-num">{m.num}</span>
+              <h3 class="mech-selector-title mech-overview-heading">{m.title}</h3>
+              <p class="mech-overview-tagline">{m.headline}</p>
+              <div class="mech-examples mech-overview-examples">
+                <span class="mech-examples-label">Examples</span>
+                <p class="mech-examples-text">{m.examples}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
+
+      <div class="mech-detail-panel" aria-live="polite" data-mech-detail-panel hidden={variant === 'overview'}>
+        {mechanisms.map((m) => (
+          <div class="mech-detail-content" data-mech-detail={m.id} hidden={m.id !== initialId}>
+            <p class="mech-detail-deck">{m.headline}</p>
+            <div class="mech-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">{m.examples}</p>
+            </div>
+            <div class="mech-detail-body">
+              {m.body.map((para) => <p>{para}</p>)}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </div>
@@ -92,10 +161,10 @@ const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
     margin: var(--space-2) auto;
   }
 
-  /* Selector + deep-dive, embedded side by side: the flow diagram narrows
-     to one stacked column on the left, and the selected mechanism's full
-     deep-dive content (deck, examples, body paragraphs) renders beside it
-     on the right — all mechanisms pre-rendered, toggled via [hidden]. */
+  /* Selector + right panel, embedded side by side: the flow diagram
+     narrows to one stacked column on the left, and the right column shows
+     either the selected mechanism's full deep-dive content, or — before
+     any click, variant="overview" only — the 2x2 overview grid. */
   .mech-diagram-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -105,6 +174,7 @@ const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
   @media (min-width: 56rem) {
     .mech-diagram-grid { grid-template-columns: 17rem 1fr; gap: var(--space-12); }
   }
+  .mech-right { min-width: 0; }
 
   .mech-selector-stack {
     list-style: none;
@@ -131,13 +201,44 @@ const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
   .mech-selector-num { font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--c-sky-600); }
   .mech-selector-title { font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.25; }
   .mech-selector-carrier { font-size: var(--text-xs); line-height: 1.4; color: var(--color-text-muted); }
-  .mech-selector-card[aria-pressed="true"] {
+  /* .mech-selector-card-active — variant="overview"'s pre-click "all
+     mechanisms active" default. Same look interactive mode gives its
+     [aria-pressed="true"] card; JS removes this class from every card the
+     moment any one of them is clicked, so from then on exactly one card is
+     ever styled active, same as the interactive variant always is. */
+  .mech-selector-card[aria-pressed="true"],
+  .mech-selector-card-active {
     background: var(--color-dark);
     border-color: var(--color-dark);
   }
-  .mech-selector-card[aria-pressed="true"] .mech-selector-num { color: var(--c-sky-300); }
-  .mech-selector-card[aria-pressed="true"] .mech-selector-title { color: #fff; }
-  .mech-selector-card[aria-pressed="true"] .mech-selector-carrier { color: rgba(248, 250, 252, 0.65); }
+  .mech-selector-card[aria-pressed="true"] .mech-selector-num,
+  .mech-selector-card-active .mech-selector-num { color: var(--c-sky-300); }
+  .mech-selector-card[aria-pressed="true"] .mech-selector-title,
+  .mech-selector-card-active .mech-selector-title { color: #fff; }
+  .mech-selector-card[aria-pressed="true"] .mech-selector-carrier,
+  .mech-selector-card-active .mech-selector-carrier { color: rgba(248, 250, 252, 0.65); }
+
+  /* variant="overview"'s wrapping panel around the card stack (owner's
+     original mockup, restored 2026-08-18 — the diagram previously went
+     straight from the "How Is the Value Carried?" rule to the bare card
+     list). Cards shrink slightly inside it (smaller padding/gap than the
+     interactive variant's) so the panel doesn't inflate the diagram's
+     overall height. */
+  .mech-selector-panel {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+  .mech-selector-panel-title {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.02em;
+    color: var(--color-text-secondary);
+  }
+  .mech-selector-panel .mech-selector-stack { gap: var(--space-2); }
+  .mech-selector-panel .mech-selector-card { padding: var(--space-3); gap: var(--space-1); }
 
   .mech-detail-panel { min-width: 0; }
   /* Full column width, not capped to a reading-width — matches the owner
@@ -158,32 +259,122 @@ const { mechanisms, initialId = mechanisms[0]?.id } = Astro.props;
     color: var(--color-text-secondary);
   }
 
+  /* ── variant="overview"'s pre-click 2x2 grid. Divider lines are a 1px
+     background-color gap (same technique as .cs-comparison-grid on the
+     Carbon & Ecosystem Services page and .origin-outcome-types on the
+     About page), not per-cell borders. No border-radius/overflow-hidden on
+     the grid — a hover lift/shadow on an edge cell would otherwise get
+     clipped. Cells reuse .mech-selector-num/.mech-selector-title (owner
+     request: "same number formatting and fonts the dark blue buttons are
+     using") instead of a separate, larger heading style — a long title
+     like "Environmental Attribute Certificates" is far less likely to wrap
+     enough to misalign the row at this smaller size. Cells are plain
+     <div>s (owner feedback: had links to the capability page, removed —
+     the hover motion stays purely as a decorative cue that clicking a left
+     card swaps this grid for the full deep-dive). ── */
+  .mech-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+  }
+  @media (min-width: 36rem) {
+    .mech-overview-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .mech-overview-cell {
+    position: relative;
+    background: var(--color-surface);
+    padding: var(--space-6);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  }
+  .mech-overview-cell:hover {
+    background: var(--color-surface-elevated);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    z-index: 1;
+  }
+  .mech-overview-heading { margin: var(--space-1) 0 var(--space-3); }
+  .mech-overview-tagline { font-size: var(--text-sm); color: var(--c-sky-700); line-height: var(--line-relaxed); }
+  .mech-overview-examples { margin-top: var(--space-4); padding-top: var(--space-4); }
+
   @media (max-width: 40rem) {
     .mech-diagram { padding: var(--space-6) var(--space-5); }
     .mech-flow-rule { height: 1.25rem; }
+    .mech-overview-cell { padding: var(--space-5); }
   }
 </style>
 
 <script>
   // Mechanism selector — sets the active card and reveals that mechanism's
-  // pre-rendered deep-dive panel beside it. Scoped per-instance via
-  // closest('[data-mech-selector]') / a shared document query for panels —
-  // if a page ever renders two instances of this component, each instance's
-  // cards only toggle panels within that same instance's stack, since panels
-  // are looked up relative to the selector root's parent, not globally.
+  // pre-rendered deep-dive panel beside it (all 4 panels are already in the
+  // DOM, toggled via [hidden] — no innerHTML swapping). Scoped per-instance
+  // via closest('.mech-diagram') — if a page ever renders two instances,
+  // each instance's cards only affect that same instance's own panel/grid.
   document.querySelectorAll<HTMLElement>('[data-mech-selector]').forEach((root) => {
     const scope = root.closest('.mech-diagram') ?? document;
     const cards = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mech-select]'));
     const panels = Array.from(scope.querySelectorAll<HTMLElement>('[data-mech-detail]'));
+    const overviewGrid = scope.querySelector<HTMLElement>('[data-mech-overview-grid]');
+    const detailPanel = scope.querySelector<HTMLElement>('[data-mech-detail-panel]');
+
+    function selectMechanism(id: string) {
+      const card = cards.find((c) => c.dataset.mechSelect === id);
+      if (!card) return;
+      cards.forEach((c) => {
+        // variant="overview"'s pre-click default is a plain class, not
+        // aria-pressed — clear it here so any click leaves exactly one
+        // card looking selected (via aria-pressed alone) from then on,
+        // same as the interactive variant always is. No-op once already
+        // clear (interactive variant, or overview after its first click).
+        c.classList.remove('mech-selector-card-active');
+        c.setAttribute('aria-pressed', String(c === card));
+      });
+      panels.forEach((p) => { p.hidden = p.dataset.mechDetail !== id; });
+      // variant="overview" only: first click swaps the always-visible grid
+      // for the single-mechanism detail panel, converting the widget to
+      // work exactly like the interactive variant from then on.
+      if (overviewGrid && detailPanel) {
+        overviewGrid.hidden = true;
+        detailPanel.hidden = false;
+      }
+    }
+
+    function resetToOverviewGrid() {
+      if (!overviewGrid || !detailPanel) return;
+      cards.forEach((c) => {
+        c.classList.add('mech-selector-card-active');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      overviewGrid.hidden = false;
+      detailPanel.hidden = true;
+    }
 
     cards.forEach((card) => {
       card.addEventListener('click', () => {
         const id = card.dataset.mechSelect;
         if (!id) return;
-
-        cards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
-        panels.forEach((p) => { p.hidden = p.dataset.mechDetail !== id; });
+        // variant="overview" only: re-clicking the already-selected card
+        // pops the 2x2 grid back up instead of doing nothing — a way back
+        // to "show everything" after narrowing to one. Never fires on the
+        // interactive variant (no overviewGrid/detailPanel pair to revert
+        // to there), so its cards keep their normal always-one-selected
+        // behavior.
+        if (overviewGrid && card.getAttribute('aria-pressed') === 'true') {
+          resetToOverviewGrid();
+          return;
+        }
+        selectMechanism(id);
       });
     });
+
+    // Deep-link support (interactive variant): if the URL hash matches a
+    // mechanism id, pre-select that one instead of defaulting to the
+    // first. Falls back to the server-rendered `initialId` default when
+    // the hash doesn't match.
+    const hashId = location.hash.slice(1);
+    if (hashId && cards.some((c) => c.dataset.mechSelect === hashId)) {
+      selectMechanism(hashId);
+    }
   });
 </script>

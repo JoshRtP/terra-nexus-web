@@ -197,14 +197,18 @@ const approachSteps = [
     </div>
   </section>
 
-  <!-- Our Markets — mirrors the mechanism-selector webpart from the Carbon
+  <!-- Our Markets — reuses the mechanism-selector webpart from the Carbon
        & Ecosystem Services capability page (owner request, 2026-08-18: same
-       widget, same 4 mechanisms, on the homepage). Shares
+       widget, same 4 mechanisms, on the homepage), but as
+       variant="overview" (owner correction, same day): a first-time
+       homepage visitor shouldn't land on one mechanism already singled
+       out, so all 4 cards render permanently active and the right side is
+       a 2x2 grid showing every mechanism's title/tagline/examples at once,
+       instead of the capability page's single-select deep-dive. Shares
        MechanismSelector.astro + data/market-mechanisms.ts with that page —
-       see MechanismSelector.astro for the diagram/selector/detail-panel
-       implementation. Single-column stacked header (eyebrow + H2), matching
-       this session's established preference over a two-column split
-       header. -->
+       see MechanismSelector.astro for both variants' implementation.
+       Single-column stacked header (eyebrow + H2), matching this session's
+       established preference over a two-column split header. -->
   <section class="section" id="our-markets" aria-labelledby="markets-heading">
     <div class="container">
       <header class="section-header">
@@ -212,7 +216,7 @@ const approachSteps = [
         <h2 id="markets-heading">We turn environmental performance into value the market will recognize</h2>
       </header>
 
-      <MechanismSelector mechanisms={marketMechanisms} />
+      <MechanismSelector mechanisms={marketMechanisms} variant="overview" />
     </div>
   </section>
 
@@ -992,6 +996,14 @@ const approachSteps = [
   #expertise, #capabilities, #who-we-work-with {
     scroll-margin-top: 6rem;
   }
+
+  /* Our Markets sits directly above How We Work — owner feedback,
+     2026-08-18: the two full .section paddings stacked (5rem + 5rem) read
+     as too much dead space between them. Trimmed on both sides rather than
+     just one, so the reduction doesn't look lopsided toward either
+     section. */
+  #our-markets { padding-bottom: var(--space-10); }
+  #capabilities { padding-top: var(--space-10); }
 
   /* ── Digital Solutions (product family break) ── */
   .digital-solutions-grid {
