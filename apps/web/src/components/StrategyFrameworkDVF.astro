@@ -299,15 +299,18 @@ const CLIENT_GEOMETRY = {
   </div>
 
   <div class="dvf-content" data-dvf-content aria-live="polite">
-    <!-- The 4 base-dimension panels — no heading; the bolded description
-         line (.dvf-content-desc) carries the "question" the old <h4> title
-         used to duplicate (owner decision, 2026-08-18: the title repeated
-         the eyebrow above it). -->
+    <!-- The 4 base-dimension panels — no eyebrow, no heading (owner
+         feedback, 2026-08-18: dropped the "FRAMEWORK · X" divider label
+         entirely, on top of the earlier removal of the <h4> title). The
+         bolded description line is the only headline now. Shown fully
+         expanded, not an accordion — selecting a single circle is already
+         the explicit "show me this one" action, unlike the combined view
+         below where 4 full before/after blocks at once is the actual
+         clutter problem. -->
     {BASE_IDS.map((id) => {
       const c = REGION_CONTENT[id];
       return (
         <div class="dvf-content-panel" data-dvf-panel={id} hidden={id !== CLIENT_GEOMETRY.initial}>
-          <span class="eyebrow">{c.eyebrow}</span>
           <p class="dvf-content-desc">{c.description}</p>
           {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
 
@@ -340,48 +343,55 @@ const CLIENT_GEOMETRY = {
     })}
 
     <!-- Center panel — clicking the middle (all three circles) shows the
-         full picture: Strategic Fit + all three base dimensions together,
-         not just the generic "strongest opportunity" line (owner
-         decision, 2026-08-18). -->
+         full picture: Strategic Fit + all three base dimensions together.
+         Each subsection is a <details> accordion, collapsed on load —
+         the bold description is the clickable summary; before/after only
+         appears once clicked (owner mockup, 2026-08-18: "collapse" —
+         showing 4 full before/after blocks open at once read as too much
+         at first paint). Native <details>/<summary> rather than a JS
+         toggle: free keyboard/screen-reader support, no extra script. -->
     <div
       class="dvf-content-panel dvf-content-panel-all"
       data-dvf-panel="desirable-feasible-viable"
       hidden={'desirable-feasible-viable' !== CLIENT_GEOMETRY.initial}
     >
-      <span class="eyebrow">{REGION_CONTENT['desirable-feasible-viable'].eyebrow}</span>
       <p class="dvf-content-desc">{REGION_CONTENT['desirable-feasible-viable'].description}</p>
 
       {BASE_IDS.map((id) => {
         const c = REGION_CONTENT[id];
         return (
-          <div class="dvf-subsection">
-            <span class="eyebrow eyebrow-sky">{c.eyebrow}</span>
-            <p class="dvf-content-desc">{c.description}</p>
-            {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
+          <details class="dvf-subsection">
+            <summary class="dvf-subsection-summary">
+              <span class="dvf-content-desc dvf-subsection-title">{c.description}</span>
+              <svg class="dvf-subsection-chevron" width="12" height="7" viewBox="0 0 12 7" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="dvf-subsection-body">
+              {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
 
-            {c.beforeAfter && c.beforeAfter.length > 0 && (
-              <div class="dvf-before-after">
-                {c.beforeAfter.map((row) => (
-                  <div class="dvf-ba-row">
-                    <div class="dvf-ba-col dvf-ba-before">
-                      <span class="dvf-ba-icon" aria-hidden="true">✕</span>
-                      <div class="dvf-ba-text-wrap">
-                        <p class="dvf-ba-label">Before</p>
-                        <p class="dvf-ba-text">{row.pitfall}</p>
+              {c.beforeAfter && c.beforeAfter.length > 0 && (
+                <div class="dvf-before-after">
+                  {c.beforeAfter.map((row) => (
+                    <div class="dvf-ba-row">
+                      <div class="dvf-ba-col dvf-ba-before">
+                        <span class="dvf-ba-icon" aria-hidden="true">✕</span>
+                        <div class="dvf-ba-text-wrap">
+                          <p class="dvf-ba-label">Before</p>
+                          <p class="dvf-ba-text">{row.pitfall}</p>
+                        </div>
+                      </div>
+                      <div class="dvf-ba-col dvf-ba-after">
+                        <span class="dvf-ba-icon" aria-hidden="true">✓</span>
+                        <div class="dvf-ba-text-wrap">
+                          <p class="dvf-ba-label">After</p>
+                          <p class="dvf-ba-text">{row.validation}</p>
+                        </div>
                       </div>
                     </div>
-                    <div class="dvf-ba-col dvf-ba-after">
-                      <span class="dvf-ba-icon" aria-hidden="true">✓</span>
-                      <div class="dvf-ba-text-wrap">
-                        <p class="dvf-ba-label">After</p>
-                        <p class="dvf-ba-text">{row.validation}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </details>
         );
       })}
     </div>
@@ -389,14 +399,29 @@ const CLIENT_GEOMETRY = {
 </div>
 
 <style>
+  /* Contained card treatment — same structural pattern as SegmentSlider's
+     "How We Support Different Participants" panel (rounded corners,
+     generous padding, a shadow that reads as "one boxed unit" against the
+     section behind it), but light/neutral instead of that component's
+     dark gradient — owner feedback, 2026-08-18: keep the diagram's
+     existing sky/gold/maroon colors, don't add a second all-dark element
+     on the page. */
   .dvf {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-10);
     align-items: start;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-10);
   }
   @media (min-width: 60rem) {
     .dvf { grid-template-columns: minmax(0, 30rem) 1fr; gap: var(--space-16); }
+  }
+  @media (max-width: 40rem) {
+    .dvf { padding: var(--space-6); }
   }
 
   .dvf-visual { min-width: 0; }
@@ -527,26 +552,45 @@ const CLIENT_GEOMETRY = {
     color: #fff;
   }
 
-  /* Content panel — no extra top offset beyond .dvf-visual's own, so the
-     "FRAMEWORK · …" eyebrow lines up with the left column's eyebrow
-     instead of sitting noticeably lower. */
+  /* Content panel — no extra top offset beyond .dvf-visual's own. */
   .dvf-content { min-width: 0; padding-top: var(--space-2); }
-  /* No heading (owner decision, 2026-08-18: the old <h4> title just
-     repeated the eyebrow above it) — the description line is the panel's
-     headline now, bold and full-strength text color instead of the
-     secondary/muted supporting-copy treatment it had underneath a title. */
-  .dvf-content-desc { font-size: var(--text-lg); font-weight: var(--font-bold); color: var(--color-text); line-height: var(--line-relaxed); margin-top: var(--space-3); margin-bottom: var(--space-4); }
+  /* No eyebrow, no heading (owner decisions, 2026-08-18: the old <h4>
+     title repeated the eyebrow above it, then the eyebrow itself came out
+     too) — the description line is the panel's only headline now, bold
+     and full-strength text color instead of the secondary/muted
+     supporting-copy treatment it had underneath a title. */
+  .dvf-content-desc { font-size: var(--text-lg); font-weight: var(--font-bold); color: var(--color-text); line-height: var(--line-relaxed); margin-top: 0; margin-bottom: var(--space-4); }
   .dvf-content-supporting { font-size: var(--text-sm); color: var(--color-text-muted); line-height: var(--line-relaxed); font-style: italic; }
   .dvf-content-cta { margin-top: var(--space-6); }
 
   /* Center panel's combined subsections — Strategic Fit + all three base
-     dimensions, stacked under the panel's own intro line. */
+     dimensions, each a <details> accordion collapsed on load (owner
+     mockup, 2026-08-18). */
   .dvf-subsection {
-    margin-top: var(--space-6);
-    padding-top: var(--space-6);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
     border-top: 1px solid var(--color-border);
   }
-  .dvf-subsection .dvf-content-desc { font-size: var(--text-base); }
+  .dvf-subsection-summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+  }
+  .dvf-subsection-summary::-webkit-details-marker { display: none; }
+  .dvf-subsection-summary:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .dvf-subsection-title { font-size: var(--text-base); margin: 0; }
+  .dvf-subsection-chevron {
+    flex-shrink: 0;
+    margin-top: var(--space-2);
+    color: var(--color-text-muted);
+    transition: transform var(--transition-fast);
+  }
+  .dvf-subsection[open] .dvf-subsection-chevron { transform: rotate(180deg); }
+  .dvf-subsection-body { padding-top: var(--space-4); }
+  .dvf-subsection-body .dvf-before-after { margin-top: 0; padding-top: 0; border-top: 0; }
 
   /* Before/after — merged into the panel so the diagram, its explanation,
      and the concrete validation guidance read as one section instead of
