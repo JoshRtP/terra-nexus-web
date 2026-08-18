@@ -349,36 +349,32 @@ const lifecycle = [
     border-radius: var(--radius-sm);
   }
 
-  /* ── Shared: split section header (H2 left / paragraphs right) — no
-     existing site-wide component for this two-column shape, so it's
-     scoped here. Reused by the mechanism selector, comparison band, and
-     lifecycle sections, matching the reference layout exactly. ── */
-  .cs-header-split {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    align-items: start;
-    margin-bottom: var(--space-12);
-  }
-  @media (min-width: 56rem) {
-    .cs-header-split { grid-template-columns: 1fr 1fr; gap: var(--space-16); }
-  }
+  /* ── Shared: section header, single stacked column — H2 on top, body
+     paragraph(s) directly below (owner feedback, 2026-08-20: no two-
+     column split; match the "Our Offerings" section-header pattern).
+     Reused by the mechanism selector, comparison band, and lifecycle
+     sections. */
+  .cs-header-split { margin-bottom: var(--space-12); }
   .cs-header-split-body {
+    margin-top: var(--space-4);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
     font-size: var(--text-lg);
     line-height: var(--line-relaxed);
     color: var(--color-text-secondary);
+    max-width: var(--max-width-text);
   }
   .cs-header-split-body-inverse { color: rgba(248, 250, 252, 0.75); }
 
   /* ── 2. Mechanism selector diagram ── */
   .cs-diagram { padding: var(--space-10) var(--space-8); }
-  /* Left-aligned to match the card stack below it, not centered — owner
-     mockup, 2026-08-19 ("Move Text"). */
+  /* Centered — shows the flow moving through the connecting lines from
+     Environmental Performance through How Is the Value Carried? to
+     Credible Claim & Market Value (owner feedback, 2026-08-20: reverted
+     from a left-aligned attempt). */
   .cs-flow-label {
-    text-align: left;
+    text-align: center;
     font-size: var(--text-xs);
     font-weight: var(--font-semibold);
     letter-spacing: 0.1em;
@@ -390,7 +386,7 @@ const lifecycle = [
     height: 1.75rem;
     width: 1px;
     background: var(--color-border-strong);
-    margin: var(--space-2) 0;
+    margin: var(--space-2) auto;
   }
   /* ── Selector + deep-dive, embedded side by side (owner feedback,
      2026-08-19) ── Was: a 4-across card grid with a short summary strip
