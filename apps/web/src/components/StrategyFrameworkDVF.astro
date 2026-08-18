@@ -47,7 +47,14 @@ export interface DvfRegionContent {
 // triggered when the component also has a <script> tag) mis-parses a
 // multi-line union type with a leading `|` before each variant. Trivial
 // to work around; flagging in case it recurs elsewhere in this codebase.
-export type DvfRegionId = 'strategic-fit' | 'desirable' | 'feasible' | 'viable' | 'desirable-feasible' | 'desirable-viable' | 'feasible-viable' | 'desirable-feasible-viable';
+//
+// Only the 5 clickable ids (owner decision, 2026-08-18) — the three
+// pairwise-only combinations dropped out of this type entirely along with
+// their REGIONS/content entries; they're now GRAY_OVERLAPS below (shape
+// only, no content).
+export type DvfBaseId = 'strategic-fit' | 'desirable' | 'feasible' | 'viable';
+export type DvfRegionId = DvfBaseId | 'desirable-feasible-viable';
+const BASE_IDS: DvfBaseId[] = ['strategic-fit', 'desirable', 'feasible', 'viable'];
 
 export interface Props {
   heading?: string;
@@ -85,21 +92,6 @@ const DEFAULT_CONTENT: Record<DvfRegionId, DvfRegionContent> = {
     title: 'Viable',
     description: 'Can it create sustainable value, whether commercially, financially, or in some other way?',
   },
-  'desirable-feasible': {
-    eyebrow: 'Framework · Desirability + Feasibility',
-    title: 'Wanted and Buildable',
-    description: 'Wanted, and we could realistically deliver it, but the value case isn’t proven yet.',
-  },
-  'desirable-viable': {
-    eyebrow: 'Framework · Desirability + Viability',
-    title: 'Wanted and Valuable',
-    description: 'Wanted, and the value case looks real, but delivery isn’t yet proven feasible.',
-  },
-  'feasible-viable': {
-    eyebrow: 'Framework · Feasibility + Viability',
-    title: 'Buildable and Valuable',
-    description: 'We could deliver it, and the economics work, but it isn’t yet clearly wanted.',
-  },
   'desirable-feasible-viable': {
     eyebrow: 'Framework · The Strongest Opportunity',
     title: 'Wanted, Buildable, and Valuable',
@@ -117,9 +109,6 @@ const REGION_CONTENT: Record<DvfRegionId, DvfRegionContent> = {
   desirable: { ...DEFAULT_CONTENT.desirable, ...content?.desirable },
   feasible: { ...DEFAULT_CONTENT.feasible, ...content?.feasible },
   viable: { ...DEFAULT_CONTENT.viable, ...content?.viable },
-  'desirable-feasible': { ...DEFAULT_CONTENT['desirable-feasible'], ...content?.['desirable-feasible'] },
-  'desirable-viable': { ...DEFAULT_CONTENT['desirable-viable'], ...content?.['desirable-viable'] },
-  'feasible-viable': { ...DEFAULT_CONTENT['feasible-viable'], ...content?.['feasible-viable'] },
   'desirable-feasible-viable': { ...DEFAULT_CONTENT['desirable-feasible-viable'], ...content?.['desirable-feasible-viable'] },
 };
 
@@ -147,10 +136,11 @@ const LABELS = {
   feasible: { x: F.x + DVF_R * 0.5, y: F.y + DVF_R * 0.35 },
 };
 
-// Each of the 8 selectable regions: which circles it's the Boolean
-// intersection of (clip chain), which circles must be excluded (mask), and
-// which circle keys it "involves" (drives the unrelated-circle dim state
-// and the accessible button labels/order).
+// The 5 CLICKABLE regions (owner decision, 2026-08-18): each of the 4
+// circles on its own, plus the center (all three). The three pairwise-only
+// lens shapes (Desirable+Feasible, Desirable+Viable, Feasible+Viable) are
+// deliberately NOT here — see GRAY_OVERLAPS below, rendered as a static,
+// non-interactive gray fill instead of a 9th/10th selectable state.
 const REGIONS: Array<{
   id: DvfRegionId;
   label: string;
@@ -161,11 +151,19 @@ const REGIONS: Array<{
   { id: 'desirable', label: 'Desirable', clip: ['d'], exclude: ['f', 'v'], involves: ['strategic', 'd'] },
   { id: 'feasible', label: 'Feasible', clip: ['f'], exclude: ['d', 'v'], involves: ['strategic', 'f'] },
   { id: 'viable', label: 'Viable', clip: ['v'], exclude: ['d', 'f'], involves: ['strategic', 'v'] },
-  { id: 'desirable-feasible', label: 'Desirable + Feasible', clip: ['d', 'f'], exclude: ['v'], involves: ['strategic', 'd', 'f'] },
-  { id: 'desirable-viable', label: 'Desirable + Viable', clip: ['d', 'v'], exclude: ['f'], involves: ['strategic', 'd', 'v'] },
-  { id: 'feasible-viable', label: 'Feasible + Viable', clip: ['f', 'v'], exclude: ['d'], involves: ['strategic', 'f', 'v'] },
-  { id: 'desirable-feasible-viable', label: 'All Three', clip: ['d', 'f', 'v'], exclude: [], involves: ['strategic', 'd', 'f', 'v'] },
   { id: 'strategic-fit', label: 'Strategic Fit Only', clip: ['strategic'], exclude: ['d', 'f', 'v'], involves: ['strategic'] },
+  { id: 'desirable-feasible-viable', label: 'All Three', clip: ['d', 'f', 'v'], exclude: [], involves: ['strategic', 'd', 'f', 'v'] },
+];
+
+// The 3 pairwise-only overlap shapes — geometry only, no label/content/
+// click behavior. Rendered as a static gray fill (see .dvf-region-gray)
+// and deliberately excluded from CLIENT_GEOMETRY.regions, so pointer
+// hit-testing (deriveRegion, in the <script> below) treats these areas as
+// "no action" rather than a selectable state.
+const GRAY_OVERLAPS: Array<{ id: string; clip: Array<'d' | 'f' | 'v'>; exclude: Array<'d' | 'f' | 'v'> }> = [
+  { id: 'desirable-feasible', clip: ['d', 'f'], exclude: ['v'] },
+  { id: 'desirable-viable', clip: ['d', 'v'], exclude: ['f'] },
+  { id: 'feasible-viable', clip: ['f', 'v'], exclude: ['d'] },
 ];
 
 const CIRCLES: Record<'strategic' | 'd' | 'f' | 'v', { x: number; y: number; r: number }> = {
@@ -207,7 +205,7 @@ const CLIENT_GEOMETRY = {
         <clipPath id={`dvf-${uid}-clip-f`}><circle cx={F.x} cy={F.y} r={DVF_R} /></clipPath>
         <clipPath id={`dvf-${uid}-clip-v`}><circle cx={V.x} cy={V.y} r={DVF_R} /></clipPath>
 
-        {REGIONS.map((region) => region.exclude.length > 0 && (
+        {[...REGIONS, ...GRAY_OVERLAPS].map((region) => region.exclude.length > 0 && (
           <mask id={`dvf-${uid}-mask-not-${region.id}`} maskUnits="userSpaceOnUse" x="0" y="0" width={VB} height={VB}>
             <rect x="0" y="0" width={VB} height={VB} fill="white" />
             {region.exclude.map((key) => (
@@ -256,6 +254,25 @@ const CLIENT_GEOMETRY = {
         );
       })}
 
+      <!-- Static gray overlays — the 3 pairwise-only lens shapes. Always
+           visible (not tied to hover/select state), pointer-events: none,
+           and never returned by deriveRegion below — clicking/hovering
+           here does nothing, by design (owner decision, 2026-08-18: these
+           don't need their own actions). -->
+      {GRAY_OVERLAPS.map((overlap) => {
+        const clipIds = overlap.clip.map((k) => `dvf-${uid}-clip-${k}`);
+        const maskAttr = `dvf-${uid}-mask-not-${overlap.id}`;
+        return (
+          <g class="dvf-region-gray" data-region={overlap.id}>
+            <g clip-path={`url(#${clipIds[0]})`}>
+              <g clip-path={`url(#${clipIds[1]})`} mask={`url(#${maskAttr})`}>
+                <rect x="0" y="0" width={VB} height={VB} />
+              </g>
+            </g>
+          </g>
+        );
+      })}
+
       <!-- Labels — short caps only; explanations live in the content panel. -->
       <text class="dvf-label dvf-label-strategic" x={LABELS.strategic.x} y={LABELS.strategic.y} text-anchor="middle">STRATEGIC FIT</text>
       <text class="dvf-label" x={LABELS.desirable.x} y={LABELS.desirable.y} text-anchor="middle">DESIRABLE</text>
@@ -282,43 +299,92 @@ const CLIENT_GEOMETRY = {
   </div>
 
   <div class="dvf-content" data-dvf-content aria-live="polite">
-    {Object.entries(REGION_CONTENT).map(([id, c]) => (
-      <div
-        class="dvf-content-panel"
-        data-dvf-panel={id}
-        hidden={id !== CLIENT_GEOMETRY.initial}
-      >
-        <span class="eyebrow">{c.eyebrow}</span>
-        <h4 class="dvf-content-title">{c.title}</h4>
-        <p class="dvf-content-desc">{c.description}</p>
-        {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
+    <!-- The 4 base-dimension panels — no heading; the bolded description
+         line (.dvf-content-desc) carries the "question" the old <h4> title
+         used to duplicate (owner decision, 2026-08-18: the title repeated
+         the eyebrow above it). -->
+    {BASE_IDS.map((id) => {
+      const c = REGION_CONTENT[id];
+      return (
+        <div class="dvf-content-panel" data-dvf-panel={id} hidden={id !== CLIENT_GEOMETRY.initial}>
+          <span class="eyebrow">{c.eyebrow}</span>
+          <p class="dvf-content-desc">{c.description}</p>
+          {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
 
-        {c.beforeAfter && c.beforeAfter.length > 0 && (
-          <div class="dvf-before-after">
-            {c.beforeAfter.map((row) => (
-              <div class="dvf-ba-row">
-                <div class="dvf-ba-col dvf-ba-before">
-                  <span class="dvf-ba-icon" aria-hidden="true">✕</span>
-                  <div class="dvf-ba-text-wrap">
-                    <p class="dvf-ba-label">Before</p>
-                    <p class="dvf-ba-text">{row.pitfall}</p>
+          {c.beforeAfter && c.beforeAfter.length > 0 && (
+            <div class="dvf-before-after">
+              {c.beforeAfter.map((row) => (
+                <div class="dvf-ba-row">
+                  <div class="dvf-ba-col dvf-ba-before">
+                    <span class="dvf-ba-icon" aria-hidden="true">✕</span>
+                    <div class="dvf-ba-text-wrap">
+                      <p class="dvf-ba-label">Before</p>
+                      <p class="dvf-ba-text">{row.pitfall}</p>
+                    </div>
+                  </div>
+                  <div class="dvf-ba-col dvf-ba-after">
+                    <span class="dvf-ba-icon" aria-hidden="true">✓</span>
+                    <div class="dvf-ba-text-wrap">
+                      <p class="dvf-ba-label">After</p>
+                      <p class="dvf-ba-text">{row.validation}</p>
+                    </div>
                   </div>
                 </div>
-                <div class="dvf-ba-col dvf-ba-after">
-                  <span class="dvf-ba-icon" aria-hidden="true">✓</span>
-                  <div class="dvf-ba-text-wrap">
-                    <p class="dvf-ba-label">After</p>
-                    <p class="dvf-ba-text">{row.validation}</p>
+              ))}
+            </div>
+          )}
+
+          {c.cta && <a href={c.cta.href} class="btn btn-secondary dvf-content-cta">{c.cta.label}</a>}
+        </div>
+      );
+    })}
+
+    <!-- Center panel — clicking the middle (all three circles) shows the
+         full picture: Strategic Fit + all three base dimensions together,
+         not just the generic "strongest opportunity" line (owner
+         decision, 2026-08-18). -->
+    <div
+      class="dvf-content-panel dvf-content-panel-all"
+      data-dvf-panel="desirable-feasible-viable"
+      hidden={'desirable-feasible-viable' !== CLIENT_GEOMETRY.initial}
+    >
+      <span class="eyebrow">{REGION_CONTENT['desirable-feasible-viable'].eyebrow}</span>
+      <p class="dvf-content-desc">{REGION_CONTENT['desirable-feasible-viable'].description}</p>
+
+      {BASE_IDS.map((id) => {
+        const c = REGION_CONTENT[id];
+        return (
+          <div class="dvf-subsection">
+            <span class="eyebrow eyebrow-sky">{c.eyebrow}</span>
+            <p class="dvf-content-desc">{c.description}</p>
+            {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
+
+            {c.beforeAfter && c.beforeAfter.length > 0 && (
+              <div class="dvf-before-after">
+                {c.beforeAfter.map((row) => (
+                  <div class="dvf-ba-row">
+                    <div class="dvf-ba-col dvf-ba-before">
+                      <span class="dvf-ba-icon" aria-hidden="true">✕</span>
+                      <div class="dvf-ba-text-wrap">
+                        <p class="dvf-ba-label">Before</p>
+                        <p class="dvf-ba-text">{row.pitfall}</p>
+                      </div>
+                    </div>
+                    <div class="dvf-ba-col dvf-ba-after">
+                      <span class="dvf-ba-icon" aria-hidden="true">✓</span>
+                      <div class="dvf-ba-text-wrap">
+                        <p class="dvf-ba-label">After</p>
+                        <p class="dvf-ba-text">{row.validation}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
-
-        {c.cta && <a href={c.cta.href} class="btn btn-secondary dvf-content-cta">{c.cta.label}</a>}
-      </div>
-    ))}
+        );
+      })}
+    </div>
   </div>
 </div>
 
@@ -346,37 +412,57 @@ const CLIENT_GEOMETRY = {
     touch-action: manipulation;
   }
 
-  /* Base circles */
+  /* Base circles — each a distinct color (owner decision, 2026-08-18),
+     drawn from existing brand ramps rather than new/arbitrary hues:
+     Desirable = sky, Feasible = gold/accent, Viable = maroon/primary,
+     Strategic Fit = neutral slate (kept dashed, now with a faint tint so
+     it reads as a 4th color rather than "no color"). */
   .dvf-circle {
-    fill: var(--c-sky-50);
-    fill-opacity: 0.35;
-    stroke: var(--c-sky-500);
     stroke-width: 1.5;
     transition: stroke-opacity 220ms ease, fill-opacity 220ms ease;
   }
+  .dvf-circle-d { fill: var(--c-sky-50); fill-opacity: 0.4; stroke: var(--c-sky-500); }
+  .dvf-circle-f { fill: var(--c-accent-50); fill-opacity: 0.45; stroke: var(--c-accent-600); }
+  .dvf-circle-v { fill: var(--c-primary-50); fill-opacity: 0.4; stroke: var(--c-primary-500); }
   .dvf-circle-strategic {
-    fill: none;
-    stroke: var(--color-border-strong);
+    fill: var(--c-secondary-50);
+    fill-opacity: 0.5;
+    stroke: var(--c-secondary-400);
     stroke-width: 1.5;
     stroke-dasharray: 4 5;
   }
   .dvf-circle.is-dim { stroke-opacity: 0.4; fill-opacity: 0.12; }
 
-  /* Region highlight overlays */
+  /* Region highlight overlays — the 5 clickable regions, each tinted to
+     match its own circle's color family so hovering/selecting a region
+     reads as "that circle," not a generic uniform highlight. */
   .dvf-region {
-    fill: var(--c-sky-600);
     fill-opacity: 0;
     pointer-events: none;
     transition: fill-opacity 220ms ease;
   }
-  .dvf-region.is-hover { fill-opacity: 0.16; }
-  .dvf-region.is-selected { fill-opacity: 0.3; }
+  .dvf-region.is-hover { fill-opacity: 0.2; }
+  .dvf-region.is-selected { fill-opacity: 0.38; }
+  .dvf-region[data-region="desirable"] { fill: var(--c-sky-600); }
+  .dvf-region[data-region="feasible"] { fill: var(--c-accent-600); }
+  .dvf-region[data-region="viable"] { fill: var(--c-primary-500); }
+  .dvf-region[data-region="strategic-fit"] { fill: var(--c-secondary-500); }
   /* Center intersection gets the strongest treatment when selected — the
      "strongest opportunity" area, per spec. */
   .dvf-region[data-region="desirable-feasible-viable"] { fill: var(--c-accent-500); }
   .dvf-region[data-region="desirable-feasible-viable"].is-hover { fill-opacity: 0.22; }
   .dvf-region[data-region="desirable-feasible-viable"].is-selected { fill-opacity: 0.4; }
-  .dvf-region[data-region="strategic-fit"] { fill: var(--color-border-strong); }
+
+  /* Static gray overlays — the 3 pairwise-only lens shapes. Fixed opacity,
+     not tied to hover/select classes (they never receive them — see
+     deriveRegion in the <script> below), pointer-events: none so they
+     never intercept anything (hit-testing is coordinate math, not native
+     pointer capture, but this keeps intent explicit). */
+  .dvf-region-gray {
+    fill: var(--c-secondary-300);
+    fill-opacity: 0.55;
+    pointer-events: none;
+  }
 
   /* Labels */
   .dvf-label {
@@ -445,10 +531,22 @@ const CLIENT_GEOMETRY = {
      "FRAMEWORK · …" eyebrow lines up with the left column's eyebrow
      instead of sitting noticeably lower. */
   .dvf-content { min-width: 0; padding-top: var(--space-2); }
-  .dvf-content-title { font-size: var(--text-3xl); margin: var(--space-3) 0 var(--space-5); }
-  .dvf-content-desc { font-size: var(--text-lg); color: var(--color-text-secondary); line-height: var(--line-relaxed); margin-bottom: var(--space-4); }
+  /* No heading (owner decision, 2026-08-18: the old <h4> title just
+     repeated the eyebrow above it) — the description line is the panel's
+     headline now, bold and full-strength text color instead of the
+     secondary/muted supporting-copy treatment it had underneath a title. */
+  .dvf-content-desc { font-size: var(--text-lg); font-weight: var(--font-bold); color: var(--color-text); line-height: var(--line-relaxed); margin-top: var(--space-3); margin-bottom: var(--space-4); }
   .dvf-content-supporting { font-size: var(--text-sm); color: var(--color-text-muted); line-height: var(--line-relaxed); font-style: italic; }
   .dvf-content-cta { margin-top: var(--space-6); }
+
+  /* Center panel's combined subsections — Strategic Fit + all three base
+     dimensions, stacked under the panel's own intro line. */
+  .dvf-subsection {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .dvf-subsection .dvf-content-desc { font-size: var(--text-base); }
 
   /* Before/after — merged into the panel so the diagram, its explanation,
      and the concrete validation guidance read as one section instead of
@@ -597,9 +695,10 @@ const CLIENT_GEOMETRY = {
         const inF = inCircle(px, py, c.f.cx, c.f.cy, c.f.r);
         const inV = inCircle(px, py, c.v.cx, c.v.cy, c.v.r);
         if (inD && inF && inV) return 'desirable-feasible-viable';
-        if (inD && inF) return 'desirable-feasible';
-        if (inD && inV) return 'desirable-viable';
-        if (inF && inV) return 'feasible-viable';
+        // Exactly two of three = one of the gray, non-interactive pairwise
+        // overlaps (owner decision, 2026-08-18) — no region selected, same
+        // as a click/hover outside every circle.
+        if ((inD && inF) || (inD && inV) || (inF && inV)) return null;
         if (inD) return 'desirable';
         if (inF) return 'feasible';
         if (inV) return 'viable';

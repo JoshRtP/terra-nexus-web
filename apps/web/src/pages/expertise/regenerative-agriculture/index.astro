@@ -308,7 +308,7 @@ for (const group of validationGroups) {
       <header class="section-header">
         <span class="eyebrow">Market Validation</span>
         <h2 id="validation-heading">Market Validation</h2>
-        <p class="section-lead">A customer-centric approach, starting with desirability, then validating viability, feasibility, and strategic fit, prevents the most common reasons programs struggle. Select any region of the framework below to explore that combination, including the pitfall it prevents and the practice that replaces it.</p>
+        <p class="section-lead validation-lead">A customer-centric approach, starting with desirability, then validating viability, feasibility, and strategic fit, prevents the most common reasons programs struggle. Select any region of the framework below to explore that combination, including the pitfall it prevents and the practice that replaces it.</p>
       </header>
 
       <div class="dvf-block" data-reveal>
@@ -518,6 +518,13 @@ for (const group of validationGroups) {
      own scoped styles so diagram + explanation + validation guidance ship
      as one component, not a component plus a page-local block. */
   .dvf-block { margin-bottom: var(--space-20); }
+
+  /* This section's lead paragraph widened beyond the site-wide
+     .section-lead max-width (var(--max-width-text), 44rem) to roughly
+     match the framework box's own right edge below it — owner mockup
+     annotation, 2026-08-18. Scoped to this one chapter, not a change to
+     .section-header .section-lead globally. */
+  .validation-lead { max-width: none; }
 
   .decisions-block { margin-top: var(--space-16); }
   .decisions-grid {
