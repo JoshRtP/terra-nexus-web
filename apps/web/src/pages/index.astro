@@ -12,6 +12,8 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import ClosingCta from '../components/ClosingCta.astro';
+import MechanismSelector from '../components/MechanismSelector.astro';
+import { marketMechanisms } from '../data/market-mechanisms';
 
 const mode = getBuildMode();
 
@@ -195,74 +197,22 @@ const approachSteps = [
     </div>
   </section>
 
-  <!-- Who We Work With -->
-  <section class="section" id="who-we-work-with" aria-labelledby="audiences-heading">
+  <!-- Our Markets — mirrors the mechanism-selector webpart from the Carbon
+       & Ecosystem Services capability page (owner request, 2026-08-18: same
+       widget, same 4 mechanisms, on the homepage). Shares
+       MechanismSelector.astro + data/market-mechanisms.ts with that page —
+       see MechanismSelector.astro for the diagram/selector/detail-panel
+       implementation. Single-column stacked header (eyebrow + H2), matching
+       this session's established preference over a two-column split
+       header. -->
+  <section class="section" id="our-markets" aria-labelledby="markets-heading">
     <div class="container">
-      <header class="section-header split-header">
-        <span class="eyebrow split-header-eyebrow">Who We Work With</span>
-        <div class="split-header-title">
-          <h2 id="audiences-heading">We Work Across the Food and Ag Value Chain to Unlock Shared Value</h2>
-        </div>
-        <div class="split-header-lead">
-          <p class="section-lead"> Terra Nexus integrates proven solutions at every node in the food and agribusiness value chain to enhance transparency, facilitate collaboration, and establish the market mechanisms needed to build trust and reward performance across the entire food system. Because what you buy matters. Who you buy it from matters. Where it comes from, how it was produced, how it was delivered, and how it was consumed—it all matters.</p>
-        </div>
+      <header class="section-header">
+        <span class="eyebrow">Our Markets</span>
+        <h2 id="markets-heading">We turn environmental performance into value the market will recognize</h2>
       </header>
 
-      <div class="segment-slider">
-        <div class="segment-slider-nav">
-          <span class="segment-slider-label">By Value-Chain Segment</span>
-          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
-            {valueChainSegments.map((seg, i) => (
-              <button
-                type="button"
-                class="segment-tab"
-                class:list={{ 'is-active': i === 0 }}
-                role="tab"
-                aria-selected={i === 0 ? 'true' : 'false'}
-                aria-controls={`segment-panel-${seg.slug}`}
-                id={`segment-tab-${seg.slug}`}
-                data-index={i}
-              >
-                {seg.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div class="segment-slider-panel">
-          <div class="segment-frame">
-            {valueChainSegments.map((seg, i) => (
-              <div
-                class="segment-slide"
-                class:list={{ 'is-active': i === 0 }}
-                id={`segment-panel-${seg.slug}`}
-                role="tabpanel"
-                aria-labelledby={`segment-tab-${seg.slug}`}
-              >
-                <img
-                  src={seg.image}
-                  alt=""
-                  aria-hidden="true"
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  class="segment-slide-img"
-                />
-                <div class="segment-slide-copy">
-                  <h3>{seg.name}</h3>
-                  <p>{seg.description}</p>
-                  <a href={`/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`} class="segment-explore">
-                    Explore
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div class="section-cta">
-        <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
-      </div>
+      <MechanismSelector mechanisms={marketMechanisms} />
     </div>
   </section>
 
@@ -345,6 +295,79 @@ const approachSteps = [
     </div>
   </section>
 
+  <!-- Who We Work With — moved here (owner request, 2026-08-18): now sits
+       between Digital Solutions and Our Track Record instead of between
+       Our Markets and Capabilities. -->
+  <section class="section" id="who-we-work-with" aria-labelledby="audiences-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Who We Work With</span>
+        <div class="split-header-title">
+          <h2 id="audiences-heading">We Work Across the Food and Ag Value Chain to Unlock Shared Value</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead"> Terra Nexus integrates proven solutions at every node in the food and agribusiness value chain to enhance transparency, facilitate collaboration, and establish the market mechanisms needed to build trust and reward performance across the entire food system. Because what you buy matters. Who you buy it from matters. Where it comes from, how it was produced, how it was delivered, and how it was consumed—it all matters.</p>
+        </div>
+      </header>
+
+      <div class="segment-slider">
+        <div class="segment-slider-nav">
+          <span class="segment-slider-label">By Value-Chain Segment</span>
+          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
+            {valueChainSegments.map((seg, i) => (
+              <button
+                type="button"
+                class="segment-tab"
+                class:list={{ 'is-active': i === 0 }}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`segment-panel-${seg.slug}`}
+                id={`segment-tab-${seg.slug}`}
+                data-index={i}
+              >
+                {seg.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="segment-slider-panel">
+          <div class="segment-frame">
+            {valueChainSegments.map((seg, i) => (
+              <div
+                class="segment-slide"
+                class:list={{ 'is-active': i === 0 }}
+                id={`segment-panel-${seg.slug}`}
+                role="tabpanel"
+                aria-labelledby={`segment-tab-${seg.slug}`}
+              >
+                <img
+                  src={seg.image}
+                  alt=""
+                  aria-hidden="true"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  class="segment-slide-img"
+                />
+                <div class="segment-slide-copy">
+                  <h3>{seg.name}</h3>
+                  <p>{seg.description}</p>
+                  <a href={`/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`} class="segment-explore">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="section-cta">
+        <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Our Proven Track Record -->
   <section class="section section-alt" aria-labelledby="track-record-heading">
     <div class="container">
@@ -377,7 +400,7 @@ const approachSteps = [
   <ClosingCta
     headingId="final-cta-heading"
     heading="Build the Right Path from Opportunity to Value"
-    description="Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress ."
+    description="Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress."
     primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
   />
 </SiteLayout>

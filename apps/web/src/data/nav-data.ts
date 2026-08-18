@@ -49,10 +49,16 @@ export interface IndustryRole {
   menuDescription: string;
 }
 
+// Menu display titles ("Developers & Producers" / "Buyers" / "Enabling
+// Infrastructure") were renamed 2026-08-18 for the mega menu only — key,
+// href, and shortDescription/menuDescription (used on the /industries/*
+// pages themselves) intentionally kept as-is, matching how the Capabilities
+// mega menu's "Markets & Claims" column rename didn't touch the underlying
+// capability page content either.
 export const industriesMenu: IndustryRole[] = [
   {
     key: 'producers',
-    title: 'Producers',
+    title: 'Developers & Producers',
     href: '/industries/producers/',
     shortDescription: 'Organizations that create, originate, quantify, certify, or supply environmentally differentiated products, verified outcomes, environmental attributes, and credible claims.',
     menuDescription: 'Organizations creating and supplying differentiated products, environmental outcomes, attributes, certifications, and claims.',
@@ -66,7 +72,7 @@ export const industriesMenu: IndustryRole[] = [
   },
   {
     key: 'enablers',
-    title: 'Enablers',
+    title: 'Enabling Infrastructure',
     href: '/industries/enablers/',
     shortDescription: 'Technology, capital, markets, assurance, and specialized services that make environmental value creation and procurement possible at scale.',
     menuDescription: 'Technology, capital, markets, assurance, and services enabling the system.',
@@ -104,18 +110,17 @@ export const approachMenu: MenuItem[] = [
   { title: 'Full Development Lifecycle', href: '/capabilities/#approach-heading' },
 ];
 
-// Claims — the Capabilities mega menu's second column (new, 2026-08-18).
-// These are the evidence/attribute types Terra Nexus's Carbon & Ecosystem
-// Services capability creates, verifies, and commercializes — see that
-// page's own description ("...environmental assets, attributes, credits,
-// insets, offsets, and claims") and the Producers role definition in
-// CLAUDE.md, which these items are drawn from. No dedicated sub-pages
-// exist yet, so all six point at that capability page.
+// Markets & Claims — the Capabilities mega menu's second column (renamed
+// from "Claims", 2026-08-18). Mirrors the 4 market mechanisms on the
+// Carbon & Ecosystem Services page's mechanism selector 1:1 (titles MUST
+// match the `mechanisms` array in
+// pages/capabilities/carbon-and-ecosystem-services/index.astro, in the
+// same order), plus a 5th "Other Markets" catch-all. All five point at
+// that capability page — no dedicated sub-pages exist yet.
 export const claimsMenu: MenuItem[] = [
-  { title: 'Certifications', href: '/capabilities/carbon-and-ecosystem-services/' },
-  { title: 'Environmental Asset Certificates (EACs)', href: '/capabilities/carbon-and-ecosystem-services/' },
-  { title: 'Insets', href: '/capabilities/carbon-and-ecosystem-services/' },
-  { title: 'Scope 3 Reductions', href: '/capabilities/carbon-and-ecosystem-services/' },
-  { title: 'Assets/Offsets', href: '/capabilities/carbon-and-ecosystem-services/' },
-  { title: 'Product Claims / LCAs', href: '/capabilities/carbon-and-ecosystem-services/' },
+  { title: 'Carbon & Ecosystem Credits', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
+  { title: 'Scope 3 & Insets', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
+  { title: 'Product & Commodity Claims', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
+  { title: 'Environmental Attribute Certificates', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
+  { title: 'Other Markets', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
 ];
