@@ -360,7 +360,7 @@ const CLIENT_GEOMETRY = {
       {BASE_IDS.map((id) => {
         const c = REGION_CONTENT[id];
         return (
-          <details class="dvf-subsection">
+          <details class="dvf-subsection" data-subsection={id}>
             <summary class="dvf-subsection-summary">
               <span class="dvf-content-desc dvf-subsection-title">{c.description}</span>
               <svg class="dvf-subsection-chevron" width="12" height="7" viewBox="0 0 12 7" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -437,11 +437,10 @@ const CLIENT_GEOMETRY = {
     touch-action: manipulation;
   }
 
-  /* Base circles — each a distinct color (owner decision, 2026-08-18),
+  /* Base circles — each a distinct color (owner decisions, 2026-08-18),
      drawn from existing brand ramps rather than new/arbitrary hues:
      Desirable = sky, Feasible = gold/accent, Viable = maroon/primary,
-     Strategic Fit = neutral slate (kept dashed, now with a faint tint so
-     it reads as a 4th color rather than "no color"). */
+     Strategic Fit = dark blue (kept dashed). */
   .dvf-circle {
     stroke-width: 1.5;
     transition: stroke-opacity 220ms ease, fill-opacity 220ms ease;
@@ -452,7 +451,7 @@ const CLIENT_GEOMETRY = {
   .dvf-circle-strategic {
     fill: var(--c-secondary-50);
     fill-opacity: 0.5;
-    stroke: var(--c-secondary-400);
+    stroke: var(--color-dark);
     stroke-width: 1.5;
     stroke-dasharray: 4 5;
   }
@@ -460,7 +459,9 @@ const CLIENT_GEOMETRY = {
 
   /* Region highlight overlays — the 5 clickable regions, each tinted to
      match its own circle's color family so hovering/selecting a region
-     reads as "that circle," not a generic uniform highlight. */
+     reads as "that circle," not a generic uniform highlight. Center
+     (all three) is green — deliberately not gold/accent like Feasible's
+     circle sits right next to it, so the two stay visually distinct. */
   .dvf-region {
     fill-opacity: 0;
     pointer-events: none;
@@ -471,12 +472,26 @@ const CLIENT_GEOMETRY = {
   .dvf-region[data-region="desirable"] { fill: var(--c-sky-600); }
   .dvf-region[data-region="feasible"] { fill: var(--c-accent-600); }
   .dvf-region[data-region="viable"] { fill: var(--c-primary-500); }
-  .dvf-region[data-region="strategic-fit"] { fill: var(--c-secondary-500); }
+  .dvf-region[data-region="strategic-fit"] { fill: var(--color-dark); }
   /* Center intersection gets the strongest treatment when selected — the
      "strongest opportunity" area, per spec. */
-  .dvf-region[data-region="desirable-feasible-viable"] { fill: var(--c-accent-500); }
+  .dvf-region[data-region="desirable-feasible-viable"] { fill: var(--c-success-500); }
   .dvf-region[data-region="desirable-feasible-viable"].is-hover { fill-opacity: 0.22; }
   .dvf-region[data-region="desirable-feasible-viable"].is-selected { fill-opacity: 0.4; }
+
+  /* Bold headings synced to their own dimension's color (owner feedback,
+     2026-08-18) — applies to both the single-circle panels and the
+     combined view's accordion summaries/intro, so the color story reads
+     the same regardless of which interaction path got you there. */
+  [data-dvf-panel="desirable"] > .dvf-content-desc,
+  [data-subsection="desirable"] .dvf-subsection-title { color: var(--c-sky-600); }
+  [data-dvf-panel="feasible"] > .dvf-content-desc,
+  [data-subsection="feasible"] .dvf-subsection-title { color: var(--c-accent-600); }
+  [data-dvf-panel="viable"] > .dvf-content-desc,
+  [data-subsection="viable"] .dvf-subsection-title { color: var(--c-primary-500); }
+  [data-dvf-panel="strategic-fit"] > .dvf-content-desc,
+  [data-subsection="strategic-fit"] .dvf-subsection-title { color: var(--color-dark); }
+  .dvf-content-panel-all > .dvf-content-desc { color: var(--c-success-600); }
 
   /* Static gray overlays — the 3 pairwise-only lens shapes. Fixed opacity,
      not tied to hover/select classes (they never receive them — see
