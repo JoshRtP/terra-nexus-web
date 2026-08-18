@@ -432,9 +432,40 @@ function isActive(href: string): boolean {
     });
   }
 
+  // Pre-scroll transparent-hero homepage (owner request, 2026-08-18):
+  // Expertise/Capabilities/Industries act as plain anchor links to the
+  // matching homepage section instead of opening their mega menu, for as
+  // long as the header is still transparent over the photo hero. Reads the
+  // body.has-photo-hero / body.past-hero class pair index.astro's own
+  // photo-hero script maintains (see that script's comments) — this stays
+  // false on every other page, and Insights/About/Contact are untouched,
+  // so nothing here changes behavior anywhere except this one homepage
+  // window. Once past-hero fires (header solidifies) these three revert to
+  // the normal mega-menu toggle below, same as every other page always has.
+  const homepageSectionAnchors: Record<string, string> = {
+    expertise: '#expertise',
+    // Points at Our Markets (owner correction, 2026-08-18), not the
+    // "How We Work" section id="capabilities" further down the page.
+    capabilities: '#our-markets',
+    industries: '#who-we-work-with',
+  };
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   menuTriggers.forEach((trigger) => {
     const panel = document.getElementById(trigger.getAttribute('aria-controls') || '');
+    const anchorHref = homepageSectionAnchors[trigger.dataset.menuTrigger || ''];
+
     trigger.addEventListener('click', () => {
+      if (
+        anchorHref &&
+        document.body.classList.contains('has-photo-hero') &&
+        !document.body.classList.contains('past-hero')
+      ) {
+        closeAllMenus();
+        document.querySelector(anchorHref)?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+        return;
+      }
+
       const isOpen = trigger.getAttribute('aria-expanded') === 'true';
       closeAllMenus(isOpen ? undefined : trigger);
       trigger.setAttribute('aria-expanded', String(!isOpen));
