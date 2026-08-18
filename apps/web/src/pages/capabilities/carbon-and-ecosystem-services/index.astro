@@ -152,70 +152,60 @@ const lifecycle = [
       </div>
 
       <div class="cs-diagram card card-static">
-        <p class="cs-flow-label">Environmental Performance</p>
-        <div class="cs-flow-rule" aria-hidden="true"></div>
-        <p class="cs-flow-label cs-flow-label-muted">How Is the Value Carried?</p>
-        <div class="cs-flow-rule" aria-hidden="true"></div>
+        <div class="cs-diagram-grid">
+          <div class="cs-diagram-flow">
+            <p class="cs-flow-label">Environmental Performance</p>
+            <div class="cs-flow-rule" aria-hidden="true"></div>
+            <p class="cs-flow-label cs-flow-label-muted">How Is the Value Carried?</p>
+            <div class="cs-flow-rule" aria-hidden="true"></div>
 
-        <ul class="cs-selector-grid" role="list" data-cs-selector>
-          {mechanisms.map((m) => (
-            <li>
-              <button
-                type="button"
-                class="cs-selector-card"
-                data-cs-select={m.id}
-                aria-pressed={m.id === 'm01' ? 'true' : 'false'}
-              >
-                <span class="cs-selector-num">{m.num}</span>
-                <span class="cs-selector-title">{m.title}</span>
-                <span class="cs-selector-carrier">{m.carrier}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+            <ul class="cs-selector-stack" role="list" data-cs-selector>
+              {mechanisms.map((m) => (
+                <li>
+                  <button
+                    type="button"
+                    class="cs-selector-card"
+                    data-cs-select={m.id}
+                    aria-pressed={m.id === 'm01' ? 'true' : 'false'}
+                  >
+                    <span class="cs-selector-num">{m.num}</span>
+                    <span class="cs-selector-title">{m.title}</span>
+                    <span class="cs-selector-carrier">{m.carrier}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
 
-        <div class="cs-flow-rule" aria-hidden="true"></div>
-        <p class="cs-flow-label">Credible Claim &amp; Market Value</p>
+            <div class="cs-flow-rule" aria-hidden="true"></div>
+            <p class="cs-flow-label">Credible Claim &amp; Market Value</p>
+          </div>
 
-        <div class="cs-summary-strip" aria-live="polite">
-          <p class="cs-summary-label" data-cs-summary-label>Selected mechanism / 01</p>
-          <div>
-            <p class="cs-summary-headline" data-cs-summary-headline>{mechanisms[0].headline}</p>
-            <p class="cs-summary-body" data-cs-summary-body>{mechanisms[0].summary}</p>
+          <!-- Each mechanism's full deep-dive content, pre-rendered and
+               toggled via [hidden] — same pattern as StrategyFrameworkDVF's
+               content panels (Market Validation page): works without JS,
+               no innerHTML swapping needed, one aria-live region announces
+               the change. Replaces the earlier design (a short summary
+               strip here + 4 separate <article> sections further down the
+               page you had to scroll to) — owner feedback, 2026-08-19:
+               embed the deep-dive content directly in this section instead. -->
+          <div class="cs-detail-panel" aria-live="polite">
+            {mechanisms.map((m) => (
+              <div class="cs-detail-content" data-cs-detail={m.id} hidden={m.id !== 'm01'}>
+                <p class="cs-detail-deck">{m.headline}</p>
+                <div class="cs-examples">
+                  <span class="cs-examples-label">Examples</span>
+                  <p class="cs-examples-text">{m.examples}</p>
+                </div>
+                <div class="cs-detail-body">
+                  {m.body.map((para) => <p>{para}</p>)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- 3. Four mechanism deep-dives -->
-  <section class="section cs-deepdive-intro">
-    <div class="container">
-      <span class="eyebrow">Four Market Mechanisms</span>
-    </div>
-  </section>
-
-  {mechanisms.map((m, i) => (
-    <article id={m.id} class:list={['cs-mechanism-article', { 'cs-mechanism-article-alt': i % 2 === 1 }]}>
-      <div class="container cs-mechanism-grid">
-        <div>
-          <p class="cs-mechanism-num">{m.num}</p>
-          <h3 class="cs-mechanism-title">{m.title}</h3>
-          <p class="cs-mechanism-carrier">{m.carrier}</p>
-        </div>
-        <div class="cs-mechanism-copy">
-          <p class="cs-mechanism-deck">{m.headline}</p>
-          <div class="cs-mechanism-body">
-            {m.body.map((para) => <p>{para}</p>)}
-          </div>
-          <div class="cs-examples">
-            <span class="cs-examples-label">Examples</span>
-            <p class="cs-examples-text">{m.examples}</p>
-          </div>
-        </div>
-      </div>
-    </article>
-  ))}
 
   <!-- 4. Dark comparison band -->
   <section class="cs-comparison-band" aria-labelledby="comparison-heading">
@@ -396,23 +386,37 @@ const lifecycle = [
     background: var(--color-border-strong);
     margin: var(--space-2) auto;
   }
-  .cs-selector-grid {
+  /* ── Selector + deep-dive, embedded side by side (owner feedback,
+     2026-08-19) ── Was: a 4-across card grid with a short summary strip
+     below it, then 4 separate full-width <article> sections further down
+     the page you had to scroll to. Now: the flow diagram narrows to one
+     stacked column on the left, and the selected mechanism's full deep-
+     dive content (deck, examples, 3 body paragraphs) renders beside it on
+     the right — all 4 mechanisms pre-rendered, toggled via [hidden]. */
+  .cs-diagram-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: start;
+  }
+  @media (min-width: 56rem) {
+    .cs-diagram-grid { grid-template-columns: 17rem 1fr; gap: var(--space-12); }
+  }
+
+  .cs-selector-stack {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
   }
-  @media (min-width: 40rem) { .cs-selector-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 64rem) { .cs-selector-grid { grid-template-columns: repeat(4, 1fr); } }
   .cs-selector-card {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     width: 100%;
-    height: 100%;
-    padding: var(--space-5) var(--space-4);
+    padding: var(--space-4);
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border);
     background: var(--color-surface-elevated);
@@ -432,49 +436,22 @@ const lifecycle = [
   .cs-selector-card[aria-pressed="true"] .cs-selector-title { color: #fff; }
   .cs-selector-card[aria-pressed="true"] .cs-selector-carrier { color: rgba(248, 250, 252, 0.65); }
 
-  .cs-summary-strip {
-    margin-top: var(--space-8);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--color-border);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-  @media (min-width: 40rem) {
-    .cs-summary-strip { grid-template-columns: 12rem 1fr; gap: var(--space-8); }
-  }
-  .cs-summary-label {
-    font-size: var(--text-xs);
-    font-weight: var(--font-semibold);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
-  .cs-summary-headline { font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--color-text); margin-bottom: var(--space-2); }
-  .cs-summary-body { font-size: var(--text-base); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
-
-  /* ── 3. Deep-dive mechanism articles ── */
-  .cs-deepdive-intro { padding-bottom: 0; }
-  .cs-mechanism-article { border-top: 1px solid var(--color-border); scroll-margin-top: 6rem; }
-  .cs-mechanism-article-alt { background: var(--color-surface); }
-  .cs-mechanism-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    padding-block: var(--space-12);
-    align-items: start;
-  }
-  @media (min-width: 56rem) {
-    .cs-mechanism-grid { grid-template-columns: 0.8fr 1.2fr; gap: var(--space-16); padding-block: var(--space-16); }
-  }
-  .cs-mechanism-num { font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--c-sky-600); margin-bottom: var(--space-2); }
-  .cs-mechanism-title { max-width: 14ch; }
-  .cs-mechanism-carrier { margin-top: var(--space-3); font-size: var(--text-base); color: var(--color-text-muted); }
-  .cs-mechanism-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; max-width: 26em; margin-bottom: var(--space-6); }
-  .cs-mechanism-body { display: flex; flex-direction: column; gap: var(--space-4); font-size: var(--text-lg); line-height: var(--line-relaxed); color: var(--color-text-secondary); max-width: 42em; }
-  .cs-examples { margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--color-border); max-width: 42em; }
+  .cs-detail-panel { min-width: 0; }
+  .cs-detail-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; max-width: 30em; }
+  .cs-examples { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
   .cs-examples-label { display: block; font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-2); }
   .cs-examples-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); }
+  .cs-detail-body {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
 
   /* ── 4. Dark comparison band ── */
   .cs-comparison-band { background: var(--gradient-dark); color: var(--color-text-inverse); }
@@ -553,55 +530,25 @@ const lifecycle = [
 </style>
 
 <script>
-  // Mechanism selector — sets the active card, updates the summary strip,
-  // and smooth-scrolls to that mechanism's deep-dive section. Mirrors the
-  // reference prototype's behavior; vanilla JS, no framework, consistent
-  // with this page's SSR-only composition.
-  const MECHANISMS: Record<string, { headline: string; summary: string; num: string }> = {
-    m01: {
-      headline: 'Turn verified environmental outcomes into market-ready assets.',
-      summary: 'A credit is a unit: once issued, a quantified outcome can be owned, transferred, priced, retired, and reported under defined market rules. Carbon is the mature case; biodiversity, water, habitat, and soil are following it.',
-      num: '01',
-    },
-    m02: {
-      headline: 'Create and account for environmental value inside the value chain.',
-      summary: "Improvements at farms, suppliers, and facilities stay attached to the chain they occur in and count toward corporate targets, procurement programs, and customer commitments — if claim rights, allocation, and custody are settled first.",
-      num: '02',
-    },
-    m03: {
-      headline: 'Make environmental performance part of what is bought and sold.',
-      summary: 'The claim travels with the product itself, so it only reaches as far as the evidence behind it: what was quantified, how it ties to this unit, and what the producer or buyer may say about it.',
-      num: '03',
-    },
-    m04: {
-      headline: 'Convey environmental value when physical supply alone cannot.',
-      summary: 'The attribute transfers separately from the molecule, letting buyers procure differentiated production where segregation is impractical — provided issuance, custody, retirement, exclusivity, and claims all agree.',
-      num: '04',
-    },
-  };
-
+  // Mechanism selector — sets the active card and reveals that
+  // mechanism's pre-rendered deep-dive panel beside it (all 4 panels are
+  // in the DOM already, toggled via [hidden] — same pattern as
+  // StrategyFrameworkDVF's content panels on the Market Validation page,
+  // so this works without JS and needs no innerHTML swapping). No scroll
+  // involved — the content is embedded in this section now, not a
+  // separate one further down the page.
   const root = document.querySelector<HTMLElement>('[data-cs-selector]');
   if (root) {
     const cards = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-cs-select]'));
-    const labelEl = document.querySelector<HTMLElement>('[data-cs-summary-label]');
-    const headlineEl = document.querySelector<HTMLElement>('[data-cs-summary-headline]');
-    const bodyEl = document.querySelector<HTMLElement>('[data-cs-summary-body]');
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-cs-detail]'));
 
     cards.forEach((card) => {
       card.addEventListener('click', () => {
         const id = card.dataset.csSelect;
         if (!id) return;
-        const m = MECHANISMS[id];
-        if (!m) return;
 
         cards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
-        if (labelEl) labelEl.textContent = `Selected mechanism / ${m.num}`;
-        if (headlineEl) headlineEl.textContent = m.headline;
-        if (bodyEl) bodyEl.textContent = m.summary;
-
-        const target = document.getElementById(id);
-        target?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+        panels.forEach((p) => { p.hidden = p.dataset.csDetail !== id; });
       });
     });
   }
