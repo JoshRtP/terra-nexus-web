@@ -114,7 +114,8 @@ const offerings = [
   { name: 'Impact Verification & Claims Translation', description: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.' },
   { name: 'Full-Service GHG Accounting', description: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.' },
 ];
-const offeringsCallout = 'The highest nominal price is not always the highest-value path. Terra Nexus compares participant economics, evidence and operating cost, ownership, market capacity, utilization, acceptance risk, timing, scalability, durability, stacking compatibility, and strategic value. Detailed pricing, intervention libraries, stacking logic, and client-specific optimization remain paid work.';
+// offeringsCallout ("The highest nominal price is not always...") removed
+// per owner feedback, 2026-08-19.
 
 const lifecycle = [
   { label: '01 — Evaluate', title: 'Find where the opportunity actually is.', body: 'Test outcomes, mechanisms, standards, eligibility, claims, economics, buyers, incentives, and risk before committing to a route.' },
@@ -260,16 +261,8 @@ const lifecycle = [
           </article>
         ))}
       </div>
-      <div class="cs-callout">
-        <p>{offeringsCallout}</p>
-      </div>
     </div>
   </section>
-
-  <!-- 6. Full-width image band -->
-  <div class="cs-image-band" role="img" aria-label="Production site, field measurement, or port — photo placeholder, real photography pending">
-    <span class="cs-photo-caption">Photo — full-width: production site, field measurement, or port</span>
-  </div>
 
   <!-- 7. Dark comparison band — moved to just above the closing CTA,
        owner feedback 2026-08-19 (was section 4, right after the
@@ -280,7 +273,6 @@ const lifecycle = [
         <h2 id="comparison-heading">Same performance. Different market architecture.</h2>
         <div class="cs-header-split-body cs-header-split-body-inverse">
           <p>A reduction at a farm, a supplier, a factory, or a production facility does not belong to any single mechanism by nature.</p>
-          <p>Depending on how the program is structured, the same underlying improvement can travel four different ways.</p>
         </div>
       </div>
 
@@ -383,8 +375,10 @@ const lifecycle = [
 
   /* ── 2. Mechanism selector diagram ── */
   .cs-diagram { padding: var(--space-10) var(--space-8); }
+  /* Left-aligned to match the card stack below it, not centered — owner
+     mockup, 2026-08-19 ("Move Text"). */
   .cs-flow-label {
-    text-align: center;
+    text-align: left;
     font-size: var(--text-xs);
     font-weight: var(--font-semibold);
     letter-spacing: 0.1em;
@@ -396,7 +390,7 @@ const lifecycle = [
     height: 1.75rem;
     width: 1px;
     background: var(--color-border-strong);
-    margin: var(--space-2) auto;
+    margin: var(--space-2) 0;
   }
   /* ── Selector + deep-dive, embedded side by side (owner feedback,
      2026-08-19) ── Was: a 4-across card grid with a short summary strip
@@ -449,7 +443,9 @@ const lifecycle = [
   .cs-selector-card[aria-pressed="true"] .cs-selector-carrier { color: rgba(248, 250, 252, 0.65); }
 
   .cs-detail-panel { min-width: 0; }
-  .cs-detail-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; max-width: 30em; }
+  /* Full column width, not capped to 30em — owner mockup, 2026-08-19
+     ("Full Margin"). */
+  .cs-detail-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; }
   .cs-examples { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
   .cs-examples-label { display: block; font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-2); }
   .cs-examples-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); }
@@ -490,13 +486,14 @@ const lifecycle = [
   }
   .cs-comparison-label { font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-sky-300); }
   .cs-comparison-body { font-size: var(--text-base); line-height: var(--line-relaxed); color: var(--color-text-inverse); }
+  /* Full container width, not capped to 34em — owner mockup, 2026-08-19
+     ("Full Margin"). */
   .cs-pull-quote {
     margin-top: var(--space-10);
     font-size: var(--text-2xl);
     font-weight: var(--font-medium);
     line-height: 1.4;
     color: #fff;
-    max-width: 34em;
   }
 
   /* ── 5. Our Offerings ── */
@@ -505,15 +502,6 @@ const lifecycle = [
   .cs-offering-index { flex-shrink: 0; min-width: 3rem; }
   .cs-offering-card h3 { font-size: var(--text-lg); margin-bottom: var(--space-3); }
   .cs-offering-card p { color: var(--color-text-secondary); font-size: var(--text-base); line-height: var(--line-relaxed); }
-  .cs-callout {
-    margin-top: var(--space-8);
-    padding: var(--space-6);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-left: 3px solid var(--c-sky-600);
-    border-radius: var(--radius-md);
-  }
-  .cs-callout p { margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm); line-height: var(--line-relaxed); }
 
   /* ── 6. Lifecycle ── */
   .cs-lifecycle-grid {
@@ -524,16 +512,6 @@ const lifecycle = [
   @media (min-width: 48rem) { .cs-lifecycle-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .cs-lifecycle-grid { grid-template-columns: repeat(3, 1fr); } }
   .cs-lifecycle-label { display: block; font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--c-sky-600); margin-bottom: var(--space-3); }
-
-  /* ── 7. Full-width image band ── */
-  .cs-image-band {
-    height: 20rem;
-    background: repeating-linear-gradient(135deg, var(--color-border) 0 7px, var(--color-surface) 7px 14px);
-    border-bottom: 1px solid var(--color-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 
   @media (max-width: 40rem) {
     .cs-diagram { padding: var(--space-6) var(--space-5); }
