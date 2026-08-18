@@ -10,7 +10,7 @@
 // (inline accordion inside the drawer) — one DOM per menu, toggled by the
 // same button/aria-expanded state; only the CSS positioning differs per
 // breakpoint. This keeps keyboard/AX behavior identical at both sizes.
-import { expertiseMenu, capabilitiesMenu, industriesMenu, insightsMenu } from '../data/nav-data';
+import { expertiseMenu, capabilitiesMenu, industriesMenu, insightsMenu, valueChainMenu, approachMenu } from '../data/nav-data';
 
 const currentPath = Astro.url.pathname;
 
@@ -55,7 +55,7 @@ function isActive(href: string): boolean {
             Expertise
           </button>
           <div id="menu-expertise" class="nav-menu-panel" data-menu-panel="expertise" hidden>
-            <div class="panel-inner panel-list-3">
+            <div class="panel-inner">
               <ul class="panel-links" role="list">
                 {expertiseMenu.map((item) => (
                   <li>
@@ -81,16 +81,33 @@ function isActive(href: string): boolean {
             Capabilities
           </button>
           <div id="menu-capabilities" class="nav-menu-panel" data-menu-panel="capabilities" hidden>
-            <div class="panel-inner panel-list-2">
-              <ul class="panel-links" role="list">
-                {capabilitiesMenu.map((item) => (
-                  <li>
-                    <a href={item.href} class="panel-link">
-                      <span class="panel-link-title">{item.title}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <div class="panel-inner">
+              <div class="panel-columns">
+                <div class="panel-col">
+                  <span class="panel-col-heading">Our Approach</span>
+                  <ul class="panel-links" role="list">
+                    {approachMenu.map((item) => (
+                      <li>
+                        <a href={item.href} class="panel-link">
+                          <span class="panel-link-title">{item.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div class="panel-col">
+                  <span class="panel-col-heading">Capabilities</span>
+                  <ul class="panel-links" role="list">
+                    {capabilitiesMenu.map((item) => (
+                      <li>
+                        <a href={item.href} class="panel-link">
+                          <span class="panel-link-title">{item.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
               <a href="/capabilities/" class="panel-view-all">View All Capabilities &rarr;</a>
             </div>
           </div>
@@ -108,15 +125,32 @@ function isActive(href: string): boolean {
           </button>
           <div id="menu-industries" class="nav-menu-panel" data-menu-panel="industries" hidden>
             <div class="panel-inner">
-              <ul class="panel-roles" role="list">
-                {industriesMenu.map((role) => (
-                  <li>
-                    <a href={role.href} class={`panel-role-card panel-role-${role.key}`}>
-                      <span class="panel-role-title">{role.title}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div class="panel-columns">
+                <div class="panel-col">
+                  <span class="panel-col-heading">By Role</span>
+                  <ul class="panel-roles" role="list">
+                    {industriesMenu.map((role) => (
+                      <li>
+                        <a href={role.href} class={`panel-role-card panel-role-${role.key}`}>
+                          <span class="panel-role-title">{role.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div class="panel-col">
+                  <span class="panel-col-heading">By Value-Chain Segment</span>
+                  <ul class="panel-links" role="list">
+                    {valueChainMenu.map((item) => (
+                      <li>
+                        <a href={item.href} class="panel-link">
+                          <span class="panel-link-title">{item.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
               <a href="/industries/" class="panel-view-all">View All Industries &rarr;</a>
             </div>
           </div>
@@ -134,7 +168,7 @@ function isActive(href: string): boolean {
           </button>
           <div id="menu-insights" class="nav-menu-panel" data-menu-panel="insights" hidden>
             <div class="panel-inner">
-              <ul class="panel-links panel-links-row" role="list">
+              <ul class="panel-links" role="list">
                 {insightsMenu.map((item) => (
                   <li>
                     <a href={item.href} class="panel-link">
@@ -245,7 +279,7 @@ function isActive(href: string): boolean {
     transform: translateX(-50%);
     width: max-content;
     min-width: 12rem;
-    max-width: min(40rem, calc(100vw - 2rem));
+    max-width: min(44rem, calc(100vw - 2rem));
     background: var(--color-surface-elevated, #fff);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-2xl);
@@ -254,13 +288,30 @@ function isActive(href: string): boolean {
   }
   .panel-inner { padding: var(--space-4) var(--space-5); }
 
+  /* Vertical, single-column by default — every panel (Expertise, Insights,
+     and each column within Industries/Capabilities) is one stacked list,
+     not a multi-column grid. */
   .panel-links {
     list-style: none; margin: 0; padding: 0;
-    display: grid; gap: var(--space-1);
+    display: grid; grid-template-columns: 1fr; gap: var(--space-1);
+    width: 16rem;
   }
-  .panel-list-3 .panel-links { grid-template-columns: repeat(3, 11rem); }
-  .panel-list-2 .panel-links { grid-template-columns: repeat(2, 12rem); }
-  .panel-links-row { grid-template-columns: repeat(4, 9rem); }
+
+  /* Two-column groups — Industries (By Role / By Value-Chain Segment) and
+     Capabilities (Our Approach / Capabilities) — each column is itself a
+     vertical list. */
+  .panel-columns {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: var(--space-2) var(--space-8);
+  }
+  .panel-col-heading {
+    display: block;
+    font-size: var(--text-xs); font-weight: var(--font-semibold);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
 
   .panel-link {
     display: block;
@@ -287,7 +338,8 @@ function isActive(href: string): boolean {
 
   .panel-roles {
     list-style: none; margin: 0; padding: 0;
-    display: grid; grid-template-columns: repeat(3, 10rem); gap: var(--space-2);
+    display: grid; grid-template-columns: 1fr; gap: var(--space-2);
+    width: 16rem;
   }
   .panel-role-card {
     display: block;
@@ -337,10 +389,13 @@ function isActive(href: string): boolean {
       margin: 0 var(--space-2) var(--space-2);
     }
     .panel-inner { padding: var(--space-2) var(--space-2) var(--space-3); }
-    .panel-list-3 .panel-links,
-    .panel-list-2 .panel-links,
-    .panel-links-row,
-    .panel-roles { grid-template-columns: 1fr; }
+    .panel-links,
+    .panel-roles { width: auto; }
+    /* Two-column groups stack to one column in the mobile drawer — there's
+       no room for Producers/Buyers/Enablers or Our Approach beside their
+       second column at 360px. */
+    .panel-columns { grid-template-columns: 1fr; gap: var(--space-4); }
+    .panel-col-heading { color: rgba(255, 255, 255, 0.5); }
     .panel-link-title { color: #fff; }
     .panel-link:hover, .panel-link:focus-visible { background: rgba(255, 255, 255, 0.08); }
     .panel-role-card { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }

@@ -14,7 +14,11 @@
 export interface MenuItem {
   title: string;
   href: string;
-  description: string;
+  // Unused since the mega menu dropped item descriptions (owner feedback,
+  // 2026-08-17) — kept optional rather than deleted so expertiseMenu/
+  // capabilitiesMenu/insightsMenu's existing descriptions don't need
+  // stripping, in case a denser menu treatment wants them back later.
+  description?: string;
 }
 
 export const expertiseMenu: MenuItem[] = [
@@ -74,4 +78,33 @@ export const insightsMenu: MenuItem[] = [
   { title: 'Research', href: '/insights/research/', description: 'Deeper research and technical analysis.' },
   { title: 'Case Studies', href: '/case-studies/', description: 'Applied examples of Terra Nexus work.' },
   { title: 'Digital Tools', href: '/digital-solutions/', description: 'Interactive tools, models, and applications.' },
+];
+
+// Value-chain segments — the Industries mega menu's second column. Titles
+// and slugs (used as #anchors) MUST match the canonical Segment[] array in
+// pages/who-we-work-with/food-and-agribusiness-value-chain/index.astro,
+// where each segment card carries id={slug}.
+export const valueChainMenu: MenuItem[] = [
+  { title: 'Inputs Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#inputs-companies' },
+  { title: 'Agricultural Producers & Integrated Protein Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#agricultural-producers' },
+  { title: 'Commodity Traders', href: '/who-we-work-with/food-and-agribusiness-value-chain/#commodity-traders' },
+  { title: 'Ingredient & Feed Processors', href: '/who-we-work-with/food-and-agribusiness-value-chain/#ingredient-feed-processors' },
+  { title: 'Food & Beverage Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-beverage-companies' },
+  { title: 'Food Retail & Distribution', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-retail-distribution' },
+  { title: 'Energy & Biofuels Refiners', href: '/who-we-work-with/food-and-agribusiness-value-chain/#energy-biofuels-refiners' },
+  { title: 'Food Waste Prevention, Diversion & Recovery', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-waste-prevention-diversion-recovery' },
+];
+
+// Our Approach stages — the Capabilities mega menu's first column. Short
+// labels match the homepage's condensed approachSteps[].short (index.astro);
+// full stage titles live on capabilities/index.astro's workstreams array.
+// No per-stage anchor exists yet, so all six point at the Our Approach
+// section on the standalone Capabilities page.
+export const approachMenu: MenuItem[] = [
+  { title: 'Evaluate', href: '/capabilities/#approach-heading' },
+  { title: 'Design', href: '/capabilities/#approach-heading' },
+  { title: 'Build', href: '/capabilities/#approach-heading' },
+  { title: 'Launch & Scale', href: '/capabilities/#approach-heading' },
+  { title: 'Manage & Verify', href: '/capabilities/#approach-heading' },
+  { title: 'Unlock Shared Value', href: '/capabilities/#approach-heading' },
 ];
