@@ -135,7 +135,23 @@ const approachSteps = [
       </div>
       <div class="hero-actions">
         <a href="/contact/" class="btn btn-primary btn-lg">Discuss Your Opportunity</a>
-        <a href="/expertise/" class="btn btn-secondary btn-lg">Explore Our Expertise</a>
+
+        <!-- Scroll cue (owner request, 2026-08-18) — replaces the old
+             "Explore Our Expertise" button; moved below the remaining
+             button per owner feedback the same day (was straddling the
+             hero-band/engagement-panel seam). Plain anchor to #expertise:
+             same destination as clicking Expertise in the transparent
+             pre-scroll header (see Header.astro's homepageSectionAnchors),
+             and needs no JS of its own — global smooth scroll +
+             #expertise's existing scroll-margin-top handle the rest, and
+             prefers-reduced-motion already downgrades smooth scroll to
+             instant site-wide. -->
+        <a href="#expertise" class="engagement-scroll-cue">
+          <span class="engagement-scroll-cue-label">Enter the Nexus</span>
+          <svg class="engagement-scroll-cue-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </a>
       </div>
     </div>
   </section>
@@ -277,7 +293,7 @@ const approachSteps = [
       <p class="approach-followup">As an integrated services provider we create long-term continuity and interoperability between partners.  We proactively manage audit and marketplace risks throughout the full commercialization lifecycle.  That means high-quality, commercially viable, and audit-ready assets from the start.</p>
 
       <div class="section-cta">
-        <a href="/capabilities/" class="btn btn-secondary">Explore Our Approach &amp; Capabilities</a>
+        <a href="/capabilities/" class="btn btn-primary">Explore Our Approach &amp; Capabilities</a>
       </div>
     </div>
   </section>
@@ -368,7 +384,7 @@ const approachSteps = [
       </div>
 
       <div class="section-cta">
-        <a href="/who-we-work-with/" class="btn btn-secondary">See Who We Work With</a>
+        <a href="/who-we-work-with/" class="btn btn-primary">See Who We Work With</a>
       </div>
     </div>
   </section>
@@ -844,7 +860,10 @@ const approachSteps = [
     position: relative; z-index: 1; margin: 0;
     background: rgba(19, 31, 72, 0.92);
     color: #d7deef; text-align: center;
-    font-size: var(--text-sm); font-weight: var(--font-medium);
+    /* Bumped up from --text-sm (owner feedback, 2026-08-18: bigger font,
+       slightly taller bar — trims some of the extra whitespace showing up
+       below the fold on load). */
+    font-size: var(--text-base); font-weight: var(--font-medium);
     letter-spacing: 0.04em; text-transform: uppercase;
     padding-inline: var(--space-4);
     /* Extra bottom padding — this bar now sits at the very bottom edge of
@@ -852,8 +871,52 @@ const approachSteps = [
        overlaps upward by 2rem to form its rounded shelf. That overlap used
        to land on plain photo; now it would cut directly into this bar's
        own text unless it has 2rem of its own background to spare below
-       the label first. */
-    padding-block: var(--space-4) calc(var(--space-4) + 2rem);
+       the label first. Top padding bumped from --space-4 to --space-5 —
+       the visible portion of the bar (the bottom 2rem is hidden under the
+       panel's overlap) is a few pixels taller now. */
+    padding-block: var(--space-5) calc(var(--space-4) + 2rem);
+  }
+
+  /* Scroll cue — moved below the Discuss Your Opportunity button (owner
+     feedback, 2026-08-18; previously straddled the hero-band/engagement-
+     panel seam). Plain normal-flow element now, centered under the button
+     via .hero-actions' own align-items below, not absolutely positioned. */
+  .engagement-scroll-cue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    /* Extra breathing room below the button, on top of .hero-actions' own
+       flex gap (owner feedback, 2026-08-18: "should be lower"). */
+    margin-top: var(--space-4);
+    text-decoration: none;
+    animation: engagement-scroll-cue-bounce 2.2s ease-in-out infinite;
+  }
+  .engagement-scroll-cue-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-dark);
+    transition: color var(--transition-fast);
+  }
+  /* Gold, not maroon (owner feedback, 2026-08-18: "a yellow arrow"). */
+  .engagement-scroll-cue-chevron {
+    display: block;
+    color: var(--c-accent-400);
+    transition: color var(--transition-fast);
+  }
+  .engagement-scroll-cue:hover .engagement-scroll-cue-label,
+  .engagement-scroll-cue:focus-visible .engagement-scroll-cue-label { color: var(--c-sky-700); }
+  .engagement-scroll-cue:hover .engagement-scroll-cue-chevron,
+  .engagement-scroll-cue:focus-visible .engagement-scroll-cue-chevron { color: var(--c-accent-600); }
+  .engagement-scroll-cue:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); border-radius: var(--radius-sm); }
+  @keyframes engagement-scroll-cue-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.75; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .engagement-scroll-cue { animation: none; }
   }
 
   /* ── Engagement panel ─────────────────────────────────
@@ -877,10 +940,13 @@ const approachSteps = [
   }
   .engagement-inner h2 { font-size: var(--text-2xl); color: var(--color-dark); margin-bottom: var(--space-3); max-width: 34ch; }
   .engagement-inner p { color: var(--c-sky-700); max-width: var(--max-width-text); line-height: var(--line-relaxed); }
-  .engagement-inner .hero-actions { display: flex; flex-direction: column; gap: var(--space-3); }
+  /* align-items: center — centers .engagement-scroll-cue under the button
+     below it (was flex-direction: row on mobile when this held two
+     buttons; a single button + the cue reads fine as one centered column
+     at every width now, so that override is gone). */
+  .engagement-inner .hero-actions { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
   @media (max-width: 56rem) {
     .engagement-inner { grid-template-columns: 1fr; }
-    .engagement-inner .hero-actions { flex-direction: row; flex-wrap: wrap; }
   }
   .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
 
