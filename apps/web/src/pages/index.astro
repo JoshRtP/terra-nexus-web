@@ -226,7 +226,6 @@ const approachSteps = [
         </div>
         <div class="split-header-lead">
           <p class="section-lead">Most companies lack the dedicated resources, and specialized knowledge that's required to navigate today's complex regulations and market dynamics.  This leads to frequent delays, expensive vendor lock-in, and unmanageable programs that fail.</p>
-          <p class="section-lead">As an integrated services provider we create long-term continuity and interoperability between partners.  We proactively manage audit and marketplace risks throughout the full commercialization lifecycle.  That means high-quality, commercially viable, and audit-ready assets from the start.</p>
         </div>
       </header>
 
@@ -270,6 +269,8 @@ const approachSteps = [
           </div>
         </div>
       </div>
+
+      <p class="approach-followup">As an integrated services provider we create long-term continuity and interoperability between partners.  We proactively manage audit and marketplace risks throughout the full commercialization lifecycle.  That means high-quality, commercially viable, and audit-ready assets from the start.</p>
 
       <div class="section-cta">
         <a href="/capabilities/" class="btn btn-secondary">Explore Our Approach &amp; Capabilities</a>
@@ -391,7 +392,7 @@ const approachSteps = [
       </div>
 
       <div class="section-cta">
-        <a href="/case-studies/" class="btn btn-primary">Read Our Case Studies</a>
+        <a href="/about/" class="btn btn-primary">Learn More About Us</a>
       </div>
     </div>
   </section>
@@ -1089,6 +1090,22 @@ const approachSteps = [
     margin-top: var(--space-2);
     max-width: 26rem;
     color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Second "How We Work" paragraph — moved here from the split-header lead
+     (owner request, 2026-08-18): now sits below the approach diagram and
+     above the "Explore Our Approach & Capabilities" button instead of
+     stacked with the intro paragraph up top. Same type treatment as
+     .section-header .section-lead (text-lg/secondary/reading-width), which
+     doesn't apply here since this paragraph isn't inside a .section-header. */
+  .approach-followup {
+    margin-top: var(--space-10);
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    /* No max-width cap — runs the full container width, matching the
+       approach diagram above it (owner mockup, 2026-08-18: "full margin"),
+       not the narrower reading-width most body copy on the site uses. */
     line-height: var(--line-relaxed);
   }
 
