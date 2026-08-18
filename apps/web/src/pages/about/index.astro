@@ -63,13 +63,18 @@ const originChapters = [
   },
   {
     label: 'The studio',
-    // Three-line stanza (owner rewrite, 2026-08-18) — replaces the previous
-    // single body paragraph + closing line entirely, not appended to it.
+    // Owner correction, 2026-08-18: "A place for experts to operate." gets
+    // promoted to the same bold <h3> heading treatment as the chapter
+    // title. "What we ended up with was a movement." keeps its ORIGINAL
+    // serif-italic font (not the bold h3 style) — only its color changes,
+    // to gold. Body + closing line are the original description/payoff
+    // line, restored per owner request after an earlier revision had
+    // dropped them.
     title: 'We built a studio, not a consultancy.',
-    stanza: [
-      'A place for experts to operate',
-      'What we ended up with was a movement.',
-    ],
+    subheading: 'A place for experts to operate.',
+    payoffLine: 'What we ended up with was a movement.',
+    body: 'Terra Nexus Ventures was formed in Boulder, Colorado to advise, manage, and operate commercial sustainability and climate programs. Experts as fractional executives, digital tools, and a network of global executives behind them.',
+    closingLine: 'If we design it, we can run it. If we run it, it will deliver results.',
   },
   {
     label: 'The change',
@@ -274,15 +279,11 @@ const rosterGroups: Array<{
           {originChapters.map((chapter, i) => (
             <article class="origin-chapter" data-origin-chapter data-origin-index={i}>
               <h3>{chapter.title}</h3>
+              {chapter.subheading && <h3>{chapter.subheading}</h3>}
+              {chapter.payoffLine && <p class="origin-payoff-line">{chapter.payoffLine}</p>}
               {chapter.body && <p>{chapter.body}</p>}
-              {chapter.stanza && (
-                <div class="origin-stanza">
-                  {chapter.stanza.map((line, lineIndex) => (
-                    <p class:list={['origin-stanza-line', { 'origin-stanza-line-final': lineIndex === chapter.stanza.length - 1 }]}>{line}</p>
-                  ))}
-                </div>
-              )}
               {chapter.pullQuote && <p class="origin-pull-quote">{chapter.pullQuote}</p>}
+              {chapter.closingLine && <p class="origin-closing-line">{chapter.closingLine}</p>}
               {chapter.levers && (
                 <div class="origin-levers">
                   {chapter.levers.map((lever) => (
@@ -559,23 +560,23 @@ const rosterGroups: Array<{
     line-height: 1.5;
     color: #fff;
   }
-  /* Three-line stanza (The studio, 2026-08-18 rewrite) — short sequential
-     statements, tighter rhythm than a normal paragraph, building to the
-     final line as the payoff. */
-  .origin-stanza { display: grid; gap: var(--space-2); }
-  .origin-stanza-line {
-    margin: 0;
-    font-size: var(--text-lg);
-    line-height: var(--line-relaxed);
-    color: var(--c-secondary-300);
-  }
-  .origin-stanza-line-final {
-    margin-top: var(--space-2);
+  /* "What we ended up with was a movement." (The studio) — same font-size
+     as the chapter headings above it, but deliberately NOT bold: serif
+     italic + normal weight reads as the lighter, "accented" counterpoint
+     to the bold h3s, not a fourth heading. Gold, not white.
+     Selector is `.origin-chapter p.origin-payoff-line` (2 classes + tag),
+     not just `.origin-payoff-line` — needs to out-specificity
+     `.origin-chapter > p` above, which otherwise wins the color property
+     and silently keeps this gray instead of gold (bit us once already). */
+  .origin-chapter p.origin-payoff-line {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--text-xl);
-    color: #fff;
+    font-weight: var(--font-normal);
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--c-accent-400);
   }
+  .origin-closing-line { margin-top: var(--space-2); font-style: italic; color: #fff; }
 
   .origin-levers { margin-top: var(--space-6); }
   .origin-lever {
