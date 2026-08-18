@@ -1,0 +1,89 @@
+---
+// BACKUP — not a live route (Astro excludes files/folders prefixed with
+// "_" from routing). This is the pre-scroll-story version of
+// /expertise/regenerative-agriculture/, saved 2026-08-17 on
+// prototype/industries-insights-ia immediately before that route was
+// replaced with the scroll-story version merged in from
+// prototype/regenerative-ag-scrollstory (commits 193e60f/de0d4f5). Restore
+// by copying this file's body back into index.astro if the scroll-story
+// version doesn't work out.
+import ExpertisePage from '../../../components/ExpertisePage.astro';
+
+const data = {
+  eyebrow: 'Agricultural Production',
+  title: 'Scale Regenerative Agriculture from Field to Market',
+  lead: 'Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims.',
+  heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  primaryCta: { label: 'Discuss Your Program', href: '/contact/' },
+  secondaryCta: { label: 'Explore Our Capabilities', href: '/capabilities/' },
+  metaTitle: 'Regenerative Agriculture | Terra Nexus',
+  metaDescription: 'Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims.',
+  orientation: [
+    'Regenerative agriculture begins with how crops are produced, but it does not scale through agronomy alone. Farmers decide what can work in a particular field and production system. Originators and processors connect producers to physical markets. Food, beverage, feed, fiber, and energy companies create demand and determine what evidence they need. Technology providers collect and analyze data. Accounting, certification, environmental-market, and assurance frameworks determine what can be reported or claimed.',
+    'A successful program must connect all of those decisions without losing sight of the farm business that makes implementation possible. Terra Nexus works across the complete system so regenerative agriculture can move from a broad ambition to a commercially relevant, operationally executable, measurable, and credible program.',
+  ],
+  performanceCategories: [
+    { title: 'Healthier and More Functional Soils', items: ['Improved soil structure and biological activity', 'Greater protection from erosion', 'Improved nutrient cycling', 'More effective water infiltration and retention', 'Maintenance or improvement of soil organic matter and soil carbon'] },
+    { title: 'More Resilient Crop Production', items: ['Greater ability to manage drought, excess water, heat, and other production risks', 'More diverse rotations and biological functions', 'Improved input efficiency', 'More stable productivity and quality over time', 'Reduced exposure to selected operating costs or supply disruptions'] },
+    { title: 'Better Water and Biodiversity Outcomes', items: ['Reduced runoff, erosion, and nutrient loss', 'Improved water-use efficiency', 'Increased plant, soil, pollinator, and habitat diversity', 'Stronger ecological function within and around working lands'] },
+    { title: 'Stronger Farm and Supply-Chain Economics', items: ['Transition support that reflects producer cost and risk', 'Potential input, yield, quality, or resilience benefits', 'Access to customer programs, differentiated markets, or incentives', 'Improved long-term supply security for buyers', 'More durable relationships among producers, originators, and downstream customers'] },
+  ],
+  systemSteps: [
+    { title: 'Define the Objective and Program Boundary', body: 'Start with the business decision rather than the practice list. The objective may be to strengthen a strategic supply shed, reduce agricultural emissions, improve water or soil outcomes, create a differentiated product, qualify suppliers, support corporate targets, access an incentive, or build a new environmental-market offering.', detail: 'Terra Nexus helps define the crops, products, geographies, participants, reporting boundary, commercial objective, and intended users of the outcome.' },
+    { title: 'Understand the Local Production and Market Context', body: 'Regenerative agriculture must fit the production system. The relevant context includes soil, climate, crop rotation, water, current management, equipment, tenancy, agronomic risk, producer economics, local advisors, infrastructure, commodity flows, buyer requirements, and available programs or incentives.', detail: 'Terra Nexus combines field and supply-shed context with customer demand and commercial feasibility so clients can prioritize where a program has a credible path to adoption and value.' },
+    { title: 'Design the Producer Proposition', body: 'Producers need a clear reason and practical path to participate. A producer offer may include technical support, cost sharing, premiums, outcome payments, multi-year commitments, access to markets, technology, financing, risk-sharing mechanisms, or combinations of these.', detail: 'Terra Nexus helps clients model transition costs, value allocation, enrollment criteria, contracting, evidence requirements, timing, and the treatment of existing adopters, new adopters, tenants, landowners, and incomplete data.' },
+    { title: 'Build Evidence, Data, and Traceability Around the Intended Use', body: 'The evidence system should be designed for the decision or claim it must support — not assembled after implementation. Depending on the program, evidence may include producer attestations, field records, input and practice data, soil samples, remote sensing, models, transaction records, chain-of-custody controls, product allocation, calculation workbooks, quality checks, and independent assurance.', detail: 'Terra Nexus helps determine what must be measured directly, what may be modeled or remotely sensed, what must be traceable to field or farm, how uncertainty and exceptions are handled, how physical products and environmental attributes are allocated, and what documentation must be retained.' },
+    { title: 'Launch, Operate, and Improve the Program', body: 'Commercial-scale programs require recurring operations — not only a methodology and a software platform. Core activities may include producer outreach, enrollment, contract management, data collection, quality control, calculation, ledger management, supplier and buyer reconciliation, partner coordination, exception handling, reporting, verification readiness, and continuous improvement.', detail: 'Terra Nexus can advise on the operating model or manage defined workstreams within a client-owned program.' },
+    { title: 'Connect Improved Performance to the Right Form of Value', body: 'The same field-level improvement may support different forms of value for different participants. Pathways have different evidence, traceability, ownership, assurance, commercial reach, and cost requirements. Some may coexist; others may require exclusive allocation or careful claims controls.', detail: 'Terra Nexus helps clients compare the realizable value, cost, risk, timing, utilization, market capacity, and strategic benefit of each pathway to find the highest-value supportable play.' },
+  ],
+  audiencePathways: [
+    { title: 'Commodity Traders & Originators', description: 'Identify attractive crops, geographies, customers, and supply sheds; assess whether to build, buy, partner, or participate; design regenerative commodity and environmental-attribute offerings; structure producer enrollment, incentives, evidence, and contracts; establish origination, aggregation, traceability, and chain-of-custody controls; model premiums, program costs, value sharing, and margin; select technology, agronomy, MRV, and assurance partners; manage data quality; prepare customer documentation, reporting, and audit packages; and scale programs across producers, locations, crops, and buyers.' },
+    { title: 'Food, Beverage, Feed, Fiber & Consumer-Product Companies', description: 'Sourcing strategy, supply-shed prioritization, supplier programs, Scope 3 and land-sector accounting, investment planning, product strategy, claims controls, and managed value-chain execution.' },
+    { title: 'Agricultural Producers & Integrated Agricultural Companies', description: 'Evaluate program opportunities, commercial structures, data and evidence requirements, partner choices, implementation burdens, and routes to market. Specialized agronomic recommendations are developed with qualified local experts.' },
+    { title: 'Inputs Companies', description: 'Connect input products, services, agronomy, producer programs, outcome measurement, channel strategy, customer partnerships, and credible product or program claims.' },
+    { title: 'Ingredient & Feed Processors', description: 'Supplier engagement, traceable sourcing, processing and allocation controls, customer reporting, product differentiation, and integration with broader sourcing or environmental programs.' },
+    { title: 'Enabling Technology & Solution Providers', description: 'Market strategy, customer discovery, methodology alignment, technology and model diligence, enterprise-program requirements, data architecture, pilot design, partner selection, and integration into real commodity and corporate workflows.' },
+    { title: 'Investors & Environmental-Market Participants', description: 'Market assessment, commercial and technical diligence, project or program economics, methodology review, value-creation planning, portfolio assessment, and operating-risk evaluation.' },
+  ],
+  decisionGroups: [
+    { heading: 'Strategy & Commercial Leaders', items: ['Which regenerative opportunities fit the business strategy and customer demand?', 'Which crops, supply sheds, products, and outcomes offer a credible business case?', 'Should the company build, buy, partner, invest, or participate?', 'How should value, transition costs, and risk be shared?'] },
+    { heading: 'Origination, Procurement & Operations', items: ['Which producers and suppliers are ready to participate?', 'How should volumes be sourced, aggregated, contracted, and reconciled?', 'How should existing adopters and incomplete traceability be treated?', 'What evidence must move with the commodity or environmental attribute?'] },
+    { heading: 'Sustainability, Climate & Claims Teams', items: ['Is the program intended for inventory progress, Scope 3, insetting, certification, product claims, carbon credits, resilience, water, biodiversity, or a combination?', 'Which accounting, target, certification, or market framework applies?', 'How should reductions, removals, avoided emissions, and broader outcomes be separated?', 'What may be reported credibly, by whom, and at what level of assurance?'] },
+    { heading: 'Program, Technology & Data Teams', items: ['What data must be collected directly and what may be modeled?', 'Which systems, vendors, models, field evidence, and ledgers must connect?', 'How will data quality, versioning, corrections, exceptions, and access be managed?', 'Which activities belong internally, with partners, or in a managed service?'] },
+    { heading: 'Finance, Investment & Risk Teams', items: ['What is the expected cost and value per acre, tonne, supplier, or product unit?', 'How sensitive is the business case to participation, outcomes, market demand, and assurance cost?', 'What methodology, counterparty, operational, fraud, and claims risks exist?', 'Is the program, platform, project, or portfolio investment supportable?'] },
+  ],
+  workstreams: [
+    { title: 'Evaluate the Opportunity', items: ['Market, customer, competitor, and program landscape analysis', 'Supply-shed and producer opportunity assessment', 'Business cases, economics, scenarios, and value allocation', 'Technology, methodology, partner, project, and transaction diligence', 'Build-buy-partner and investment decisions'] },
+    { title: 'Design the Program', items: ['Objectives, boundaries, outcomes, and participation criteria', 'Producer proposition, incentives, contracts, and risk allocation', 'Practice-based, outcome-based, or hybrid program architecture', 'Commercial model and routes to market', 'Governance, roles, controls, and assurance strategy'] },
+    { title: 'Build the Operating Infrastructure', items: ['Producer and supplier workflows', 'Data requirements and system architecture', 'MRV, calculation, and quality-control processes', 'Traceability, chain of custody, mass balance, and attribute controls', 'Ledgers, documentation, reporting, and exception management'] },
+    { title: 'Launch and Scale', items: ['Pilot design and success criteria', 'Partner and technology selection', 'Implementation planning and change management', 'Producer, originator, supplier, and buyer coordination', 'Program expansion across crops, geographies, and customers'] },
+    { title: 'Manage Client-Owned Programs', items: ['Recurring producer and evidence workflows', 'Data review and calculation processes', 'Program and attribute ledgers', 'Vendor and partner coordination', 'Exception resolution and management reporting', 'Audit and verification preparation', 'Continuous program improvement'] },
+    { title: 'Connect Performance to Claims and Market Value', items: ['Corporate inventory and target alignment', 'Certification and sourcing claims', 'Product, customer, and commercial propositions', 'Scope 3 and inset pathways', 'Carbon and ecosystem-service market assessment', 'Low-carbon feedstock and regulatory opportunities', 'Claims governance and communication boundaries'] },
+  ],
+  valuePathways: [
+    { label: 'Regenerative sourcing or participation claims' },
+    { label: 'Certification and product differentiation' },
+    { label: 'Scope 3 reductions and insets' },
+    { label: 'Carbon or ecosystem-service credits' },
+    { label: 'Low-carbon feedstock or regulatory value' },
+    { label: 'Procurement qualification and customer reporting' },
+    { label: 'Resilience, supply-security, and risk-reduction value' },
+  ],
+  validationRows: [
+    { category: 'Desirability', pitfall: 'The program starts with a practice list rather than a clear business objective.', validation: 'Start with the customer or commercial problem the program must solve, then map practices to that objective.' },
+    { category: 'Viability', pitfall: 'Producer costs, risk, timing, and operational burden are underestimated.', validation: 'Build a producer economics model that quantifies cost, risk, timing, and operational burden before committing.' },
+    { category: 'Feasibility', pitfall: 'A technology platform is selected before the operating model and evidence requirements are defined.', validation: 'Define the operating model and evidence requirements first, then select technology that fits them.' },
+    { category: 'Feasibility', pitfall: 'Models, field data, contracts, commodity flows, and claims use different boundaries.', validation: 'Align all program boundaries — models, data, contracts, commodity flows, and claims — from the outset.' },
+    { category: 'Feasibility', pitfall: 'Traceability is not sufficient for the intended accounting or product claim.', validation: 'Design traceability to match the accounting or claim level the program intends to support.' },
+    { category: 'Strategic Fit', pitfall: 'Environmental attributes and usage rights are unclear or allocated more than once.', validation: 'Establish clear ownership and single-use allocation of environmental attributes before commercialization.' },
+    { category: 'Viability', pitfall: 'The customer proposition does not cover the cost of origination, data, assurance, and management.', validation: 'Validate that the customer proposition fully covers origination, data, assurance, and management costs.' },
+    { category: 'Strategic Fit', pitfall: 'Pilot success criteria do not test the assumptions required for commercial scale.', validation: 'Design pilot success criteria that explicitly test the assumptions needed for commercial-scale decisions.' },
+    { category: 'Feasibility', pitfall: 'Ongoing program management, corrections, exceptions, and verification readiness are not adequately resourced.', validation: 'Resource recurring management, exception handling, and verification readiness as core program costs.' },
+  ],
+  ctaHeading: 'Build Regenerative Agriculture That Works from Field to Market',
+  ctaBody: 'Whether you are evaluating a new opportunity, designing a producer program, selecting technology, building traceability and controls, scaling an existing initiative, or preparing evidence and claims for independent review, Terra Nexus helps identify and execute the next steps.',
+  ctaButton: { label: 'Discuss Your Program', href: '/contact/' },
+};
+---
+
+<ExpertisePage data={data} />

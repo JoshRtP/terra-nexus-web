@@ -1,0 +1,637 @@
+---
+// StrategyFrameworkDVF — interactive Desirability / Feasibility / Viability
+// Venn diagram inside a larger "Strategic Fit" boundary circle. Reusable
+// component (src/components/) — first used on
+// expertise/regenerative-agriculture/index.astro's Market Validation
+// chapter, built generically enough for a second page to reuse.
+//
+// Architecture:
+// - Pure SVG (no absolutely-positioned overlapping <div>s) — see the
+//   geometry constants below. Circle positions are computed once here via
+//   trig, not hand-picked pixel guesses, so the layout stays adjustable.
+// - Hit-testing is coordinate math (client → SVG user-space via
+//   getScreenCTM, then (x-cx)²+(y-cy)²<=r² per circle), not DOM shape
+//   hit-testing — reliable regardless of clip-path/mask quirks and
+//   correct at any responsive scale. See the <script> block.
+// - Visual highlighting of the 8 Boolean regions (including the lens-
+//   shaped overlaps) uses nested SVG <clipPath> intersections plus <mask>
+//   subtraction — no path-boolean geometry library. Hit-testing and
+//   highlighting are deliberately decoupled (math drives both, but the
+//   visual shapes don't need to double as hit targets).
+// - Genuine accessible control surface: 8 real, visible <button>s below
+//   the diagram (not just the SVG) drive the same state — keyboard/screen
+//   reader users never depend on pointer geometry. The SVG itself is
+//   aria-hidden (decorative/pointer-only reinforcement of what the
+//   buttons already expose).
+// - Reduced motion: no JS-driven animation exists to disable — highlight/
+//   content transitions are plain CSS `transition`s, already neutralized
+//   by design-system.css's global `prefers-reduced-motion` override.
+
+export interface DvfRegionContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  supporting?: string;
+  cta?: { label: string; href: string };
+  /** Optional pitfall/fix pairs shown as a compact before/after list inside
+   * this state's content panel — keeps the diagram + explanation + concrete
+   * validation guidance as one unified section instead of a separate block
+   * stacked below the diagram. Typically only populated for the four base
+   * dimensions (not the two/three-way combinations), since that's the
+   * shape the underlying content naturally comes in. */
+  beforeAfter?: Array<{ pitfall: string; validation: string }>;
+}
+
+// NOTE: written as a single line, not the usual leading-`|` multi-line
+// style — confirmed via bisection that Astro's frontmatter scan (only
+// triggered when the component also has a <script> tag) mis-parses a
+// multi-line union type with a leading `|` before each variant. Trivial
+// to work around; flagging in case it recurs elsewhere in this codebase.
+export type DvfRegionId = 'strategic-fit' | 'desirable' | 'feasible' | 'viable' | 'desirable-feasible' | 'desirable-viable' | 'feasible-viable' | 'desirable-feasible-viable';
+
+export interface Props {
+  heading?: string;
+  eyebrow?: string;
+  /** Optional content override — defaults below are placeholder copy,
+   * clearly meant to be refined per CLAUDE.md/AGENTS.md (framework
+   * description, not a claim about any real client or engagement). */
+  content?: Partial<Record<DvfRegionId, Partial<DvfRegionContent>>>;
+}
+
+// `supporting` deliberately omitted below — it previously held
+// "Placeholder copy — refine before publishing" style TODO markers that
+// were rendering as real, visible page copy. Real supporting copy can be
+// supplied per-instance via the `content` prop's `supporting` field
+// whenever it exists; until then the panel just shows eyebrow/title/
+// description (+ beforeAfter, on this page).
+const DEFAULT_CONTENT: Record<DvfRegionId, DvfRegionContent> = {
+  'strategic-fit': {
+    eyebrow: 'Framework · Context',
+    title: 'Strategic Fit',
+    description: 'Does this direction advance where the organization is actually trying to go? Strategic Fit is the boundary within which desirability, feasibility, and viability get evaluated, not a fourth criterion sitting beside them.',
+  },
+  desirable: {
+    eyebrow: 'Framework · Desirability',
+    title: 'Desirable',
+    description: 'What do customers and stakeholders actually need or want?',
+  },
+  feasible: {
+    eyebrow: 'Framework · Feasibility',
+    title: 'Feasible',
+    description: 'Can we realistically deliver it: technically, operationally, and organizationally?',
+  },
+  viable: {
+    eyebrow: 'Framework · Viability',
+    title: 'Viable',
+    description: 'Can it create sustainable value, whether commercially, financially, or in some other way?',
+  },
+  'desirable-feasible': {
+    eyebrow: 'Framework · Desirability + Feasibility',
+    title: 'Wanted and Buildable',
+    description: 'Wanted, and we could realistically deliver it, but the value case isn’t proven yet.',
+  },
+  'desirable-viable': {
+    eyebrow: 'Framework · Desirability + Viability',
+    title: 'Wanted and Valuable',
+    description: 'Wanted, and the value case looks real, but delivery isn’t yet proven feasible.',
+  },
+  'feasible-viable': {
+    eyebrow: 'Framework · Feasibility + Viability',
+    title: 'Buildable and Valuable',
+    description: 'We could deliver it, and the economics work, but it isn’t yet clearly wanted.',
+  },
+  'desirable-feasible-viable': {
+    eyebrow: 'Framework · The Strongest Opportunity',
+    title: 'Wanted, Buildable, and Valuable',
+    description: 'Great opportunities sit at the intersection of what people want, what we can deliver, and what creates value. All of that gets weighed within Strategic Fit.',
+  },
+};
+
+const { heading = 'Evaluating an Opportunity', eyebrow = 'Framework', content } = Astro.props;
+// Unique per rendered instance so a second copy of this component on the
+// same page doesn't collide on <clipPath>/<mask> ids (SVG ids are global
+// to the document, not scoped like Astro's component-style hashing).
+const uid = Math.random().toString(36).slice(2, 9);
+const REGION_CONTENT: Record<DvfRegionId, DvfRegionContent> = {
+  'strategic-fit': { ...DEFAULT_CONTENT['strategic-fit'], ...content?.['strategic-fit'] },
+  desirable: { ...DEFAULT_CONTENT.desirable, ...content?.desirable },
+  feasible: { ...DEFAULT_CONTENT.feasible, ...content?.feasible },
+  viable: { ...DEFAULT_CONTENT.viable, ...content?.viable },
+  'desirable-feasible': { ...DEFAULT_CONTENT['desirable-feasible'], ...content?.['desirable-feasible'] },
+  'desirable-viable': { ...DEFAULT_CONTENT['desirable-viable'], ...content?.['desirable-viable'] },
+  'feasible-viable': { ...DEFAULT_CONTENT['feasible-viable'], ...content?.['feasible-viable'] },
+  'desirable-feasible-viable': { ...DEFAULT_CONTENT['desirable-feasible-viable'], ...content?.['desirable-feasible-viable'] },
+};
+
+// ── Geometry (viewBox 0 0 520 520) — computed once via trig, not
+// hand-picked pixel guesses, so the layout is actually adjustable. ──
+const VB = 520;
+const CENTER = { x: 260, y: 262 };
+const STRATEGIC_R = 232;
+const DVF_R = 118; // each of the three inner circles
+const DVF_CIRCUMRADIUS = 70; // distance from CENTER to each inner circle's own center
+
+function polar(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+const D = polar(CENTER.x, CENTER.y, DVF_CIRCUMRADIUS, -90); // Desirable — top
+const V = polar(CENTER.x, CENTER.y, DVF_CIRCUMRADIUS, 150); // Viable — bottom-left
+const F = polar(CENTER.x, CENTER.y, DVF_CIRCUMRADIUS, 30); // Feasible — bottom-right
+
+const LABELS = {
+  strategic: { x: CENTER.x, y: CENTER.y - STRATEGIC_R + 30 },
+  desirable: { x: D.x, y: D.y - DVF_R * 0.55 },
+  viable: { x: V.x - DVF_R * 0.5, y: V.y + DVF_R * 0.35 },
+  feasible: { x: F.x + DVF_R * 0.5, y: F.y + DVF_R * 0.35 },
+};
+
+// Each of the 8 selectable regions: which circles it's the Boolean
+// intersection of (clip chain), which circles must be excluded (mask), and
+// which circle keys it "involves" (drives the unrelated-circle dim state
+// and the accessible button labels/order).
+const REGIONS: Array<{
+  id: DvfRegionId;
+  label: string;
+  clip: Array<'strategic' | 'd' | 'f' | 'v'>;
+  exclude: Array<'d' | 'f' | 'v'>;
+  involves: Array<'strategic' | 'd' | 'f' | 'v'>;
+}> = [
+  { id: 'desirable', label: 'Desirable', clip: ['d'], exclude: ['f', 'v'], involves: ['strategic', 'd'] },
+  { id: 'feasible', label: 'Feasible', clip: ['f'], exclude: ['d', 'v'], involves: ['strategic', 'f'] },
+  { id: 'viable', label: 'Viable', clip: ['v'], exclude: ['d', 'f'], involves: ['strategic', 'v'] },
+  { id: 'desirable-feasible', label: 'Desirable + Feasible', clip: ['d', 'f'], exclude: ['v'], involves: ['strategic', 'd', 'f'] },
+  { id: 'desirable-viable', label: 'Desirable + Viable', clip: ['d', 'v'], exclude: ['f'], involves: ['strategic', 'd', 'v'] },
+  { id: 'feasible-viable', label: 'Feasible + Viable', clip: ['f', 'v'], exclude: ['d'], involves: ['strategic', 'f', 'v'] },
+  { id: 'desirable-feasible-viable', label: 'All Three', clip: ['d', 'f', 'v'], exclude: [], involves: ['strategic', 'd', 'f', 'v'] },
+  { id: 'strategic-fit', label: 'Strategic Fit Only', clip: ['strategic'], exclude: ['d', 'f', 'v'], involves: ['strategic'] },
+];
+
+const CIRCLES: Record<'strategic' | 'd' | 'f' | 'v', { x: number; y: number; r: number }> = {
+  strategic: { x: CENTER.x, y: CENTER.y, r: STRATEGIC_R },
+  d: { x: D.x, y: D.y, r: DVF_R },
+  f: { x: F.x, y: F.y, r: DVF_R },
+  v: { x: V.x, y: V.y, r: DVF_R },
+};
+
+// Geometry handed to the client script as JSON — single source of truth
+// (computed here, not re-hand-typed in the <script> block).
+const CLIENT_GEOMETRY = {
+  viewBox: VB,
+  circles: {
+    strategic: { cx: CENTER.x, cy: CENTER.y, r: STRATEGIC_R },
+    d: { cx: D.x, cy: D.y, r: DVF_R },
+    f: { cx: F.x, cy: F.y, r: DVF_R },
+    v: { cx: V.x, cy: V.y, r: DVF_R },
+  },
+  regions: REGIONS.map((r) => ({ id: r.id, involves: r.involves })),
+  initial: 'desirable-feasible-viable' as DvfRegionId,
+};
+---
+
+<div class="dvf" data-dvf data-dvf-geometry={JSON.stringify(CLIENT_GEOMETRY)}>
+  <div class="dvf-visual">
+    {eyebrow && <span class="eyebrow eyebrow-sky">{eyebrow}</span>}
+    {heading && <h3 class="dvf-heading">{heading}</h3>}
+
+    <svg
+      class="dvf-svg"
+      viewBox={`0 0 ${VB} ${VB}`}
+      aria-hidden="true"
+      data-dvf-svg
+    >
+      <defs>
+        <clipPath id={`dvf-${uid}-clip-strategic`}><circle cx={CENTER.x} cy={CENTER.y} r={STRATEGIC_R} /></clipPath>
+        <clipPath id={`dvf-${uid}-clip-d`}><circle cx={D.x} cy={D.y} r={DVF_R} /></clipPath>
+        <clipPath id={`dvf-${uid}-clip-f`}><circle cx={F.x} cy={F.y} r={DVF_R} /></clipPath>
+        <clipPath id={`dvf-${uid}-clip-v`}><circle cx={V.x} cy={V.y} r={DVF_R} /></clipPath>
+
+        {REGIONS.map((region) => region.exclude.length > 0 && (
+          <mask id={`dvf-${uid}-mask-not-${region.id}`} maskUnits="userSpaceOnUse" x="0" y="0" width={VB} height={VB}>
+            <rect x="0" y="0" width={VB} height={VB} fill="white" />
+            {region.exclude.map((key) => (
+              <circle cx={CIRCLES[key].x} cy={CIRCLES[key].y} r={CIRCLES[key].r} fill="black" />
+            ))}
+          </mask>
+        ))}
+      </defs>
+
+      <!-- Base circles — thin stroke, subtle fill, always visible. -->
+      <circle class="dvf-circle dvf-circle-strategic" data-circle="strategic" cx={CENTER.x} cy={CENTER.y} r={STRATEGIC_R} />
+      <circle class="dvf-circle dvf-circle-d" data-circle="d" cx={D.x} cy={D.y} r={DVF_R} />
+      <circle class="dvf-circle dvf-circle-f" data-circle="f" cx={F.x} cy={F.y} r={DVF_R} />
+      <circle class="dvf-circle dvf-circle-v" data-circle="v" cx={V.x} cy={V.y} r={DVF_R} />
+
+      <!-- Region highlight overlays — one per selectable state, built from
+           nested clip-path intersections (+ mask subtraction where a
+           region must exclude a third circle). Invisible until hovered/
+           selected (see CSS). -->
+      {REGIONS.map((region) => {
+        const clipIds = region.clip.map((k) => `dvf-${uid}-clip-${k}`);
+        const maskAttr = region.exclude.length > 0 ? `dvf-${uid}-mask-not-${region.id}` : null;
+        // Build nested <g clip-path="..."> wrappers, innermost carries the mask.
+        return (
+          <g class="dvf-region" data-region={region.id}>
+            {clipIds.length === 1 ? (
+              <g clip-path={`url(#${clipIds[0]})`} mask={maskAttr ? `url(#${maskAttr})` : undefined}>
+                <rect x="0" y="0" width={VB} height={VB} />
+              </g>
+            ) : clipIds.length === 2 ? (
+              <g clip-path={`url(#${clipIds[0]})`}>
+                <g clip-path={`url(#${clipIds[1]})`} mask={maskAttr ? `url(#${maskAttr})` : undefined}>
+                  <rect x="0" y="0" width={VB} height={VB} />
+                </g>
+              </g>
+            ) : (
+              <g clip-path={`url(#${clipIds[0]})`}>
+                <g clip-path={`url(#${clipIds[1]})`}>
+                  <g clip-path={`url(#${clipIds[2]})`}>
+                    <rect x="0" y="0" width={VB} height={VB} />
+                  </g>
+                </g>
+              </g>
+            )}
+          </g>
+        );
+      })}
+
+      <!-- Labels — short caps only; explanations live in the content panel. -->
+      <text class="dvf-label dvf-label-strategic" x={LABELS.strategic.x} y={LABELS.strategic.y} text-anchor="middle">STRATEGIC FIT</text>
+      <text class="dvf-label" x={LABELS.desirable.x} y={LABELS.desirable.y} text-anchor="middle">DESIRABLE</text>
+      <text class="dvf-label" x={LABELS.viable.x} y={LABELS.viable.y} text-anchor="middle">VIABLE</text>
+      <text class="dvf-label" x={LABELS.feasible.x} y={LABELS.feasible.y} text-anchor="middle">FEASIBLE</text>
+    </svg>
+
+    <!-- Genuine accessible control surface — keyboard/screen-reader users
+         drive the same state through these, independent of SVG pointer
+         geometry. Visually integrated as a compact selector row, not
+         hidden. -->
+    <div class="dvf-controls" role="group" aria-label="Framework dimensions">
+      {REGIONS.map((region) => (
+        <button
+          type="button"
+          class="dvf-control"
+          data-dvf-control={region.id}
+          aria-pressed={region.id === CLIENT_GEOMETRY.initial ? 'true' : 'false'}
+        >
+          {region.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="dvf-content" data-dvf-content aria-live="polite">
+    {Object.entries(REGION_CONTENT).map(([id, c]) => (
+      <div
+        class="dvf-content-panel"
+        data-dvf-panel={id}
+        hidden={id !== CLIENT_GEOMETRY.initial}
+      >
+        <span class="eyebrow">{c.eyebrow}</span>
+        <h4 class="dvf-content-title">{c.title}</h4>
+        <p class="dvf-content-desc">{c.description}</p>
+        {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
+
+        {c.beforeAfter && c.beforeAfter.length > 0 && (
+          <div class="dvf-before-after">
+            {c.beforeAfter.map((row) => (
+              <div class="dvf-ba-row">
+                <div class="dvf-ba-col dvf-ba-before">
+                  <span class="dvf-ba-icon" aria-hidden="true">✕</span>
+                  <div class="dvf-ba-text-wrap">
+                    <p class="dvf-ba-label">Before</p>
+                    <p class="dvf-ba-text">{row.pitfall}</p>
+                  </div>
+                </div>
+                <div class="dvf-ba-col dvf-ba-after">
+                  <span class="dvf-ba-icon" aria-hidden="true">✓</span>
+                  <div class="dvf-ba-text-wrap">
+                    <p class="dvf-ba-label">After</p>
+                    <p class="dvf-ba-text">{row.validation}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {c.cta && <a href={c.cta.href} class="btn btn-secondary dvf-content-cta">{c.cta.label}</a>}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .dvf {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: start;
+  }
+  @media (min-width: 60rem) {
+    .dvf { grid-template-columns: minmax(0, 30rem) 1fr; gap: var(--space-16); }
+  }
+
+  .dvf-visual { min-width: 0; }
+  .dvf-heading { margin-top: var(--space-2); margin-bottom: var(--space-6); font-size: var(--text-xl); }
+
+  .dvf-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 28rem;
+    margin-inline: auto;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  /* Base circles */
+  .dvf-circle {
+    fill: var(--c-sky-50);
+    fill-opacity: 0.35;
+    stroke: var(--c-sky-500);
+    stroke-width: 1.5;
+    transition: stroke-opacity 220ms ease, fill-opacity 220ms ease;
+  }
+  .dvf-circle-strategic {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 5;
+  }
+  .dvf-circle.is-dim { stroke-opacity: 0.4; fill-opacity: 0.12; }
+
+  /* Region highlight overlays */
+  .dvf-region {
+    fill: var(--c-sky-600);
+    fill-opacity: 0;
+    pointer-events: none;
+    transition: fill-opacity 220ms ease;
+  }
+  .dvf-region.is-hover { fill-opacity: 0.16; }
+  .dvf-region.is-selected { fill-opacity: 0.3; }
+  /* Center intersection gets the strongest treatment when selected — the
+     "strongest opportunity" area, per spec. */
+  .dvf-region[data-region="desirable-feasible-viable"] { fill: var(--c-accent-500); }
+  .dvf-region[data-region="desirable-feasible-viable"].is-hover { fill-opacity: 0.22; }
+  .dvf-region[data-region="desirable-feasible-viable"].is-selected { fill-opacity: 0.4; }
+  .dvf-region[data-region="strategic-fit"] { fill: var(--color-border-strong); }
+
+  /* Labels */
+  .dvf-label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.06em;
+    fill: var(--color-text);
+    pointer-events: none;
+    transition: fill-opacity 220ms ease;
+  }
+  .dvf-label-strategic { fill: var(--color-text-muted); font-size: 12px; }
+
+  /* Accessible control row — visually hidden (the SVG regions + the
+     content panel already communicate selection state visually; the pill
+     row read as redundant UI chrome on top of the diagram). Kept in the
+     DOM and keyboard/screen-reader reachable: it pops into view on
+     focus-within so keyboard users driving it with Tab/Enter still get a
+     visible focus target, exactly the standard "sr-only until focused"
+     pattern. */
+  .dvf-controls {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .dvf-controls:focus-within {
+    position: static;
+    width: auto;
+    height: auto;
+    margin-top: var(--space-6);
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .dvf-control {
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    padding: var(--space-3) var(--space-4);
+    min-height: 2.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .dvf-control:hover { border-color: var(--c-sky-300); color: var(--color-text); }
+  .dvf-control:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .dvf-control[aria-pressed="true"] {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: #fff;
+  }
+
+  /* Content panel — no extra top offset beyond .dvf-visual's own, so the
+     "FRAMEWORK · …" eyebrow lines up with the left column's eyebrow
+     instead of sitting noticeably lower. */
+  .dvf-content { min-width: 0; padding-top: var(--space-2); }
+  .dvf-content-title { font-size: var(--text-3xl); margin: var(--space-3) 0 var(--space-5); }
+  .dvf-content-desc { font-size: var(--text-lg); color: var(--color-text-secondary); line-height: var(--line-relaxed); margin-bottom: var(--space-4); }
+  .dvf-content-supporting { font-size: var(--text-sm); color: var(--color-text-muted); line-height: var(--line-relaxed); font-style: italic; }
+  .dvf-content-cta { margin-top: var(--space-6); }
+
+  /* Before/after — merged into the panel so the diagram, its explanation,
+     and the concrete validation guidance read as one section instead of
+     a separate block stacked underneath. Same visual language as the
+     rest of the site's before/after treatment (error/success tokens). */
+  .dvf-before-after {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .dvf-ba-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .dvf-ba-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  @media (max-width: 40rem) {
+    .dvf-ba-row { grid-template-columns: 1fr; gap: var(--space-3); }
+  }
+  .dvf-ba-col { display: flex; gap: var(--space-3); align-items: flex-start; }
+  .dvf-ba-icon {
+    flex-shrink: 0;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    line-height: 1;
+  }
+  .dvf-ba-before .dvf-ba-icon { background: var(--c-error-50); color: var(--c-error-500); }
+  .dvf-ba-after .dvf-ba-icon { background: var(--c-success-50); color: var(--c-success-600); }
+  .dvf-ba-text-wrap { min-width: 0; }
+  .dvf-ba-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--space-1);
+  }
+  .dvf-ba-before .dvf-ba-label { color: var(--c-error-500); }
+  .dvf-ba-after .dvf-ba-label { color: var(--c-success-600); }
+  .dvf-ba-text { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--line-normal); }
+
+  .dvf-content-panel {
+    animation: dvf-panel-in 320ms ease both;
+  }
+  @keyframes dvf-panel-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  interface DvfGeometry {
+    viewBox: number;
+    circles: Record<string, { cx: number; cy: number; r: number }>;
+    regions: Array<{ id: string; involves: string[] }>;
+    initial: string;
+  }
+
+  const roots = document.querySelectorAll<HTMLElement>('[data-dvf]');
+  roots.forEach((root) => {
+    const geometryAttr = root.getAttribute('data-dvf-geometry');
+    if (!geometryAttr) return;
+    const geometry: DvfGeometry = JSON.parse(geometryAttr);
+    const svg = root.querySelector<SVGSVGElement>('[data-dvf-svg]');
+    const controls = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dvf-control]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-dvf-panel]'));
+    const regionEls = Array.from(root.querySelectorAll<SVGGElement>('[data-region]'));
+    const circleEls = Array.from(root.querySelectorAll<SVGCircleElement>('[data-circle]'));
+    const involvesByRegion = new Map(geometry.regions.map((r: { id: string; involves: string[] }) => [r.id, r.involves]));
+
+    let selected = geometry.initial;
+    let hovered: string | null = null;
+
+    const applyDim = (activeId: string) => {
+      const involves = involvesByRegion.get(activeId) ?? [];
+      circleEls.forEach((el) => {
+        const key = el.getAttribute('data-circle') || '';
+        el.classList.toggle('is-dim', !involves.includes(key));
+      });
+    };
+
+    const render = () => {
+      regionEls.forEach((el) => {
+        const id = el.getAttribute('data-region') || '';
+        el.classList.toggle('is-selected', id === selected);
+        el.classList.toggle('is-hover', id === hovered && id !== selected);
+      });
+      applyDim(hovered ?? selected);
+    };
+
+    const setSelected = (id: string) => {
+      if (!involvesByRegion.has(id)) return;
+      selected = id;
+      controls.forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.dvfControl === id));
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-dvf-panel') !== id;
+      });
+      render();
+    };
+
+    controls.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.dvfControl;
+        if (!id) return;
+        // Clicking the already-selected region again resets to the
+        // default "All Three" overview instead of doing nothing — gives
+        // keyboard/screen-reader users the same "unclick to see
+        // everything again" escape hatch as clicking off-diagram below.
+        setSelected(id === selected ? geometry.initial : id);
+      });
+    });
+
+    if (svg) {
+      const toSvgPoint = (clientX: number, clientY: number) => {
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return null;
+        return pt.matrixTransform(ctm.inverse());
+      };
+
+      const inCircle = (px: number, py: number, cx: number, cy: number, r: number) => {
+        const dx = px - cx;
+        const dy = py - cy;
+        return dx * dx + dy * dy <= r * r;
+      };
+
+      const deriveRegion = (px: number, py: number): string | null => {
+        const c = geometry.circles;
+        const inStrategic = inCircle(px, py, c.strategic.cx, c.strategic.cy, c.strategic.r);
+        if (!inStrategic) return null;
+        const inD = inCircle(px, py, c.d.cx, c.d.cy, c.d.r);
+        const inF = inCircle(px, py, c.f.cx, c.f.cy, c.f.r);
+        const inV = inCircle(px, py, c.v.cx, c.v.cy, c.v.r);
+        if (inD && inF && inV) return 'desirable-feasible-viable';
+        if (inD && inF) return 'desirable-feasible';
+        if (inD && inV) return 'desirable-viable';
+        if (inF && inV) return 'feasible-viable';
+        if (inD) return 'desirable';
+        if (inF) return 'feasible';
+        if (inV) return 'viable';
+        return 'strategic-fit';
+      };
+
+      svg.addEventListener('pointermove', (event) => {
+        const p = toSvgPoint(event.clientX, event.clientY);
+        if (!p) return;
+        const region = deriveRegion(p.x, p.y);
+        if (region !== hovered) {
+          hovered = region;
+          render();
+        }
+      });
+      svg.addEventListener('pointerleave', () => {
+        hovered = null;
+        render();
+      });
+      svg.addEventListener('click', (event) => {
+        const p = toSvgPoint(event.clientX, event.clientY);
+        if (!p) return;
+        const region = deriveRegion(p.x, p.y);
+        // Clicking the already-selected region (or clicking outside every
+        // circle entirely) resets to the default "All Three" overview —
+        // "unclick to see everything again," rather than a dead end once
+        // a region is selected.
+        if (!region || region === selected) setSelected(geometry.initial);
+        else setSelected(region);
+      });
+    }
+
+    render();
+  });
+</script>
