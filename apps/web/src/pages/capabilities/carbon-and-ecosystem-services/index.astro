@@ -1,72 +1,608 @@
 ---
-import CapabilityPage from '../../../components/CapabilityPage.astro';
+// Carbon & Ecosystem Services — bespoke page composition (2026-08-19),
+// replacing the shared CapabilityPage.astro treatment this page used
+// before. Structure, copy, and interaction behavior come verbatim from a
+// design reference prototype a second designer produced (see
+// design-reference/Environmental Markets Page.dc.html and its README in
+// that handoff, not part of this repo) — the prototype's own inline
+// styles/fonts/hex colors were NOT ported; every visual value below maps
+// onto this site's existing design-system.css tokens instead, per the
+// handoff's own instructions ("map each role onto the existing palette").
+//
+// One addition beyond the reference prototype: the "Our Offerings"
+// section (owner feedback, 2026-08-19 — the reference redesign dropped
+// it). Content is the exact `offerings`/`callout` data the old
+// CapabilityPage-based version of this page used; only the presentation
+// changed to fit this page's own visual system. Placed after the dark
+// comparison band and before the Lifecycle section — answers "what does
+// Terra Nexus actually do about this" right after the mechanics are
+// established, before "how we run the engagement."
+//
+// Not ported from the reference prototype: its "Related Expertise" /
+// "Relevant Proof" sections don't exist here either (CapabilityPage had
+// them; the reference redesign didn't restore them, and the owner asked
+// only for Offerings back) — flagged in case those also need to return.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
 
-const data = {
-  eyebrow: 'Capabilities',
-  title: 'Turn Environmental Performance into Credible Assets, Claims, and Value',
-  lead: 'Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes.',
-  primaryCta: { label: 'Discuss Your Carbon Opportunity', href: '/contact/' },
-  secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
-  metaTitle: 'Carbon & Ecosystem Services | Terra Nexus',
-  metaDescription: 'Terra Nexus helps environmental-market, carbon, program, trade, finance, and sustainability leaders create, access, value, verify, account for, manage, and commercialize carbon and ecosystem-service outcomes.',
+const mode = getBuildMode();
 
-  orientation: [
-    'Carbon & Ecosystem Services addresses the decisions that turn environmental performance into credible, monetizable assets and claims. This capability connects the technical work of measuring, verifying, and accounting for environmental outcomes with the commercial work of structuring, pricing, and transacting them in the right market.',
-    'Environmental value is not created automatically. A reduction in emissions, an improvement in soil health, or a restoration outcome may support different claims — a Scope 3 reduction, a carbon credit, a product claim, a certification, a regulatory compliance pathway, or an ecosystem-service payment. Each pathway has different evidence, ownership, assurance, and commercial requirements. Some may coexist; others may conflict or require allocation.',
-    'Terra Nexus helps clients navigate these decisions with a discipline that connects environmental performance, accounting integrity, and commercial value — so the highest-value pathway is chosen, not simply the most visible one.',
-  ],
-  offerings: [
-    {
-      name: 'VCM & Scope 3 Markets',
-      description: 'Evaluate how organizations can access, buy, sell, develop, use, or participate in voluntary carbon, Scope 3, inset, and related markets.',
-      subOfferings: [],
-    },
-    {
-      name: 'Commercialization Pathways',
-      description: 'Compare product claims, insets, credits, certifications, regulatory pathways, customer programs, and other market mechanisms using route-to-market, value, utilization, ownership, stacking, and risk analysis.',
-      subOfferings: [],
-    },
-    {
-      name: 'Asset & Portfolio Valuation',
-      description: 'Assess the quality, risk, value, strategic fit, and portfolio role of environmental assets, projects, programs, and claims.',
-      subOfferings: [],
-    },
-    {
-      name: 'Pilot Development & Partner Selection',
-      description: 'Design pilots that test critical technical, operational, commercial, and market assumptions before scale and select the partners and technologies required.',
-      subOfferings: [],
-    },
-    {
-      name: 'Program Design & Operations',
-      description: 'Build and manage program governance, workflows, data, contracts, controls, ledgers, chain of custody, partners, exceptions, and reporting.',
-      subOfferings: [],
-    },
-    {
-      name: 'Impact Verification & Claims Translation',
-      description: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.',
-      subOfferings: [],
-    },
-    {
-      name: 'Full-Service GHG Accounting',
-      description: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.',
-      subOfferings: [],
-    },
-  ],
-  callout: 'The highest nominal price is not always the highest-value path. Terra Nexus compares participant economics, evidence and operating cost, ownership, market capacity, utilization, acceptance risk, timing, scalability, durability, stacking compatibility, and strategic value. Detailed pricing, intervention libraries, stacking logic, and client-specific optimization remain paid work.',
-  relatedExpertise: [
-    { label: 'Regenerative Agriculture', href: '/expertise/regenerative-agriculture/' },
-    { label: 'Regenerative Rangeland', href: '/expertise/regenerative-rangeland/' },
-    { label: 'Agroforestry', href: '/expertise/agroforestry/' },
-    { label: 'Biodiversity & Ecosystem Resilience', href: '/expertise/biodiversity-and-ecosystem-resilience/' },
-    { label: 'Low Carbon Energy & Biofuels', href: '/expertise/low-carbon-energy-and-biofuels/' },
-    { label: 'Sustainable Supply Chains', href: '/expertise/sustainable-supply-chains/' },
-  ],
-  proofNote: 'The approved lower-emissions beef case study supports methodology review, claims pathways, insetting, program readiness, market acceptance, and commercialization.',
-  proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
-  ctaHeading: 'Discuss Your Carbon or Ecosystem Opportunity',
-  ctaBody: 'Tell us what you are developing, verifying, or trying to commercialize.',
-  ctaButton: { label: 'Discuss Your Carbon Opportunity', href: '/contact/' },
-};
+const mechanisms = [
+  {
+    id: 'm01',
+    num: '01',
+    title: 'Carbon & Ecosystem Credits',
+    carrier: 'As a quantified environmental asset',
+    headline: 'Turn verified environmental outcomes into market-ready assets.',
+    summary: 'A credit is a unit: once issued, a quantified outcome can be owned, transferred, priced, retired, and reported under defined market rules. Carbon is the mature case; biodiversity, water, habitat, and soil are following it.',
+    body: [
+      'A credit is a unit. Once a quantified outcome has been issued as one, it can be owned, transferred, priced, retired, and reported under a defined set of market rules.',
+      'Carbon is the mature case, where a credit stands for a verified reduction or removal. The same structure is now being extended to biodiversity, water, habitat, and soil, with real variation in how rigorously it holds.',
+      'Terra Nexus works the full length of the asset: market and methodology strategy, development, quantification, verification, issuance, valuation, transaction, and the accounting that has to survive scrutiny afterward.',
+    ],
+    examples: 'Carbon reductions · Carbon removals · Agricultural carbon · Nature-based credits · Biodiversity · Water · Other ecosystem-service markets',
+  },
+  {
+    id: 'm02',
+    num: '02',
+    title: 'Scope 3 & Insets',
+    carrier: 'As an outcome connected to the value chain',
+    headline: 'Create and account for environmental value inside the value chain.',
+    summary: "Improvements at farms, suppliers, and facilities stay attached to the chain they occur in and count toward corporate targets, procurement programs, and customer commitments — if claim rights, allocation, and custody are settled first.",
+    body: [
+      "Some outcomes are worth more where they happen. A reduction at a supplier's farm, mill, or plant can count toward a corporate target, a procurement program, or a customer commitment, provided it stays attached to that chain.",
+      'Generating the outcome is the straightforward half. The harder half is settling who may claim it, how it is quantified and allocated, how chain of custody is held, how competing claims are ruled out, and how the performance enters a corporate inventory without being challenged later.',
+      'Terra Nexus designs those systems, then helps operate, verify, and maintain them.',
+    ],
+    examples: 'Scope 3 reductions · Scope 3 removals · Insets · Supplier interventions · Regenerative agriculture programs · Low-carbon sourcing · Supply-shed programs · Value-chain decarbonization',
+  },
+  {
+    id: 'm03',
+    num: '03',
+    title: 'Product & Commodity Claims',
+    carrier: 'As an attribute of the physical product',
+    headline: 'Make environmental performance part of what is bought and sold.',
+    summary: 'The claim travels with the product itself, so it only reaches as far as the evidence behind it: what was quantified, how it ties to this unit, and what the producer or buyer may say about it.',
+    body: [
+      'Environmental performance can differentiate a product, ingredient, feedstock, fuel, material, or commodity, but only as far as the evidence behind it reaches.',
+      'The useful claim is rarely that something is sustainable. It is narrower: which characteristic can be demonstrated, how was it quantified, how is it tied to this particular product, and what may the producer or buyer say about it.',
+      'Terra Nexus connects environmental data, lifecycle assessment, traceability, chain of custody, and assurance to claims that hold up in front of a buyer, an auditor, or a regulator.',
+    ],
+    examples: 'Low-carbon products · Low-CI commodities · Low-carbon feedstocks and fuels · Certified commodities · Regenerative products · Product carbon footprints · Responsible sourcing claims',
+  },
+  {
+    id: 'm04',
+    num: '04',
+    title: 'Environmental Attribute Certificates',
+    carrier: 'As a certificate conveying the attribute',
+    headline: 'Convey environmental value when physical supply alone cannot.',
+    summary: 'The attribute transfers separately from the molecule, letting buyers procure differentiated production where segregation is impractical — provided issuance, custody, retirement, exclusivity, and claims all agree.',
+    body: [
+      'An Environmental Attribute Certificate, or EAC, carries a verified characteristic of how a commodity, material, fuel, or energy source was produced. Depending on the market, that attribute can transfer separately from the physical product, so a buyer can still procure differentiated production where segregation or physical traceability is impractical.',
+      'Separating the attribute from the molecule puts all the weight on the architecture. Ownership, quantification, issuance, chain of custody, transfer, retirement, exclusivity, accounting, and claim language have to agree with one another. Where they do not, the value leaks or the claim will not stand.',
+      'These markets are still forming. Terra Nexus helps clients design, evaluate, enter, operate, and commercialize them.',
+    ],
+    examples: 'Low-carbon commodity certificates · Low-carbon material certificates · Agricultural environmental attributes · Fuel attributes · Sustainable aviation fuel certificates · Renewable-energy attributes · Book-and-claim markets',
+  },
+];
+
+const comparison = [
+  { label: 'Carbon or Ecosystem Credit', body: 'The quantified outcome becomes an independently issued environmental asset.' },
+  { label: 'Scope 3 Reduction or Inset', body: "The outcome stays inside a company's value chain and counts toward its performance there." },
+  { label: 'Product or Commodity Claim', body: 'The characteristic remains attributable to the physical product being bought or sold.' },
+  { label: 'Environmental Attribute Certificate', body: 'The characteristic is conveyed by certificate and can be transacted apart from the product.' },
+];
+
+// Same "Our Offerings" content the CapabilityPage.astro-based version of
+// this page rendered — restored per owner feedback, 2026-08-19, unchanged.
+const offerings = [
+  { name: 'VCM & Scope 3 Markets', description: 'Evaluate how organizations can access, buy, sell, develop, use, or participate in voluntary carbon, Scope 3, inset, and related markets.' },
+  { name: 'Commercialization Pathways', description: 'Compare product claims, insets, credits, certifications, regulatory pathways, customer programs, and other market mechanisms using route-to-market, value, utilization, ownership, stacking, and risk analysis.' },
+  { name: 'Asset & Portfolio Valuation', description: 'Assess the quality, risk, value, strategic fit, and portfolio role of environmental assets, projects, programs, and claims.' },
+  { name: 'Pilot Development & Partner Selection', description: 'Design pilots that test critical technical, operational, commercial, and market assumptions before scale and select the partners and technologies required.' },
+  { name: 'Program Design & Operations', description: 'Build and manage program governance, workflows, data, contracts, controls, ledgers, chain of custody, partners, exceptions, and reporting.' },
+  { name: 'Impact Verification & Claims Translation', description: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.' },
+  { name: 'Full-Service GHG Accounting', description: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.' },
+];
+const offeringsCallout = 'The highest nominal price is not always the highest-value path. Terra Nexus compares participant economics, evidence and operating cost, ownership, market capacity, utilization, acceptance risk, timing, scalability, durability, stacking compatibility, and strategic value. Detailed pricing, intervention libraries, stacking logic, and client-specific optimization remain paid work.';
+
+const lifecycle = [
+  { label: '01 — Evaluate', title: 'Find where the opportunity actually is.', body: 'Test outcomes, mechanisms, standards, eligibility, claims, economics, buyers, incentives, and risk before committing to a route.' },
+  { label: '02 — Design', title: 'Decide how the mechanism will work.', body: 'Set the program structure, the asset or claim, the methodology, chain of custody, ownership model, incentives, and commercial approach.' },
+  { label: '03 — Build', title: 'Stand up what it takes to operate.', body: 'MRV, data, workflows, contracts, registries, controls, traceability, accounting, and assurance — built to run, not to demonstrate.' },
+  { label: '04 — Launch & Scale', title: 'Move from design into the market.', body: 'Onboard suppliers, buyers, and partners, run the first transactions, integrate operations, and widen participation.' },
+  { label: '05 — Manage & Verify', title: 'Hold performance and credibility over time.', body: 'Data, counterparties, verification, audits, registries, accounting, claims, reporting, and the obligations that never stop arriving.' },
+  { label: '06 — Unlock Shared Value', title: 'Convert verified performance into return.', body: 'Monetize assets, capture incentives, improve procurement economics, differentiate product, meet targets, and move value back down the supply chain.' },
+];
 ---
 
-<CapabilityPage data={data} />
+<SiteLayout
+  title="Carbon & Ecosystem Services | Terra Nexus"
+  description="Terra Nexus works with carbon, trade, finance, program, and sustainability teams to build environmental outcomes into assets and claims that can be measured, verified, accounted for, transacted, and defended."
+  preview={mode === 'preview'}
+>
+  <!-- 1. Hero -->
+  <section class="section cs-hero">
+    <div class="container cs-hero-grid">
+      <div>
+        <span class="eyebrow">Carbon &amp; Ecosystem Services</span>
+        <h1 class="cs-hero-title">Turn environmental performance into value the market will recognize.</h1>
+        <p class="cs-hero-lead">Terra Nexus works with carbon, trade, finance, program, and sustainability teams to build environmental outcomes into assets and claims that can be measured, verified, accounted for, transacted, and defended.</p>
+        <div class="cs-hero-actions">
+          <a href="#mechanisms" class="btn btn-primary">Explore the market mechanisms &rarr;</a>
+          <span class="cs-mini-label">Four Routes to Market</span>
+        </div>
+      </div>
+      <div class="cs-hero-photo" role="img" aria-label="Working landscape or supply chain — photo placeholder, real photography pending">
+        <span class="cs-photo-caption">Photo — working landscape / supply chain</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Mechanism selector -->
+  <section id="mechanisms" class="section section-alt cs-mechanisms-section" aria-labelledby="mechanisms-heading">
+    <div class="container">
+      <div class="cs-header-split">
+        <h2 id="mechanisms-heading">One outcome. Different paths to value.</h2>
+        <div class="cs-header-split-body">
+          <p>Environmental performance can reach the market by more than one route. Which route fits depends on what actually changed, where it happened, who holds the right to claim it, how it was quantified, how the attribute moves, and what the buyer at the end needs to purchase, report, or say in public.</p>
+          <p>Most programs come apart at the joints between those answers rather than on the science. Connecting them is the work.</p>
+        </div>
+      </div>
+
+      <div class="cs-diagram card card-static">
+        <p class="cs-flow-label">Environmental Performance</p>
+        <div class="cs-flow-rule" aria-hidden="true"></div>
+        <p class="cs-flow-label cs-flow-label-muted">How Is the Value Carried?</p>
+        <div class="cs-flow-rule" aria-hidden="true"></div>
+
+        <ul class="cs-selector-grid" role="list" data-cs-selector>
+          {mechanisms.map((m) => (
+            <li>
+              <button
+                type="button"
+                class="cs-selector-card"
+                data-cs-select={m.id}
+                aria-pressed={m.id === 'm01' ? 'true' : 'false'}
+              >
+                <span class="cs-selector-num">{m.num}</span>
+                <span class="cs-selector-title">{m.title}</span>
+                <span class="cs-selector-carrier">{m.carrier}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div class="cs-flow-rule" aria-hidden="true"></div>
+        <p class="cs-flow-label">Credible Claim &amp; Market Value</p>
+
+        <div class="cs-summary-strip" aria-live="polite">
+          <p class="cs-summary-label" data-cs-summary-label>Selected mechanism / 01</p>
+          <div>
+            <p class="cs-summary-headline" data-cs-summary-headline>{mechanisms[0].headline}</p>
+            <p class="cs-summary-body" data-cs-summary-body>{mechanisms[0].summary}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Four mechanism deep-dives -->
+  <section class="section cs-deepdive-intro">
+    <div class="container">
+      <span class="eyebrow">Four Market Mechanisms</span>
+    </div>
+  </section>
+
+  {mechanisms.map((m, i) => (
+    <article id={m.id} class:list={['cs-mechanism-article', { 'cs-mechanism-article-alt': i % 2 === 1 }]}>
+      <div class="container cs-mechanism-grid">
+        <div>
+          <p class="cs-mechanism-num">{m.num}</p>
+          <h3 class="cs-mechanism-title">{m.title}</h3>
+          <p class="cs-mechanism-carrier">{m.carrier}</p>
+        </div>
+        <div class="cs-mechanism-copy">
+          <p class="cs-mechanism-deck">{m.headline}</p>
+          <div class="cs-mechanism-body">
+            {m.body.map((para) => <p>{para}</p>)}
+          </div>
+          <div class="cs-examples">
+            <span class="cs-examples-label">Examples</span>
+            <p class="cs-examples-text">{m.examples}</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  ))}
+
+  <!-- 4. Dark comparison band -->
+  <section class="cs-comparison-band" aria-labelledby="comparison-heading">
+    <div class="container">
+      <div class="cs-header-split">
+        <h2 id="comparison-heading">Same performance. Different market architecture.</h2>
+        <div class="cs-header-split-body cs-header-split-body-inverse">
+          <p>A reduction at a farm, a supplier, a factory, or a production facility does not belong to any single mechanism by nature.</p>
+          <p>Depending on how the program is structured, the same underlying improvement can travel four different ways.</p>
+        </div>
+      </div>
+
+      <ul class="cs-comparison-grid" role="list">
+        {comparison.map((c) => (
+          <li class="cs-comparison-cell">
+            <span class="cs-comparison-label">{c.label}</span>
+            <span class="cs-comparison-body">{c.body}</span>
+          </li>
+        ))}
+      </ul>
+
+      <p class="cs-pull-quote">The performance may begin in the same place. The architecture decides how the value is carried, who can claim it, and where it finally accrues.</p>
+    </div>
+  </section>
+
+  <!-- 5. Our Offerings — restored, owner feedback 2026-08-19 (see file
+       header comment). Not part of the reference redesign. -->
+  <section class="section section-alt" aria-labelledby="offerings-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Our Offerings</span>
+        <h2 id="offerings-heading">What We Do</h2>
+        <p class="section-lead">These offerings can be combined to match the decision at hand. Each engagement is tailored to the client's specific context, objectives, and constraints.</p>
+      </header>
+      <div class="cs-offerings-list">
+        {offerings.map((offering, i) => (
+          <article class="card card-static cs-offering-card">
+            <span class="numbered-index cs-offering-index">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{offering.name}</h3>
+              <p>{offering.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="cs-callout">
+        <p>{offeringsCallout}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Lifecycle -->
+  <section class="section" aria-labelledby="lifecycle-heading">
+    <div class="container">
+      <div class="cs-header-split">
+        <h2 id="lifecycle-heading">Managed across the full development lifecycle</h2>
+        <div class="cs-header-split-body">
+          <p>Choosing the mechanism is the first decision, not the last one.</p>
+          <p>Terra Nexus stays with a program across its whole life, holding strategy, technical requirements, operating infrastructure, assurance, and commercialization on the same track.</p>
+        </div>
+      </div>
+
+      <div class="cs-lifecycle-grid">
+        {lifecycle.map((stage) => (
+          <article class="card-plain cs-lifecycle-cell">
+            <span class="cs-lifecycle-label">{stage.label}</span>
+            <h3>{stage.title}</h3>
+            <p>{stage.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Full-width image band -->
+  <div class="cs-image-band" role="img" aria-label="Production site, field measurement, or port — photo placeholder, real photography pending">
+    <span class="cs-photo-caption">Photo — full-width: production site, field measurement, or port</span>
+  </div>
+
+  <!-- 8. Closing CTA -->
+  <ClosingCta
+    headingId="final-cta-heading"
+    heading="Choose the right mechanism. Build it to last."
+    description="Environmental markets get difficult where science, standards, supply chains, accounting, claims, and commercial objectives all have to agree at once. Terra Nexus helps clients pick the mechanism, build what sits behind it, keep it standing through verification and market change, and turn credible performance into value that lasts."
+    primaryCta={{ label: 'Turn environmental performance into value →', href: '/contact/' }}
+  />
+</SiteLayout>
+
+<style>
+  /* ── 1. Hero ── */
+  .cs-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: start;
+  }
+  @media (min-width: 64rem) {
+    .cs-hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: var(--space-16); }
+  }
+  .cs-hero-title { margin-top: var(--space-6); max-width: 20ch; }
+  .cs-hero-lead {
+    margin-top: var(--space-6);
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+    max-width: 34em;
+  }
+  .cs-hero-actions {
+    margin-top: var(--space-8);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+  }
+  .cs-mini-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .cs-hero-photo {
+    aspect-ratio: 4 / 5;
+    background: repeating-linear-gradient(135deg, var(--color-border) 0 7px, var(--color-surface) 7px 14px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-5);
+  }
+  .cs-photo-caption {
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    background: var(--color-surface-elevated);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── Shared: split section header (H2 left / paragraphs right) — no
+     existing site-wide component for this two-column shape, so it's
+     scoped here. Reused by the mechanism selector, comparison band, and
+     lifecycle sections, matching the reference layout exactly. ── */
+  .cs-header-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+    margin-bottom: var(--space-12);
+  }
+  @media (min-width: 56rem) {
+    .cs-header-split { grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+  }
+  .cs-header-split-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--text-lg);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .cs-header-split-body-inverse { color: rgba(248, 250, 252, 0.75); }
+
+  /* ── 2. Mechanism selector diagram ── */
+  .cs-diagram { padding: var(--space-10) var(--space-8); }
+  .cs-flow-label {
+    text-align: center;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .cs-flow-label-muted { color: var(--color-text-muted); }
+  .cs-flow-rule {
+    height: 1.75rem;
+    width: 1px;
+    background: var(--color-border-strong);
+    margin: var(--space-2) auto;
+  }
+  .cs-selector-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  @media (min-width: 40rem) { .cs-selector-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .cs-selector-grid { grid-template-columns: repeat(4, 1fr); } }
+  .cs-selector-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+    height: 100%;
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-elevated);
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .cs-selector-card:hover { border-color: var(--c-sky-300); }
+  .cs-selector-card:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .cs-selector-num { font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--c-sky-600); }
+  .cs-selector-title { font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.25; }
+  .cs-selector-carrier { font-size: var(--text-xs); line-height: 1.4; color: var(--color-text-muted); }
+  .cs-selector-card[aria-pressed="true"] {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+  }
+  .cs-selector-card[aria-pressed="true"] .cs-selector-num { color: var(--c-sky-300); }
+  .cs-selector-card[aria-pressed="true"] .cs-selector-title { color: #fff; }
+  .cs-selector-card[aria-pressed="true"] .cs-selector-carrier { color: rgba(248, 250, 252, 0.65); }
+
+  .cs-summary-strip {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  @media (min-width: 40rem) {
+    .cs-summary-strip { grid-template-columns: 12rem 1fr; gap: var(--space-8); }
+  }
+  .cs-summary-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .cs-summary-headline { font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--color-text); margin-bottom: var(--space-2); }
+  .cs-summary-body { font-size: var(--text-base); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
+
+  /* ── 3. Deep-dive mechanism articles ── */
+  .cs-deepdive-intro { padding-bottom: 0; }
+  .cs-mechanism-article { border-top: 1px solid var(--color-border); scroll-margin-top: 6rem; }
+  .cs-mechanism-article-alt { background: var(--color-surface); }
+  .cs-mechanism-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    padding-block: var(--space-12);
+    align-items: start;
+  }
+  @media (min-width: 56rem) {
+    .cs-mechanism-grid { grid-template-columns: 0.8fr 1.2fr; gap: var(--space-16); padding-block: var(--space-16); }
+  }
+  .cs-mechanism-num { font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--c-sky-600); margin-bottom: var(--space-2); }
+  .cs-mechanism-title { max-width: 14ch; }
+  .cs-mechanism-carrier { margin-top: var(--space-3); font-size: var(--text-base); color: var(--color-text-muted); }
+  .cs-mechanism-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; max-width: 26em; margin-bottom: var(--space-6); }
+  .cs-mechanism-body { display: flex; flex-direction: column; gap: var(--space-4); font-size: var(--text-lg); line-height: var(--line-relaxed); color: var(--color-text-secondary); max-width: 42em; }
+  .cs-examples { margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--color-border); max-width: 42em; }
+  .cs-examples-label { display: block; font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-2); }
+  .cs-examples-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); }
+
+  /* ── 4. Dark comparison band ── */
+  .cs-comparison-band { background: var(--gradient-dark); color: var(--color-text-inverse); }
+  .cs-comparison-band .container { padding-block: var(--space-16); }
+  .cs-comparison-band h2 { color: #fff; }
+  .cs-comparison-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  @media (min-width: 40rem) { .cs-comparison-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .cs-comparison-grid { grid-template-columns: repeat(4, 1fr); } }
+  .cs-comparison-cell {
+    background: #131f48;
+    padding: var(--space-6) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .cs-comparison-label { font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-sky-300); }
+  .cs-comparison-body { font-size: var(--text-base); line-height: var(--line-relaxed); color: var(--color-text-inverse); }
+  .cs-pull-quote {
+    margin-top: var(--space-10);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-medium);
+    line-height: 1.4;
+    color: #fff;
+    max-width: 34em;
+  }
+
+  /* ── 5. Our Offerings ── */
+  .cs-offerings-list { display: flex; flex-direction: column; gap: var(--space-5); }
+  .cs-offering-card { display: flex; gap: var(--space-6); align-items: flex-start; }
+  .cs-offering-index { flex-shrink: 0; min-width: 3rem; }
+  .cs-offering-card h3 { font-size: var(--text-lg); margin-bottom: var(--space-3); }
+  .cs-offering-card p { color: var(--color-text-secondary); font-size: var(--text-base); line-height: var(--line-relaxed); }
+  .cs-callout {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--c-sky-600);
+    border-radius: var(--radius-md);
+  }
+  .cs-callout p { margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm); line-height: var(--line-relaxed); }
+
+  /* ── 6. Lifecycle ── */
+  .cs-lifecycle-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 48rem) { .cs-lifecycle-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .cs-lifecycle-grid { grid-template-columns: repeat(3, 1fr); } }
+  .cs-lifecycle-label { display: block; font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--c-sky-600); margin-bottom: var(--space-3); }
+
+  /* ── 7. Full-width image band ── */
+  .cs-image-band {
+    height: 20rem;
+    background: repeating-linear-gradient(135deg, var(--color-border) 0 7px, var(--color-surface) 7px 14px);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 40rem) {
+    .cs-diagram { padding: var(--space-6) var(--space-5); }
+    .cs-flow-rule { height: 1.25rem; }
+  }
+</style>
+
+<script>
+  // Mechanism selector — sets the active card, updates the summary strip,
+  // and smooth-scrolls to that mechanism's deep-dive section. Mirrors the
+  // reference prototype's behavior; vanilla JS, no framework, consistent
+  // with this page's SSR-only composition.
+  const MECHANISMS: Record<string, { headline: string; summary: string; num: string }> = {
+    m01: {
+      headline: 'Turn verified environmental outcomes into market-ready assets.',
+      summary: 'A credit is a unit: once issued, a quantified outcome can be owned, transferred, priced, retired, and reported under defined market rules. Carbon is the mature case; biodiversity, water, habitat, and soil are following it.',
+      num: '01',
+    },
+    m02: {
+      headline: 'Create and account for environmental value inside the value chain.',
+      summary: "Improvements at farms, suppliers, and facilities stay attached to the chain they occur in and count toward corporate targets, procurement programs, and customer commitments — if claim rights, allocation, and custody are settled first.",
+      num: '02',
+    },
+    m03: {
+      headline: 'Make environmental performance part of what is bought and sold.',
+      summary: 'The claim travels with the product itself, so it only reaches as far as the evidence behind it: what was quantified, how it ties to this unit, and what the producer or buyer may say about it.',
+      num: '03',
+    },
+    m04: {
+      headline: 'Convey environmental value when physical supply alone cannot.',
+      summary: 'The attribute transfers separately from the molecule, letting buyers procure differentiated production where segregation is impractical — provided issuance, custody, retirement, exclusivity, and claims all agree.',
+      num: '04',
+    },
+  };
+
+  const root = document.querySelector<HTMLElement>('[data-cs-selector]');
+  if (root) {
+    const cards = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-cs-select]'));
+    const labelEl = document.querySelector<HTMLElement>('[data-cs-summary-label]');
+    const headlineEl = document.querySelector<HTMLElement>('[data-cs-summary-headline]');
+    const bodyEl = document.querySelector<HTMLElement>('[data-cs-summary-body]');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.csSelect;
+        if (!id) return;
+        const m = MECHANISMS[id];
+        if (!m) return;
+
+        cards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
+        if (labelEl) labelEl.textContent = `Selected mechanism / ${m.num}`;
+        if (headlineEl) headlineEl.textContent = m.headline;
+        if (bodyEl) bodyEl.textContent = m.summary;
+
+        const target = document.getElementById(id);
+        target?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+  }
+</script>
