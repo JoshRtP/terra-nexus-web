@@ -13,10 +13,19 @@
 // section (owner feedback, 2026-08-19 — the reference redesign dropped
 // it). Content is the exact `offerings`/`callout` data the old
 // CapabilityPage-based version of this page used; only the presentation
-// changed to fit this page's own visual system. Placed after the dark
-// comparison band and before the Lifecycle section — answers "what does
-// Terra Nexus actually do about this" right after the mechanics are
-// established, before "how we run the engagement."
+// changed to fit this page's own visual system.
+//
+// Section order was also reworked twice beyond the reference prototype's
+// original sequence, both per owner feedback on 2026-08-19:
+// 1. The 4 mechanism deep-dives moved from separate <article> sections
+//    further down the page into the selector itself (left column: card
+//    stack; right column: the selected mechanism's full content) —
+//    see the mechanism-selector section's own comment.
+// 2. Final page order: Hero -> Mechanism selector (now including the
+//    deep-dive content) -> Lifecycle -> Our Offerings -> Image band ->
+//    Dark comparison band -> Closing CTA. Lifecycle moved up to sit
+//    directly under the selector; the dark comparison band moved down
+//    to sit directly above the closing CTA banner.
 //
 // Not ported from the reference prototype: its "Related Expertise" /
 // "Relevant Proof" sections don't exist here either (CapabilityPage had
@@ -207,27 +216,27 @@ const lifecycle = [
     </div>
   </section>
 
-  <!-- 4. Dark comparison band -->
-  <section class="cs-comparison-band" aria-labelledby="comparison-heading">
+  <!-- 4. Lifecycle — moved directly under the mechanism selector, owner
+       feedback 2026-08-19 (was section 6, after Offerings). -->
+  <section class="section" aria-labelledby="lifecycle-heading">
     <div class="container">
       <div class="cs-header-split">
-        <h2 id="comparison-heading">Same performance. Different market architecture.</h2>
-        <div class="cs-header-split-body cs-header-split-body-inverse">
-          <p>A reduction at a farm, a supplier, a factory, or a production facility does not belong to any single mechanism by nature.</p>
-          <p>Depending on how the program is structured, the same underlying improvement can travel four different ways.</p>
+        <h2 id="lifecycle-heading">Managed across the full development lifecycle</h2>
+        <div class="cs-header-split-body">
+          <p>Choosing the mechanism is the first decision, not the last one.</p>
+          <p>Terra Nexus stays with a program across its whole life, holding strategy, technical requirements, operating infrastructure, assurance, and commercialization on the same track.</p>
         </div>
       </div>
 
-      <ul class="cs-comparison-grid" role="list">
-        {comparison.map((c) => (
-          <li class="cs-comparison-cell">
-            <span class="cs-comparison-label">{c.label}</span>
-            <span class="cs-comparison-body">{c.body}</span>
-          </li>
+      <div class="cs-lifecycle-grid">
+        {lifecycle.map((stage) => (
+          <article class="card-plain cs-lifecycle-cell">
+            <span class="cs-lifecycle-label">{stage.label}</span>
+            <h3>{stage.title}</h3>
+            <p>{stage.body}</p>
+          </article>
         ))}
-      </ul>
-
-      <p class="cs-pull-quote">The performance may begin in the same place. The architecture decides how the value is carried, who can claim it, and where it finally accrues.</p>
+      </div>
     </div>
   </section>
 
@@ -257,33 +266,36 @@ const lifecycle = [
     </div>
   </section>
 
-  <!-- 6. Lifecycle -->
-  <section class="section" aria-labelledby="lifecycle-heading">
-    <div class="container">
-      <div class="cs-header-split">
-        <h2 id="lifecycle-heading">Managed across the full development lifecycle</h2>
-        <div class="cs-header-split-body">
-          <p>Choosing the mechanism is the first decision, not the last one.</p>
-          <p>Terra Nexus stays with a program across its whole life, holding strategy, technical requirements, operating infrastructure, assurance, and commercialization on the same track.</p>
-        </div>
-      </div>
-
-      <div class="cs-lifecycle-grid">
-        {lifecycle.map((stage) => (
-          <article class="card-plain cs-lifecycle-cell">
-            <span class="cs-lifecycle-label">{stage.label}</span>
-            <h3>{stage.title}</h3>
-            <p>{stage.body}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. Full-width image band -->
+  <!-- 6. Full-width image band -->
   <div class="cs-image-band" role="img" aria-label="Production site, field measurement, or port — photo placeholder, real photography pending">
     <span class="cs-photo-caption">Photo — full-width: production site, field measurement, or port</span>
   </div>
+
+  <!-- 7. Dark comparison band — moved to just above the closing CTA,
+       owner feedback 2026-08-19 (was section 4, right after the
+       selector). -->
+  <section class="cs-comparison-band" aria-labelledby="comparison-heading">
+    <div class="container">
+      <div class="cs-header-split">
+        <h2 id="comparison-heading">Same performance. Different market architecture.</h2>
+        <div class="cs-header-split-body cs-header-split-body-inverse">
+          <p>A reduction at a farm, a supplier, a factory, or a production facility does not belong to any single mechanism by nature.</p>
+          <p>Depending on how the program is structured, the same underlying improvement can travel four different ways.</p>
+        </div>
+      </div>
+
+      <ul class="cs-comparison-grid" role="list">
+        {comparison.map((c) => (
+          <li class="cs-comparison-cell">
+            <span class="cs-comparison-label">{c.label}</span>
+            <span class="cs-comparison-body">{c.body}</span>
+          </li>
+        ))}
+      </ul>
+
+      <p class="cs-pull-quote">The performance may begin in the same place. The architecture decides how the value is carried, who can claim it, and where it finally accrues.</p>
+    </div>
+  </section>
 
   <!-- 8. Closing CTA -->
   <ClosingCta
