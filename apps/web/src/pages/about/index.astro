@@ -3,34 +3,102 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import ProfileRoster from '../../components/ProfileRoster.astro';
 const mode = getBuildMode();
 
-// Studio Executives — placeholder data for the two team-section layout
-// options below. Names match what's live at terra.nexus today; everything
-// else (photo, bio, focus areas, social links) is a stand-in for review,
-// not final content — see CLAUDE.md on not inventing claims about real
-// people. Real headshots can drop straight into .exec-avatar/.exec-avatar-lg
-// (both already wired for the grayscale-on-hover treatment); LinkedIn URLs
-// can replace the disabled placeholder icons once confirmed.
-const teamPlaceholder = [
+// Studio Executives — the team section settled on the Executive Profile
+// Roster interaction (Option A from the component trial on
+// feature/about-team-component-trial; the alternate Executive Index +
+// Detail Panel option was removed once the owner picked this direction —
+// see ProfileRoster.astro for the component). Names/titles match what's
+// supplied today; bios/tags/links are placeholders, not final content —
+// see CLAUDE.md and AGENTS.md on not inventing claims about real people.
+// Real headshots can drop straight into ProfileRoster's portrait slot.
+// Isaac's name/title are exactly what was supplied — no bio, credentials,
+// or links exist yet, so his panel intentionally stays minimal. The
+// Expert Network group is a capability/network group, not an individual
+// profile — its tags reuse the real capabilities taxonomy (see
+// capabilities/index.astro) purely as an illustrative demo.
+const rosterGroups: Array<{
+  id: string;
+  heading: string;
+  members: Array<{
+    id: string;
+    name: string;
+    role: string;
+    initials: string;
+    variant?: 'person' | 'network';
+    bio: string;
+    tags?: Array<{ label: string; href: string }>;
+    tagsCaption?: string;
+    showLinkedIn?: boolean;
+  }>;
+}> = [
   {
-    name: 'Laura Klein',
-    title: 'Studio Executive',
-    initials: 'LK',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
-      { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+    id: 'studio-executives',
+    heading: 'Studio Executives',
+    members: [
+      {
+        id: 'laura-klein',
+        name: 'Laura Klein',
+        role: 'Studio Executive',
+        initials: 'LK',
+        variant: 'person',
+        bio: 'Full bio and areas of expertise coming soon.',
+        tags: [
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+        ],
+      },
+      {
+        id: 'josh-mellinger',
+        name: 'Josh Mellinger',
+        role: 'Studio Executive',
+        initials: 'JM',
+        variant: 'person',
+        bio: 'Full bio and areas of expertise coming soon.',
+        tags: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+        ],
+      },
     ],
   },
   {
-    name: 'Josh Mellinger',
-    title: 'Studio Executive',
-    initials: 'JM',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
-      { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+    id: 'executive-in-residence',
+    heading: 'Executive in Residence',
+    members: [
+      {
+        id: 'isaac',
+        name: 'Isaac',
+        role: 'Executive in Residence',
+        initials: 'I',
+        variant: 'person',
+        bio: 'Full bio coming soon.',
+      },
+    ],
+  },
+  {
+    id: 'expert-network',
+    heading: 'Terra Nexus Expert Network',
+    members: [
+      {
+        id: 'expert-network',
+        name: 'Terra Nexus Expert Network',
+        role: '',
+        initials: 'TN',
+        variant: 'network',
+        bio: 'Network details coming soon.',
+        tags: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+          { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
+        ],
+        tagsCaption: 'Illustrative coverage areas — existing Terra Nexus capability taxonomy, shown for design-review purposes only.',
+        showLinkedIn: false,
+      },
     ],
   },
 ];
@@ -94,68 +162,23 @@ const teamPlaceholder = [
     </div>
   </section>
 
-  <!-- Studio Executives — two layout options for team review. Not a final
-       pick; see the code comment on teamPlaceholder above. Both stay in
-       place until the team decides which direction (or hybrid) to build
-       out fully, same "leave both up for review" approach as the homepage
-       nav-anchor trial. -->
+  <!-- Studio Executives — Executive Profile Roster (settled direction from
+       feature/about-team-component-trial). Interaction principle from
+       ogilvy.com/team (NOT its branding/layout/assets): a closed row of
+       portrait tiles; selecting one collapses the row to that portrait +
+       a large adjacent bio panel; a close control restores the roster.
+       See components/ProfileRoster.astro. -->
   <section class="section" aria-labelledby="team-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Studio Executives</span>
+        <span class="eyebrow">Leadership</span>
         <h2 id="team-heading">Food Systems Leadership Team</h2>
-        <p class="section-lead">Two directions for the team section — one hover-forward and photo-led, one expertise-forward and read-first. <span class="draft-flag">Draft for internal review — photos, bios, and links are placeholders.</span></p>
+        <p class="section-lead">Select a profile to read more. <span class="draft-flag">Photos, bios, and links are placeholders pending final content.</span></p>
       </header>
 
-      <div class="team-option">
-        <h3 class="team-option-label">Option A — Photo Reveal</h3>
-        <p class="team-option-note">Closest to the current live site: black-and-white photo through hover, with a LinkedIn/email icon rail revealing on top. Compact and visual; bio depth lives on a future full profile page, not here.</p>
-        <ul class="exec-grid-a" role="list">
-          {teamPlaceholder.map((person) => (
-            <li class="exec-card-a">
-              <div class="exec-card-a-media">
-                <div class="exec-avatar" aria-hidden="true">{person.initials}</div>
-                <div class="exec-icon-rail">
-                  <span class="exec-icon is-placeholder" title="LinkedIn — link coming soon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="sans-serif">in</text></svg>
-                  </span>
-                  <a class="exec-icon" href="/contact/" aria-label={`Contact ${person.name}`} title="Email">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>
-                  </a>
-                </div>
-              </div>
-              <h4>{person.name}</h4>
-              <p class="exec-role">{person.title}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div class="team-option">
-        <h3 class="team-option-label">Option B — Expertise-Linked</h3>
-        <p class="team-option-note">Leads with credibility and depth: a short bio plus tags linking straight into the Capabilities that person owns — the connective tissue you described wanting between the team and the work.</p>
-        <div class="exec-list-b">
-          {teamPlaceholder.map((person) => (
-            <article class="exec-card-b">
-              <div class="exec-avatar-lg" aria-hidden="true">{person.initials}</div>
-              <div class="exec-card-b-body">
-                <h4>{person.name}</h4>
-                <p class="exec-role">{person.title}</p>
-                <p class="exec-bio">{person.bio}</p>
-                <ul class="exec-tags" role="list">
-                  {person.focusAreas.map((area) => (
-                    <li><a href={area.href} class="tag">{area.label}</a></li>
-                  ))}
-                </ul>
-                <div class="exec-socials">
-                  <span class="exec-social-link is-placeholder" title="LinkedIn — link coming soon">LinkedIn</span>
-                  <a class="exec-social-link" href="/contact/">Email</a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+      {rosterGroups.map((group) => (
+        <ProfileRoster heading={group.heading} members={group.members} />
+      ))}
     </div>
   </section>
 
@@ -176,7 +199,8 @@ const teamPlaceholder = [
   .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
   .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
 
-  /* ── Studio Executives — team section review options ── */
+  /* Studio Executives section — copy note only; roster styling lives in
+     components/ProfileRoster.astro (scoped to that component). */
   .draft-flag {
     display: inline-block;
     margin-top: var(--space-2);
@@ -184,97 +208,4 @@ const teamPlaceholder = [
     font-weight: var(--font-medium);
     color: var(--color-eyebrow);
   }
-  .team-option { margin-top: var(--space-12); }
-  .team-option:first-of-type { margin-top: var(--space-8); }
-  .team-option-label {
-    font-family: var(--font-serif);
-    margin-bottom: var(--space-2);
-  }
-  .team-option-note {
-    color: var(--color-text-secondary);
-    max-width: var(--max-width-text);
-    margin-bottom: var(--space-6);
-    line-height: var(--line-relaxed);
-  }
-
-  /* Option A — photo reveal grid */
-  .exec-grid-a {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; gap: var(--space-6);
-    grid-template-columns: repeat(2, minmax(0, 14rem));
-  }
-  @media (max-width: 30rem) { .exec-grid-a { grid-template-columns: minmax(0, 14rem); } }
-  .exec-card-a { display: flex; flex-direction: column; }
-  .exec-card-a-media {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: var(--space-3);
-    box-shadow: var(--shadow-md);
-  }
-  .exec-avatar {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-slow, var(--transition-base));
-  }
-  .exec-card-a:hover .exec-avatar,
-  .exec-card-a:focus-within .exec-avatar { filter: grayscale(0); }
-  .exec-icon-rail {
-    position: absolute; top: var(--space-3); right: var(--space-3);
-    display: flex; flex-direction: column; gap: var(--space-2);
-    opacity: 0; transform: translateX(0.5rem);
-    transition: opacity var(--transition-base), transform var(--transition-base);
-  }
-  .exec-card-a:hover .exec-icon-rail,
-  .exec-card-a:focus-within .exec-icon-rail { opacity: 1; transform: translateX(0); }
-  .exec-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 1.75rem; height: 1.75rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--color-dark);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-  }
-  .exec-icon.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
-  .exec-card-a h4 { font-family: var(--font-serif); }
-  .exec-role { font-size: var(--text-sm); color: var(--color-text-secondary); margin-top: var(--space-1); }
-
-  /* Option B — expertise-linked editorial rows */
-  .exec-list-b { display: flex; flex-direction: column; gap: var(--space-6); }
-  .exec-card-b {
-    display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-6);
-    padding: var(--space-6);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-  }
-  @media (max-width: 30rem) { .exec-card-b { grid-template-columns: 1fr; } }
-  .exec-avatar-lg {
-    width: 7rem; height: 7rem;
-    border-radius: var(--radius-full);
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-base);
-  }
-  .exec-card-b:hover .exec-avatar-lg,
-  .exec-card-b:focus-within .exec-avatar-lg { filter: grayscale(0); }
-  .exec-bio { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
-  .exec-tags { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .exec-socials { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
-  .exec-social-link {
-    font-size: var(--text-sm); font-weight: var(--font-medium);
-    color: var(--color-link); text-decoration: none;
-  }
-  .exec-social-link:hover { color: var(--color-link-hover); }
-  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
 </style>
