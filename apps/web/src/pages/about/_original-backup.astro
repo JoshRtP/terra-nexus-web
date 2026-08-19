@@ -1,0 +1,288 @@
+---
+// BACKUP — not a live route (Astro excludes files/folders prefixed with
+// "_" from routing). This is the pre-Executive-Profile-Roster version of
+// /about/ (the "two team-section layout options" trial: Option A Photo
+// Reveal / Option B Expertise-Linked), saved 2026-08-18 on
+// prototype/industries-insights-ia immediately before that route was
+// replaced with the settled roster version merged in from
+// prototype/regenerative-ag-scrollstory (commit 33554f3). Restore by
+// copying this file's body back into index.astro if needed.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+const mode = getBuildMode();
+
+// Studio Executives — placeholder data for the two team-section layout
+// options below. Names match what's live at terra.nexus today; everything
+// else (photo, bio, focus areas, social links) is a stand-in for review,
+// not final content — see CLAUDE.md on not inventing claims about real
+// people. Real headshots can drop straight into .exec-avatar/.exec-avatar-lg
+// (both already wired for the grayscale-on-hover treatment); LinkedIn URLs
+// can replace the disabled placeholder icons once confirmed.
+const teamPlaceholder = [
+  {
+    name: 'Laura Klein',
+    title: 'Studio Executive',
+    initials: 'LK',
+    bio: 'Full bio and areas of expertise coming soon.',
+    focusAreas: [
+      { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+      { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+    ],
+  },
+  {
+    name: 'Josh Mellinger',
+    title: 'Studio Executive',
+    initials: 'JM',
+    bio: 'Full bio and areas of expertise coming soon.',
+    focusAreas: [
+      { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+      { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+    ],
+  },
+];
+---
+
+<SiteLayout
+  title="About | Terra Nexus"
+  description="Terra Nexus is an innovation and insights studio for food and climate. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="About Terra Nexus"
+    title="An Innovation & Insights Studio for Food & Climate"
+    lead="Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain."
+  />
+
+  <section class="section">
+    <div class="container text-container">
+      <h2>Why We Exist</h2>
+      <p>To build a more resilient, sustainable, and prosperous food system by accelerating adoption of proven solutions that create impact at the intersection of food and climate.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container text-container">
+      <h2>How We Work</h2>
+      <p>We work with food and agribusinesses across the value chain to:</p>
+      <ul class="how-list">
+        <li>Enhance transparency</li>
+        <li>Facilitate collaboration</li>
+        <li>Establish market mechanisms</li>
+        <li>Unlock shared value</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container text-container">
+      <h2>What We Provide</h2>
+      <p>We provide the insights, tools, and management expertise needed to deliver the right solution, in the right place, with the right partners, and capture the largest supportable sources of value for commercial sustainability and climate programs.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2>What Makes Terra Nexus Different</h2>
+      <div class="different-content">
+        <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
+        <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
+      </div>
+      <div class="not-list">
+        <h3>What Terra Nexus Is Not</h3>
+        <ul>
+          <li>Not generic ESG consulting</li>
+          <li>Not simply a software company</li>
+          <li>Not only a carbon-credit firm</li>
+          <li>Not an accredited verifier</li>
+        </ul>
+        <p class="not-summary">Terra Nexus is an innovation and insights studio integrating commercial strategy, food systems, value-chain operations, technical evidence, environmental accounting, market mechanisms, and program management.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Studio Executives — two layout options for team review. Not a final
+       pick; see the code comment on teamPlaceholder above. Both stay in
+       place until the team decides which direction (or hybrid) to build
+       out fully, same "leave both up for review" approach as the homepage
+       nav-anchor trial. -->
+  <section class="section" aria-labelledby="team-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Studio Executives</span>
+        <h2 id="team-heading">Food Systems Leadership Team</h2>
+        <p class="section-lead">Two directions for the team section — one hover-forward and photo-led, one expertise-forward and read-first. <span class="draft-flag">Draft for internal review — photos, bios, and links are placeholders.</span></p>
+      </header>
+
+      <div class="team-option">
+        <h3 class="team-option-label">Option A — Photo Reveal</h3>
+        <p class="team-option-note">Closest to the current live site: black-and-white photo through hover, with a LinkedIn/email icon rail revealing on top. Compact and visual; bio depth lives on a future full profile page, not here.</p>
+        <ul class="exec-grid-a" role="list">
+          {teamPlaceholder.map((person) => (
+            <li class="exec-card-a">
+              <div class="exec-card-a-media">
+                <div class="exec-avatar" aria-hidden="true">{person.initials}</div>
+                <div class="exec-icon-rail">
+                  <span class="exec-icon is-placeholder" title="LinkedIn — link coming soon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="sans-serif">in</text></svg>
+                  </span>
+                  <a class="exec-icon" href="/contact/" aria-label={`Contact ${person.name}`} title="Email">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>
+                  </a>
+                </div>
+              </div>
+              <h4>{person.name}</h4>
+              <p class="exec-role">{person.title}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="team-option">
+        <h3 class="team-option-label">Option B — Expertise-Linked</h3>
+        <p class="team-option-note">Leads with credibility and depth: a short bio plus tags linking straight into the Capabilities that person owns — the connective tissue you described wanting between the team and the work.</p>
+        <div class="exec-list-b">
+          {teamPlaceholder.map((person) => (
+            <article class="exec-card-b">
+              <div class="exec-avatar-lg" aria-hidden="true">{person.initials}</div>
+              <div class="exec-card-b-body">
+                <h4>{person.name}</h4>
+                <p class="exec-role">{person.title}</p>
+                <p class="exec-bio">{person.bio}</p>
+                <ul class="exec-tags" role="list">
+                  {person.focusAreas.map((area) => (
+                    <li><a href={area.href} class="tag">{area.label}</a></li>
+                  ))}
+                </ul>
+                <div class="exec-socials">
+                  <span class="exec-social-link is-placeholder" title="LinkedIn — link coming soon">LinkedIn</span>
+                  <a class="exec-social-link" href="/contact/">Email</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Start a Conversation"
+    primaryCta={{ label: 'Start a Conversation', href: '/contact/' }}
+  />
+</SiteLayout>
+
+<style>
+  .how-list { margin-top: var(--space-4); padding-left: var(--space-5); }
+  .how-list li { margin-bottom: var(--space-2); font-size: var(--text-lg); color: var(--color-text); }
+  .different-content { max-width: 72ch; margin-bottom: var(--space-8); }
+  .different-content p { margin-bottom: var(--space-4); line-height: var(--line-relaxed); }
+  .not-list { padding: var(--space-6); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .not-list h3 { margin-bottom: var(--space-3); }
+  .not-list ul { padding-left: var(--space-5); margin-bottom: var(--space-4); }
+  .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
+  .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+
+  /* ── Studio Executives — team section review options ── */
+  .draft-flag {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-eyebrow);
+  }
+  .team-option { margin-top: var(--space-12); }
+  .team-option:first-of-type { margin-top: var(--space-8); }
+  .team-option-label {
+    font-family: var(--font-serif);
+    margin-bottom: var(--space-2);
+  }
+  .team-option-note {
+    color: var(--color-text-secondary);
+    max-width: var(--max-width-text);
+    margin-bottom: var(--space-6);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Option A — photo reveal grid */
+  .exec-grid-a {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--space-6);
+    grid-template-columns: repeat(2, minmax(0, 14rem));
+  }
+  @media (max-width: 30rem) { .exec-grid-a { grid-template-columns: minmax(0, 14rem); } }
+  .exec-card-a { display: flex; flex-direction: column; }
+  .exec-card-a-media {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+    box-shadow: var(--shadow-md);
+  }
+  .exec-avatar {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gradient-dark);
+    color: var(--c-accent-400);
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    filter: grayscale(1);
+    transition: filter var(--transition-slow, var(--transition-base));
+  }
+  .exec-card-a:hover .exec-avatar,
+  .exec-card-a:focus-within .exec-avatar { filter: grayscale(0); }
+  .exec-icon-rail {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    display: flex; flex-direction: column; gap: var(--space-2);
+    opacity: 0; transform: translateX(0.5rem);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+  }
+  .exec-card-a:hover .exec-icon-rail,
+  .exec-card-a:focus-within .exec-icon-rail { opacity: 1; transform: translateX(0); }
+  .exec-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 1.75rem; height: 1.75rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-dark);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+  }
+  .exec-icon.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+  .exec-card-a h4 { font-family: var(--font-serif); }
+  .exec-role { font-size: var(--text-sm); color: var(--color-text-secondary); margin-top: var(--space-1); }
+
+  /* Option B — expertise-linked editorial rows */
+  .exec-list-b { display: flex; flex-direction: column; gap: var(--space-6); }
+  .exec-card-b {
+    display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  @media (max-width: 30rem) { .exec-card-b { grid-template-columns: 1fr; } }
+  .exec-avatar-lg {
+    width: 7rem; height: 7rem;
+    border-radius: var(--radius-full);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gradient-dark);
+    color: var(--c-accent-400);
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    filter: grayscale(1);
+    transition: filter var(--transition-base);
+  }
+  .exec-card-b:hover .exec-avatar-lg,
+  .exec-card-b:focus-within .exec-avatar-lg { filter: grayscale(0); }
+  .exec-bio { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
+  .exec-tags { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .exec-socials { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
+  .exec-social-link {
+    font-size: var(--text-sm); font-weight: var(--font-medium);
+    color: var(--color-link); text-decoration: none;
+  }
+  .exec-social-link:hover { color: var(--color-link-hover); }
+  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+</style>

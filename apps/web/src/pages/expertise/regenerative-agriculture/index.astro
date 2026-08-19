@@ -1,5 +1,71 @@
 ---
-import ExpertisePage from '../../../components/ExpertisePage.astro';
+// Regenerative Agriculture — scroll-stack composition prototype
+// (feature/about-team-component-trial, design-prototype mode). This route
+// intentionally does NOT render the shared <ExpertisePage> component —
+// ExpertisePage.astro is untouched and every other Expertise page still
+// uses it unchanged. This is a page-local alternate composition of the
+// exact same `data` object (content is 100% preserved from the previous
+// version of this file, only regrouped/re-presented — see the section
+// comments below for what moved where). See ScrollPanel.astro (colocated
+// in this folder) for the sticky-stack mechanism itself.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+import ScrollPanel from './_ScrollPanel.astro';
+import StrategyFrameworkDVF from '../../../components/StrategyFrameworkDVF.astro';
+import SegmentSlider from '../../../components/SegmentSlider.astro';
+
+const mode = getBuildMode();
+
+// Terra Nexus's site-wide Capabilities (same 5, same slugs, as the
+// homepage's `capabilities` list and /capabilities/<slug>/ pages) — used
+// below to group each "Who We Support" participant's specific support
+// activities under the capability that actually delivers them, each
+// with a link out to that capability's full page.
+//
+// `offerings` is each capability's real, top-level offering names —
+// copied verbatim from that capability's own page (apps/web/src/pages/
+// capabilities/<slug>/index.astro's `data.offerings[].name`), not
+// hand-picked or paraphrased — so what shows here matches what's really
+// on that page. Deliberately the offering level, not the more granular
+// subOffering level nested under each one (17–34 items per capability,
+// noticeably more than a panel accordion should hold): the "See
+// <Capability>" link is what takes an interested user to the full page
+// to see those. Kept local to this page rather than imported from the
+// homepage/capability pages, since none of those export their data.
+const CAPABILITIES = {
+  strategy: {
+    name: 'Strategy & Innovation',
+    href: '/capabilities/strategy-and-innovation/',
+    offerings: ['Corporate & Business Unit Strategy', 'Market Entry & Competitive Strategy', 'Business Model & Growth Strategy', 'Customer Experience', 'Product, Innovation & Design', 'Sustainability & Climate Change Strategy'],
+  },
+  investment: {
+    name: 'Financial Investments & New Venture Development',
+    href: '/capabilities/financial-investments-and-new-venture-development/',
+    offerings: ['Financial Planning & Analysis', 'Business Case & Initiative Prioritization', 'Corporate Ventures', 'Investor Due Diligence'],
+  },
+  supplyChain: {
+    name: 'Sustainable Supply Chain & Operations',
+    href: '/capabilities/sustainable-supply-chain-and-operations/',
+    offerings: ['Digital Supply Chain Strategy', 'Value Chain Interventions (Influence-to-Impact)', 'Responsible Sourcing & Procurement', 'Resource Efficiency & Lean Operations', 'Low Impact Logistics', 'Joint Business Planning & Supply Chain Collaboration', 'Circular Economy, Waste & Diversion'],
+  },
+  corporateSustainability: {
+    name: 'Corporate Sustainability',
+    href: '/capabilities/corporate-sustainability/',
+    offerings: ['Sustainability Strategy', 'Measurement, Impact & Disclosure', 'Stakeholder Engagement', 'Building Purpose-Driven Products & Services', 'Sustainable Supply Chain & Operations'],
+  },
+  carbon: {
+    name: 'Carbon & Ecosystem Services',
+    href: '/capabilities/carbon-and-ecosystem-services/',
+    offerings: ['VCM & Scope 3 Markets', 'Commercialization Pathways', 'Asset & Portfolio Valuation', 'Pilot Development & Partner Selection', 'Program Design & Operations', 'Impact Verification & Claims Translation', 'Full-Service GHG Accounting'],
+  },
+};
+// Every participant shows all 5 Capabilities, not a per-participant
+// subset — Terra Nexus can bring any of them to bear for any
+// participant, and singling some out as "not applicable" per audience
+// read as more definitive than intended.
+const ALL_CAPABILITIES = [CAPABILITIES.strategy, CAPABILITIES.investment, CAPABILITIES.supplyChain, CAPABILITIES.corporateSustainability, CAPABILITIES.carbon];
 
 const data = {
   eyebrow: 'Agricultural Production',
@@ -24,18 +90,62 @@ const data = {
     { title: 'Define the Objective and Program Boundary', body: 'Start with the business decision rather than the practice list. The objective may be to strengthen a strategic supply shed, reduce agricultural emissions, improve water or soil outcomes, create a differentiated product, qualify suppliers, support corporate targets, access an incentive, or build a new environmental-market offering.', detail: 'Terra Nexus helps define the crops, products, geographies, participants, reporting boundary, commercial objective, and intended users of the outcome.' },
     { title: 'Understand the Local Production and Market Context', body: 'Regenerative agriculture must fit the production system. The relevant context includes soil, climate, crop rotation, water, current management, equipment, tenancy, agronomic risk, producer economics, local advisors, infrastructure, commodity flows, buyer requirements, and available programs or incentives.', detail: 'Terra Nexus combines field and supply-shed context with customer demand and commercial feasibility so clients can prioritize where a program has a credible path to adoption and value.' },
     { title: 'Design the Producer Proposition', body: 'Producers need a clear reason and practical path to participate. A producer offer may include technical support, cost sharing, premiums, outcome payments, multi-year commitments, access to markets, technology, financing, risk-sharing mechanisms, or combinations of these.', detail: 'Terra Nexus helps clients model transition costs, value allocation, enrollment criteria, contracting, evidence requirements, timing, and the treatment of existing adopters, new adopters, tenants, landowners, and incomplete data.' },
-    { title: 'Build Evidence, Data, and Traceability Around the Intended Use', body: 'The evidence system should be designed for the decision or claim it must support — not assembled after implementation. Depending on the program, evidence may include producer attestations, field records, input and practice data, soil samples, remote sensing, models, transaction records, chain-of-custody controls, product allocation, calculation workbooks, quality checks, and independent assurance.', detail: 'Terra Nexus helps determine what must be measured directly, what may be modeled or remotely sensed, what must be traceable to field or farm, how uncertainty and exceptions are handled, how physical products and environmental attributes are allocated, and what documentation must be retained.' },
-    { title: 'Launch, Operate, and Improve the Program', body: 'Commercial-scale programs require recurring operations — not only a methodology and a software platform. Core activities may include producer outreach, enrollment, contract management, data collection, quality control, calculation, ledger management, supplier and buyer reconciliation, partner coordination, exception handling, reporting, verification readiness, and continuous improvement.', detail: 'Terra Nexus can advise on the operating model or manage defined workstreams within a client-owned program.' },
+    { title: 'Build Evidence, Data, and Traceability Around the Intended Use', body: 'The evidence system should be designed for the decision or claim it must support, not assembled after implementation. Depending on the program, evidence may include producer attestations, field records, input and practice data, soil samples, remote sensing, models, transaction records, chain-of-custody controls, product allocation, calculation workbooks, quality checks, and independent assurance.', detail: 'Terra Nexus helps determine what must be measured directly, what may be modeled or remotely sensed, what must be traceable to field or farm, how uncertainty and exceptions are handled, how physical products and environmental attributes are allocated, and what documentation must be retained.' },
+    { title: 'Launch, Operate, and Improve the Program', body: 'Commercial-scale programs need recurring operations, not just a methodology and a software platform. Core activities may include producer outreach, enrollment, contract management, data collection, quality control, calculation, ledger management, supplier and buyer reconciliation, partner coordination, exception handling, reporting, verification readiness, and continuous improvement.', detail: 'Terra Nexus can advise on the operating model or manage defined workstreams within a client-owned program.' },
     { title: 'Connect Improved Performance to the Right Form of Value', body: 'The same field-level improvement may support different forms of value for different participants. Pathways have different evidence, traceability, ownership, assurance, commercial reach, and cost requirements. Some may coexist; others may require exclusive allocation or careful claims controls.', detail: 'Terra Nexus helps clients compare the realizable value, cost, risk, timing, utilization, market capacity, and strategic benefit of each pathway to find the highest-value supportable play.' },
   ],
+  // Each participant shows all 5 Capabilities (ALL_CAPABILITIES, above)
+  // — lets "How We Support X" link out to each capability's own full
+  // page instead of dead-ending in a single undifferentiated accordion.
+  // Each capability group shows that capability's own real offering
+  // names (CAPABILITIES.<key>.offerings — copied verbatim from that
+  // capability's own page, see the comment above), not custom text
+  // picked per participant, so the same capability reads identically no
+  // matter which participant surfaces it.
   audiencePathways: [
-    { title: 'Commodity Traders & Originators', description: 'Identify attractive crops, geographies, customers, and supply sheds; assess whether to build, buy, partner, or participate; design regenerative commodity and environmental-attribute offerings; structure producer enrollment, incentives, evidence, and contracts; establish origination, aggregation, traceability, and chain-of-custody controls; model premiums, program costs, value sharing, and margin; select technology, agronomy, MRV, and assurance partners; manage data quality; prepare customer documentation, reporting, and audit packages; and scale programs across producers, locations, crops, and buyers.' },
-    { title: 'Food, Beverage, Feed, Fiber & Consumer-Product Companies', description: 'Sourcing strategy, supply-shed prioritization, supplier programs, Scope 3 and land-sector accounting, investment planning, product strategy, claims controls, and managed value-chain execution.' },
-    { title: 'Agricultural Producers & Integrated Agricultural Companies', description: 'Evaluate program opportunities, commercial structures, data and evidence requirements, partner choices, implementation burdens, and routes to market. Specialized agronomic recommendations are developed with qualified local experts.' },
-    { title: 'Inputs Companies', description: 'Connect input products, services, agronomy, producer programs, outcome measurement, channel strategy, customer partnerships, and credible product or program claims.' },
-    { title: 'Ingredient & Feed Processors', description: 'Supplier engagement, traceable sourcing, processing and allocation controls, customer reporting, product differentiation, and integration with broader sourcing or environmental programs.' },
-    { title: 'Enabling Technology & Solution Providers', description: 'Market strategy, customer discovery, methodology alignment, technology and model diligence, enterprise-program requirements, data architecture, pilot design, partner selection, and integration into real commodity and corporate workflows.' },
-    { title: 'Investors & Environmental-Market Participants', description: 'Market assessment, commercial and technical diligence, project or program economics, methodology review, value-creation planning, portfolio assessment, and operating-risk evaluation.' },
+    {
+      title: 'Commodity Traders & Originators',
+      description: 'Identify attractive crops, geographies, customers, and supply sheds; assess whether to build, buy, partner, or participate; design regenerative commodity and environmental-attribute offerings; structure producer enrollment, incentives, evidence, and contracts; establish origination, aggregation, traceability, and chain-of-custody controls; model premiums, program costs, value sharing, and margin; select technology, agronomy, MRV, and assurance partners; manage data quality; prepare customer documentation, reporting, and audit packages; and scale programs across producers, locations, crops, and buyers.',
+      image: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
+    {
+      title: 'Food, Beverage, Feed, Fiber & Consumer-Product Companies',
+      description: 'Sourcing strategy, supply-shed prioritization, supplier programs, Scope 3 and land-sector accounting, investment planning, product strategy, claims controls, and managed value-chain execution.',
+      image: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
+    {
+      title: 'Agricultural Producers & Integrated Agricultural Companies',
+      description: 'Evaluate program opportunities, commercial structures, data and evidence requirements, partner choices, implementation burdens, and routes to market. Specialized agronomic recommendations are developed with qualified local experts.',
+      image: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+      note: 'Specialized agronomic recommendations are developed with qualified local experts.',
+    },
+    {
+      title: 'Inputs Companies',
+      description: 'Connect input products, services, agronomy, producer programs, outcome measurement, channel strategy, customer partnerships, and credible product or program claims.',
+      image: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
+    {
+      title: 'Ingredient & Feed Processors',
+      description: 'Supplier engagement, traceable sourcing, processing and allocation controls, customer reporting, product differentiation, and integration with broader sourcing or environmental programs.',
+      image: 'https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
+    {
+      title: 'Enabling Technology & Solution Providers',
+      description: 'Market strategy, customer discovery, methodology alignment, technology and model diligence, enterprise-program requirements, data architecture, pilot design, partner selection, and integration into real commodity and corporate workflows.',
+      image: 'https://images.pexels.com/photos/5230957/pexels-photo-5230957.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
+    {
+      title: 'Investors & Environmental-Market Participants',
+      description: 'Market assessment, commercial and technical diligence, project or program economics, methodology review, value-creation planning, portfolio assessment, and operating-risk evaluation.',
+      image: 'https://images.pexels.com/photos/9261334/pexels-photo-9261334.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      capabilities: ALL_CAPABILITIES,
+    },
   ],
   decisionGroups: [
     { heading: 'Strategy & Commercial Leaders', items: ['Which regenerative opportunities fit the business strategy and customer demand?', 'Which crops, supply sheds, products, and outcomes offer a credible business case?', 'Should the company build, buy, partner, invest, or participate?', 'How should value, transition costs, and risk be shared?'] },
@@ -65,7 +175,7 @@ const data = {
     { category: 'Desirability', pitfall: 'The program starts with a practice list rather than a clear business objective.', validation: 'Start with the customer or commercial problem the program must solve, then map practices to that objective.' },
     { category: 'Viability', pitfall: 'Producer costs, risk, timing, and operational burden are underestimated.', validation: 'Build a producer economics model that quantifies cost, risk, timing, and operational burden before committing.' },
     { category: 'Feasibility', pitfall: 'A technology platform is selected before the operating model and evidence requirements are defined.', validation: 'Define the operating model and evidence requirements first, then select technology that fits them.' },
-    { category: 'Feasibility', pitfall: 'Models, field data, contracts, commodity flows, and claims use different boundaries.', validation: 'Align all program boundaries — models, data, contracts, commodity flows, and claims — from the outset.' },
+    { category: 'Feasibility', pitfall: 'Models, field data, contracts, commodity flows, and claims use different boundaries.', validation: 'Align all program boundaries (models, data, contracts, commodity flows, and claims) from the outset.' },
     { category: 'Feasibility', pitfall: 'Traceability is not sufficient for the intended accounting or product claim.', validation: 'Design traceability to match the accounting or claim level the program intends to support.' },
     { category: 'Strategic Fit', pitfall: 'Environmental attributes and usage rights are unclear or allocated more than once.', validation: 'Establish clear ownership and single-use allocation of environmental attributes before commercialization.' },
     { category: 'Viability', pitfall: 'The customer proposition does not cover the cost of origination, data, assurance, and management.', validation: 'Validate that the customer proposition fully covers origination, data, assurance, and management costs.' },
@@ -76,6 +186,466 @@ const data = {
   ctaBody: 'Whether you are evaluating a new opportunity, designing a producer program, selecting technology, building traceability and controls, scaling an existing initiative, or preparing evidence and claims for independent review, Terra Nexus helps identify and execute the next steps.',
   ctaButton: { label: 'Discuss Your Program', href: '/contact/' },
 };
+
+// validationRows grouped by category, in first-seen order — computed from
+// the real data (Desirability, Viability, Feasibility, Strategic Fit fall
+// out naturally in that order), not hardcoded.
+const validationGroups: Array<{ category: string; rows: typeof data.validationRows }> = [];
+for (const row of data.validationRows) {
+  let group = validationGroups.find((g) => g.category === row.category);
+  if (!group) {
+    group = { category: row.category, rows: [] };
+    validationGroups.push(group);
+  }
+  group.rows.push(row);
+}
+
+// Feeds the grouped before/after pairs into the interactive DVF framework
+// as each base dimension's `beforeAfter` list, so the diagram, its short
+// framework explanation, AND the concrete pitfall/fix guidance render as
+// one unified panel instead of a separate block stacked underneath —
+// same real validationRows data as before, just merged into the
+// interactive component rather than duplicated alongside it.
+const CATEGORY_TO_REGION: Record<string, 'desirable' | 'viable' | 'feasible' | 'strategic-fit'> = {
+  Desirability: 'desirable',
+  Viability: 'viable',
+  Feasibility: 'feasible',
+  'Strategic Fit': 'strategic-fit',
+};
+const dvfContent: Record<string, { beforeAfter: Array<{ pitfall: string; validation: string }> }> = {};
+for (const group of validationGroups) {
+  const regionId = CATEGORY_TO_REGION[group.category];
+  if (regionId) {
+    dvfContent[regionId] = {
+      beforeAfter: group.rows.map((row) => ({ pitfall: row.pitfall, validation: row.validation })),
+    };
+  }
+}
 ---
 
-<ExpertisePage data={data} />
+<SiteLayout title={data.metaTitle} description={data.metaDescription} preview={mode === 'preview'}>
+
+  <!-- Scroll progress indicator — fixed thin bar above the header,
+       filled by JS based on page scroll position. Informational, not
+       gratuitous: reduced-motion just removes the easing on its width
+       transition (global design-system.css override), the bar itself
+       stays since it's not really "motion" so much as a live readout. -->
+  <div class="scroll-progress" aria-hidden="true">
+    <div class="scroll-progress-fill" data-scroll-progress-fill></div>
+  </div>
+
+  <!-- Chapter 1 — Hero. Normal (non-sticky) flow; the stacking behavior
+       begins at Chapter 2. -->
+  <PageHero
+    variant="media"
+    heroImage={data.heroImage}
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lead={data.lead}
+    primaryCta={data.primaryCta}
+    secondaryCta={data.secondaryCta}
+  />
+
+  <div class="scroll-stack">
+
+    <!-- Chapter 2 — Overview + Key Benefits, one chapter/act (a single
+         sticky-release spacer — two separate acts back-to-back produced
+         a much bigger dead gap between them than the rest of the page's
+         rhythm). Overview is a full-width, horizontal editorial intro
+         (two-column paragraph spread at desktop, like a magazine lede).
+         Key Benefits is a plain, high-contrast 2x2 grid reusing the same
+         type scale, numbered-index treatment, and tight-list bullets as
+         every other numbered section on this page (Key Questions, Our
+         Approach, How It Works) — after a full-bleed photo/accordion
+         treatment tested hard to read and visually inconsistent with the
+         rest of the page (see QA screenshots), this trades novelty for
+         legibility and consistency. No image: none of the candidate
+         stock photos actually depicted "benefits" any better than
+         generic farmland, so a photo backdrop wasn't earning its keep
+         here — the numbered index + heading + bullets carry the content
+         on their own, same as they do everywhere else on this page. -->
+    <ScrollPanel index={1} aria-labelledby="overview-heading">
+      <div class="overview-block" data-reveal>
+        <span class="eyebrow">Overview</span>
+        <h2 id="overview-heading">{data.title}</h2>
+        <div class="overview-columns">
+          {data.orientation.map((para) => <p class="chapter-lead">{para}</p>)}
+        </div>
+      </div>
+
+      <div class="benefits-block" data-reveal>
+        <h3 class="chapter-secondary-title">Key Benefits</h3>
+        <div class="benefits-grid">
+          {data.performanceCategories.map((cat, i) => (
+            <div class="benefit-tile">
+              <span class="numbered-index benefit-tile-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div class="benefit-tile-body">
+                <h4 class="benefit-tile-title">{cat.title}</h4>
+                <ul class="tight-list" role="list">
+                  {cat.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </ScrollPanel>
+
+    <!-- Chapter 4 — Market Validation (moved above Our Approach). The
+         interactive Desirability/Feasibility/Viability + Strategic Fit
+         framework (StrategyFrameworkDVF.astro) IS the section now — each
+         base-dimension state's content panel includes both the short
+         framework explanation and that dimension's real before/after
+         pitfall/fix pairs (fed in via the `content` prop below), so the
+         diagram + explanation + validation guidance read as one unified
+         part instead of a diagram with a separate block stacked under it.
+         decisionGroups render below as "Validation Questions" — a static
+         card grid, one card per function (2026-08-18: chosen after an
+         owner review of 5 presentation options; see git history for the
+         other 4 if this needs revisiting). The "Forms of Value This Can
+         Support" tag block that used to sit under it was removed earlier,
+         per owner feedback, as redundant with the Market Validation
+         framework above it. data.valuePathways is left in place unused,
+         same convention as data.systemSteps elsewhere in this file, in
+         case this content returns in another form later. The DVF
+         component's own click/keyboard interaction is untouched and
+         independent of page scroll — this chapter is just one more
+         sticky "act" containing it, same as before. -->
+    <ScrollPanel index={2} tone="alt" aria-labelledby="validation-heading">
+      <header class="section-header">
+        <span class="eyebrow">Market Validation</span>
+        <h2 id="validation-heading">Market Validation</h2>
+        <p class="section-lead validation-lead">A customer-centric approach, starting with desirability, then validating viability, feasibility, and strategic fit, prevents the most common reasons programs struggle. Select any region of the framework below to explore that combination, including the pitfall it prevents and the practice that replaces it.</p>
+      </header>
+
+      <div class="dvf-block" data-reveal>
+        <StrategyFrameworkDVF heading="Where Does an Opportunity Sit?" eyebrow="Interactive Framework" content={dvfContent} />
+      </div>
+
+      <div class="decisions-block" data-reveal>
+        <h3 class="chapter-secondary-title">Validation Questions</h3>
+        <div class="decisions-grid">
+          {data.decisionGroups.map((group) => (
+            <article class="card card-static decision-card">
+              <h4>{group.heading}</h4>
+              <ul class="decision-question-list">
+                {group.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </ScrollPanel>
+
+    <!-- Chapter 8 — Our Approach (workstreams), presented as a horizontal
+         01→06 scroll timeline (unchanged from before — only its parent
+         act's index/z-index moved). Reformatted from a horizontal-scroll
+         single row (cut content off at narrower viewports, required
+         sideways scrolling to read past step 4) to a 2-column grid —
+         same numbered-index + title + bullet-list treatment used
+         elsewhere on this page (Key Questions / How It Works), so every
+         workstream is visible without horizontal scrolling. -->
+    <ScrollPanel index={3} aria-labelledby="approach-heading">
+      <header class="section-header">
+        <span class="eyebrow">Our Approach</span>
+        <h2 id="approach-heading">Our Approach</h2>
+      </header>
+      <ol class="approach-grid" role="list">
+        {data.workstreams.map((ws, i) => (
+          <li class="approach-item" data-reveal style={`--reveal-i: ${i}`}>
+            <span class="numbered-index">{String(i + 1).padStart(2, '0')}</span>
+            <div class="approach-item-body">
+              <h3>{ws.title}</h3>
+              <ul class="tight-list">
+                {ws.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </ScrollPanel>
+
+    <!-- Chapter 9 — How It Works (systemSteps) removed for now — judged
+         redundant alongside Our Approach and Market Validation's Key
+         Questions above. `data.systemSteps` itself is left in place
+         (unused) in case this comes back later; only the rendered
+         ScrollPanel was removed. -->
+
+    <!-- Chapter 10 — Who We Support (audiencePathways) — same dark
+         segment-slider webpart as the homepage's "Who We Work With"
+         section (src/components/SegmentSlider.astro), reused here per
+         design feedback rather than the large numbered-index list this
+         used before. Same seven participant titles/descriptions,
+         unchanged. Unlike the homepage's value-chain segments (which
+         each link to their own detail page), each participant here maps
+         to multiple Capabilities — so the in-panel accordion is grouped
+         by capability instead of one flat list, and each group links out
+         to that capability's own /capabilities/<slug>/ page. -->
+    <ScrollPanel index={4} aria-labelledby="audiences-heading">
+      <header class="section-header">
+        <span class="eyebrow">Who We Support</span>
+        <h2 id="audiences-heading">How We Support Different Participants</h2>
+      </header>
+      <SegmentSlider
+        label="By Participant"
+        items={data.audiencePathways.map((aud) => ({
+          name: aud.title,
+          description: aud.description,
+          image: aud.image,
+          note: aud.note,
+          accordionGroups: aud.capabilities.map((capability) => ({
+            heading: capability.name,
+            items: capability.offerings,
+            href: capability.href,
+          })),
+        }))}
+      />
+    </ScrollPanel>
+
+  </div>
+
+  <!-- Chapter 11 — Closing CTA. Deliberately outside .scroll-stack so it
+       releases back into plain document flow and is never sticky/covered. -->
+  <ClosingCta
+    headingId="final-cta-heading"
+    heading={data.ctaHeading}
+    description={data.ctaBody}
+    primaryCta={data.ctaButton}
+  />
+</SiteLayout>
+
+<style>
+  /* ── Chapter 2 — Overview ──
+     Full-width, horizontal editorial intro — a two-column paragraph
+     spread at desktop (magazine-lede read) instead of a narrow column,
+     since Key Benefits no longer sits beside it. */
+  .overview-block h2 { margin-top: var(--space-2); margin-bottom: var(--space-6); }
+  .overview-columns { display: grid; grid-template-columns: 1fr; gap: var(--space-6) var(--space-10); }
+  @media (min-width: 56rem) {
+    .overview-columns { grid-template-columns: repeat(2, 1fr); }
+  }
+  .chapter-lead {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: 0;
+    line-height: var(--line-relaxed);
+  }
+  .chapter-secondary-title { font-size: var(--text-xl); margin-top: var(--space-2); margin-bottom: var(--space-5); }
+
+  /* ── Key Benefits grid ──
+     Deliberately plain and consistent rather than novel: same
+     numbered-index + heading + tight-list pattern as Key Questions
+     (.decisions-grid) and Our Approach (.approach-grid) elsewhere on
+     this page. A full-bleed photo/accordion
+     treatment was tried first but tested hard to read (low-contrast
+     text over a busy image) and visually inconsistent with the rest of
+     the page's light, high-contrast editorial system — this reuses that
+     system instead of inventing a new one. Two columns from 48rem up so
+     all four benefits stay fully readable without scrolling or
+     clipping; one column below that. */
+  .benefits-block { margin-top: var(--space-16); }
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10) var(--space-12);
+  }
+  @media (min-width: 48rem) {
+    .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .benefit-tile {
+    display: flex;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
+    border-top: 2px solid var(--color-border-strong);
+  }
+  .benefit-tile-index { flex-shrink: 0; font-size: var(--text-2xl); color: var(--c-sky-500); }
+  .benefit-tile-body { min-width: 0; }
+  .benefit-tile-title { font-size: var(--text-xl); margin-bottom: var(--space-3); max-width: 28ch; }
+
+  /* ── Our Approach 2-column grid ──
+     Same numbered-index + title + bullet-list pattern as Key Questions
+     (.decisions-grid) — one column on mobile, two from 48rem up, so all
+     6 workstreams stay fully readable without horizontal scrolling or
+     clipped content. */
+  .approach-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10) var(--space-12);
+  }
+  @media (min-width: 48rem) {
+    .approach-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .approach-item {
+    display: flex;
+    gap: var(--space-5);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .approach-item .numbered-index { flex-shrink: 0; font-size: var(--text-2xl); color: var(--c-sky-600); }
+  .approach-item-body { min-width: 0; }
+  .approach-item-body h3 { margin-bottom: var(--space-3); }
+
+  .tight-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+  .tight-list li {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    padding-left: var(--space-4);
+    position: relative;
+    margin-bottom: var(--space-1);
+    line-height: var(--line-normal);
+  }
+  .tight-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-sky-600);
+  }
+
+  /* ── Chapter 7 — Market Validation ──
+     The before/after pitfall/fix presentation now lives INSIDE the
+     StrategyFrameworkDVF component's own content panel (see the
+     `content` prop above) — no page-local before/after CSS needed here
+     anymore; that whole treatment moved to StrategyFrameworkDVF.astro's
+     own scoped styles so diagram + explanation + validation guidance ship
+     as one component, not a component plus a page-local block. */
+  .dvf-block { margin-bottom: var(--space-20); }
+
+  /* This section's lead paragraph widened beyond the site-wide
+     .section-lead max-width (var(--max-width-text), 44rem) to roughly
+     match the framework box's own right edge below it — owner mockup
+     annotation, 2026-08-18. Scoped to this one chapter, not a change to
+     .section-header .section-lead globally. */
+  .validation-lead { max-width: none; }
+
+  /* ── Validation Questions — static card grid, one function group per
+     card ──
+     Chosen 2026-08-18 after an owner review of 5 presentation options
+     (accordion, vertical tabs, pill filter, card grid, timeline) shown
+     side by side on this page — card grid won. No interaction: every
+     question is always visible, reusing design-system.css's `.card
+     card-static` (non-hover, non-lift variant — this grid isn't a set of
+     links) for the bordered/padded card treatment already used elsewhere
+     on the site. */
+  .decisions-block { margin-top: var(--space-16); }
+  .decisions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 40rem) { .decisions-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .decisions-grid { grid-template-columns: repeat(3, 1fr); } }
+  .decision-card h4 { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .decision-question-list { list-style: none; margin: 0; padding: 0; }
+  .decision-question-list li {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .decision-question-list li:first-child { border-top: 0; padding-top: 0; }
+
+  /* ── Scroll progress bar ── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 100; /* above .site-header's z-index:50 */
+    background: transparent;
+    pointer-events: none;
+  }
+  .scroll-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gradient-accent);
+    transition: width 0.1s linear;
+  }
+
+  /* ── Scroll-reveal (fade + rise) ──
+     [data-reveal] elements default to fully visible — the base rule below
+     is what a no-JS visitor (or a `prefers-reduced-motion` visitor, since
+     the script skips adding .js-reveal in that case) sees: plain, static,
+     fully readable content, nothing hidden behind a script that might not
+     run. The script adds .js-reveal (which hides + arms the transition)
+     and then removes .is-pending as each element crosses into view via
+     IntersectionObserver. --reveal-i (set inline per list item above)
+     staggers siblings within the same group. */
+  [data-reveal] { opacity: 1; transform: none; }
+  [data-reveal].js-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms);
+  }
+  [data-reveal].js-reveal.is-visible { opacity: 1; transform: none; }
+
+  /* ── Reduced motion ── */
+  /* The sticky-stack effect itself is native `position: sticky`, not
+     motion, so it stays under reduced-motion. The scroll-reveal system
+     above IS motion and needs an explicit opt-out beyond the global
+     transition-duration override (an element stuck at opacity:0 forever
+     because its IntersectionObserver never fired would be a real content
+     bug, not just an animation preference) — handled in the script by
+     skipping .js-reveal entirely when prefers-reduced-motion is set, so
+     reduced-motion visitors get the same plain, always-visible base rule
+     as no-JS visitors, never a hidden-and-waiting state. */
+</style>
+
+<script>
+  // Scroll-reveal (fade + rise on scroll-into-view). Skipped entirely
+  // under prefers-reduced-motion — reveal elements simply stay at their
+  // CSS-default fully-visible state (same as the no-JS fallback), never a
+  // hidden-and-waiting one.
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    revealEls.forEach((el) => el.classList.add('js-reveal'));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+    revealEls.forEach((el) => observer.observe(el));
+  }
+
+  // Scroll progress bar — plain scrollY / scrollable-height readout,
+  // throttled to one update per animation frame. Not scroll-hijacking:
+  // purely reflects native scroll position, never sets it.
+  const progressFill = document.querySelector<HTMLElement>('[data-scroll-progress-fill]');
+  if (progressFill) {
+    let ticking = false;
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 0;
+      progressFill.style.width = `${pct}%`;
+      ticking = false;
+    };
+    updateProgress();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(updateProgress);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+    window.addEventListener('resize', updateProgress);
+  }
+</script>

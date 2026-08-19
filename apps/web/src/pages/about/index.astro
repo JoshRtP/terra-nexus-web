@@ -1,36 +1,199 @@
 ---
+// About — scrollytelling-lite rebuild (2026-08-18), replacing the previous
+// placeholder page. Structure/copy/flow taken from a design firm's "About
+// v2" HTML reference (design-review only, not production code) and
+// recomposed here as real Astro + design-system.css, reusing every shared
+// component unchanged: SiteLayout (preview banner), Header, Footer,
+// PageHero (standard variant), ClosingCta, ProfileRoster. New page-local
+// patterns below reuse existing site mechanisms rather than inventing new
+// ones — the scroll-progress bar and scroll-reveal fade are copied 1:1
+// from expertise/regenerative-agriculture/index.astro's established
+// implementation; the Track Record stat grid reuses index.astro's
+// .stat-strip pattern and its exact, already-approved figures, extended
+// here with a scroll-triggered count-up matching the design reference.
+// The pinned sticker moment and its scroll-driven scale/rotate math are
+// also matched to the design reference 1:1 (see the script block below) —
+// climate-sticker-03-sunfaded-vintage.png lives in apps/web/public/images/.
+//
+// ⚠️ DRAFT / PLACEHOLDER CONTENT — flagged inline below and in-page via
+// dashed-border notes, per the source design doc. Do not treat as final:
+// - Origin Story narrative (all four chapters) — directional copy, not
+//   confirmed history. Dates/specifics are invented placeholders.
+// - "The change" chapter's working title and its body copy contain a
+//   likely typo ("We invests") — see the inline comment at that paragraph.
+//   Do not silently "fix" it; confirm the intended sentence with the
+//   content owner first.
+// - Leadership bios/tags/photos — Laura Klein/Josh Mellinger tags are
+//   illustrative, Isaac has no bio yet, the Expert Network tags reuse the
+//   capabilities taxonomy "for design-review purposes only." (unchanged
+//   from the roster wiring already on this branch.)
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
-import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import ProfileRoster from '../../components/ProfileRoster.astro';
+
 const mode = getBuildMode();
 
-// Studio Executives — placeholder data for the two team-section layout
-// options below. Names match what's live at terra.nexus today; everything
-// else (photo, bio, focus areas, social links) is a stand-in for review,
-// not final content — see CLAUDE.md on not inventing claims about real
-// people. Real headshots can drop straight into .exec-avatar/.exec-avatar-lg
-// (both already wired for the grayscale-on-hover treatment); LinkedIn URLs
-// can replace the disabled placeholder icons once confirmed.
-const teamPlaceholder = [
+// Same six figures as the homepage's "Our Track Record" section
+// (index.astro's `portfolioStats`, approved 2026-08-10) — kept identical
+// rather than re-deriving slightly different label wording from the design
+// doc, since these are the one already-approved source of truth.
+// count/prefix/suffix drive the scroll-triggered count-up (data-count
+// script below); `value` is the plain-text fallback rendered for no-JS/
+// reduced-motion visitors (same progressive-enhancement approach as
+// ProfileRoster and the scroll-reveal system elsewhere on this page).
+const trackRecordStats = [
+  { value: '$3B+', count: 3, prefix: '$', suffix: 'B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
+  { value: '25+', count: 25, suffix: '+', label: 'Global Projects Across 25+ Countries' },
+  { value: '15+', count: 15, suffix: '+', label: 'Commodities worked with' },
+  { value: '20+', count: 20, suffix: '+', label: '20+ Sustainable Food Systems Certifications' },
+  { value: '10+', count: 10, suffix: '+', label: '10+ Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
+  { value: '5M+', count: 5, suffix: 'M+', label: 'Acres of regenerative ecosystems' },
+];
+
+// Origin Story — sticky-rail chapters. Copy carried over verbatim from the
+// design doc (draft narrative, not confirmed history — see the header
+// comment above and the draft-pill rendered in the section itself).
+const originChapters = [
   {
-    name: 'Laura Klein',
-    title: 'Studio Executive',
-    initials: 'LK',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
-      { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+    label: 'The premise',
+    title: 'The food system already contains the solutions.',
+    body: 'What it lacks is transparency, collaboration, and the market mechanisms that consistently unlock shared value. Adoption of what already works in the places where it matters most and the end of the perpetual cycle of proof of concept pilots.',
+    pullQuote: 'We need fewer spectators, influencers, and noisemakers. It’s time for a roll call of visionaries, changemakers, and doers. ',
+  },
+  {
+    label: 'The studio',
+    // Owner correction, 2026-08-18: "A place for experts to operate." gets
+    // promoted to the same bold <h3> heading treatment as the chapter
+    // title. "What we ended up with was a movement." keeps its ORIGINAL
+    // serif-italic font (not the bold h3 style) — only its color changes,
+    // to gold. Body + closing line are the original description/payoff
+    // line, restored per owner request after an earlier revision had
+    // dropped them.
+    title: 'We built a studio, not a consultancy.',
+    subheading: 'We created an environment for experts to operate.',
+    payoffLine: 'We founded a connected climate movement.',
+    body: 'Terra Nexus Ventures was formed in Boulder, Colorado to advise, manage, and operate commercial sustainability and climate programs. Experts as fractional executives, digital tools, and a network of global executives behind them.',
+    closingLine: 'If we design it, we can run it. If we run it, it will deliver results.',
+  },
+  {
+    label: 'The change',
+    // "Our theory of change: The value nexus" (owner rewrite, 2026-08-18) —
+    // replaces the earlier "...: Proven solutions" working title.
+    title: 'Our theory of change: The value nexus',
+    // "We invests" is very likely a typo for "We invest" — flagged per the
+    // design doc's own instruction. Do not silently correct without
+    // confirming the intended sentence with the content owner; surrounding
+    // copy on this chapter is still draft.
+    body: 'We invests in visionaries, changemakers, and doers that are willing to redefine our current food system.',
+    levers: [
+      { num: '01', title: 'Enhance transparency', body: "Make performance visible at every node, in evidence a buyer's auditor will accept." },
+      { num: '02', title: 'Facilitate collaboration', body: 'Get producers, processors, brands, and capital working from one plan.' },
+      { num: '03', title: 'Establish market mechanisms', body: 'Build the instruments that reward the performance we ask the chain to deliver.' },
+    ],
+    outcome: { title: 'Unlock shared value', body: "The outcome, not a fourth workstream: incentives allocated so value lands across the whole chain rather than at one link's expense." },
+    // Placeholders (owner request, 2026-08-18): the theory of change reads
+    // transparency + collaboration + market mechanisms → unlock shared
+    // value → and this is the shape that shared value takes. Titles match
+    // the hero's "resilient, sustainable, and prosperous" wording exactly
+    // (not the noun forms) per owner correction. Owner is supplying a
+    // short statement per item (same length/shape as the levers above) —
+    // body copy below is a placeholder standing in until that lands.
+    outcomeTypes: [
+      { title: 'Resilient', body: 'Short statement coming soon.' },
+      { title: 'Sustainable', body: 'Short statement coming soon.' },
+      { title: 'Prosperous', body: 'Short statement coming soon.' },
     ],
   },
   {
-    name: 'Josh Mellinger',
-    title: 'Studio Executive',
-    initials: 'JM',
-    bio: 'Full bio and areas of expertise coming soon.',
-    focusAreas: [
-      { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
-      { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+    label: 'The proof',
+    title: 'Today: programs in the ground, value on the books.',
+    body: 'Work spanning the value chain from farm to brand, an integrated carbon and ecosystem developer inside the studio, and a food loss & waste credit program we developed and operate ourselves.',
+  },
+];
+
+// Studio Executives — unchanged from the existing roster wiring on this
+// branch (ProfileRoster.astro, Executive Profile Roster interaction).
+const rosterGroups: Array<{
+  id: string;
+  heading: string;
+  members: Array<{
+    id: string;
+    name: string;
+    role: string;
+    initials: string;
+    variant?: 'person' | 'network';
+    bio: string;
+    tags?: Array<{ label: string; href: string }>;
+    tagsCaption?: string;
+    showLinkedIn?: boolean;
+  }>;
+}> = [
+  {
+    id: 'studio-executives',
+    heading: 'Studio Executives',
+    members: [
+      {
+        id: 'laura-klein',
+        name: 'Laura Klein',
+        role: 'Studio Executive',
+        initials: 'LK',
+        variant: 'person',
+        bio: 'Full bio and areas of expertise coming soon.',
+        tags: [
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+        ],
+      },
+      {
+        id: 'josh-mellinger',
+        name: 'Josh Mellinger',
+        role: 'Studio Executive',
+        initials: 'JM',
+        variant: 'person',
+        bio: 'Full bio and areas of expertise coming soon.',
+        tags: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'executive-in-residence',
+    heading: 'Executive in Residence',
+    members: [
+      {
+        id: 'isaac',
+        name: 'Isaac',
+        role: 'Executive in Residence',
+        initials: 'I',
+        variant: 'person',
+        bio: 'Full bio coming soon.',
+      },
+    ],
+  },
+  {
+    id: 'expert-network',
+    heading: 'Terra Nexus Expert Network',
+    members: [
+      {
+        id: 'expert-network',
+        name: 'Terra Nexus Expert Network',
+        role: '',
+        initials: 'TN',
+        variant: 'network',
+        bio: 'Network details coming soon.',
+        tags: [
+          { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+          { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+          { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+          { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
+        ],
+        tagsCaption: 'Illustrative coverage areas — existing Terra Nexus capability taxonomy, shown for design-review purposes only.',
+        showLinkedIn: false,
+      },
     ],
   },
 ];
@@ -41,117 +204,118 @@ const teamPlaceholder = [
   description="Terra Nexus is an innovation and insights studio for food and climate. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value."
   preview={mode === 'preview'}
 >
-  <PageHero
-    eyebrow="About Terra Nexus"
-    title="An Innovation & Insights Studio for Food & Climate"
-    lead="Terra Nexus exists to develop a more resilient, sustainable, and prosperous food system. We accelerate the adoption of proven solutions that enhance transparency, facilitate collaboration, and incentivize investment to unlock shared value across the entire value chain."
-  />
+  <!-- Scroll progress bar — same pattern as
+       expertise/regenerative-agriculture/index.astro: a live scroll-position
+       readout, not scroll-hijacking. -->
+  <div class="scroll-progress" aria-hidden="true">
+    <div class="scroll-progress-fill" data-scroll-progress-fill></div>
+  </div>
 
-  <section class="section">
-    <div class="container text-container">
-      <h2>Why We Exist</h2>
-      <p>To build a more resilient, sustainable, and prosperous food system by accelerating adoption of proven solutions that create impact at the intersection of food and climate.</p>
+  <!-- Hero now carries the "Why We Exist" statement directly as its
+       eyebrow/H1 (owner feedback, 2026-08-18: keep the hero's gradient
+       treatment, but the H1 itself needs the serif statement + gold-
+       highlighted "proven solutions" treatment the standalone Why We Exist
+       section had — not PageHero's plain-text bold-sans title). PageHero's
+       `title` prop can't carry a highlighted <mark>, so this is a
+       page-local hero reproducing PageHero's 'standard' variant chrome
+       (gradient-surface background, radial glow, .eyebrow/.container)
+       verbatim from PageHero.astro — not a new visual, just this one
+       page's H1 content forked out of the shared component. -->
+  <section class="exists-hero" aria-labelledby="exists-heading">
+    <div class="exists-hero-glow" aria-hidden="true"></div>
+    <div class="container exists-hero-inner">
+      <span class="eyebrow" data-reveal>Why We Exist</span>
+      <h1 id="exists-heading" class="exists-statement" data-reveal>
+        To build a more resilient, sustainable, and prosperous food system by accelerating adoption of <mark class="highlight">proven solutions</mark> that create impact at the intersection of food and climate.
+      </h1>
     </div>
   </section>
 
-  <section class="section section-alt">
-    <div class="container text-container">
-      <h2>How We Work</h2>
-      <p>We work with food and agribusinesses across the value chain to:</p>
-      <ul class="how-list">
-        <li>Enhance transparency</li>
-        <li>Facilitate collaboration</li>
-        <li>Establish market mechanisms</li>
-        <li>Unlock shared value</li>
-      </ul>
+  <!-- Pinned "sticker" moment — position:sticky pin, same mechanism already
+       used by ScrollPanel.astro elsewhere on the site. Scale/rotate driven
+       by scroll progress through the pinned section (data-sticker-scene /
+       data-sticker script below), matching the design reference 1:1. -->
+  <section class="sticker-scene" data-sticker-scene aria-label="Climate is not a side hustle">
+    <div class="sticker-pin">
+      <!-- Same .container as the hero/text sections above — keeps the
+           badge's horizontal center pixel-identical to the page's text
+           column instead of the full (unpadded) viewport center. -->
+      <div class="container sticker-pin-inner">
+        <img
+          data-sticker
+          src="/images/climate-sticker-03-sunfaded-vintage.png"
+          alt="Climate is not a side hustle"
+          class="sticker-image"
+          width="660"
+          height="374"
+          loading="lazy"
+        />
+        <p class="sticker-line" data-sticker-line>There is absolutely no legitimate reason that creating a better planet should be so damn complicated.</p>
+      </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container text-container">
-      <h2>What We Provide</h2>
-      <p>We provide the insights, tools, and management expertise needed to deliver the right solution, in the right place, with the right partners, and capture the largest supportable sources of value for commercial sustainability and climate programs.</p>
-    </div>
-  </section>
-
-  <section class="section section-alt">
+  <!-- Origin Story — sticky chapter rail + four narrative chapters.
+       ⚠️ Draft narrative — see header comment. -->
+  <section class="section origin-section" id="origin" aria-labelledby="origin-heading">
     <div class="container">
-      <h2>What Makes Terra Nexus Different</h2>
-      <div class="different-content">
-        <p>Food-and-climate challenges are rarely solved by one technology, standard, buyer, or participant. Terra Nexus integrates commercial strategy, food and agricultural systems, value-chain operations, data and technology, environmental accounting, market mechanisms, and program management.</p>
-        <p>We help clients determine what should change, where it can create the greatest value, which participants are required, what evidence and operating system are needed, how incentives should be allocated, and which supportable route to market or claim best fits the objective.</p>
-      </div>
-      <div class="not-list">
-        <h3>What Terra Nexus Is Not</h3>
-        <ul>
-          <li>Not generic ESG consulting</li>
-          <li>Not simply a software company</li>
-          <li>Not only a carbon-credit firm</li>
-          <li>Not an accredited verifier</li>
-        </ul>
-        <p class="not-summary">Terra Nexus is an innovation and insights studio integrating commercial strategy, food systems, value-chain operations, technical evidence, environmental accounting, market mechanisms, and program management.</p>
-      </div>
-    </div>
-  </section>
+      <span class="eyebrow eyebrow-light" data-reveal>The Origin Story</span>
+      <h2 id="origin-heading" class="origin-heading" data-reveal>We started Terra Nexus because the work kept stalling in the same place.</h2>
+      <p class="draft-pill" data-reveal>Draft for internal review — origin narrative, dates, and details pending confirmation.</p>
 
-  <!-- Studio Executives — two layout options for team review. Not a final
-       pick; see the code comment on teamPlaceholder above. Both stay in
-       place until the team decides which direction (or hybrid) to build
-       out fully, same "leave both up for review" approach as the homepage
-       nav-anchor trial. -->
-  <section class="section" aria-labelledby="team-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Studio Executives</span>
-        <h2 id="team-heading">Food Systems Leadership Team</h2>
-        <p class="section-lead">Two directions for the team section — one hover-forward and photo-led, one expertise-forward and read-first. <span class="draft-flag">Draft for internal review — photos, bios, and links are placeholders.</span></p>
-      </header>
+      <div class="origin-layout">
+        <div class="origin-rail">
+          <div class="origin-rail-number" data-origin-number aria-hidden="true">01</div>
+          <ol class="origin-rail-list" role="list">
+            {originChapters.map((chapter, i) => (
+              <li>
+                <button type="button" class="origin-rail-item" data-origin-rail data-origin-index={i}>{chapter.label}</button>
+              </li>
+            ))}
+          </ol>
+        </div>
 
-      <div class="team-option">
-        <h3 class="team-option-label">Option A — Photo Reveal</h3>
-        <p class="team-option-note">Closest to the current live site: black-and-white photo through hover, with a LinkedIn/email icon rail revealing on top. Compact and visual; bio depth lives on a future full profile page, not here.</p>
-        <ul class="exec-grid-a" role="list">
-          {teamPlaceholder.map((person) => (
-            <li class="exec-card-a">
-              <div class="exec-card-a-media">
-                <div class="exec-avatar" aria-hidden="true">{person.initials}</div>
-                <div class="exec-icon-rail">
-                  <span class="exec-icon is-placeholder" title="LinkedIn — link coming soon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="sans-serif">in</text></svg>
-                  </span>
-                  <a class="exec-icon" href="/contact/" aria-label={`Contact ${person.name}`} title="Email">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>
-                  </a>
-                </div>
-              </div>
-              <h4>{person.name}</h4>
-              <p class="exec-role">{person.title}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div class="team-option">
-        <h3 class="team-option-label">Option B — Expertise-Linked</h3>
-        <p class="team-option-note">Leads with credibility and depth: a short bio plus tags linking straight into the Capabilities that person owns — the connective tissue you described wanting between the team and the work.</p>
-        <div class="exec-list-b">
-          {teamPlaceholder.map((person) => (
-            <article class="exec-card-b">
-              <div class="exec-avatar-lg" aria-hidden="true">{person.initials}</div>
-              <div class="exec-card-b-body">
-                <h4>{person.name}</h4>
-                <p class="exec-role">{person.title}</p>
-                <p class="exec-bio">{person.bio}</p>
-                <ul class="exec-tags" role="list">
-                  {person.focusAreas.map((area) => (
-                    <li><a href={area.href} class="tag">{area.label}</a></li>
+        <div class="origin-chapters">
+          {originChapters.map((chapter, i) => (
+            <article class="origin-chapter" data-origin-chapter data-origin-index={i}>
+              <h3>{chapter.title}</h3>
+              {chapter.subheading && <h3>{chapter.subheading}</h3>}
+              {chapter.payoffLine && <p class="origin-payoff-line">{chapter.payoffLine}</p>}
+              {chapter.body && <p>{chapter.body}</p>}
+              {chapter.pullQuote && <p class="origin-pull-quote">{chapter.pullQuote}</p>}
+              {chapter.closingLine && <p class="origin-closing-line">{chapter.closingLine}</p>}
+              {chapter.levers && (
+                <div class="origin-levers">
+                  {chapter.levers.map((lever) => (
+                    <div class="origin-lever">
+                      <span class="origin-lever-num" aria-hidden="true">{lever.num}</span>
+                      <div>
+                        <h4>{lever.title}</h4>
+                        <p>{lever.body}</p>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-                <div class="exec-socials">
-                  <span class="exec-social-link is-placeholder" title="LinkedIn — link coming soon">LinkedIn</span>
-                  <a class="exec-social-link" href="/contact/">Email</a>
+                  {chapter.outcome && (
+                    <div class="origin-outcome">
+                      <span class="origin-outcome-icon" aria-hidden="true">&#9670;</span>
+                      <div>
+                        <h4>{chapter.outcome.title}</h4>
+                        <p>{chapter.outcome.body}</p>
+                      </div>
+                    </div>
+                  )}
+                  {chapter.outcomeTypes && (
+                    <div class="origin-outcome-types">
+                      {chapter.outcomeTypes.map((type) => (
+                        <div class="origin-outcome-type">
+                          <h4>{type.title}</h4>
+                          <p>{type.body}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </article>
           ))}
         </div>
@@ -159,24 +323,328 @@ const teamPlaceholder = [
     </div>
   </section>
 
+  <!-- Our Track Record — reuses index.astro's exact .stat-strip pattern and
+       figures rather than a new count-up widget (see header comment). -->
+  <section class="section" aria-labelledby="track-record-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow" data-reveal>Our Track Record</span>
+        <h2 id="track-record-heading" data-reveal>Proven portfolio of successful impact</h2>
+        <p class="draft-flag" data-reveal>Draft for internal review — figures carried over from the in-development About page, pending verification.</p>
+      </header>
+
+      <div class="stat-strip" data-stat-strip>
+        {trackRecordStats.map((stat, i) => (
+          <div class="stat-item" data-reveal style={`--reveal-i: ${i}`}>
+            <p
+              class="stat-value stat-value-md"
+              data-count={stat.count}
+              data-prefix={stat.prefix}
+              data-suffix={stat.suffix}
+            >{stat.value}</p>
+            <p class="stat-label">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Leadership — Executive Profile Roster (unchanged from existing
+       roster wiring on this branch). -->
+  <section class="section section-alt" aria-labelledby="team-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow" data-reveal>Leadership</span>
+        <h2 id="team-heading" data-reveal>Food Systems Leadership Team</h2>
+        <p class="section-lead" data-reveal>Select a profile to read more. <span class="draft-flag">Photos, bios, and links are placeholders pending final content.</span></p>
+      </header>
+
+      {rosterGroups.map((group) => (
+        <ProfileRoster heading={group.heading} members={group.members} />
+      ))}
+    </div>
+  </section>
+
   <ClosingCta
-    heading="Start a Conversation"
-    primaryCta={{ label: 'Start a Conversation', href: '/contact/' }}
+    headingId="final-cta-heading"
+    heading="Build the Right Path from Opportunity to Value"
+    description="Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress."
+    primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
   />
 </SiteLayout>
 
 <style>
-  .how-list { margin-top: var(--space-4); padding-left: var(--space-5); }
-  .how-list li { margin-bottom: var(--space-2); font-size: var(--text-lg); color: var(--color-text); }
-  .different-content { max-width: 72ch; margin-bottom: var(--space-8); }
-  .different-content p { margin-bottom: var(--space-4); line-height: var(--line-relaxed); }
-  .not-list { padding: var(--space-6); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .not-list h3 { margin-bottom: var(--space-3); }
-  .not-list ul { padding-left: var(--space-5); margin-bottom: var(--space-4); }
-  .not-list li { margin-bottom: var(--space-2); color: var(--color-text-secondary); }
-  .not-summary { font-size: var(--text-sm); color: var(--color-text-muted); font-style: italic; }
+  /* ── Hero (page-local — see the markup comment above) ── */
+  .exists-hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--gradient-surface);
+    padding-block: var(--space-20) var(--space-10);
+  }
+  .exists-hero-glow {
+    pointer-events: none;
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    height: 50rem;
+    width: 50rem;
+    background: radial-gradient(circle, rgba(168, 208, 219, 0.4) 0%, transparent 65%);
+  }
+  .exists-hero-inner { position: relative; }
+  .exists-statement {
+    margin-top: var(--space-6);
+    /* No max-width cap — runs the full .container width (owner feedback:
+       "full margin"), not the narrower reading-width cap most body copy
+       on the site uses. */
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    font-weight: var(--font-medium);
+    color: var(--color-dark);
+  }
+  .highlight {
+    background: linear-gradient(transparent 66%, var(--c-accent-300) 66%);
+    color: inherit;
+    font-style: normal;
+  }
 
-  /* ── Studio Executives — team section review options ── */
+  /* ── Pinned sticker moment ── */
+  .sticker-scene {
+    position: relative;
+    /* Shorter scroll runway than a typical pin (owner feedback: "reduce
+       gap") — still enough above 100vh for the scale/rotate progress math
+       in the script below to read as a smooth pin, just less dead space
+       before/after it. */
+    height: 130vh;
+    background: var(--color-surface);
+    border-block: 1px solid var(--color-border);
+  }
+  .sticker-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .sticker-pin::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 50% at 50% 40%, rgba(168, 208, 219, 0.35), transparent 70%);
+    pointer-events: none;
+  }
+  /* Reuses .container so the badge's horizontal center matches the hero
+     text's column exactly (owner feedback: "center aligned"), instead of
+     centering against the full unpadded viewport. */
+  .sticker-pin-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .sticker-image {
+    position: relative;
+    width: min(58vw, 720px);
+    max-height: 46vh;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 25px 50px rgba(15, 23, 42, 0.15));
+    transform: scale(0.8) rotate(-4.5deg);
+    will-change: transform;
+  }
+  .sticker-line {
+    position: relative;
+    margin: 0;
+    max-width: 28ch;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2.2vw, 1.875rem);
+    line-height: 1.35;
+    color: var(--color-eyebrow);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .sticker-line.is-on {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticker-image { transform: none; }
+    .sticker-line { opacity: 1; transform: none; }
+  }
+
+  /* ── Origin Story ── */
+  .origin-section {
+    background: var(--gradient-dark);
+  }
+  .origin-heading {
+    margin: var(--space-4) 0 var(--space-4);
+    max-width: 22ch;
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    line-height: 1.15;
+    font-weight: var(--font-semibold);
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .draft-pill {
+    display: inline-block;
+    margin: 0 0 var(--space-16);
+    padding: var(--space-1) var(--space-3);
+    border: 1px dashed rgba(231, 215, 127, 0.5);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.02em;
+    color: var(--c-accent-400);
+  }
+
+  .origin-layout {
+    display: grid;
+    grid-template-columns: minmax(11rem, 16rem) 1fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+  .origin-rail { position: sticky; top: 8.75rem; }
+  .origin-rail-number {
+    font-family: var(--font-serif);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--c-accent-400);
+  }
+  .origin-rail-list {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--color-dark-border);
+    list-style: none;
+  }
+  .origin-rail-item {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--c-secondary-400);
+    cursor: pointer;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+  }
+  .origin-rail-item[aria-current="true"] {
+    color: var(--c-accent-400);
+    transform: translateX(6px);
+  }
+
+  .origin-chapters { display: grid; gap: var(--space-24); max-width: 44rem; }
+  .origin-chapter { transition: opacity var(--transition-base); }
+  .origin-chapter[data-active="false"] { opacity: 0.45; }
+  .origin-chapter h3 {
+    margin-bottom: var(--space-4);
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: #fff;
+  }
+  .origin-chapter > p { margin-bottom: var(--space-4); font-size: var(--text-lg); line-height: var(--line-relaxed); color: var(--c-secondary-300); }
+  .origin-pull-quote {
+    padding-left: var(--space-5);
+    border-left: 2px solid var(--c-accent-400);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: 1.5;
+    color: #fff;
+  }
+  /* "What we ended up with was a movement." (The studio) — same font-size
+     as the chapter headings above it, but deliberately NOT bold: serif
+     italic + normal weight reads as the lighter, "accented" counterpoint
+     to the bold h3s, not a fourth heading. Gold, not white.
+     Selector is `.origin-chapter p.origin-payoff-line` (2 classes + tag),
+     not just `.origin-payoff-line` — needs to out-specificity
+     `.origin-chapter > p` above, which otherwise wins the color property
+     and silently keeps this gray instead of gold (bit us once already). */
+  .origin-chapter p.origin-payoff-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: var(--font-normal);
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--c-accent-400);
+  }
+  .origin-closing-line { margin-top: var(--space-2); font-style: italic; color: #fff; }
+
+  .origin-levers { margin-top: var(--space-6); }
+  .origin-lever {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-5);
+    align-items: baseline;
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-dark-border);
+  }
+  .origin-lever-num { font-family: var(--font-serif); font-size: var(--text-2xl); line-height: 1; color: var(--c-accent-400); }
+  .origin-lever h4 { margin-bottom: var(--space-1); font-size: var(--text-base); font-weight: var(--font-semibold); color: #fff; }
+  .origin-lever p { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--c-secondary-300); }
+
+  .origin-outcome {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-5);
+    align-items: center;
+    margin-top: var(--space-6);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: rgba(231, 215, 127, 0.1);
+    border: 1px solid rgba(231, 215, 127, 0.35);
+  }
+  .origin-outcome-icon { font-size: var(--text-2xl); line-height: 1; color: var(--c-accent-400); }
+  .origin-outcome h4 { margin-bottom: var(--space-1); font-family: var(--font-serif); font-size: var(--text-xl); font-weight: var(--font-semibold); color: #fff; }
+  .origin-outcome p { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--c-secondary-300); }
+
+  /* What "unlock shared value" unlocks — three placeholder tiles below the
+     outcome callout (owner request, 2026-08-18). Plain dark tiles, not
+     .card-plain (that pattern assumes a light surface). */
+  .origin-outcome-types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .origin-outcome-type {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-dark-border);
+  }
+  .origin-outcome-type h4 { margin-bottom: var(--space-1); font-family: var(--font-serif); font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--c-accent-400); }
+  .origin-outcome-type p { margin: 0; font-size: var(--text-xs); font-style: italic; line-height: var(--line-relaxed); color: var(--c-secondary-400); }
+  @media (max-width: 30rem) {
+    .origin-outcome-types { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 56rem) {
+    .origin-layout { grid-template-columns: 1fr; gap: var(--space-8); }
+    .origin-rail { position: static; display: flex; align-items: baseline; gap: var(--space-6); }
+    .origin-rail-list { flex-direction: row; flex-wrap: wrap; margin-top: 0; padding-left: var(--space-4); }
+  }
+
+  /* ── Our Track Record — same grid recipe as index.astro's .stat-strip. ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--space-10);
+    row-gap: var(--space-10);
+  }
+  @media (max-width: 56rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
+  .stat-item { padding-top: var(--space-4); border-top: 3px solid var(--color-eyebrow); }
+  .stat-item .stat-value { margin-top: var(--space-3); }
+  .stat-item .stat-label { margin-top: var(--space-2); max-width: 26rem; color: var(--color-text-secondary); }
+
   .draft-flag {
     display: inline-block;
     margin-top: var(--space-2);
@@ -184,97 +652,202 @@ const teamPlaceholder = [
     font-weight: var(--font-medium);
     color: var(--color-eyebrow);
   }
-  .team-option { margin-top: var(--space-12); }
-  .team-option:first-of-type { margin-top: var(--space-8); }
-  .team-option-label {
-    font-family: var(--font-serif);
-    margin-bottom: var(--space-2);
+
+  /* ── Scroll progress bar — identical to
+       expertise/regenerative-agriculture/index.astro's implementation. ── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 100;
+    background: transparent;
+    pointer-events: none;
   }
-  .team-option-note {
-    color: var(--color-text-secondary);
-    max-width: var(--max-width-text);
-    margin-bottom: var(--space-6);
-    line-height: var(--line-relaxed);
+  .scroll-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gradient-accent);
+    transition: width 0.1s linear;
   }
 
-  /* Option A — photo reveal grid */
-  .exec-grid-a {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; gap: var(--space-6);
-    grid-template-columns: repeat(2, minmax(0, 14rem));
+  /* ── Scroll-reveal (fade + rise) — identical pattern/rules to
+       expertise/regenerative-agriculture/index.astro; see that file's
+       comment for the no-JS/reduced-motion fallback rationale. ── */
+  [data-reveal] { opacity: 1; transform: none; }
+  [data-reveal].js-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms);
   }
-  @media (max-width: 30rem) { .exec-grid-a { grid-template-columns: minmax(0, 14rem); } }
-  .exec-card-a { display: flex; flex-direction: column; }
-  .exec-card-a-media {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: var(--space-3);
-    box-shadow: var(--shadow-md);
-  }
-  .exec-avatar {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-slow, var(--transition-base));
-  }
-  .exec-card-a:hover .exec-avatar,
-  .exec-card-a:focus-within .exec-avatar { filter: grayscale(0); }
-  .exec-icon-rail {
-    position: absolute; top: var(--space-3); right: var(--space-3);
-    display: flex; flex-direction: column; gap: var(--space-2);
-    opacity: 0; transform: translateX(0.5rem);
-    transition: opacity var(--transition-base), transform var(--transition-base);
-  }
-  .exec-card-a:hover .exec-icon-rail,
-  .exec-card-a:focus-within .exec-icon-rail { opacity: 1; transform: translateX(0); }
-  .exec-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 1.75rem; height: 1.75rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--color-dark);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-  }
-  .exec-icon.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
-  .exec-card-a h4 { font-family: var(--font-serif); }
-  .exec-role { font-size: var(--text-sm); color: var(--color-text-secondary); margin-top: var(--space-1); }
-
-  /* Option B — expertise-linked editorial rows */
-  .exec-list-b { display: flex; flex-direction: column; gap: var(--space-6); }
-  .exec-card-b {
-    display: grid; grid-template-columns: 7rem 1fr; gap: var(--space-6);
-    padding: var(--space-6);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-  }
-  @media (max-width: 30rem) { .exec-card-b { grid-template-columns: 1fr; } }
-  .exec-avatar-lg {
-    width: 7rem; height: 7rem;
-    border-radius: var(--radius-full);
-    display: flex; align-items: center; justify-content: center;
-    background: var(--gradient-dark);
-    color: var(--c-accent-400);
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    filter: grayscale(1);
-    transition: filter var(--transition-base);
-  }
-  .exec-card-b:hover .exec-avatar-lg,
-  .exec-card-b:focus-within .exec-avatar-lg { filter: grayscale(0); }
-  .exec-bio { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--line-relaxed); }
-  .exec-tags { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .exec-socials { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
-  .exec-social-link {
-    font-size: var(--text-sm); font-weight: var(--font-medium);
-    color: var(--color-link); text-decoration: none;
-  }
-  .exec-social-link:hover { color: var(--color-link-hover); }
-  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+  [data-reveal].js-reveal.is-visible { opacity: 1; transform: none; }
 </style>
+
+<script>
+  // Scroll-reveal + scroll progress bar — copied 1:1 from
+  // expertise/regenerative-agriculture/index.astro (see that file for the
+  // rationale comments this omits to avoid duplication).
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    revealEls.forEach((el) => el.classList.add('js-reveal'));
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+    revealEls.forEach((el) => revealObserver.observe(el));
+  }
+
+  const progressFill = document.querySelector<HTMLElement>('[data-scroll-progress-fill]');
+  if (progressFill) {
+    let ticking = false;
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 0;
+      progressFill.style.width = `${pct}%`;
+      ticking = false;
+    };
+    updateProgress();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(updateProgress);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+    window.addEventListener('resize', updateProgress);
+  }
+
+  // Origin Story rail — tracks which chapter is nearest the vertical center
+  // of the viewport via a centered IntersectionObserver band (idiomatic IO
+  // "currently crossing center" pattern, used here instead of the per-frame
+  // bounding-rect math the design reference used, to stay consistent with
+  // this codebase's existing IO-first convention). Falls back to "chapter 1
+  // active, rail static" if IntersectionObserver is unavailable or motion
+  // is reduced — chapters are already fully readable in source order either
+  // way, so nothing is lost, just the highlight.
+  const chapters = Array.from(document.querySelectorAll<HTMLElement>('[data-origin-chapter]'));
+  const railItems = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-origin-rail]'));
+  const railNumber = document.querySelector<HTMLElement>('[data-origin-number]');
+
+  function setActiveChapter(index: number) {
+    chapters.forEach((el) => {
+      const isActive = Number(el.dataset.originIndex) === index;
+      el.dataset.active = String(isActive);
+    });
+    railItems.forEach((el) => {
+      const isActive = Number(el.dataset.originIndex) === index;
+      el.setAttribute('aria-current', String(isActive));
+    });
+    if (railNumber) railNumber.textContent = String(index + 1).padStart(2, '0');
+  }
+
+  railItems.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const index = Number(btn.dataset.originIndex);
+      chapters[index]?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
+    });
+  });
+
+  if (chapters.length && 'IntersectionObserver' in window) {
+    setActiveChapter(0);
+    const originObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveChapter(Number((entry.target as HTMLElement).dataset.originIndex));
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    );
+    chapters.forEach((el) => originObserver.observe(el));
+  } else {
+    setActiveChapter(0);
+  }
+
+  // Pinned sticker moment — scale/rotate driven by scroll progress through
+  // the pinned section (matches the design reference: 0.8×→1.04× scale,
+  // -4.5deg→+2deg rotate; supporting line fades in past ~42% progress).
+  // Skipped entirely under reduced motion (CSS media query above already
+  // pins the image/line to their resting, fully-visible state).
+  const stickerScene = document.querySelector<HTMLElement>('[data-sticker-scene]');
+  const stickerImage = document.querySelector<HTMLElement>('[data-sticker]');
+  const stickerLine = document.querySelector<HTMLElement>('[data-sticker-line]');
+
+  function sceneProgress(el: HTMLElement | null): number {
+    if (!el) return 0;
+    const rect = el.getBoundingClientRect();
+    const span = Math.max(1, rect.height - window.innerHeight);
+    return Math.max(0, Math.min(1, -rect.top / span));
+  }
+
+  function updateSticker() {
+    if (!stickerImage || prefersReducedMotion) return;
+    const p = sceneProgress(stickerScene);
+    const scale = 0.8 + Math.min(p * 2.2, 1) * 0.24;
+    const rotate = -4.5 + p * 6.5;
+    stickerImage.style.transform = `scale(${scale.toFixed(3)}) rotate(${rotate.toFixed(2)}deg)`;
+    stickerLine?.classList.toggle('is-on', p > 0.42);
+  }
+
+  // Count-up stats — triggers once per stat on first scroll-into-view,
+  // eased (1-(1-t)^3) over ~1.1–1.4s depending on magnitude. Skipped under
+  // reduced motion — the SSR/no-JS plain-text value (e.g. "$3B+") already
+  // renders in the markup and is left untouched in that case.
+  const counters = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
+  let countedIn = false;
+  function runCounts() {
+    counters.forEach((el) => {
+      const target = Number(el.dataset.count || 0);
+      const pre = el.dataset.prefix || '';
+      const suf = el.dataset.suffix || '';
+      const duration = 1100 + target * 8;
+      const start = performance.now();
+      const step = (now: number) => {
+        const k = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - k, 3);
+        el.textContent = pre + Math.round(target * eased) + suf;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      el.textContent = pre + '0' + suf;
+      requestAnimationFrame(step);
+    });
+  }
+  const statStrip = document.querySelector<HTMLElement>('[data-stat-strip]');
+
+  if (stickerImage || (statStrip && !prefersReducedMotion)) {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateSticker();
+        if (!countedIn && statStrip && !prefersReducedMotion) {
+          const rect = statStrip.getBoundingClientRect();
+          if (rect.top < window.innerHeight * 0.82) {
+            countedIn = true;
+            runCounts();
+          }
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    window.addEventListener('load', onScroll);
+    onScroll();
+  }
+</script>

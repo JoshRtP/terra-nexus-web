@@ -1,0 +1,237 @@
+---
+// Industries landing page — Industries/Insights IA prototype
+// (prototype/industries-insights-ia, 2026-08-17). Replaces "Who We Work
+// With" in the primary navigation with a role-based model: Producers,
+// Buyers, Enablers. The /who-we-work-with/ routes are intentionally
+// retained (linked from the connection section below) — not deleted, not
+// redirected yet. See CLAUDE.md for the full IA brief and role
+// definitions this page implements verbatim.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+import { industriesMenu } from '../../data/nav-data';
+const mode = getBuildMode();
+
+const roleDetail = {
+  producers: {
+    examples: [
+      'Certified & differentiated commodities, ingredients, and low-carbon products',
+      'Product-level evidence — Product Carbon Footprints, LCAs, environmental claims',
+      'Verified supply-chain outcomes — Scope 3 reductions, insets, regenerative outcomes',
+      'Environmental assets — carbon offsets, EACs, ecosystem-service and removal credits',
+    ],
+  },
+  buyers: {
+    examples: [
+      'Decarbonization progress and Scope 3 target achievement',
+      'Certification, sourcing, and product-differentiation claims',
+      'Regulatory compliance and corporate environmental reporting',
+      'Procurement qualification and customer-requirement fulfillment',
+    ],
+  },
+  enablers: {
+    examples: [
+      'Technology & data — MRV, traceability, modeling, digital platforms',
+      'Markets & ecosystem services — registries, marketplaces, asset infrastructure',
+      'Finance — project finance, climate finance, PE/VC/impact investment',
+      'Assurance & specialist services — verification, certification infrastructure',
+    ],
+  },
+};
+---
+
+<SiteLayout
+  title="Industries | Terra Nexus"
+  description="Terra Nexus works across the ecosystem connecting organizations that create environmental and commercial value, organizations that use it, and the infrastructure that enables both."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Industries"
+    title="Producers, Buyers, and Enablers of Environmental Value"
+    lead="Terra Nexus works across the ecosystem connecting organizations that create environmental and commercial value, organizations that use it, and the infrastructure that enables both — at every scale."
+    primaryCta={{ label: 'Discuss Your Market or Program', href: '/contact/' }}
+  />
+
+  <section class="section" aria-labelledby="system-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">The System</span>
+        <h2 id="system-heading">A Role, Not Just an Industry</h2>
+        <p class="section-lead">
+          This is a segmentation by <strong>role</strong> — what an organization is doing in the
+          market — not a conventional industry list. The same organization can play more than one
+          role. A commodity trader may buy low-carbon grain and later sell a certified
+          differentiated commodity. A food company may buy Scope 3 reductions and produce a
+          consumer product with a verified footprint.
+        </p>
+      </header>
+
+      <div class="system-map">
+        <svg class="system-map-lines" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--c-sky-500)" />
+            </marker>
+          </defs>
+          <line x1="185" y1="58" x2="405" y2="58" stroke="var(--c-sky-500)" stroke-width="2" marker-end="url(#arrow)" />
+          <line x1="130" y1="95" x2="268" y2="185" stroke="var(--c-sky-300)" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow)" />
+          <line x1="470" y1="95" x2="332" y2="185" stroke="var(--c-sky-300)" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow)" />
+        </svg>
+
+        <a href="/industries/producers/" class="system-map-node node-producers">
+          <span class="node-label">Producers</span>
+          <span class="node-sub">Create &amp; supply value</span>
+        </a>
+        <a href="/industries/buyers/" class="system-map-node node-buyers">
+          <span class="node-label">Buyers</span>
+          <span class="node-sub">Procure &amp; use value</span>
+        </a>
+        <a href="/industries/enablers/" class="system-map-node node-enablers">
+          <span class="node-label">Enablers</span>
+          <span class="node-sub">Make it possible at scale</span>
+        </a>
+
+        <p class="system-map-caption">Producers create and supply value; Buyers procure and use it; Enablers make creation, validation, financing, exchange, and scale possible for both.</p>
+      </div>
+
+      <ol class="system-map-mobile-flow" role="list">
+        <li><a href="/industries/producers/">Producers</a> create &amp; supply value</li>
+        <li><a href="/industries/buyers/">Buyers</a> procure &amp; use it</li>
+        <li><a href="/industries/enablers/">Enablers</a> make it possible at scale</li>
+      </ol>
+    </div>
+  </section>
+
+  {industriesMenu.map((role, i) => (
+    <section class:list={['section', { 'section-alt': i % 2 === 1 }]} aria-labelledby={`${role.key}-heading`}>
+      <div class="container role-section">
+        <div class="role-copy">
+          <span class="eyebrow">{role.title}</span>
+          <h2 id={`${role.key}-heading`}>{role.title}</h2>
+          <p class="role-lead">{role.shortDescription}</p>
+          <a href={role.href} class="btn btn-secondary">Explore {role.title} &rarr;</a>
+        </div>
+        <ul class="role-examples" role="list">
+          {roleDetail[role.key].examples.map((example) => <li>{example}</li>)}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <section class="section" aria-labelledby="connection-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">How It Connects</span>
+        <h2 id="connection-heading">Value Moves Between the Groups</h2>
+        <p class="section-lead">
+          The existing Terra Nexus value-chain view — Inputs Companies, Agricultural Producers,
+          Commodity Traders, Processors, Food &amp; Beverage, Retail, Energy &amp; Biofuels, Food Waste
+          Recovery — describes <strong>where</strong> an organization sits in the physical supply chain.
+          Industries describes <strong>what role</strong> it plays in creating or using environmental value.
+          They're different dimensions of the same map.
+        </p>
+      </header>
+      <a href="/who-we-work-with/" class="panel-view-all">See the Value-Chain View &rarr;</a>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Discuss Your Market or Program"
+    description="Tell us whether you're creating, using, or enabling environmental value — Terra Nexus works across all three roles."
+    primaryCta={{ label: 'Discuss Your Market or Program', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
+  />
+</SiteLayout>
+
+<style>
+  .system-map {
+    position: relative;
+    max-width: 46rem;
+    margin: 0 auto var(--space-6);
+    aspect-ratio: 600 / 300;
+  }
+  .system-map-lines {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .system-map-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    gap: 2px;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface-elevated);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    width: 9.5rem;
+  }
+  .system-map-node:hover,
+  .system-map-node:focus-visible {
+    border-color: var(--c-sky-400);
+    box-shadow: var(--shadow-lg);
+    transform: translate(-50%, calc(-50% - 3px));
+  }
+  .system-map-node:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .node-producers { left: 16.7%; top: 22.3%; }
+  .node-buyers { left: 83.3%; top: 22.3%; }
+  .node-enablers { left: 50%; top: 84.6%; }
+  .node-label {
+    font-size: var(--text-base); font-weight: var(--font-semibold);
+    color: var(--color-text);
+  }
+  .node-sub {
+    font-size: var(--text-xs); color: var(--color-text-secondary);
+  }
+  .system-map-caption {
+    text-align: center; max-width: 34rem; margin: var(--space-4) auto 0;
+    font-size: var(--text-sm); color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+
+  .system-map-mobile-flow {
+    display: none;
+    max-width: 24rem; margin: 0 auto;
+    list-style: decimal; padding-inline-start: var(--space-6);
+    gap: var(--space-3);
+    font-size: var(--text-sm); color: var(--color-text-secondary);
+  }
+  .system-map-mobile-flow li { margin-bottom: var(--space-2); }
+  .system-map-mobile-flow a { color: var(--color-eyebrow); font-weight: var(--font-semibold); text-decoration: none; }
+  .system-map-mobile-flow a:hover { text-decoration: underline; }
+
+  @media (max-width: 40rem) {
+    .system-map { display: none; }
+    .system-map-mobile-flow { display: block; }
+  }
+
+  .role-section {
+    display: grid; gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 56rem) {
+    .role-section { grid-template-columns: 1.1fr 1fr; align-items: start; gap: var(--space-12); }
+  }
+  .role-lead {
+    font-size: var(--text-lg); color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+    margin-block: var(--space-4) var(--space-6);
+    max-width: 32rem;
+  }
+  .role-examples {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--space-3);
+  }
+  .role-examples li {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-inline-start: 3px solid var(--c-sky-300);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm); color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+// Smallest-needed prototype route for the Insights mega menu's "Research"
+// item — no suitable existing page to reuse. Industries/Insights IA
+// prototype (prototype/industries-insights-ia, 2026-08-17). Not final
+// editorial content or taxonomy. See CLAUDE.md.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+import PageHero from '../../../components/PageHero.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+const mode = getBuildMode();
+---
+
+<SiteLayout
+  title="Research | Insights | Terra Nexus"
+  description="Longer-form research, reports, technical analysis, market intelligence, and frameworks from Terra Nexus."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Insights — Research"
+    title="Research & Technical Analysis"
+    lead="Longer-form research, reports, technical analysis, market intelligence, and frameworks — a deeper counterpart to the Blog. This section is a placeholder pending Terra Nexus's first published research."
+    secondaryCta={{ label: 'Back to Insights', href: '/insights/' }}
+  />
+
+  <section class="section" aria-labelledby="coming-soon-heading">
+    <div class="container narrow-container text-center">
+      <span class="eyebrow">Coming Soon</span>
+      <h2 id="coming-soon-heading">Research Publishing Is Not Yet Live</h2>
+      <p>
+        In the meantime, explore current perspectives on the <a href="/insights/">Blog</a> or see
+        applied work in <a href="/case-studies/">Case Studies</a>.
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Have a Research Question in Mind?"
+    description="Tell us what you're trying to understand — Terra Nexus can help scope the analysis."
+    primaryCta={{ label: 'Discuss Your Question', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore the Blog', href: '/insights/' }}
+  />
+</SiteLayout>

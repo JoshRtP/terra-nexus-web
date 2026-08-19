@@ -1,0 +1,301 @@
+---
+// ProfileRoster — expanding profile roster (About team-trial, Option A).
+//
+// Interaction principle borrowed from ogilvy.com/team (NOT its branding,
+// layout, assets, or code): a closed horizontal row of portrait tiles;
+// selecting one collapses the row down to that single portrait on the
+// left, with a large biography panel opening to its right; a close
+// control restores the closed roster. This is a composition/interaction
+// reference only — visuals here are Terra Nexus tokens throughout.
+//
+// Page-local (not promoted to the shared design-system vocabulary) —
+// exactly one consumer (about/index.astro) exists today. Promote only if
+// a second page genuinely needs "a group of expanding profile tiles."
+//
+// Reuses existing M7 primitives: .tag, focus-ring/token colors, spacing
+// scale, .eyebrow-style caption treatment. Portrait/bio layout is new —
+// no existing primitive covers "editorial headshot tile + adjacent large
+// bio panel."
+export interface Props {
+  heading: string;
+  members: Array<{
+    id: string;
+    name: string;
+    role: string;
+    initials: string;
+    variant?: 'person' | 'network';
+    bio: string;
+    tags?: Array<{ label: string; href: string }>;
+    tagsCaption?: string;
+    showLinkedIn?: boolean;
+  }>;
+}
+
+const { heading, members } = Astro.props;
+---
+
+<div class="roster" data-roster>
+  <h4 class="roster-heading">{heading}</h4>
+
+  <div class="roster-row" data-roster-row role="list">
+    {members.map((member) => (
+      <button
+        type="button"
+        class="roster-tile"
+        role="listitem"
+        id={`roster-tile-${member.id}`}
+        aria-expanded="false"
+        aria-controls={`roster-panel-${member.id}`}
+        data-roster-tile
+        data-target={`roster-panel-${member.id}`}
+      >
+        <span class={`roster-portrait roster-portrait-${member.variant ?? 'person'}`} aria-hidden="true">
+          {member.variant === 'network' ? (
+            <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
+              <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
+            </svg>
+          ) : (
+            <span class="roster-initials">{member.initials}</span>
+          )}
+        </span>
+        <span class="roster-tile-meta">
+          <span class="roster-tile-name">{member.name}</span>
+          {member.role && <span class="roster-tile-role">{member.role}</span>}
+        </span>
+      </button>
+    ))}
+  </div>
+
+  {members.map((member) => (
+    <div
+      class="roster-expanded"
+      data-roster-expanded
+      id={`roster-panel-${member.id}`}
+      aria-labelledby={`roster-tile-${member.id}`}
+      hidden
+    >
+      <div class={`roster-expanded-portrait roster-portrait-${member.variant ?? 'person'}`} aria-hidden="true">
+        {member.variant === 'network' ? (
+          <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+            <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
+        ) : (
+          <span class="roster-initials">{member.initials}</span>
+        )}
+      </div>
+      <div class="roster-bio">
+        <button type="button" class="roster-close" data-roster-close aria-label={`Close ${member.name}`}>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+        <p class="roster-bio-eyebrow">{heading}</p>
+        <h5 class="roster-bio-name">{member.name}</h5>
+        {member.role && <p class="roster-bio-role">{member.role}</p>}
+        <div class="roster-bio-body">
+          <p>{member.bio}</p>
+        </div>
+        {member.tags && member.tags.length > 0 && (
+          <div class="roster-bio-tags">
+            {member.tagsCaption && <p class="roster-bio-tags-caption">{member.tagsCaption}</p>}
+            <ul class="exec-tags" role="list">
+              {member.tags.map((tag) => (
+                <li><a href={tag.href} class="tag">{tag.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div class="roster-bio-links">
+          {member.showLinkedIn !== false && (
+            <span class="exec-social-link is-placeholder" title="LinkedIn — link coming soon">LinkedIn</span>
+          )}
+          <a class="exec-social-link" href="/contact/">Contact</a>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .roster { margin-top: var(--space-10); }
+  .roster:first-of-type { margin-top: var(--space-2); }
+  .roster-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Closed state — horizontal row of editorial portrait tiles. */
+  .roster-row { display: flex; flex-wrap: wrap; gap: var(--space-6); }
+  .roster-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 12rem;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: var(--radius-lg);
+  }
+  .roster-tile:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+  .roster-portrait {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-3);
+    transition: box-shadow var(--transition-fast);
+  }
+  .roster-tile:hover .roster-portrait,
+  .roster-tile:focus-visible .roster-portrait { box-shadow: var(--shadow-md); }
+
+  .roster-portrait-person {
+    background: var(--gradient-dark);
+    color: var(--c-accent-400);
+  }
+  .roster-portrait-person .roster-initials {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+  }
+  /* Network variant reads as a schematic/placeholder, not a headshot —
+     dashed border + sky icon instead of the person gradient+initials. */
+  .roster-portrait-network {
+    background: var(--color-surface-alt);
+    color: var(--c-sky-600);
+    border: 1.5px dashed var(--color-border-strong);
+  }
+
+  .roster-tile-name { display: block; font-family: var(--font-serif); font-size: var(--text-base); color: var(--color-text); }
+  .roster-tile-role { display: block; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
+
+  /* Expanded state — selected portrait (left) + large bio panel (right). */
+  .roster-expanded {
+    display: grid;
+    grid-template-columns: minmax(12rem, 16rem) 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .roster-expanded-portrait {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .roster-expanded-portrait.roster-portrait-person .roster-initials { font-family: var(--font-serif); font-size: var(--text-4xl); }
+
+  .roster-bio {
+    position: relative;
+    min-width: 0;
+    padding: var(--space-8);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .roster-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .roster-close:hover { background: var(--color-surface-alt); color: var(--color-text); }
+  .roster-close:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+  .roster-bio-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-eyebrow);
+    margin-bottom: var(--space-2);
+    padding-right: var(--space-8);
+  }
+  .roster-bio-name { font-family: var(--font-serif); font-size: var(--text-2xl); margin-bottom: var(--space-1); }
+  .roster-bio-role { font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .roster-bio-body { margin-top: var(--space-5); max-width: 52ch; }
+  .roster-bio-body p { color: var(--color-text-secondary); line-height: var(--line-relaxed); }
+  .roster-bio-body p + p { margin-top: var(--space-3); }
+  .roster-bio-tags { margin-top: var(--space-5); }
+  .roster-bio-tags-caption { font-size: var(--text-xs); color: var(--color-text-muted); font-style: italic; margin-bottom: var(--space-2); }
+  .exec-tags { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .roster-bio-links { display: flex; gap: var(--space-4); margin-top: var(--space-6); }
+  .exec-social-link { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-link); text-decoration: none; }
+  .exec-social-link:hover { color: var(--color-link-hover); }
+  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+
+  @media (max-width: 40rem) {
+    .roster-tile { width: 9rem; }
+    .roster-expanded { grid-template-columns: 1fr; }
+    .roster-expanded-portrait { max-width: 11rem; }
+    .roster-bio { padding: var(--space-6); }
+  }
+</style>
+
+<script>
+  // ProfileRoster interaction (shared across every roster instance on the
+  // page). Progressive enhancement: SSR renders the roster row AND every
+  // bio panel visible/stacked (fully readable without JS); this script
+  // hides the bio panels on load and wires up select/close. No animation
+  // library; hover/focus transitions already covered by
+  // design-system.css's global reduced-motion override.
+  document.querySelectorAll<HTMLElement>('[data-roster]').forEach((roster) => {
+    const row = roster.querySelector<HTMLElement>('[data-roster-row]');
+    const tiles = Array.from(roster.querySelectorAll<HTMLButtonElement>('[data-roster-tile]'));
+    const panels = Array.from(roster.querySelectorAll<HTMLElement>('[data-roster-expanded]'));
+
+    const closeAll = (focusTileId?: string | null) => {
+      panels.forEach((panel) => { panel.hidden = true; });
+      tiles.forEach((tile) => tile.setAttribute('aria-expanded', 'false'));
+      if (row) row.hidden = false;
+      if (focusTileId) document.getElementById(focusTileId)?.focus();
+    };
+
+    const openMember = (tile: HTMLButtonElement) => {
+      const targetId = tile.getAttribute('data-target');
+      const panel = targetId ? document.getElementById(targetId) : null;
+      if (!panel) return;
+      panels.forEach((p) => { p.hidden = p !== panel; });
+      tiles.forEach((t) => t.setAttribute('aria-expanded', String(t === tile)));
+      if (row) row.hidden = true;
+      panel.querySelector<HTMLButtonElement>('[data-roster-close]')?.focus();
+    };
+
+    // Start closed (JS-enhanced roster look); no-JS visitors keep the
+    // SSR-default fully visible/stacked state.
+    closeAll();
+
+    tiles.forEach((tile) => {
+      tile.addEventListener('click', () => openMember(tile));
+    });
+    panels.forEach((panel) => {
+      panel.querySelector<HTMLButtonElement>('[data-roster-close]')?.addEventListener('click', () => {
+        closeAll(panel.getAttribute('aria-labelledby'));
+      });
+      panel.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Escape') closeAll(panel.getAttribute('aria-labelledby'));
+      });
+    });
+  });
+</script>
