@@ -664,3 +664,75 @@ merged.
   untouched, Studio Executives review options both preserved unchanged,
   nav-anchor trial preserved as a trial, Case Study/OKF data architecture
   untouched (visual/composition only). PR #7 not merged.
+
+## 2026-09-07 — About page: Executive Profile Roster photos/LinkedIn/hover polish + draft-flag cleanup
+
+* **Branch**: `feature/about-team-bios`, cut from `prototype/industries-insights-ia`
+  (where the About page rebuild with the roster already lived, ahead of
+  `main`) — local dev only this session, no production/Cloudflare deploy.
+* **Local dev environment**: `npm run web:dev` (Astro dev server); hit and
+  fixed a stale Vite/Astro cache (`virtual:keystatic-config` resolution
+  error) blocking first start — cleared `apps/web/.astro`,
+  `apps/web/node_modules/.vite*`, restarted clean.
+* **Team photos** (`ProfileRoster.astro`, `about/index.astro`): added
+  `photo`/`linkedin` fields to the roster member shape. Laura Klein, Josh
+  Mellinger, Isaac headshots and the Expert Network mark now live under
+  `apps/web/public/images/team/<slug>/` (see that folder's `README.md`).
+  Laura's and Josh's originals (~2100–2450px, ~900–950KB) were downsampled
+  offline to ~900px wide with a high-quality Lanczos3 resize (sharp) —
+  leaving that reduction to the browser's live/runtime scaling was
+  producing visible graininess around fine detail (hair) that the offline
+  resize avoids, and cut page weight substantially (943KB→143KB,
+  905KB→237KB); untouched originals kept alongside as `photo-original.jpg`
+  for future re-derivation. Isaac's source is already smaller than its
+  display size, used as-is. Portrait tiles sized up from 12rem to 18rem
+  (owner request — no roster row here ever carries more than two tiles);
+  expanded/selected portrait now uses the same fixed 18rem box as the
+  closed tile rather than growing on select.
+* **Interactions**: grayscale→color hover/focus reveal on headshots
+  (matches the live terra.nexus homepage team-photo treatment) via CSS
+  `filter`, respecting the design system's existing reduced-motion
+  override; clicking the expanded/selected portrait itself now closes the
+  panel (in addition to the existing X button and Escape); a hover-
+  revealed LinkedIn icon badge sits in the closed tile's top-right corner
+  (real LinkedIn mark, not text), scoped to `(hover: hover) and
+  (pointer: fine)` so touch devices get it visible-by-default instead of
+  unreachable; the plain "LinkedIn" text link inside the opened bio was
+  replaced with the same icon treatment. Fixed a real bug found along the
+  way: the network-variant fallback icon could bleed through around the
+  Expert Network mark (which uses `object-fit: contain`, not `cover`) —
+  now hidden via `data-has-photo` whenever a real photo/logo is present,
+  restored automatically via the existing `onerror` fallback path if an
+  image ever fails to load.
+* **Expert Network mark**: swapped through two owner-supplied revisions
+  to a transparent gold PNG on the same dark `--gradient-dark` background
+  used by the person tiles (replacing the earlier light
+  surface-alt/dashed-border "placeholder" treatment, which stopped being
+  accurate once this became the real mark).
+* **Copy**: filled in the "Resilient / Sustainable / Prosperous" outcome-
+  type short statements (owner-supplied) in the Origin Story's "theory of
+  change" chapter. Removed four in-page draft/placeholder labels per
+  owner request — the Origin Story `draft-pill`, the "not a fourth
+  workstream" body copy under "Unlock shared value" (title-only now), the
+  Track Record `draft-flag`, and the Leadership section's "Select a
+  profile… placeholders pending final content" line — along with their
+  now-unused page-local CSS. Added back visual spacing between the Origin
+  Story `<h2>` and the chapter rail below it (bumped `.origin-heading`'s
+  bottom margin from `space-4` to the standard `space-10` section-header
+  gap) now that the removed draft-pill isn't providing that gap itself.
+  **Note**: removing the draft *labels* does not mean the underlying copy
+  is confirmed — the Origin Story narrative (all four chapters, including
+  "The change" chapter's likely "We invests" typo) is still flagged
+  draft/unconfirmed in this file's own header comment and remains so.
+* **Not done this session** (tracked as open items, relayed to the
+  owner): Laura's and Isaac's full bio text, Isaac's display name
+  ("Isaac" vs. "Isaac Carroo"), Expert Network bio copy/real coverage
+  tags, Origin Story narrative confirmation, hero/stat-figure copy
+  verification.
+* **QA**: iterative `visual-qa` subagent passes plus direct Playwright
+  checks after each change (roster sizing/hover/click-to-close, LinkedIn
+  icon placement and href correctness, Expert Network logo swaps, draft-
+  flag removal, heading spacing) — zero console errors throughout, no
+  horizontal overflow at 1440/1024/768/390 where checked. Full
+  `npm run web:build` / `web:typecheck` / `web:test` / `check` re-run not
+  yet done this session — recommended before merge.
