@@ -15,18 +15,22 @@
 // also matched to the design reference 1:1 (see the script block below) —
 // climate-sticker-03-sunfaded-vintage.png lives in apps/web/public/images/.
 //
-// ⚠️ DRAFT / PLACEHOLDER CONTENT — flagged inline below and in-page via
-// dashed-border notes, per the source design doc. Do not treat as final:
+// ⚠️ DRAFT / PLACEHOLDER CONTENT remaining, flagged inline below (updated
+// 2026-09-07 — the in-page dashed-border draft notes this comment used to
+// reference were removed per owner request; this file-level flag is now
+// the only record of what's still unconfirmed). Do not treat as final:
 // - Origin Story narrative (all four chapters) — directional copy, not
-//   confirmed history. Dates/specifics are invented placeholders.
-// - "The change" chapter's working title and its body copy contain a
-//   likely typo ("We invests") — see the inline comment at that paragraph.
-//   Do not silently "fix" it; confirm the intended sentence with the
-//   content owner first.
-// - Leadership bios/tags/photos — Laura Klein/Josh Mellinger tags are
-//   illustrative, Isaac has no bio yet, the Expert Network tags reuse the
-//   capabilities taxonomy "for design-review purposes only." (unchanged
-//   from the roster wiring already on this branch.)
+//   confirmed history. Dates/specifics are invented placeholders. The
+//   "We invests" typo in "The change" chapter was confirmed and fixed to
+//   "We invest," 2026-09-07 — that one item is resolved; the rest of the
+//   narrative is not.
+// - Leadership bios — Laura Klein, Josh Mellinger, and Isaac Carroo all
+//   have real bios now (added 2026-09-07 from owner-supplied source
+//   material, run through the humanizer skill). Laura Klein/Josh
+//   Mellinger capability tags are still illustrative, not confirmed;
+//   Isaac has no tags yet; the Expert Network tags reuse the capabilities
+//   taxonomy "for design-review purposes only" (unchanged from the
+//   roster wiring already on this branch).
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import ClosingCta from '../../components/ClosingCta.astro';
@@ -82,11 +86,10 @@ const originChapters = [
     // "Our theory of change: The value nexus" (owner rewrite, 2026-08-18) —
     // replaces the earlier "...: Proven solutions" working title.
     title: 'Our theory of change: The value nexus',
-    // "We invests" is very likely a typo for "We invest" — flagged per the
-    // design doc's own instruction. Do not silently correct without
-    // confirming the intended sentence with the content owner; surrounding
-    // copy on this chapter is still draft.
-    body: 'We invests in visionaries, changemakers, and doers that are willing to redefine our current food system.',
+    // "We invests" typo fixed to "We invest" per owner confirmation,
+    // 2026-09-07 (previously flagged, not silently corrected). Surrounding
+    // Origin Story copy is still draft/unconfirmed.
+    body: 'We invest in visionaries, changemakers, and doers that are willing to redefine our current food system.',
     levers: [
       { num: '01', title: 'Enhance transparency', body: "Make performance visible at every node, in evidence a buyer's auditor will accept." },
       { num: '02', title: 'Facilitate collaboration', body: 'Get producers, processors, brands, and capital working from one plan.' },
@@ -129,7 +132,7 @@ const rosterGroups: Array<{
     // Path under public/, e.g. "/images/team/josh-mellinger/photo.jpg" —
     // see ProfileRoster.astro's Props doc for the fallback behavior.
     photo?: string;
-    bio: string;
+    bio: string | string[];
     tags?: Array<{ label: string; href: string }>;
     tagsCaption?: string;
     showLinkedIn?: boolean;
@@ -147,7 +150,17 @@ const rosterGroups: Array<{
         initials: 'LK',
         variant: 'person',
         photo: '/images/team/laura-klein/photo.jpg',
-        bio: 'Full bio and areas of expertise coming soon.',
+        // Adapted from Laura's LinkedIn About section (owner-supplied
+        // screenshot, 2026-09-07) into third person for the roster's
+        // voice, run through the humanizer skill. Every fact, place name,
+        // and figure below (Stanford coursework, working groups,
+        // publications, the huskies' names) comes directly from that
+        // source.
+        bio: [
+          "Laura works on the harder end of climate and sustainability: how climate change is reshaping the way people interact with the world around them. She grew up exploring Northern California's ecosystems, tidepooling at Big Sur's Pfeiffer Beach, backpacking through Desolation Wilderness, and climbing 14ers in the Southern Sierra, including a summit of Mount Whitney's Mountaineers Route at 17. At Stanford, she turned that curiosity into an academic focus, taking courses spanning the built environment, natural ecosystems, land stewardship, health and nutrition, and next-generation technologies, and spent summers leading outdoor trips for middle and high school students.",
+          "Since graduating, she's specialized in regenerative agriculture, drawn to it as the discipline where climate and sustainability work can make the biggest difference. Her current focus is applying sustainability and resiliency frameworks to agriculture, supporting a global scale-up of ecosystem services and nature-based decarbonization, alongside corporate sustainability work in GHG accounting, program design and operations, voluntary carbon markets, and certification and assurance. She participates in industry working groups including Verra and the Global Roundtable for Sustainable Beef, and has spoken and written for CTVC, the CU Leeds Center for Ethics and Social Responsibility, Climatebase, and Work on Climate.",
+          "Off the clock, she ski patrols at Eldora Mountain Resort in Boulder and trail runs with her two huskies, Maize and Fitz. Her mantra: sustainability is a team sport.",
+        ],
         linkedin: 'https://www.linkedin.com/in/lauraklein17/',
         tags: [
           { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
@@ -161,7 +174,21 @@ const rosterGroups: Array<{
         initials: 'JM',
         variant: 'person',
         photo: '/images/team/josh-mellinger/photo.jpg',
-        bio: 'Full bio and areas of expertise coming soon.',
+        // Adapted from Josh's own LinkedIn bio (owner-supplied, 2026-09-07)
+        // into the roster's third-person voice, run through the humanizer
+        // skill. Every fact, dollar figure, and credential below comes
+        // directly from that source. One line was trimmed rather than
+        // rewritten: the original's "spotlighted in numerous publications"
+        // claim names no actual outlet, so it's cut here rather than kept
+        // as unsupported puffery or given an invented citation. If real
+        // publications back that claim, naming them would let it go back
+        // in with substance instead of as a vague appeal to authority.
+        bio: [
+          "Josh is a food and agriculture executive with more than 20 years leading supply chain and climate-focused organizations. He's generated more than $5 billion in verified shareholder value and cut more than $3 billion in food waste out of global food supply chains, work built on a simple premise: better collaboration across the supply chain means food that looks better, lasts longer, and feeds families instead of garbage cans.",
+          "He's designed and launched some of the largest nature-based sustainable sourcing programs in the food, feed, and fuel markets, and has served as Chief Revenue Officer, Chief Sustainability Officer, and a consulting practice leader, developing and commercializing digital products and services across more than 70 client engagements. As an operating partner at Terra Nexus Ventures, he works with food and agribusiness companies to build ecosystem programs that increase the value of products and services with reduced carbon or lower environmental impact, and serves as an advisor and board member to early-stage climate startups and universities, consulting on sustainable supply chains, regenerative agriculture, grazing, biofuels, voluntary carbon markets, new climate technologies, and corporate decarbonization.",
+          "He holds a B.S. in Information Systems and Decision Sciences from Louisiana State University, where he graduated summa cum laude, and is a graduate of the Stephen M. Ross School of Business, where he focused on strategy, venture capital, and finance. He's also a recipient of the Consortium for Graduate Study in Management Diversity Fellowship.",
+          "Outside of work, he's usually near a river: tying his own fly patterns, guiding friends, stalking trophy trout on Western tailwaters, and curating riverside wine experiences.",
+        ],
         linkedin: 'https://www.linkedin.com/in/joshmellinger/',
         tags: [
           { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
@@ -176,12 +203,27 @@ const rosterGroups: Array<{
     members: [
       {
         id: 'isaac',
-        name: 'Isaac',
+        // Full name, confirmed by Isaac's own bio materials (deck slide,
+        // Global Advisory Network card, LinkedIn About section), all of
+        // which use "Isaac Carroo." Previously just "Isaac" as a
+        // placeholder.
+        name: 'Isaac Carroo',
         role: 'Executive in Residence',
-        initials: 'I',
+        initials: 'IC',
         variant: 'person',
         photo: '/images/team/isaac/photo.jpg',
-        bio: 'Full bio coming soon.',
+        // Composited from three source materials Isaac supplied (a bio-
+        // deck slide, a Global Advisory Network card, and his LinkedIn
+        // About section), 2026-09-07: rewritten into a consistent two-
+        // paragraph bio rather than stitched together, but every fact and
+        // figure below (schools, dollar amounts, farmer counts) comes
+        // directly from that source material. Passed through the
+        // humanizer skill afterward per owner request to clear em-dash
+        // and other AI-writing tells.
+        bio: [
+          "Isaac works at the intersection of food systems, community engagement, and eco-spirituality, an unusual combination that lets him move as comfortably through a corporate strategy session as he does through a farmer's field. He holds a bachelor's degree from Rice University, a Master of Environmental Management from the Yale School of the Environment, and a Master of Arts in Religion and Ecology from Yale Divinity School. He puts all three to use: the training to build a business case, the field experience to run a supply chain, and the patience to understand what a community actually needs before proposing a fix.",
+          "His work spans corporate decarbonization strategy and farmer engagement, including a supply chain redesign for a large grocer that diverted millions of pounds of food waste and saved more than $100 million. On the grassroots side, he's worked on food sovereignty efforts, engaging more than 15 potato farmers on regenerative growing practices and raising over $1 million for on-farm improvements with small farmers and Indigenous communities in New Zealand. He's a published author on circular economies and tribal sovereignty, and speaks regularly on food systems at private sector, nonprofit, academic, and religious institutions.",
+        ],
         linkedin: 'https://www.linkedin.com/in/isaac-carroo/',
       },
     ],
