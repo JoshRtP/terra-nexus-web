@@ -30,7 +30,10 @@ export interface Props {
     // onerror handler below — this is the one sanctioned inline-script use,
     // matching the "graceful img fallback" pattern, not a new mechanism).
     photo?: string;
-    bio: string;
+    // A real bio reads better as a couple of short paragraphs than one
+    // wall of text — pass an array for that; a single string still works
+    // for the "coming soon" placeholders and renders as one <p>.
+    bio: string | string[];
     tags?: Array<{ label: string; href: string }>;
     tagsCaption?: string;
     showLinkedIn?: boolean;
@@ -160,7 +163,9 @@ const { heading, members } = Astro.props;
         <h5 class="roster-bio-name">{member.name}</h5>
         {member.role && <p class="roster-bio-role">{member.role}</p>}
         <div class="roster-bio-body">
-          <p>{member.bio}</p>
+          {(Array.isArray(member.bio) ? member.bio : [member.bio]).map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
         </div>
         {member.tags && member.tags.length > 0 && (
           <div class="roster-bio-tags">
