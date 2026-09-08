@@ -7,11 +7,7 @@ const SUBMISSION: ContactSubmission = {
   email: 'ada@example.com',
   organization: 'Analytical Engines Inc.',
   role: 'Founder',
-  orgType: 'technology',
-  routing: 'strategy',
   challenge: 'We need help scaling a pilot <program> & rollout.',
-  timing: 'quarter',
-  link: 'https://example.com',
   consent: true,
   turnstileToken: 'token',
 };
@@ -22,18 +18,10 @@ describe('buildContactNotificationEmail', () => {
     expect(subject).toBe('Contact form: Ada Lovelace (Analytical Engines Inc.)');
   });
 
-  it('maps coded enum values to human-readable labels', () => {
-    const { text } = buildContactNotificationEmail(SUBMISSION);
-    expect(text).toContain('Enabling Tech / Solution Provider');
-    expect(text).toContain('Strategy, market, product, or growth');
-    expect(text).toContain('This quarter');
-  });
-
   it('falls back to "(not specified)" for blank optional fields', () => {
-    const { text } = buildContactNotificationEmail({ ...SUBMISSION, organization: '', role: '', link: '' });
+    const { text } = buildContactNotificationEmail({ ...SUBMISSION, organization: '', role: '' });
     expect(text).toContain('Organization: (not specified)');
     expect(text).toContain('Role: (not specified)');
-    expect(text).toContain('Optional link: (not specified)');
   });
 
   it('HTML-escapes user-supplied text', () => {
