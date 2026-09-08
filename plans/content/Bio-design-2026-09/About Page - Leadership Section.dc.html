@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  body { margin: 0; background: #ffffff; font-family: 'Inter', system-ui, sans-serif; color: #131f48; -webkit-font-smoothing: antialiased; }
+  a { color: #1b2c5c; text-decoration: none; }
+  a:hover { color: #5c0d17; }
+  p { margin: 0; text-wrap: pretty; }
+  button { font: inherit; }
+  @keyframes tnFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes tnFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes tnCardIn { from { background: rgba(255,255,255,0); border-color: transparent; } to { background: #ffffff; border-color: #e2e8f0; } }
+  @keyframes tnBioIn { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</helmet>
+
+<div style="width:100%">
+
+  <header style="background:#131f48; color:#fff">
+    <div style="max-width:75rem; margin-inline:auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px">
+      <a href="/" aria-label="Terra Nexus home" style="display:flex; align-items:center; flex-shrink:0">
+        <img src="apps/web/public/brand/logo-wordmark-dark.png" alt="Terra Nexus" style="height:1.75rem; width:auto; display:block">
+      </a>
+      <nav aria-label="Primary navigation" style="display:flex; flex-wrap:wrap; align-items:center; gap:4px; font-size:14px; font-weight:500">
+        <a href="/expertise/" style="padding:8px 12px; border-radius:6px; color:#f5e6b3">Expertise</a>
+        <a href="/capabilities/" style="padding:8px 12px; border-radius:6px; color:#f5e6b3">Capabilities</a>
+        <a href="/industries/" style="padding:8px 12px; border-radius:6px; color:#f5e6b3">Industries</a>
+        <a href="/insights/" style="padding:8px 12px; border-radius:6px; color:#f5e6b3">Insights</a>
+        <a href="/about/" aria-current="page" style="position:relative; padding:8px 12px; border-radius:6px; color:#ffffff" style-after="content:''; position:absolute; bottom:-2px; left:12px; right:12px; height:2px; background:#e7d77f; border-radius:999px">About</a>
+        <a href="/contact/" style="padding:8px 12px; border-radius:6px; color:#f5e6b3">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section style="background:#f3f8fa; padding-block:80px">
+    <div style="max-width:75rem; margin-inline:auto; padding-inline:24px">
+
+      <div style="margin-bottom:40px">
+        <span style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#6a1b32; margin-bottom:12px">
+          <span style="display:inline-block; width:24px; height:2px; background:#6a1b32; border-radius:999px"></span>Leadership
+        </span>
+        <h2 style="margin:0; font-size:30px; line-height:1.2; font-weight:600; letter-spacing:-0.02em; color:#131f48">Food Systems Leadership Team</h2>
+      </div>
+
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+        <div style="margin-bottom:40px">
+          <h4 style="margin:0 0 20px; font-family:'Lora',serif; font-size:20px; font-weight:600">{{ g.heading }}</h4>
+
+          <sc-if value="{{ g.showRow }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:24px; border:1px solid transparent; border-radius:14px; animation:tnFadeIn 240ms ease">
+            <div style="display:flex; flex-wrap:wrap; gap:24px" role="list">
+              <sc-for list="{{ g.members }}" as="m" hint-placeholder-count="2">
+                <div style="position:relative; width:18rem; max-width:100%" role="listitem">
+                  <button type="button" onClick="{{ m.open }}" style="display:flex; flex-direction:column; align-items:flex-start; width:100%; padding:0; background:none; border:none; cursor:pointer; text-align:left">
+                    <span style="position:relative; display:block; width:100%; aspect-ratio:3/4; border-radius:14px; overflow:hidden; background:linear-gradient(160deg,#131f48,#1b2c5c); margin-bottom:12px; transition:box-shadow 150ms ease" style-hover="box-shadow:0 4px 6px -1px rgba(15,23,42,0.07), 0 2px 4px -2px rgba(15,23,42,0.05)">
+                      <sc-if value="{{ m.isNetwork }}" hint-placeholder-val="{{ false }}">
+                        <img src="{{ m.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:16px">
+                      </sc-if>
+                      <sc-if value="{{ m.isPerson }}" hint-placeholder-val="{{ true }}">
+                        <img src="{{ m.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(100%); transition:filter 250ms ease" style-hover="filter:grayscale(0%)">
+                      </sc-if>
+                    </span>
+                    <span style="display:block; font-family:'Lora',serif; font-size:16px; color:#131f48">{{ m.name }}</span>
+                    <span style="display:block; font-size:12px; color:#94a3b8; margin-top:4px">{{ m.role }}</span>
+                  </button>
+                  <sc-if value="{{ m.hasLinkedIn }}" hint-placeholder-val="{{ true }}">
+                    <a href="{{ m.linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" style="position:absolute; top:12px; right:12px; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:rgba(255,255,255,0.92); color:#131f48">
+                      <svg viewBox="0 0 448 512" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"></path></svg>
+                    </a>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ g.showPanel }}" hint-placeholder-val="{{ false }}">
+            <div onKeyDown="{{ g.onKey }}" style="position:relative; display:flex; flex-wrap:wrap; gap:24px; background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:24px; animation:tnCardIn 260ms ease">
+              <button type="button" onClick="{{ g.close }}" aria-label="Close profile" style="position:absolute; top:16px; right:16px; display:flex; align-items:center; justify-content:center; width:32px; height:32px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; color:#475569; cursor:pointer; z-index:1" style-hover="background:#e9f2f5; color:#131f48">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+              </button>
+
+              <div style="flex:0 0 18rem; max-width:100%; display:flex; flex-direction:column; gap:20px; position:relative; z-index:2; transform:translateX({{ g.slide }}px); transition:transform 380ms cubic-bezier(0.16,1,0.3,1)">
+                <button type="button" onClick="{{ g.close }}" aria-label="Close profile" title="Close" style="position:relative; display:block; width:100%; aspect-ratio:3/4; padding:0; border:none; border-radius:14px; overflow:hidden; background:linear-gradient(160deg,#131f48,#1b2c5c); cursor:pointer; transition:box-shadow 150ms ease" style-hover="box-shadow:0 4px 6px -1px rgba(15,23,42,0.07), 0 2px 4px -2px rgba(15,23,42,0.05)">
+                  <sc-if value="{{ g.m.isNetwork }}" hint-placeholder-val="{{ false }}">
+                    <img src="{{ g.m.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:16px">
+                  </sc-if>
+                  <sc-if value="{{ g.m.isPerson }}" hint-placeholder-val="{{ true }}">
+                    <img src="{{ g.m.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover">
+                  </sc-if>
+                </button>
+                <div>
+                  <h5 style="margin:0; font-family:'Lora',serif; font-size:26px; font-weight:600; letter-spacing:-0.01em; line-height:1.15">{{ g.m.name }}</h5>
+                  <p style="margin-top:5px; font-size:14px; font-weight:500; color:#315f6c">{{ g.m.title }}</p>
+                </div>
+                <div style="height:2px; background:#e7d77f"></div>
+                <sc-if value="{{ g.m.isPerson }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; align-items:center; gap:12px">
+                    <sc-if value="{{ g.m.hasLinkedIn }}" hint-placeholder-val="{{ true }}">
+                      <a href="{{ g.m.linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#e9f2f5; color:#1b2c5c" style-hover="background:#a8d0db">
+                        <svg viewBox="0 0 448 512" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"></path></svg>
+                      </a>
+                    </sc-if>
+                    <a href="{{ g.m.contactHref }}" aria-label="Email" title="Email" style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#e9f2f5; color:#1b2c5c" style-hover="background:#a8d0db">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"></rect><path d="M3 6l9 6.5L21 6" stroke-linecap="round"></path></svg>
+                    </a>
+                    <a href="{{ mapUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Office" title="{{ office }}" style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#e9f2f5; color:#1b2c5c" style-hover="background:#a8d0db">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21.5c4-4.6 6.5-7.7 6.5-11a6.5 6.5 0 1 0-13 0c0 3.3 2.5 6.4 6.5 11z" stroke-linejoin="round"></path><circle cx="12" cy="10.2" r="2.4"></circle></svg>
+                    </a>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ g.m.hasTags }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; flex-direction:column; gap:9px; margin-top:14px">
+                    <p style="font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#6a1b32">Focus Areas &amp; Expertise</p>
+                    <sc-for list="{{ g.m.tags }}" as="tag" hint-placeholder-count="2">
+                      <a href="{{ tag.href }}" style="display:block; font-size:13px; line-height:1.4; color:#475569; padding-left:12px; border-left:2px solid #a8d0db" style-hover="color:#315f6c; border-left-color:#427e90">{{ tag.label }}</a>
+                    </sc-for>
+                    <sc-if value="{{ g.m.hasTagsCaption }}" hint-placeholder-val="{{ false }}">
+                      <p style="font-size:11px; font-style:italic; line-height:1.5; color:#94a3b8; margin-top:2px">{{ g.m.tagsCaption }}</p>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </div>
+
+              <div style="flex:1 1 22rem; min-width:0; border-left:1px solid #e2e8f0; padding-left:24px; padding-right:48px; animation:tnBioIn 340ms cubic-bezier(0.16,1,0.3,1) 90ms both">
+                <div style="columns:19rem 2; column-gap:34px">
+                  <sc-for list="{{ g.m.bio }}" as="para" hint-placeholder-count="3">
+                    <p style="font-size:15px; line-height:1.7; color:#475569; margin-bottom:14px">{{ para }}</p>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+
+    </div>
+  </section>
+
+  <section style="background:linear-gradient(135deg,#c7e3ea 0%,#a8d0db 100%); padding-block:80px; text-align:center">
+    <div style="max-width:44rem; margin-inline:auto; padding-inline:24px">
+      <h2 style="margin:0; font-size:30px; line-height:1.2; font-weight:600; letter-spacing:-0.02em; color:#131f48">Build the Right Path from Opportunity to Value</h2>
+      <p style="font-size:18px; line-height:1.7; color:#315f6c; margin:16px 0 32px">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress.</p>
+      <a href="/contact/" style="display:inline-flex; align-items:center; justify-content:center; padding:13px 24px; font-size:16px; font-weight:600; line-height:1; color:#fff; background:linear-gradient(135deg,#380009,#4e0110); border:1.5px solid #4e0110; border-radius:6px; box-shadow:0 4px 14px rgba(78,1,16,0.3)" style-hover="background:#380009">Discuss Your Opportunity</a>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;lauraTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Chief Executive Officer&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Titles&quot;},&quot;joshTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Technical Engagement Leader&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Titles&quot;},&quot;isaacTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Studio Executive in Residence&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Titles&quot;},&quot;office&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Boulder, Colorado&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Contact&quot;}}">
+class Component extends DCLogic {
+  state = { open: {}, slide: {} };
+
+  data() {
+    const office = this.props.office ?? 'Boulder, Colorado';
+    return [
+      {
+        id: 'studio-executives',
+        heading: 'Studio Executives',
+        members: [
+          {
+            id: 'laura-klein',
+            name: 'Laura Klein',
+            role: 'Studio Executive',
+            title: this.props.lauraTitle ?? 'Chief Executive Officer',
+            photo: 'apps/web/public/images/team/laura-klein/photo.jpg',
+            linkedin: 'https://www.linkedin.com/in/lauraklein17/',
+            contactHref: '/contact/?re=laura-klein',
+            tags: [
+              { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+              { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+            ],
+            bio: [
+              "Laura works on the harder end of climate and sustainability: how climate change is reshaping the way people interact with the world around them. She grew up exploring Northern California's ecosystems, tidepooling at Big Sur's Pfeiffer Beach, backpacking through Desolation Wilderness, and climbing 14ers in the Southern Sierra, including a summit of Mount Whitney's Mountaineers Route at 17. At Stanford, she turned that curiosity into an academic focus, taking courses spanning the built environment, natural ecosystems, land stewardship, health and nutrition, and next-generation technologies, and spent summers leading outdoor trips for middle and high school students.",
+              "Since graduating, she's specialized in regenerative agriculture, drawn to it as the discipline where climate and sustainability work can make the biggest difference. Her current focus is applying sustainability and resiliency frameworks to agriculture, supporting a global scale-up of ecosystem services and nature-based decarbonization, alongside corporate sustainability work in GHG accounting, program design and operations, voluntary carbon markets, and certification and assurance. She participates in industry working groups including Verra and the Global Roundtable for Sustainable Beef, and has spoken and written for CTVC, the CU Leeds Center for Ethics and Social Responsibility, Climatebase, and Work on Climate.",
+              "Off the clock, she ski patrols at Eldora Mountain Resort in Boulder and trail runs with her two huskies, Maize and Fitz. Her mantra: sustainability is a team sport.",
+            ],
+          },
+          {
+            id: 'josh-mellinger',
+            name: 'Josh Mellinger',
+            role: 'Studio Executive',
+            title: this.props.joshTitle ?? 'Technical Engagement Leader',
+            photo: 'apps/web/public/images/team/josh-mellinger/photo.jpg',
+            linkedin: 'https://www.linkedin.com/in/joshmellinger/',
+            contactHref: '/contact/?re=josh-mellinger',
+            tags: [
+              { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+              { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+            ],
+            bio: [
+              "Josh is a food and agriculture executive with more than 20 years leading supply chain and climate-focused organizations. He's generated more than $5 billion in verified shareholder value and cut more than $3 billion in food waste out of global food supply chains, work built on a simple premise: better collaboration across the supply chain means food that looks better, lasts longer, and feeds families instead of garbage cans.",
+              "He's designed and launched some of the largest nature-based sustainable sourcing programs in the food, feed, and fuel markets, and has served as Chief Revenue Officer, Chief Sustainability Officer, and a consulting practice leader, developing and commercializing digital products and services across more than 70 client engagements. As an operating partner at Terra Nexus Ventures, he works with food and agribusiness companies to build ecosystem programs that increase the value of products and services with reduced carbon or lower environmental impact, and serves as an advisor and board member to early-stage climate startups and universities.",
+              "He holds a B.S. in Information Systems and Decision Sciences from Louisiana State University, where he graduated summa cum laude, and is a graduate of the Stephen M. Ross School of Business, where he focused on strategy, venture capital, and finance. He's also a recipient of the Consortium for Graduate Study in Management Diversity Fellowship.",
+              "Outside of work, he's usually near a river: tying his own fly patterns, guiding friends, stalking trophy trout on Western tailwaters, and curating riverside wine experiences.",
+            ],
+          },
+        ],
+      },
+      {
+        id: 'executive-in-residence',
+        heading: 'Executive in Residence',
+        members: [
+          {
+            id: 'isaac',
+            name: 'Isaac Carroo',
+            role: 'Executive in Residence',
+            title: this.props.isaacTitle ?? 'Studio Executive in Residence',
+            photo: 'apps/web/public/images/team/isaac/photo.jpg',
+            linkedin: 'https://www.linkedin.com/in/isaac-carroo/',
+            contactHref: '/contact/?re=isaac-carroo',
+            tags: [],
+            bio: [
+              "Isaac works at the intersection of food systems, community engagement, and eco-spirituality, an unusual combination that lets him move as comfortably through a corporate strategy session as he does through a farmer's field. He holds a bachelor's degree from Rice University, a Master of Environmental Management from the Yale School of the Environment, and a Master of Arts in Religion and Ecology from Yale Divinity School. He puts all three to use: the training to build a business case, the field experience to run a supply chain, and the patience to understand what a community actually needs before proposing a fix.",
+              "His work spans corporate decarbonization strategy and farmer engagement, including a supply chain redesign for a large grocer that diverted millions of pounds of food waste and saved more than $100 million. On the grassroots side, he's worked on food sovereignty efforts, engaging more than 15 potato farmers on regenerative growing practices and raising over $1 million for on-farm improvements with small farmers and Indigenous communities in New Zealand. He's a published author on circular economies and tribal sovereignty, and speaks regularly on food systems at private sector, nonprofit, academic, and religious institutions.",
+            ],
+          },
+        ],
+      },
+      {
+        id: 'expert-network',
+        heading: 'Terra Nexus Expert Network',
+        members: [
+          {
+            id: 'expert-network',
+            name: 'Terra Nexus Expert Network',
+            role: '',
+            title: '',
+            variant: 'network',
+            photo: 'apps/web/public/images/team/expert-network/logo.png',
+            linkedin: '',
+            contactHref: '/contact/',
+            tagsCaption: 'Illustrative coverage areas — existing Terra Nexus capability taxonomy, shown for design-review purposes only.',
+            tags: [
+              { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+              { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
+              { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
+              { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
+              { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
+            ],
+            bio: ['Network details coming soon.'],
+          },
+        ],
+      },
+    ].map((g) => ({ ...g, office }));
+  }
+
+  renderVals() {
+    const office = this.props.office ?? 'Boulder, Colorado';
+    const decorate = (m) => ({
+      ...m,
+      isNetwork: m.variant === 'network',
+      isPerson: m.variant !== 'network',
+      hasLinkedIn: !!m.linkedin,
+      hasTags: !!(m.tags && m.tags.length),
+      hasTagsCaption: !!m.tagsCaption,
+    });
+
+    // Tile column pitch — 18rem tile + 24px gap. A tile opened from column N
+    // renders its portrait offset by N pitches, then transitions to 0, so the
+    // picture visually slides into the rail slot instead of jumping there.
+    const PITCH = 288 + 24;
+
+    const groups = this.data().map((g) => {
+      const members = g.members.map(decorate);
+      const openId = this.state.open[g.id] || null;
+      const sel = members.find((m) => m.id === openId) || null;
+      const close = () => this.setState((s) => ({ open: { ...s.open, [g.id]: null } }));
+      const openAt = (id, index) => {
+        this.setState((s) => ({ open: { ...s.open, [g.id]: id }, slide: { ...s.slide, [g.id]: index * PITCH } }));
+        const settle = () => this.setState((s) => ({ slide: { ...s.slide, [g.id]: 0 } }));
+        requestAnimationFrame(() => requestAnimationFrame(settle));
+        setTimeout(settle, 80);
+      };
+      return {
+        id: g.id,
+        heading: g.heading,
+        slide: (this.state.slide || {})[g.id] || 0,
+        members: members.map((m, i) => ({
+          ...m,
+          open: () => openAt(m.id, i),
+        })),
+        showRow: !sel,
+        showPanel: !!sel,
+        m: sel || members[0],
+        close,
+        onKey: (e) => { if (e.key === 'Escape') close(); },
+      };
+    });
+
+    return {
+      groups,
+      office,
+      mapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(office),
+    };
+  }
+}
+</script>
+</body>
+</html>

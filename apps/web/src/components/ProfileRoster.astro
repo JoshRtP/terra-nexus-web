@@ -12,10 +12,15 @@
 // exactly one consumer (about/index.astro) exists today. Promote only if
 // a second page genuinely needs "a group of expanding profile tiles."
 //
-// Reuses existing M7 primitives: .tag, focus-ring/token colors, spacing
-// scale, .eyebrow-style caption treatment. Portrait/bio layout is new —
-// no existing primitive covers "editorial headshot tile + adjacent large
-// bio panel."
+// Reuses existing M7 primitives: focus-ring/token colors, spacing scale.
+// Portrait/rail/bio layout below is the option-1A "aligned expand" redesign
+// (plans/content/Bio-design-2026-09/README.md, 2026-09-08): the portrait's
+// bounding box is structurally identical between the closed tile and the
+// open panel — both live inside an identically-padded/bordered/radiused
+// "frame" (transparent when closed, a real card when open) with an
+// 18rem-wide slot for the portrait, so nothing in its box model changes
+// on open. See the README's "alignment invariant" section — this is the
+// single most important property of this component; do not regress it.
 export interface Props {
   heading: string;
   members: Array<{
@@ -41,6 +46,27 @@ export interface Props {
     // the grayed-out "coming soon" placeholder. showLinkedIn:false still
     // wins (hides it entirely) regardless of this.
     linkedin?: string;
+    // Specific title shown in the open panel's identity block, under the
+    // name — falls back to `role` when omitted. `role` on the closed tile
+    // is now each person's focus-area subtitle (owner request, 2026-09-08),
+    // not a shared group label, so the fallback mainly matters for members
+    // without a `title` at all.
+    title?: string;
+    // One-line description of what the person runs, shown directly under
+    // `title` in its own smaller line — owner request, 2026-09-08: title
+    // is the person's level (e.g. "Chief Executive Officer"), titleDetail
+    // is the function ("Heads Terra Nexus's X offerings."), not a single
+    // comma-joined string.
+    titleDetail?: string;
+    // Real mailto: address — renders as the envelope icon in the open
+    // panel's contact-icon row. Omitted entirely (no broken icon) when not
+    // set.
+    email?: string;
+    // Office/map-pin icon link (e.g. a Google Maps query URL) + its
+    // accessible label. Both are required together — the icon is omitted
+    // if either is missing.
+    officeHref?: string;
+    officeLabel?: string;
   }>;
 }
 
@@ -50,72 +76,77 @@ const { heading, members } = Astro.props;
 <div class="roster" data-roster>
   <h4 class="roster-heading">{heading}</h4>
 
-  <div class="roster-row" data-roster-row role="list">
-    {members.map((member) => (
-      <div class="roster-tile-wrap" role="listitem">
-        <button
-          type="button"
-          class="roster-tile"
-          id={`roster-tile-${member.id}`}
-          aria-expanded="false"
-          aria-controls={`roster-panel-${member.id}`}
-          data-roster-tile
-          data-target={`roster-panel-${member.id}`}
-        >
-          <span
-            class={`roster-portrait roster-portrait-${member.variant ?? 'person'}`}
-            data-has-photo={member.photo ? 'true' : undefined}
-            aria-hidden="true"
+  <!-- Closed state — horizontal row of editorial portrait tiles, inside a
+       transparent instance of the shared "frame" (see Props doc above). -->
+  <div class="roster-row-frame" data-roster-row>
+    <div class="roster-row" role="list">
+      {members.map((member, i) => (
+        <div class="roster-tile-wrap" role="listitem">
+          <button
+            type="button"
+            class="roster-tile"
+            id={`roster-tile-${member.id}`}
+            aria-expanded="false"
+            aria-controls={`roster-panel-${member.id}`}
+            data-roster-tile
+            data-target={`roster-panel-${member.id}`}
+            data-roster-index={i}
           >
-            {member.variant === 'network' ? (
-              <svg class="roster-fallback-icon" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
-                <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-                <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-                <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-                <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
+            <span
+              class={`roster-portrait roster-portrait-${member.variant ?? 'person'}`}
+              data-has-photo={member.photo ? 'true' : undefined}
+              aria-hidden="true"
+            >
+              {member.variant === 'network' ? (
+                <svg class="roster-fallback-icon" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
+                  <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+                  <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+                  <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
+                </svg>
+              ) : (
+                <span class="roster-initials roster-fallback-icon">{member.initials}</span>
+              )}
+              {member.photo && (
+                <img
+                  class="roster-photo"
+                  src={member.photo}
+                  alt=""
+                  loading="lazy"
+                  onerror="this.style.display='none'; this.parentElement?.removeAttribute('data-has-photo')"
+                />
+              )}
+            </span>
+            <span class="roster-tile-meta">
+              <span class="roster-tile-name">{member.name}</span>
+              {member.role && <span class="roster-tile-role">{member.role}</span>}
+            </span>
+          </button>
+          {/* Hover-revealed icon badge on the closed tile itself — owner
+              reference, 2026-09-07 (terra.nexus homepage team photos). A
+              sibling of the trigger button, not nested inside it: an <a>
+              inside a <button> is invalid HTML/inaccessible, so this sits
+              layered on top via position:absolute on the shared wrapper
+              instead. Only LinkedIn goes here per owner direction — any
+              other links (email, office) belong inside the opened bio's
+              contact row, not on the closed tile. */}
+          {member.linkedin && member.showLinkedIn !== false && (
+            <a
+              class="roster-tile-linkedin"
+              href={member.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on LinkedIn`}
+              title="LinkedIn"
+            >
+              <svg viewBox="0 0 448 512" width="14" height="14" aria-hidden="true">
+                <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
               </svg>
-            ) : (
-              <span class="roster-initials roster-fallback-icon">{member.initials}</span>
-            )}
-            {member.photo && (
-              <img
-                class="roster-photo"
-                src={member.photo}
-                alt=""
-                loading="lazy"
-                onerror="this.style.display='none'; this.parentElement?.removeAttribute('data-has-photo')"
-              />
-            )}
-          </span>
-          <span class="roster-tile-meta">
-            <span class="roster-tile-name">{member.name}</span>
-            {member.role && <span class="roster-tile-role">{member.role}</span>}
-          </span>
-        </button>
-        {/* Hover-revealed icon badge on the closed tile itself — owner
-            reference, 2026-09-07 (terra.nexus homepage team photos). A
-            sibling of the trigger button, not nested inside it: an <a>
-            inside a <button> is invalid HTML/inaccessible, so this sits
-            layered on top via position:absolute on the shared wrapper
-            instead. Only LinkedIn goes here per owner direction — any
-            other links (email, etc.) belong inside the opened bio, not on
-            the closed tile. */}
-        {member.linkedin && member.showLinkedIn !== false && (
-          <a
-            class="roster-tile-linkedin"
-            href={member.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${member.name} on LinkedIn`}
-            title="LinkedIn"
-          >
-            <svg viewBox="0 0 448 512" width="14" height="14" aria-hidden="true">
-              <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-            </svg>
-          </a>
-        )}
-      </div>
-    ))}
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
   </div>
 
   {members.map((member) => (
@@ -126,74 +157,103 @@ const { heading, members } = Astro.props;
       aria-labelledby={`roster-tile-${member.id}`}
       hidden
     >
-      <button
-        type="button"
-        class={`roster-expanded-portrait roster-portrait-${member.variant ?? 'person'}`}
-        data-has-photo={member.photo ? 'true' : undefined}
-        data-roster-portrait-close
-        aria-label={`Close ${member.name}`}
-      >
-        {member.variant === 'network' ? (
-          <svg class="roster-fallback-icon" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
-            <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-            <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-            <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-            <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
-          </svg>
-        ) : (
-          <span class="roster-initials roster-fallback-icon">{member.initials}</span>
-        )}
-        {member.photo && (
-          <img
-            class="roster-photo"
-            src={member.photo}
-            alt=""
-            loading="lazy"
-            onerror="this.style.display='none'; this.parentElement?.removeAttribute('data-has-photo')"
-          />
-        )}
+      <button type="button" class="roster-close" data-roster-close aria-label={`Close ${member.name}`}>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
       </button>
-      <div class="roster-bio">
-        <button type="button" class="roster-close" data-roster-close aria-label={`Close ${member.name}`}>
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-            <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
+
+      <div class="roster-rail" data-roster-rail>
+        <button
+          type="button"
+          class={`roster-expanded-portrait roster-portrait-${member.variant ?? 'person'}`}
+          data-has-photo={member.photo ? 'true' : undefined}
+          data-roster-portrait-close
+          aria-label={`Close ${member.name}`}
+        >
+          {member.variant === 'network' ? (
+            <svg class="roster-fallback-icon" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+              <circle cx="24" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <circle cx="10" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <circle cx="38" cy="34" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+              <path d="M24 14 L12 30 M24 14 L36 30 M14 34 L34 34" stroke="currentColor" stroke-width="1.5" fill="none" />
+            </svg>
+          ) : (
+            <span class="roster-initials roster-fallback-icon">{member.initials}</span>
+          )}
+          {member.photo && (
+            <img
+              class="roster-photo"
+              src={member.photo}
+              alt=""
+              loading="lazy"
+              onerror="this.style.display='none'; this.parentElement?.removeAttribute('data-has-photo')"
+            />
+          )}
         </button>
-        <p class="roster-bio-eyebrow">{heading}</p>
-        <h5 class="roster-bio-name">{member.name}</h5>
-        {member.role && <p class="roster-bio-role">{member.role}</p>}
+
+        <div class="roster-identity">
+          <h5 class="roster-identity-name">{member.name}</h5>
+          {(member.title || member.role) && <p class="roster-identity-title">{member.title || member.role}</p>}
+          {member.titleDetail && <p class="roster-identity-detail">{member.titleDetail}</p>}
+        </div>
+
+        <div class="roster-gold-rule" aria-hidden="true"></div>
+
+        {(member.showLinkedIn !== false || member.email || member.officeHref) && (
+          <div class="roster-contact-row">
+            {member.showLinkedIn !== false && (
+              member.linkedin ? (
+                <a class="roster-contact-icon" href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name} on LinkedIn`} title="LinkedIn">
+                  <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true">
+                    <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
+                  </svg>
+                </a>
+              ) : (
+                <span class="roster-contact-icon is-placeholder" title="LinkedIn — link coming soon" aria-label="LinkedIn — link coming soon">
+                  <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true">
+                    <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
+                  </svg>
+                </span>
+              )
+            )}
+            {member.email && (
+              <a class="roster-contact-icon" href={`mailto:${member.email}`} aria-label={`Email ${member.name}`} title="Email">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="M4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            )}
+            {member.officeHref && member.officeLabel && (
+              <a class="roster-contact-icon" href={member.officeHref} target="_blank" rel="noopener noreferrer" aria-label={member.officeLabel} title={member.officeLabel}>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z" stroke-linejoin="round" />
+                  <circle cx="12" cy="9" r="2.4" />
+                </svg>
+              </a>
+            )}
+          </div>
+        )}
+
+        {member.tags && member.tags.length > 0 && (
+          <div class="roster-focus">
+            <p class="roster-focus-label">Focus Areas &amp; Expertise</p>
+            {member.tagsCaption && <p class="roster-focus-caption">{member.tagsCaption}</p>}
+            <div class="roster-focus-list">
+              {member.tags.map((tag) => (
+                <a href={tag.href} class="roster-focus-tag">{tag.label}</a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div class="roster-bio-col" data-roster-bio-col>
         <div class="roster-bio-body">
           {(Array.isArray(member.bio) ? member.bio : [member.bio]).map((paragraph) => (
             <p>{paragraph}</p>
           ))}
-        </div>
-        {member.tags && member.tags.length > 0 && (
-          <div class="roster-bio-tags">
-            {member.tagsCaption && <p class="roster-bio-tags-caption">{member.tagsCaption}</p>}
-            <ul class="exec-tags" role="list">
-              {member.tags.map((tag) => (
-                <li><a href={tag.href} class="tag">{tag.label}</a></li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <div class="roster-bio-links">
-          {member.showLinkedIn !== false && (
-            member.linkedin ? (
-              <a class="exec-icon-link" href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name} on LinkedIn`} title="LinkedIn">
-                <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true">
-                  <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-                </svg>
-              </a>
-            ) : (
-              <span class="exec-icon-link is-placeholder" title="LinkedIn — link coming soon" aria-label="LinkedIn — link coming soon">
-                <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true">
-                  <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-                </svg>
-              </span>
-            )
-          )}
-          <a class="exec-social-link" href="/contact/">Contact</a>
         </div>
       </div>
     </div>
@@ -209,13 +269,28 @@ const { heading, members } = Astro.props;
     margin-bottom: var(--space-5);
   }
 
+  /* Shared "frame" — identical padding/border/radius in both the closed
+     (transparent) and open (real card) states. This, plus the rail's fixed
+     18rem flex-basis (same as the closed tile's width), is what keeps the
+     portrait's bounding box pixel-identical across open/close — see the
+     Props doc comment and the README's "alignment invariant" section.
+     Do not put padding on only one state, and do not change either the
+     tile-wrap width or the rail flex-basis to a percentage/minmax(). */
+  .roster-row-frame {
+    padding: var(--space-6);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    background: transparent;
+  }
+
   /* Closed state — horizontal row of editorial portrait tiles. */
   .roster-row { display: flex; flex-wrap: wrap; gap: var(--space-6); }
   .roster-tile-wrap {
     position: relative;
     /* Sized up from an earlier 12rem — no roster row here carries more than
        two tiles, so there's room for a larger, more editorial portrait
-       (owner request, 2026-09-07) without ever forcing a wrap. */
+       (owner request, 2026-09-07) without ever forcing a wrap. Must match
+       .roster-rail's flex-basis below (the alignment invariant). */
     width: 18rem;
   }
   .roster-tile {
@@ -298,11 +373,9 @@ const { heading, members } = Astro.props;
     font-family: var(--font-serif);
     font-size: var(--text-3xl);
   }
-  /* Network variant now carries the real Expert Network mark (a
-     transparent gold PNG designed for a dark ground — owner-supplied
-     asset, 2026-09-07) — same dark gradient as the person tiles rather
-     than the earlier light surface-alt + dashed "placeholder" treatment,
-     which read wrong once this stopped being a schematic stand-in. */
+  /* Network variant carries the real Expert Network mark (a transparent
+     gold PNG designed for a dark ground) — same dark gradient as the
+     person tiles. */
   .roster-portrait-network {
     background: var(--gradient-dark);
     color: var(--c-accent-400);
@@ -311,46 +384,8 @@ const { heading, members } = Astro.props;
   .roster-tile-name { display: block; font-family: var(--font-serif); font-size: var(--text-base); color: var(--color-text); }
   .roster-tile-role { display: block; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
 
-  /* Expanded state — selected portrait (left) + large bio panel (right).
-     Portrait column is a fixed 18rem — same box size as the closed
-     .roster-tile — rather than growing to fill the column (owner
-     request, 2026-09-07): the photo shouldn't get visibly larger/softer
-     just because it's selected. */
-  .roster-expanded {
-    display: grid;
-    grid-template-columns: 18rem 1fr;
-    gap: var(--space-8);
-    align-items: start;
-  }
-  .roster-expanded-portrait {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    /* Now an interactive control (click to close/collapse), not a
-       decorative div — reset button chrome so it keeps reading as a
-       plain portrait. */
-    padding: 0;
-    border: none;
-    cursor: pointer;
-    transition: box-shadow var(--transition-fast);
-  }
-  .roster-expanded-portrait:hover,
-  .roster-expanded-portrait:focus-visible { box-shadow: var(--shadow-md); }
-  .roster-expanded-portrait:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
-  .roster-expanded-portrait.roster-portrait-person .roster-initials { font-family: var(--font-serif); font-size: var(--text-4xl); }
-
   /* Photo layers over the initials/icon fallback; onerror hides the img
-     AND clears data-has-photo so the fallback becomes visible again. While
-     a photo is present, the fallback stays hidden outright (not just
-     covered) — with object-fit: cover this never mattered since the photo
-     always fully occluded it, but the network mark below uses
-     object-fit: contain, which can otherwise let the fallback icon show
-     through the letterboxed padding around a non-cover image. */
+     AND clears data-has-photo so the fallback becomes visible again. */
   [data-has-photo] .roster-fallback-icon { display: none; }
 
   .roster-photo {
@@ -370,10 +405,10 @@ const { heading, members } = Astro.props;
   }
 
   /* Grayscale → color reveal on hover/focus — matches the existing
-     terra.nexus homepage team-photo treatment (owner reference,
-     2026-09-07). Only the closed-row tile gets the grayscale default; the
-     expanded/selected portrait renders in full color, since opening a
-     profile is itself the "selected" state the hover reveals toward. */
+     terra.nexus homepage team-photo treatment. Only the closed-row tile
+     gets the grayscale default; the expanded/selected portrait renders in
+     full color, since opening a profile is itself the "selected" state the
+     hover reveals toward. */
   .roster-tile .roster-photo {
     filter: grayscale(100%);
     transition: filter var(--transition-base);
@@ -383,18 +418,190 @@ const { heading, members } = Astro.props;
     filter: grayscale(0%);
   }
 
-  .roster-bio {
+  /* Open state — the "frame" (padding/border/radius identical to
+     .roster-row-frame above) doubling as the flex layout for rail + bio.
+     See the alignment-invariant comment above .roster-row-frame. */
+  .roster-expanded {
     position: relative;
-    min-width: 0;
-    padding: var(--space-8);
-    background: var(--color-surface);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    padding: var(--space-6);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
+    background: var(--color-surface-elevated);
+    animation: rosterFrameFadeIn 260ms ease;
   }
+  @keyframes rosterFrameFadeIn {
+    from { background: rgba(255, 255, 255, 0); border-color: transparent; }
+    to { background: var(--color-surface-elevated); border-color: var(--color-border); }
+  }
+
+  /* Left rail — portrait, identity, gold rule, contact icons, focus areas.
+     Fixed 18rem flex-basis matches .roster-tile-wrap's width exactly (the
+     alignment invariant). z-index keeps the sliding portrait above the bio
+     column during the open transition. */
+  .roster-rail {
+    flex: 0 0 18rem;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    position: relative;
+    z-index: 2;
+    transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .roster-expanded-portrait {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Interactive control (click to close/collapse), not a decorative div —
+       reset button chrome so it keeps reading as a plain portrait. */
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast);
+  }
+  .roster-expanded-portrait:hover,
+  .roster-expanded-portrait:focus-visible { box-shadow: var(--shadow-md); }
+  .roster-expanded-portrait:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .roster-expanded-portrait.roster-portrait-person .roster-initials { font-family: var(--font-serif); font-size: var(--text-4xl); }
+  /* Full color in the open state — no grayscale (unlike the closed tile). */
+  .roster-expanded-portrait .roster-photo { filter: none; }
+
+  .roster-identity-name {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: var(--font-semibold);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .roster-identity-title {
+    margin-top: 5px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--c-sky-700);
+  }
+  /* Function/description line — a distinct step down from the level line
+     above it (smaller, secondary text color, no bold) so the two read as
+     rank then remit, not one run-on title. */
+  .roster-identity-detail {
+    margin-top: 3px;
+    font-size: var(--text-xs);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  .roster-gold-rule {
+    height: 2px;
+    background: var(--c-accent-400);
+  }
+
+  .roster-contact-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .roster-contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-alt);
+    color: var(--color-link);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .roster-contact-icon:hover { background: var(--c-sky-300); }
+  .roster-contact-icon:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .roster-contact-icon.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
+  .roster-contact-icon.is-placeholder:hover { background: var(--color-surface-alt); color: var(--color-text-muted); }
+
+  .roster-focus {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .roster-focus-label {
+    font-size: 11px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-eyebrow);
+  }
+  .roster-focus-caption {
+    font-size: 11px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+  .roster-focus-list { display: flex; flex-direction: column; gap: 9px; }
+  .roster-focus-tag {
+    display: block;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--c-sky-300);
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .roster-focus-tag:hover {
+    color: var(--c-sky-700);
+    border-left-color: var(--c-sky-600);
+  }
+
+  /* Bio column — two-column text to the right of the rail. Flex-basis is
+     20rem (not the visually-nicer 22rem) so that rail (18rem) + gap
+     (--space-6, 1.5rem) + this basis still fits beside the rail — rather
+     than wrapping below it — inside the panel's available width at
+     768px, one of the four mandated QA viewports (real desktop scrollbars
+     eat a few more px than headless tooling shows, so this keeps real-
+     browser headroom, not just a bare fit against a scrollbar-less
+     measurement). */
+  .roster-bio-col {
+    flex: 1 1 20rem;
+    min-width: 0;
+    border-left: 1px solid var(--color-border);
+    padding-left: var(--space-6);
+    /* Required clearance for the close × in the frame's top-right corner —
+       without it the button's circle sits on the first line of text. Do
+       not remove it, and do not move the × off-card. */
+    padding-right: 48px;
+    animation: rosterBioExpand 340ms cubic-bezier(0.16, 1, 0.3, 1) 90ms both;
+  }
+  @keyframes rosterBioExpand {
+    from { opacity: 0; transform: translateX(-14px); }
+    to { opacity: 1; transform: none; }
+  }
+  .roster-bio-body {
+    /* Two columns at desktop width, collapsing to one when the column
+       can't hold 19rem — deliberately `columns` (not `column-count:2`,
+       which forces two narrow columns on mobile). No
+       break-inside:avoid-column — that pushes text outside the frame. */
+    columns: 19rem 2;
+    column-gap: 34px;
+  }
+  .roster-bio-body p {
+    font-size: 15px;
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
   .roster-close {
     position: absolute;
     top: var(--space-4);
     right: var(--space-4);
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -410,52 +617,18 @@ const { heading, members } = Astro.props;
   .roster-close:hover { background: var(--color-surface-alt); color: var(--color-text); }
   .roster-close:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
 
-  .roster-bio-eyebrow {
-    font-size: var(--text-xs);
-    font-weight: var(--font-semibold);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-eyebrow);
-    margin-bottom: var(--space-2);
-    padding-right: var(--space-8);
-  }
-  .roster-bio-name { font-family: var(--font-serif); font-size: var(--text-2xl); margin-bottom: var(--space-1); }
-  .roster-bio-role { font-size: var(--text-sm); color: var(--color-text-secondary); }
-  .roster-bio-body { margin-top: var(--space-5); max-width: 52ch; }
-  .roster-bio-body p { color: var(--color-text-secondary); line-height: var(--line-relaxed); }
-  .roster-bio-body p + p { margin-top: var(--space-3); }
-  .roster-bio-tags { margin-top: var(--space-5); }
-  .roster-bio-tags-caption { font-size: var(--text-xs); color: var(--color-text-muted); font-style: italic; margin-bottom: var(--space-2); }
-  .exec-tags { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .roster-bio-links { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-6); }
-  .exec-social-link { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-link); text-decoration: none; }
-  .exec-social-link:hover { color: var(--color-link-hover); }
-  .exec-social-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
-
-  /* Icon-badge link (LinkedIn inside the opened bio) — same small circular
-     treatment as the closed-tile badge above, rather than a plain text
-     link (owner request, 2026-09-07: use the actual LinkedIn mark). */
-  .exec-icon-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--radius-full);
-    background: var(--color-surface-alt);
-    color: var(--color-link);
-    transition: background var(--transition-fast), color var(--transition-fast);
-  }
-  .exec-icon-link:hover { background: var(--color-border); color: var(--color-link-hover); }
-  .exec-icon-link:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
-  .exec-icon-link.is-placeholder { color: var(--color-text-muted); cursor: not-allowed; }
-  .exec-icon-link.is-placeholder:hover { background: var(--color-surface-alt); color: var(--color-text-muted); }
-
   @media (max-width: 40rem) {
     .roster-tile-wrap { width: 13rem; }
-    .roster-expanded { grid-template-columns: 1fr; }
-    .roster-expanded-portrait { max-width: 13rem; }
-    .roster-bio { padding: var(--space-6); }
+    /* Rail flex-basis must track the tile-wrap width above (the alignment
+       invariant) — otherwise the portrait's box would resize on open at
+       this breakpoint. */
+    .roster-rail { flex-basis: 13rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roster-expanded { animation: none; }
+    .roster-bio-col { animation: none; }
+    .roster-rail { transition: none; }
   }
 </style>
 
@@ -463,9 +636,12 @@ const { heading, members } = Astro.props;
   // ProfileRoster interaction (shared across every roster instance on the
   // page). Progressive enhancement: SSR renders the roster row AND every
   // bio panel visible/stacked (fully readable without JS); this script
-  // hides the bio panels on load and wires up select/close. No animation
-  // library; hover/focus transitions already covered by
-  // design-system.css's global reduced-motion override.
+  // hides the bio panels on load and wires up select/close, plus the
+  // portrait's "slide in from its column" open transition (see the
+  // alignment-invariant + open-transition notes in the README this
+  // implements: plans/content/Bio-design-2026-09/README.md).
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   document.querySelectorAll<HTMLElement>('[data-roster]').forEach((roster) => {
     const row = roster.querySelector<HTMLElement>('[data-roster-row]');
     const tiles = Array.from(roster.querySelectorAll<HTMLButtonElement>('[data-roster-tile]'));
@@ -482,9 +658,60 @@ const { heading, members } = Astro.props;
       const targetId = tile.getAttribute('data-target');
       const panel = targetId ? document.getElementById(targetId) : null;
       if (!panel) return;
+
+      const rail = panel.querySelector<HTMLElement>('[data-roster-rail]');
+      // Capture the closed portrait's live position *before* the row hides —
+      // this is the point the open portrait must visually slide in from.
+      // Measuring live (rather than assuming a fixed horizontal pitch) is
+      // required because a row can wrap onto more than one visual line at
+      // narrow viewports, at which point a same-row tile's true offset from
+      // the rail slot has a vertical component too, not just horizontal —
+      // see the README's "alignment invariant" section.
+      const closedPortrait = tile.querySelector<HTMLElement>('.roster-portrait');
+      const tileRect = !prefersReducedMotion && rail && closedPortrait ? closedPortrait.getBoundingClientRect() : null;
+
       panels.forEach((p) => { p.hidden = p !== panel; });
       tiles.forEach((t) => t.setAttribute('aria-expanded', String(t === tile)));
       if (row) row.hidden = true;
+
+      // Portrait slide — the rail is measured at its natural resting
+      // position (the fixed rail slot) now that the panel is visible, then
+      // offset back to the closed tile's live position and transitioned to
+      // 0, so the picture reads as sliding in from wherever it actually was
+      // — including a wrapped row — into the fixed rail slot. When the
+      // offset comes out to ~0 (the common column-0 case) nothing visibly
+      // slides — the bio simply expands out from behind the picture.
+      if (rail) {
+        if (tileRect) {
+          const openPortrait = rail.querySelector<HTMLElement>('.roster-expanded-portrait');
+          rail.style.transition = 'none';
+          rail.style.transform = 'none';
+          // Force layout so the resting position below reflects the
+          // transform reset above.
+          void rail.offsetWidth;
+          const railRect = (openPortrait ?? rail).getBoundingClientRect();
+          const dx = tileRect.left - railRect.left;
+          const dy = tileRect.top - railRect.top;
+          rail.style.transform = `translate(${dx}px, ${dy}px)`;
+          // Force layout again so the offset above actually applies before
+          // we re-enable the transition and clear it.
+          void rail.offsetWidth;
+          rail.style.transition = '';
+          let settled = false;
+          const settle = () => {
+            if (settled) return;
+            settled = true;
+            rail.style.transform = '';
+          };
+          requestAnimationFrame(settle);
+          // Fallback: under frame throttling the rAF-only path can leave
+          // the rail parked at its offset.
+          setTimeout(settle, 80);
+        } else {
+          rail.style.transform = '';
+        }
+      }
+
       panel.querySelector<HTMLButtonElement>('[data-roster-close]')?.focus();
     };
 
@@ -501,7 +728,7 @@ const { heading, members } = Astro.props;
       });
       // Click/tap the now-selected portrait itself to collapse back —
       // same close behavior as the X button, just re-using the picture as
-      // the trigger (owner request, 2026-09-07).
+      // the trigger.
       panel.querySelector<HTMLButtonElement>('[data-roster-portrait-close]')?.addEventListener('click', () => {
         closeAll(panel.getAttribute('aria-labelledby'));
       });
