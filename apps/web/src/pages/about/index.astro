@@ -141,7 +141,12 @@ const rosterGroups: Array<{
     // 2026-09-08 for the ProfileRoster bio redesign
     // (plans/content/Bio-design-2026-09/README.md); owner-supplied, real
     // addresses. See ProfileRoster.astro's Props doc for how each renders.
+    // `title` is the person's level/rank (e.g. "Chief Executive Officer");
+    // `titleDetail` is the one-line description of what they run, shown
+    // directly under it in the open panel (owner request, 2026-09-08 —
+    // levels and function belong on separate lines, not comma-joined).
     title?: string;
+    titleDetail?: string;
     email?: string;
     officeHref?: string;
     officeLabel?: string;
@@ -154,7 +159,10 @@ const rosterGroups: Array<{
       {
         id: 'laura-klein',
         name: 'Laura Klein',
-        role: 'Studio Executive',
+        // Closed-tile subtitle — owner request, 2026-09-08: swapped from
+        // the roster-group label to Laura's focus area so the row itself
+        // hints at what each person runs, not just their seniority.
+        role: 'Environmental Markets & Commercialization',
         initials: 'LK',
         variant: 'person',
         photo: '/images/team/laura-klein/photo.jpg',
@@ -170,7 +178,8 @@ const rosterGroups: Array<{
           "Off the clock, she ski patrols at Eldora Mountain Resort in Boulder and trail runs with her two huskies, Maize and Fitz. Her mantra: sustainability is a team sport.",
         ],
         linkedin: 'https://www.linkedin.com/in/lauraklein17/',
-        title: 'Chief Executive Officer, Environmental Markets & Commercialization Leader',
+        title: 'Chief Executive Officer',
+        titleDetail: 'Environmental Markets & Commercialization Leader',
         email: 'laura@terra.nexus',
         officeHref: 'https://maps.google.com/?q=2000+Central+Ave%2C+Boulder%2C+CO+80301',
         officeLabel: 'Boulder, CO',
@@ -182,7 +191,8 @@ const rosterGroups: Array<{
       {
         id: 'josh-mellinger',
         name: 'Josh Mellinger',
-        role: 'Studio Executive',
+        // Closed-tile subtitle — see the note on Laura Klein above.
+        role: 'Sustainable Food & Climate',
         initials: 'JM',
         variant: 'person',
         photo: '/images/team/josh-mellinger/photo.jpg',
@@ -202,7 +212,8 @@ const rosterGroups: Array<{
           "Outside of work, he's usually near a river: tying his own fly patterns, guiding friends, stalking trophy trout on Western tailwaters, and curating riverside wine experiences.",
         ],
         linkedin: 'https://www.linkedin.com/in/joshmellinger/',
-        title: 'Head of Product & Services, Sustainable Food & Climate Leader',
+        title: 'Chief Data, Analytics & AI Officer',
+        titleDetail: 'Sustainable Food & Climate Leader',
         email: 'josh@terra.nexus',
         officeHref: 'https://maps.google.com/?q=2000+Central+Ave%2C+Boulder%2C+CO+80301',
         officeLabel: 'Boulder, CO',
@@ -224,7 +235,8 @@ const rosterGroups: Array<{
         // which use "Isaac Carroo." Previously just "Isaac" as a
         // placeholder.
         name: 'Isaac Carroo',
-        role: 'Executive in Residence',
+        // Closed-tile subtitle — see the note on Laura Klein above.
+        role: 'Ecosystem & Communities Resilience',
         initials: 'IC',
         variant: 'person',
         photo: '/images/team/isaac/photo.jpg',
@@ -241,7 +253,8 @@ const rosterGroups: Array<{
           "His work spans corporate decarbonization strategy and farmer engagement, including a supply chain redesign for a large grocer that diverted millions of pounds of food waste and saved more than $100 million. On the grassroots side, he's worked on food sovereignty efforts, engaging more than 15 potato farmers on regenerative growing practices and raising over $1 million for on-farm improvements with small farmers and Indigenous communities in New Zealand. He's a published author on circular economies and tribal sovereignty, and speaks regularly on food systems at private sector, nonprofit, academic, and religious institutions.",
         ],
         linkedin: 'https://www.linkedin.com/in/isaac-carroo/',
-        title: 'Head of Studio & Expert Network, Resilient Agriculture & Communities Lead',
+        title: 'Head of Studio & Expert Network',
+        titleDetail: 'Resilient Agriculture & Communities Lead',
         email: 'isaac@terra.nexus',
         // City/state only per owner direction — no street address listed
         // for Isaac.
