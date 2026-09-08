@@ -47,10 +47,17 @@ export interface Props {
     // wins (hides it entirely) regardless of this.
     linkedin?: string;
     // Specific title shown in the open panel's identity block, under the
-    // name — falls back to `role` when omitted. `role` itself stays the
-    // roster-group label shown on the closed tile ("Studio Executive",
-    // etc.) and is never overloaded to carry this.
+    // name — falls back to `role` when omitted. `role` on the closed tile
+    // is now each person's focus-area subtitle (owner request, 2026-09-08),
+    // not a shared group label, so the fallback mainly matters for members
+    // without a `title` at all.
     title?: string;
+    // One-line description of what the person runs, shown directly under
+    // `title` in its own smaller line — owner request, 2026-09-08: title
+    // is the person's level (e.g. "Chief Executive Officer"), titleDetail
+    // is the function ("Heads Terra Nexus's X offerings."), not a single
+    // comma-joined string.
+    titleDetail?: string;
     // Real mailto: address — renders as the envelope icon in the open
     // panel's contact-icon row. Omitted entirely (no broken icon) when not
     // set.
@@ -188,6 +195,7 @@ const { heading, members } = Astro.props;
         <div class="roster-identity">
           <h5 class="roster-identity-name">{member.name}</h5>
           {(member.title || member.role) && <p class="roster-identity-title">{member.title || member.role}</p>}
+          {member.titleDetail && <p class="roster-identity-detail">{member.titleDetail}</p>}
         </div>
 
         <div class="roster-gold-rule" aria-hidden="true"></div>
@@ -480,6 +488,15 @@ const { heading, members } = Astro.props;
     font-weight: var(--font-medium);
     color: var(--c-sky-700);
   }
+  /* Function/description line — a distinct step down from the level line
+     above it (smaller, secondary text color, no bold) so the two read as
+     rank then remit, not one run-on title. */
+  .roster-identity-detail {
+    margin-top: 3px;
+    font-size: var(--text-xs);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
 
   .roster-gold-rule {
     height: 2px;
@@ -542,9 +559,16 @@ const { heading, members } = Astro.props;
     border-left-color: var(--c-sky-600);
   }
 
-  /* Bio column — two-column text to the right of the rail. */
+  /* Bio column — two-column text to the right of the rail. Flex-basis is
+     20rem (not the visually-nicer 22rem) so that rail (18rem) + gap
+     (--space-6, 1.5rem) + this basis still fits beside the rail — rather
+     than wrapping below it — inside the panel's available width at
+     768px, one of the four mandated QA viewports (real desktop scrollbars
+     eat a few more px than headless tooling shows, so this keeps real-
+     browser headroom, not just a bare fit against a scrollbar-less
+     measurement). */
   .roster-bio-col {
-    flex: 1 1 22rem;
+    flex: 1 1 20rem;
     min-width: 0;
     border-left: 1px solid var(--color-border);
     padding-left: var(--space-6);
@@ -617,7 +641,6 @@ const { heading, members } = Astro.props;
   // alignment-invariant + open-transition notes in the README this
   // implements: plans/content/Bio-design-2026-09/README.md).
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SLIDE_PITCH = 312; // 18rem tile (288px) + 24px (--space-6) gap.
 
   document.querySelectorAll<HTMLElement>('[data-roster]').forEach((roster) => {
     const row = roster.querySelector<HTMLElement>('[data-roster-row]');
@@ -635,23 +658,43 @@ const { heading, members } = Astro.props;
       const targetId = tile.getAttribute('data-target');
       const panel = targetId ? document.getElementById(targetId) : null;
       if (!panel) return;
+
+      const rail = panel.querySelector<HTMLElement>('[data-roster-rail]');
+      // Capture the closed portrait's live position *before* the row hides —
+      // this is the point the open portrait must visually slide in from.
+      // Measuring live (rather than assuming a fixed horizontal pitch) is
+      // required because a row can wrap onto more than one visual line at
+      // narrow viewports, at which point a same-row tile's true offset from
+      // the rail slot has a vertical component too, not just horizontal —
+      // see the README's "alignment invariant" section.
+      const closedPortrait = tile.querySelector<HTMLElement>('.roster-portrait');
+      const tileRect = !prefersReducedMotion && rail && closedPortrait ? closedPortrait.getBoundingClientRect() : null;
+
       panels.forEach((p) => { p.hidden = p !== panel; });
       tiles.forEach((t) => t.setAttribute('aria-expanded', String(t === tile)));
       if (row) row.hidden = true;
 
-      // Portrait slide — a tile opened from column N renders its rail
-      // offset by N * pitch and transitions back to 0, so the picture
-      // reads as sliding in from its original column into the fixed rail
-      // slot. Column 0 (the common case) has offset 0, so nothing slides —
-      // the bio simply expands out from behind the picture.
-      const rail = panel.querySelector<HTMLElement>('[data-roster-rail]');
-      const index = Number(tile.getAttribute('data-roster-index') || 0);
+      // Portrait slide — the rail is measured at its natural resting
+      // position (the fixed rail slot) now that the panel is visible, then
+      // offset back to the closed tile's live position and transitioned to
+      // 0, so the picture reads as sliding in from wherever it actually was
+      // — including a wrapped row — into the fixed rail slot. When the
+      // offset comes out to ~0 (the common column-0 case) nothing visibly
+      // slides — the bio simply expands out from behind the picture.
       if (rail) {
-        if (!prefersReducedMotion && index > 0) {
+        if (tileRect) {
+          const openPortrait = rail.querySelector<HTMLElement>('.roster-expanded-portrait');
           rail.style.transition = 'none';
-          rail.style.transform = `translateX(${index * SLIDE_PITCH}px)`;
-          // Force layout so the offset above actually applies before we
-          // re-enable the transition and clear it.
+          rail.style.transform = 'none';
+          // Force layout so the resting position below reflects the
+          // transform reset above.
+          void rail.offsetWidth;
+          const railRect = (openPortrait ?? rail).getBoundingClientRect();
+          const dx = tileRect.left - railRect.left;
+          const dy = tileRect.top - railRect.top;
+          rail.style.transform = `translate(${dx}px, ${dy}px)`;
+          // Force layout again so the offset above actually applies before
+          // we re-enable the transition and clear it.
           void rail.offsetWidth;
           rail.style.transition = '';
           let settled = false;
