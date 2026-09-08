@@ -50,5 +50,18 @@
   // generated output). Committing it explicitly here freezes that value
   // instead of letting it silently drift if a future Wrangler/adapter
   // version changes its own default — bump deliberately, not incidentally.
-  "compatibility_date": "2026-04-15"
+  "compatibility_date": "2026-04-15",
+
+  // Plain (non-secret) runtime vars for the contact-form route
+  // (src/pages/api/contact.ts), read via `cloudflare:workers` `env` at
+  // request time. Committed here rather than set only in the dashboard —
+  // same "one source of truth" reasoning as `name` above — so local
+  // `wrangler dev`, Workers Builds, and manual deploys can't drift from
+  // each other. TURNSTILE_SECRET_KEY and RESEND_API_KEY are real secrets
+  // and stay out of this file — see `wrangler secret put` usage in
+  // plans/contact-form-production.md.
+  "vars": {
+    "CONTACT_TO_EMAIL": "experts@terra.nexus",
+    "CONTACT_FROM_EMAIL": "contact@send.terra.nexus"
+  }
 }
