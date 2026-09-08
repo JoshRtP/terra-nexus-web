@@ -197,6 +197,41 @@ spot-check in an ordinary browser session at some point, but doesn't block
 shipping since the client-side wiring (script load, widget init, token
 generation, hidden-input population) is already confirmed correct.
 
+## Update 2026-09-08 (post-ship): form simplified per owner request
+
+After the initial production version above shipped and was merged to
+`main`, the owner asked for a follow-up revision:
+
+- Hero title changed from "Start with the Decision That Matters" to
+  "See What's Possible".
+- Submit button text changed to "Discover What's Next" (it had briefly
+  been "Discuss What's Next" in the shipped version above — changed again
+  here).
+- Four fields **removed entirely**: "Organization type" dropdown, "How
+  can we help?" dropdown, "Desired timing" dropdown, "Optional link"
+  input. Remaining fields: Name, Work email, Organization, Role,
+  Challenge or objective, consent checkbox, Turnstile widget.
+- Layout: the form section now uses the same `.container` as
+  `PageHero` (design-system.css) instead of the independently-centered
+  `.container narrow-container` — `.contact-form` itself caps its width
+  via `max-width: var(--max-width-narrow)` without auto-centering, so the
+  form's left edge lines up directly under the hero title/lead text
+  instead of floating centered on the page.
+
+Removing the four fields was a full-stack change, not just an HTML edit —
+`apps/web/src/lib/contact/validation.ts` (`ContactSubmission` type, the
+now-removed `ORG_TYPE_VALUES`/`ROUTING_VALUES`/`TIMING_VALUES` enums and
+their validation branches, the link URL-format check) and
+`apps/web/src/lib/contact/email.ts` (the `ORG_TYPE_LABELS`/
+`ROUTING_LABELS`/`TIMING_LABELS` maps and the corresponding email body
+rows) were updated to match, along with `test/contact-validation.test.ts`
+and `test/contact-email.test.ts`. Full check suite re-run and green after
+the change (`web:build`, `web:typecheck` 0 errors, `web:test` 48/48 —
+down from 51, exactly the 3 tests that covered the removed fields — and
+`npm run check`). Fresh browser QA at all four required viewports
+confirmed the left-alignment fix and the absence of the four removed
+fields with no orphaned spacing.
+
 ## Explicit non-goals (for now)
 
 - No CRM integration.

@@ -6,41 +6,10 @@
 // (test/contact-email.test.ts); no test ever calls the real Resend API.
 import type { ContactSubmission } from './validation.js';
 
-const ORG_TYPE_LABELS: Record<string, string> = {
-  'agricultural-producer': 'Agricultural Producer / Integrated Protein',
-  'commodity-trader': 'Commodity Trader',
-  'ingredient-processor': 'Ingredient & Feed Processor',
-  'food-beverage': 'Food & Beverage Company',
-  'retail-distribution': 'Food Retail & Distribution',
-  'energy-biofuels': 'Energy & Biofuels Refiner',
-  'food-waste': 'Food Waste Prevention / Diversion / Recovery',
-  inputs: 'Inputs Company',
-  'environmental-markets': 'Environmental Markets / Ecosystem Services',
-  technology: 'Enabling Tech / Solution Provider',
-  investor: 'Private Equity / Venture / Impact Investor',
-  other: 'Other',
-};
-
-const ROUTING_LABELS: Record<string, string> = {
-  strategy: 'Strategy, market, product, or growth',
-  investment: 'Investment, venture, or diligence',
-  sourcing: 'Sourcing, supply chain, or operations',
-  sustainability: 'Corporate sustainability, accounting, or reporting',
-  carbon: 'Carbon, ecosystem services, claims, or verification readiness',
-  other: 'Other',
-};
-
-const TIMING_LABELS: Record<string, string> = {
-  immediate: 'Immediate (within 30 days)',
-  'near-term': 'Near-term (1-3 months)',
-  quarter: 'This quarter',
-  exploring: 'Exploring / no fixed timeline',
-};
-
-function label(map: Record<string, string>, value: string): string {
-  if (!value) return '(not specified)';
-  return map[value] ?? value;
-}
+// Organization type, routing, desired timing, and an optional link were
+// removed from the contact form 2026-09-08 (owner request) — the label
+// maps that used to render those coded values in this email were removed
+// along with them. See validation.ts for the current field list.
 
 function escapeHtml(value: string): string {
   return value
@@ -65,10 +34,6 @@ export function buildContactNotificationEmail(data: ContactSubmission): ContactE
     ['Work email', data.email],
     ['Organization', data.organization || '(not specified)'],
     ['Role', data.role || '(not specified)'],
-    ['Organization type', label(ORG_TYPE_LABELS, data.orgType)],
-    ['How can we help', label(ROUTING_LABELS, data.routing)],
-    ['Desired timing', label(TIMING_LABELS, data.timing)],
-    ['Optional link', data.link || '(not specified)'],
   ];
 
   const text = [

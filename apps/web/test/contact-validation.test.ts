@@ -6,11 +6,7 @@ const VALID_PAYLOAD = {
   email: 'ada@example.com',
   organization: 'Analytical Engines Inc.',
   role: 'Founder',
-  org_type: 'technology',
-  routing: 'strategy',
   challenge: 'We need help scaling a pilot program.',
-  timing: 'quarter',
-  link: 'https://example.com',
   consent: true,
   turnstileToken: 'test-token',
 };
@@ -23,10 +19,7 @@ describe('validateContactPayload', () => {
     expect(result.data).toMatchObject({
       name: 'Ada Lovelace',
       email: 'ada@example.com',
-      orgType: 'technology',
-      routing: 'strategy',
       challenge: 'We need help scaling a pilot program.',
-      timing: 'quarter',
       consent: true,
     });
   });
@@ -36,10 +29,6 @@ describe('validateContactPayload', () => {
       ...VALID_PAYLOAD,
       organization: '',
       role: '',
-      org_type: '',
-      routing: '',
-      timing: '',
-      link: '',
     });
     expect(result.valid).toBe(true);
   });
@@ -64,23 +53,6 @@ describe('validateContactPayload', () => {
     const result = validateContactPayload({ ...VALID_PAYLOAD, email: 'not-an-email' });
     expect(result.valid).toBe(false);
     expect(result.errors.email).toBeTruthy();
-  });
-
-  it('rejects an unrecognized org_type/routing/timing value', () => {
-    const result = validateContactPayload({ ...VALID_PAYLOAD, org_type: 'made-up', routing: 'made-up', timing: 'made-up' });
-    expect(result.valid).toBe(false);
-    expect(result.errors.orgType).toBeTruthy();
-    expect(result.errors.routing).toBeTruthy();
-    expect(result.errors.timing).toBeTruthy();
-  });
-
-  it('rejects a malformed optional link but allows a well-formed one', () => {
-    const bad = validateContactPayload({ ...VALID_PAYLOAD, link: 'not a url' });
-    expect(bad.valid).toBe(false);
-    expect(bad.errors.link).toBeTruthy();
-
-    const good = validateContactPayload({ ...VALID_PAYLOAD, link: 'https://terra.nexus' });
-    expect(good.valid).toBe(true);
   });
 
   it('treats consent as required unless explicitly true/"true"/"on"', () => {
