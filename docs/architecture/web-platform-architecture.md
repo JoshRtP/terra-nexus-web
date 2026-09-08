@@ -78,8 +78,10 @@ the baseline.
 
 ## 3. Current route table
 
-Fully static, no server rendering, no API routes besides a dynamic
-`robots.txt`.
+Predominantly static. A handful of routes opt out of prerendering
+(`prerender = false`) for reasons that don't fit a build-time static file —
+publication-gated Insights, Keystatic's admin API, and now the contact
+form's submission endpoint.
 
 - `/` — homepage (the former `/homepage-alt` draft layout, canonicalized 2026-08-12)
 - `/homepage-alt` — redirects to `/` (kept for anyone who bookmarked the
@@ -94,7 +96,16 @@ Fully static, no server rendering, no API routes besides a dynamic
 - `/digital-solutions` — placeholder product page (reconciled onto main
   2026-08-16); the homepage's "See our Digital Solutions" button points
   here instead of the earlier `/capabilities/` stand-in
-- `/contact`
+- `/contact` — production contact form (implemented 2026-09-07, not yet
+  live pending owner-provisioned Turnstile/Resend credentials — see
+  `plans/contact-form-production.md`)
+- `/api/contact` (`prerender = false`) — validates the contact form
+  submission, verifies a Cloudflare Turnstile token, and sends a
+  notification email via Resend. Present in every production build (not
+  gated behind `SKIP_KEYSTATIC` the way Keystatic's routes are — a
+  visitor-facing form has to work in every deploy). See
+  `plans/contact-form-production.md` for the full design and remaining
+  setup steps.
 - `/insights`, `/insights/[slug]` (added M3 — Keystatic `posts` collection,
   `getStaticPaths()` from Astro Content Collections, `prerender = true`)
 - `/robots.txt` (dynamic; emits `noindex,nofollow` + disallow when `TNX_BUILD_MODE=preview`)

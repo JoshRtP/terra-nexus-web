@@ -3,6 +3,18 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 const mode = getBuildMode();
+
+// Cloudflare Turnstile site key — public by design (unlike
+// TURNSTILE_SECRET_KEY, which the /api/contact route reads at request time
+// from `cloudflare:workers` env; see plans/contact-form-production.md).
+// This page is prerendered (static), so it must come from
+// import.meta.env at build time, not a runtime env lookup — same rule as
+// getPublicBuildMode() in src/lib/build-mode.ts. Falls back to Cloudflare's
+// published "always passes, visible widget" test key
+// (https://developers.cloudflare.com/turnstile/troubleshooting/testing/)
+// so local/preview builds without a real site key still render a working
+// (test-mode) widget instead of a broken one.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 ---
 
 <SiteLayout
@@ -18,14 +30,7 @@ const mode = getBuildMode();
 
   <section class="section">
     <div class="container narrow-container">
-      <!-- PROTOTYPE NOTICE: This form is a visual prototype. It does not submit,
-           process, or store any data. No CRM, backend, or privacy system is
-           connected. Do not present this as a working form without implementation. -->
-      <div class="prototype-notice" role="status">
-        <p><strong>Prototype form:</strong> This form is for demonstration only. Submissions are not processed or stored. No backend, CRM, or privacy system is connected yet.</p>
-      </div>
-
-      <form class="contact-form" novalidate>
+      <form id="contact-form" class="contact-form" action="/api/contact" method="post">
         <div class="form-field">
           <label for="name">Name <span class="required" aria-hidden="true">*</span></label>
           <input type="text" id="name" name="name" autocomplete="name" required />
@@ -102,21 +107,104 @@ const mode = getBuildMode();
 
         <div class="form-field form-checkbox">
           <input type="checkbox" id="consent" name="consent" required />
-          <label for="consent">I understand this is a prototype form and my submission will not be processed or stored. <span class="required" aria-hidden="true">*</span></label>
+          <!-- Copy approved by the owner 2026-09-08 (no privacy policy page
+               exists in this repo yet, so this deliberately doesn't link
+               one, and only states what the form actually does — see
+               src/lib/contact/email.ts): send this submission as an email
+               notification only, no CRM/database storage. Add a privacy
+               policy link here once one is published. -->
+          <label for="consent">I agree that Terra Nexus may use the information above to respond to my inquiry. <span class="required" aria-hidden="true">*</span></label>
+        </div>
+
+        <div class="form-field">
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn btn-primary" disabled>Discuss Your Challenge</button>
-          <p class="form-disabled-note">Form submission is disabled in this prototype.</p>
+          <button type="submit" class="btn btn-primary">Discuss What's Next</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
         </div>
       </form>
     </div>
   </section>
 </SiteLayout>
 
+<!--
+  Cloudflare Turnstile's loader script — renders the widget into the
+  .cf-turnstile div above (implicit rendering: no explicit
+  turnstile.render() call needed) and, because that div lives inside
+  <form id="contact-form">, auto-injects a hidden
+  `cf-turnstile-response` input into the form on completion. See
+  https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
+  (checked 2026-09-07) and plans/contact-form-production.md.
+-->
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  // Progressive enhancement: the <form> has a real action/method, so it
+  // still submits (full-page reload to /api/contact's JSON response, not
+  // ideal but not broken) if this script fails to load. Turnstile itself
+  // requires JS to render at all, so a true no-JS path isn't achievable
+  // here regardless — see plans/contact-form-production.md.
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const statusEl = form?.querySelector<HTMLElement>('.form-status') ?? null;
+  const submitButton = form?.querySelector<HTMLButtonElement>('button[type="submit"]') ?? null;
+  const defaultButtonLabel = submitButton?.textContent ?? '';
+
+  // The Turnstile loader script (above) injects `window.turnstile` at
+  // runtime — it has no bundled type declarations here, so it's typed
+  // loosely rather than pulling in a dependency just for this.
+  type TurnstileGlobal = { reset: () => void };
+  function getTurnstile(): TurnstileGlobal | undefined {
+    return (window as unknown as { turnstile?: TurnstileGlobal }).turnstile;
+  }
+
+  function setStatus(message: string, tone?: 'success' | 'error'): void {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.classList.remove('form-status-success', 'form-status-error');
+    if (tone) statusEl.classList.add(`form-status-${tone}`);
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    setStatus('');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending…';
+    }
+
+    const formData = new FormData(form);
+    const payload: Record<string, FormDataEntryValue | boolean> = Object.fromEntries(formData.entries());
+    payload.consent = formData.get('consent') === 'on';
+    payload.turnstileToken = formData.get('cf-turnstile-response') || '';
+
+    try {
+      const response = await fetch(form.getAttribute('action') || '/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = (await response.json()) as { ok: boolean; message?: string };
+      if (response.ok && result.ok) {
+        setStatus(result.message || 'Thank you — your message has been sent.', 'success');
+        form.reset();
+        getTurnstile()?.reset();
+      } else {
+        setStatus(result.message || 'Something went wrong. Please correct the highlighted fields and try again.', 'error');
+      }
+    } catch {
+      setStatus('Network error — please check your connection and try again.', 'error');
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = defaultButtonLabel;
+      }
+    }
+  });
+</script>
+
 <style>
-  .prototype-notice { padding: var(--space-4) var(--space-5); background: var(--color-surface-alt); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); margin-bottom: var(--space-6); }
-  .prototype-notice p { font-size: var(--text-sm); color: var(--color-text-secondary); margin: 0; }
   .contact-form { display: flex; flex-direction: column; gap: var(--space-5); }
   .form-field { display: flex; flex-direction: column; gap: var(--space-2); }
   .form-field label { font-size: var(--text-sm); font-weight: 600; color: var(--color-text); }
@@ -137,5 +225,7 @@ const mode = getBuildMode();
   .form-checkbox label { font-size: var(--text-sm); font-weight: 400; color: var(--color-text-secondary); }
   .form-actions { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-4); }
   .form-actions .btn[disabled] { opacity: 0.6; cursor: not-allowed; }
-  .form-disabled-note { font-size: var(--text-xs); color: var(--color-text-muted); font-style: italic; }
+  .form-status { font-size: var(--text-sm); margin: 0; min-height: 1.25em; }
+  .form-status-success { color: var(--c-success-600); font-weight: 600; }
+  .form-status-error { color: var(--c-error-700); font-weight: 600; }
 </style>
