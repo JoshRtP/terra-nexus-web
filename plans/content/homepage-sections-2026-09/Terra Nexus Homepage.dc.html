@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="apps/web/src/styles/design-system.css">
+<link rel="stylesheet" href="apps/web/src/styles/homepage-sections.css">
+<link rel="stylesheet" href="apps/web/src/styles/mechanism-selector.css">
+<link rel="stylesheet" href="_ds/terra-nexus-design-system-2058f024-f104-4085-a69d-3deeb9f589e9/tokens/colors.css">
+<script src="_ds/terra-nexus-design-system-2058f024-f104-4085-a69d-3deeb9f589e9/_ds_bundle.js"></script>
+<style>
+  body{margin:0;background:var(--color-bg);font-family:var(--font-sans);color:var(--color-text-secondary)}
+  h1,h2,h3,h4{font-family:var(--font-sans);color:var(--color-text)}
+  a{color:var(--color-link)}
+  a:hover{color:var(--color-link-hover)}
+  .lens-btn.is-active{background:var(--c-accent-400) !important;color:var(--color-dark) !important;border-color:var(--c-accent-400) !important}
+  .lens-btn.is-active span{color:rgba(19,31,72,.72) !important}
+  .seg-chip{cursor:pointer;font-family:inherit;text-align:left;background:#fff;border:1.5px solid var(--color-border);border-radius:var(--radius-full);padding:.5rem 1rem;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text);transition:border-color var(--transition-base),background var(--transition-base),color var(--transition-base)}
+  .seg-chip:hover{border-color:var(--c-sky-400);background:var(--c-sky-50)}
+  .seg-chip.is-active{background:var(--color-dark);border-color:var(--color-dark);color:#fff}
+  .act-row summary{list-style:none;cursor:pointer}
+  .act-row summary::-webkit-details-marker{display:none}
+  .act-row summary:focus-visible{outline:2px solid var(--c-accent-400);outline-offset:2px}
+  .act-row .act-mark{transition:transform var(--transition-base)}
+  .act-row[open] .act-mark{transform:rotate(45deg)}
+  .site-header{position:sticky;top:0;z-index:50;background:var(--color-dark);border-bottom:1px solid rgba(255,255,255,.1)}
+  body.has-photo-hero .site-header{position:fixed;top:0;left:0;right:0;background:transparent;border-bottom-color:transparent;box-shadow:none}
+  body.has-photo-hero.past-hero .site-header{background:var(--color-dark);border-bottom-color:rgba(255,255,255,.1);box-shadow:var(--shadow-md)}
+  body.has-photo-hero .site-header .wordmark-logo{opacity:0;transition:opacity 200ms ease;filter:drop-shadow(0 1px 3px rgba(0,0,0,.8)) drop-shadow(0 0 6px rgba(0,0,0,.5))}
+  body.has-photo-hero.past-hero .site-header .wordmark-logo{opacity:1}
+  .topnav a{color:#c3cdea;text-decoration:none;font-size:var(--text-sm);font-weight:var(--font-medium)}
+  .topnav a:hover{color:#fff}
+</style>
+</helmet>
+
+<header class="site-header" id="site-header">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);padding-block:var(--space-4)">
+    <a href="/" style="display:flex;align-items:center"><img class="wordmark-logo" src="apps/web/public/brand/logo-wordmark-dark.png" alt="Terra Nexus" style="height:34px;width:auto"></a>
+    <nav class="topnav" style="display:flex;flex-wrap:wrap;gap:var(--space-6)">
+      <a href="#expertise">Expertise</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#who-we-work-with">Industries</a>
+      <a href="/insights/">Insights</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="photo-hero" aria-labelledby="hero-heading">
+  <img class="photo-hero-bg" src="apps/web/public/images/live-site/hero-canyon.jpg" alt="" aria-hidden="true">
+  <div class="photo-hero-scrim" aria-hidden="true"></div>
+  <img class="photo-hero-star" src="apps/web/public/brand/star-mark.png" alt="" aria-hidden="true">
+  <div class="container photo-hero-content">
+    <img class="photo-hero-wordmark" src="apps/web/public/images/live-site/logo-stacked.png" alt="Terra Nexus">
+    <h1 id="hero-heading" class="photo-hero-tagline">Impact at the Intersection of <span>Food &amp; Climate</span></h1>
+  </div>
+  <p class="photo-hero-band">Developing a more resilient, sustainable, &amp; prosperous food system</p>
+</section>
+
+<section class="engagement-panel" aria-labelledby="engagement-heading">
+  <div class="container engagement-inner">
+    <div>
+      <h2 id="engagement-heading">Innovation &amp; Insights for Environmental Markets and Scope 3 Investments that Scale</h2>
+      <p>Terra Nexus provides the insights, tools, and supporting capabilities that food and agribusinesses need to achieve commercial success on the path to a more resilient, sustainable, and prosperous food system.</p>
+    </div>
+    <div class="hero-actions">
+      <a href="/contact/" class="btn btn-primary btn-lg">Discuss Your Opportunity</a>
+      <a href="#expertise" class="engagement-scroll-cue">
+        <span class="engagement-scroll-cue-label">Enter the Nexus</span>
+        <svg class="engagement-scroll-cue-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="expertise" aria-labelledby="expertise-heading">
+  <div class="container">
+    <header class="section-header split-header">
+      <span class="eyebrow split-header-eyebrow">What We Are Known For</span>
+      <div class="split-header-title"><h2 id="expertise-heading">Holistic Food Systems that Generate Real Value</h2></div>
+      <div class="split-header-lead"><p class="section-lead">We are highly specialized experts with a deep understanding of the production systems, supply chains, products, services, and markets that produce the greatest returns.</p></div>
+    </header>
+    <ul class="expertise-grid" role="list">
+      <li><a href="/expertise/regenerative-agriculture/" class="expertise-tile" aria-label="Regenerative Agriculture"><img src="https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Regenerative Agriculture</h3><p class="tile-desc">Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/regenerative-rangeland/" class="expertise-tile" aria-label="Regenerative Rangeland"><img src="https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Regenerative Rangeland</h3><p class="tile-desc">Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/agroforestry/" class="expertise-tile" aria-label="Agroforestry"><img src="https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Agroforestry</h3><p class="tile-desc">Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/aquaculture/" class="expertise-tile" aria-label="Aquaculture"><img src="https://images.pexels.com/photos/14992906/pexels-photo-14992906.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Aquaculture</h3><p class="tile-desc">Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/biodiversity-and-ecosystem-resilience/" class="expertise-tile" aria-label="Biodiversity &amp; Ecosystem Resilience"><img src="https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Biodiversity &amp; Ecosystem Resilience</h3><p class="tile-desc">Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/sustainable-supply-chains/" class="expertise-tile" aria-label="Sustainable Supply Chains"><img src="https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Sustainable Supply Chains</h3><p class="tile-desc">Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/low-carbon-energy-and-biofuels/" class="expertise-tile" aria-label="Low Carbon Energy &amp; Biofuels"><img src="https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Low Carbon Energy &amp; Biofuels</h3><p class="tile-desc">Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/purpose-driven-food-brands-and-retailers/" class="expertise-tile" aria-label="Purpose-Driven Food Brands &amp; Retailers"><img src="https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Purpose-Driven Food Brands &amp; Retailers</h3><p class="tile-desc">Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+      <li><a href="/expertise/food-waste-prevention-diversion-recovery/" class="expertise-tile" aria-label="Food Waste: Prevention, Diversion &amp; Recovery"><img src="https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" loading="lazy" class="tile-bg-img"><div class="tile-overlay" aria-hidden="true"></div><div class="tile-content"><h3 class="tile-title">Food Waste: Prevention, Diversion &amp; Recovery</h3><p class="tile-desc">Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.</p><span class="tile-cta" aria-hidden="true">Learn More &rarr;</span></div></a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="integration-heading">
+  <div class="container integration-grid">
+    <div class="integration-copy">
+      <span class="eyebrow">Food &amp; Agribusiness Support</span>
+      <h2 id="integration-heading">Insights Studio &amp; Operating Partner</h2>
+      <p>Terra Nexus is an Innovation &amp; Insight Studio that invests in visionaries, changemakers, and doers that are willing to redefine our current food system.  We provide fully integrated support from industry executives and proprietary digital solutions to advise, manage, and operate climate programs.</p>
+    </div>
+    <img class="integration-diagram" src="apps/web/public/images/live-site/value-chain-diagram.png" alt="Diagram of the food and agribusiness value chain: inputs, agricultural production, commodity trading, ingredient and feed processing, food and beverage, and retail and distribution, connected to energy and biofuels and waste diversion, and enabled by environmental markets, technology and solution providers, private equity and impact investors.">
+  </div>
+</section>
+
+<section class="section" id="our-markets" aria-labelledby="markets-heading">
+  <div class="container">
+    <header class="section-header">
+      <span class="eyebrow">Our Markets</span>
+      <h2 id="markets-heading">We turn environmental performance into value the market will recognize</h2>
+    </header>
+    <div class="mech-diagram card card-static">
+      <div class="mech-diagram-grid">
+        <div class="mech-flow">
+          <p class="mech-flow-label">Environmental Performance</p>
+          <div class="mech-flow-rule" aria-hidden="true"></div>
+          <div class="mech-selector-panel">
+            <p class="mech-selector-panel-title">Commercial &amp; Decarbonization Pathways</p>
+            <ul class="mech-selector-stack" role="list" data-mech-selector="true">
+              <li>
+                <button type="button" class="mech-selector-card mech-selector-card-active" data-mech-select="m01" aria-pressed="false">
+                  <span class="mech-selector-num">01</span>
+                  <span class="mech-selector-title">Carbon &amp; Ecosystem Credits</span>
+                  <span class="mech-selector-carrier">As a quantified environmental asset</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="mech-selector-card mech-selector-card-active" data-mech-select="m02" aria-pressed="false">
+                  <span class="mech-selector-num">02</span>
+                  <span class="mech-selector-title">Scope 3 &amp; Insets</span>
+                  <span class="mech-selector-carrier">As an outcome connected to the value chain</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="mech-selector-card mech-selector-card-active" data-mech-select="m03" aria-pressed="false">
+                  <span class="mech-selector-num">03</span>
+                  <span class="mech-selector-title">Product &amp; Commodity Claims</span>
+                  <span class="mech-selector-carrier">As an attribute of the physical product</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="mech-selector-card mech-selector-card-active" data-mech-select="m04" aria-pressed="false">
+                  <span class="mech-selector-num">04</span>
+                  <span class="mech-selector-title">Environmental Attribute Certificates</span>
+                  <span class="mech-selector-carrier">As a certificate conveying the attribute</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div class="mech-flow-rule" aria-hidden="true"></div>
+          <p class="mech-flow-label">Credible Claim &amp; Market Value</p>
+        </div>
+
+        <div class="mech-right">
+          <div class="mech-overview-grid" data-mech-overview-grid="true">
+          <div class="mech-overview-cell">
+            <span class="mech-selector-num">01</span>
+            <h3 class="mech-selector-title mech-overview-heading">Carbon &amp; Ecosystem Credits</h3>
+            <p class="mech-overview-tagline">Turn verified environmental outcomes into market-ready assets.</p>
+            <div class="mech-examples mech-overview-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Carbon reductions · Carbon removals · Agricultural carbon · Nature-based credits · Biodiversity · Water · Other ecosystem-service markets</p>
+            </div>
+          </div>
+          <div class="mech-overview-cell">
+            <span class="mech-selector-num">02</span>
+            <h3 class="mech-selector-title mech-overview-heading">Scope 3 &amp; Insets</h3>
+            <p class="mech-overview-tagline">Create and account for environmental value inside the value chain.</p>
+            <div class="mech-examples mech-overview-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Scope 3 reductions · Scope 3 removals · Insets · Supplier interventions · Regenerative agriculture programs · Low-carbon sourcing · Supply-shed programs · Value-chain decarbonization</p>
+            </div>
+          </div>
+          <div class="mech-overview-cell">
+            <span class="mech-selector-num">03</span>
+            <h3 class="mech-selector-title mech-overview-heading">Product &amp; Commodity Claims</h3>
+            <p class="mech-overview-tagline">Make environmental performance part of what is bought and sold.</p>
+            <div class="mech-examples mech-overview-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Low-carbon products · Low-CI commodities · Low-carbon feedstocks and fuels · Certified commodities · Regenerative products · Product carbon footprints · Responsible sourcing claims</p>
+            </div>
+          </div>
+          <div class="mech-overview-cell">
+            <span class="mech-selector-num">04</span>
+            <h3 class="mech-selector-title mech-overview-heading">Environmental Attribute Certificates</h3>
+            <p class="mech-overview-tagline">Convey environmental value when physical supply alone cannot.</p>
+            <div class="mech-examples mech-overview-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Low-carbon commodity certificates · Low-carbon material certificates · Agricultural environmental attributes · Fuel attributes · Sustainable aviation fuel certificates · Renewable-energy attributes · Book-and-claim markets</p>
+            </div>
+          </div>
+          </div>
+
+          <div class="mech-detail-panel" aria-live="polite" data-mech-detail-panel="true" hidden="hidden">
+          <div class="mech-detail-content" data-mech-detail="m01">
+            <p class="mech-detail-deck">Turn verified environmental outcomes into market-ready assets.</p>
+            <div class="mech-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Carbon reductions · Carbon removals · Agricultural carbon · Nature-based credits · Biodiversity · Water · Other ecosystem-service markets</p>
+            </div>
+            <div class="mech-detail-body">
+              <p>A credit is a unit. Once a quantified outcome has been issued as one, it can be owned, transferred, priced, retired, and reported under a defined set of market rules.</p>
+              <p>Carbon is the mature case, where a credit stands for a verified reduction or removal. The same structure is now being extended to biodiversity, water, habitat, and soil, with real variation in how rigorously it holds.</p>
+              <p>Terra Nexus works the full length of the asset: market and methodology strategy, development, quantification, verification, issuance, valuation, transaction, and the accounting that has to survive scrutiny afterward.</p>
+            </div>
+          </div>
+          <div class="mech-detail-content" data-mech-detail="m02" hidden="hidden">
+            <p class="mech-detail-deck">Create and account for environmental value inside the value chain.</p>
+            <div class="mech-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Scope 3 reductions · Scope 3 removals · Insets · Supplier interventions · Regenerative agriculture programs · Low-carbon sourcing · Supply-shed programs · Value-chain decarbonization</p>
+            </div>
+            <div class="mech-detail-body">
+              <p>Some outcomes are worth more where they happen. A reduction at a supplier's farm, mill, or plant can count toward a corporate target, a procurement program, or a customer commitment, provided it stays attached to that chain.</p>
+              <p>Generating the outcome is the straightforward half. The harder half is settling who may claim it, how it is quantified and allocated, how chain of custody is held, how competing claims are ruled out, and how the performance enters a corporate inventory without being challenged later.</p>
+              <p>Terra Nexus designs those systems, then helps operate, verify, and maintain them.</p>
+            </div>
+          </div>
+          <div class="mech-detail-content" data-mech-detail="m03" hidden="hidden">
+            <p class="mech-detail-deck">Make environmental performance part of what is bought and sold.</p>
+            <div class="mech-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Low-carbon products · Low-CI commodities · Low-carbon feedstocks and fuels · Certified commodities · Regenerative products · Product carbon footprints · Responsible sourcing claims</p>
+            </div>
+            <div class="mech-detail-body">
+              <p>Environmental performance can differentiate a product, ingredient, feedstock, fuel, material, or commodity, but only as far as the evidence behind it reaches.</p>
+              <p>The useful claim is rarely that something is sustainable. It is narrower: which characteristic can be demonstrated, how was it quantified, how is it tied to this particular product, and what may the producer or buyer say about it.</p>
+              <p>Terra Nexus connects environmental data, lifecycle assessment, traceability, chain of custody, and assurance to claims that hold up in front of a buyer, an auditor, or a regulator.</p>
+            </div>
+          </div>
+          <div class="mech-detail-content" data-mech-detail="m04" hidden="hidden">
+            <p class="mech-detail-deck">Convey environmental value when physical supply alone cannot.</p>
+            <div class="mech-examples">
+              <span class="mech-examples-label">Examples</span>
+              <p class="mech-examples-text">Low-carbon commodity certificates · Low-carbon material certificates · Agricultural environmental attributes · Fuel attributes · Sustainable aviation fuel certificates · Renewable-energy attributes · Book-and-claim markets</p>
+            </div>
+            <div class="mech-detail-body">
+              <p>An Environmental Attribute Certificate, or EAC, carries a verified characteristic of how a commodity, material, fuel, or energy source was produced. Depending on the market, that attribute can transfer separately from the physical product, so a buyer can still procure differentiated production where segregation or physical traceability is impractical.</p>
+              <p>Separating the attribute from the molecule puts all the weight on the architecture. Ownership, quantification, issuance, chain of custody, transfer, retirement, exclusivity, accounting, and claim language have to agree with one another. Where they do not, the value leaks or the claim will not stand.</p>
+              <p>These markets are still forming. Terra Nexus helps clients design, evaluate, enter, operate, and commercialize them.</p>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="capabilities" aria-labelledby="approach-heading">
+  <div class="container">
+    <header class="section-header split-header">
+      <span class="eyebrow split-header-eyebrow">How We Work</span>
+      <div class="split-header-title"><h2 id="approach-heading">Terra Nexus Manages the Full Development Lifecycle</h2></div>
+      <div class="split-header-lead"><p class="section-lead">Most companies lack the dedicated resources, and specialized knowledge that's required to navigate today's complex regulations and market dynamics.  This leads to frequent delays, expensive vendor lock-in, and unmanageable programs that fail.</p></div>
+    </header>
+
+    <div class="approach-card">
+      <div style="position:relative;z-index:1">
+        <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);letter-spacing:.14em;text-transform:uppercase;color:var(--c-accent-400)">Approach</div>
+        <div aria-hidden="true" style="height:1px;background:rgba(255,255,255,.14);margin:var(--space-3) 0 var(--space-6)"></div>
+      </div>
+
+      <div class="approach-rail">
+        <div class="approach-track" role="tablist" aria-label="Approach steps">
+          <button type="button" class="approach-stop is-active" role="tab" aria-selected="true" aria-controls="approach-panel" id="approach-tab-0" data-stage="evaluate"><span class="dot" aria-hidden="true">01</span><span class="label">Evaluate</span></button>
+          <button type="button" class="approach-stop" role="tab" aria-selected="false" aria-controls="approach-panel" id="approach-tab-1" data-stage="design"><span class="dot" aria-hidden="true">02</span><span class="label">Design</span></button>
+          <button type="button" class="approach-stop" role="tab" aria-selected="false" aria-controls="approach-panel" id="approach-tab-2" data-stage="build"><span class="dot" aria-hidden="true">03</span><span class="label">Build</span></button>
+          <button type="button" class="approach-stop" role="tab" aria-selected="false" aria-controls="approach-panel" id="approach-tab-3" data-stage="launch"><span class="dot" aria-hidden="true">04</span><span class="label">Scale</span></button>
+          <button type="button" class="approach-stop" role="tab" aria-selected="false" aria-controls="approach-panel" id="approach-tab-4" data-stage="operate"><span class="dot" aria-hidden="true">05</span><span class="label">Operate</span></button>
+          <button type="button" class="approach-stop" role="tab" aria-selected="false" aria-controls="approach-panel" id="approach-tab-5" data-stage="commercialize"><span class="dot" aria-hidden="true">06</span><span class="label">Claim</span></button>
+        </div>
+      </div>
+
+      <div class="approach-panel" id="approach-panel" role="tabpanel" aria-labelledby="approach-tab-0" style="position:relative;z-index:1">
+        <p class="approach-desc"><strong>{{ stageTitle }}</strong> — {{ stageDescription }}</p>
+
+        <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);letter-spacing:.14em;text-transform:uppercase;color:var(--c-accent-400)">Focus</div>
+        <div aria-hidden="true" style="height:1px;background:rgba(255,255,255,.14);margin:var(--space-3) 0 var(--space-6)"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-4);margin-bottom:var(--space-10)">
+          <div style="min-width:0;display:flex;flex-direction:column">
+            <div style="padding-bottom:var(--space-3);border-bottom:2px solid rgba(154,209,220,.5)">
+              <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#fff;white-space:nowrap">Suppliers</span>
+            </div>
+            <div style="flex:1;margin-top:var(--space-4);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-lg);padding:var(--space-5)">
+              <div style="font-size:11px;font-weight:var(--font-semibold);letter-spacing:.12em;text-transform:uppercase;color:#a8d0db">Value Chain Programs</div>
+              <p style="margin:var(--space-3) 0 0;font-size:var(--text-sm);line-height:var(--line-relaxed);color:#fff;text-wrap:pretty">{{ focusSuppliers }}</p>
+            </div>
+          </div>
+          <div style="min-width:0;display:flex;flex-direction:column">
+            <div style="padding-bottom:var(--space-3);border-bottom:2px solid rgba(154,209,220,.5)">
+              <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#fff;white-space:nowrap">Internal</span>
+            </div>
+            <div style="flex:1;margin-top:var(--space-4);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-lg);padding:var(--space-5)">
+              <div style="font-size:11px;font-weight:var(--font-semibold);letter-spacing:.12em;text-transform:uppercase;color:#a8d0db">Corporate Inventory Improvements</div>
+              <p style="margin:var(--space-3) 0 0;font-size:var(--text-sm);line-height:var(--line-relaxed);color:#fff;text-wrap:pretty">{{ focusInternal }}</p>
+            </div>
+          </div>
+          <div style="min-width:0;display:flex;flex-direction:column">
+            <div style="padding-bottom:var(--space-3);border-bottom:2px solid rgba(154,209,220,.5)">
+              <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#fff;white-space:nowrap">Customers</span>
+            </div>
+            <div style="flex:1;margin-top:var(--space-4);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-lg);padding:var(--space-5)">
+              <div style="font-size:11px;font-weight:var(--font-semibold);letter-spacing:.12em;text-transform:uppercase;color:#a8d0db">Low Impact Products &amp; Services</div>
+              <p style="margin:var(--space-3) 0 0;font-size:var(--text-sm);line-height:var(--line-relaxed);color:#fff;text-wrap:pretty">{{ focusCustomers }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);letter-spacing:.14em;text-transform:uppercase;color:var(--c-accent-400)">Function</div>
+        <div aria-hidden="true" style="height:1px;background:rgba(255,255,255,.14);margin:var(--space-3) 0 var(--space-6)"></div>
+        <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
+          <a href="/capabilities/strategy-and-innovation/" class="approach-cap" data-cap="strategy-and-innovation">
+            <h4>Strategy &amp; Innovation</h4>
+            <p>Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.</p>
+          </a>
+          <a href="/capabilities/financial-investments-and-new-venture-development/" class="approach-cap" data-cap="financial-investments-and-new-venture-development">
+            <h4>Financial Investments &amp; New Venture Development</h4>
+            <p>Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.</p>
+          </a>
+          <a href="/capabilities/sustainable-supply-chain-and-operations/" class="approach-cap" data-cap="sustainable-supply-chain-and-operations">
+            <h4>Sustainable Supply Chain &amp; Operations</h4>
+            <p>Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.</p>
+          </a>
+          <a href="/capabilities/corporate-sustainability/" class="approach-cap" data-cap="corporate-sustainability">
+            <h4>Corporate Sustainability</h4>
+            <p>Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.</p>
+          </a>
+          <a href="/capabilities/carbon-and-ecosystem-services/" class="approach-cap" data-cap="carbon-and-ecosystem-services">
+            <h4>Carbon &amp; Ecosystem Services</h4>
+            <p>Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <p class="approach-followup">As an integrated services provider we create long-term continuity and interoperability between partners.  We proactively manage audit and marketplace risks throughout the full commercialization lifecycle.  That means high-quality, commercially viable, and audit-ready assets from the start.</p>
+
+    <div class="section-cta"><a href="/capabilities/" class="btn btn-primary">Explore Our Approach &amp; Capabilities</a></div>
+  </div>
+</section>
+
+<section class="section" id="who-we-work-with" aria-labelledby="audiences-heading">
+  <div class="container">
+    <header class="section-header split-header">
+      <span class="eyebrow split-header-eyebrow">Who We Work With</span>
+      <div class="split-header-title"><h2 id="audiences-heading">We Work Across the Food and Ag Value Chain to Unlock Shared Value</h2></div>
+      <div class="split-header-lead"><p class="section-lead"> Terra Nexus integrates proven solutions at every node in the food and agribusiness value chain to enhance transparency, facilitate collaboration, and establish the market mechanisms needed to build trust and reward performance across the entire food system. Because what you buy matters. Who you buy it from matters. Where it comes from, how it was produced, how it was delivered, and how it was consumed—it all matters.</p></div>
+    </header>
+
+    <div class="segment-slider" style="margin-bottom:var(--space-8)">
+      <div class="segment-slider-nav">
+        <span class="segment-slider-label">By Market Role</span>
+        <div class="segment-tabs" role="tablist" aria-label="Market roles" aria-orientation="vertical" style="margin-bottom:var(--space-6)">
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-producers" data-role="producers">Developers &amp; Producers</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-buyers" data-role="buyers">Buyers</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-enablers" data-role="enablers">Enabling Infrastructure</button>
+        </div>
+        <span class="segment-slider-label">By Value-Chain Segment</span>
+        <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
+          <button type="button" class="segment-tab is-active" role="tab" aria-selected="true" aria-controls="segment-panel" id="segment-tab-inputs-companies" data-segment="inputs-companies">Inputs Companies</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-agricultural-producers" data-segment="agricultural-producers">Agricultural Producers &amp; Integrated Protein Companies</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-commodity-traders" data-segment="commodity-traders">Commodity Traders</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-ingredient-feed-processors" data-segment="ingredient-feed-processors">Ingredient &amp; Feed Processors</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-food-beverage-companies" data-segment="food-beverage-companies">Food &amp; Beverage Companies</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-food-retail-distribution" data-segment="food-retail-distribution">Food Retail &amp; Distribution</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-energy-biofuels-refiners" data-segment="energy-biofuels-refiners">Energy &amp; Biofuels Refiners</button>
+          <button type="button" class="segment-tab" role="tab" aria-selected="false" aria-controls="segment-panel" id="segment-tab-food-waste-prevention-diversion-recovery" data-segment="food-waste-prevention-diversion-recovery">Food Waste Prevention, Diversion &amp; Recovery</button>
+        </div>
+      </div>
+
+      <div class="segment-slider-panel" id="segment-panel" role="tabpanel" aria-labelledby="segment-tab-inputs-companies">
+        <h3 style="color:#fff;font-size:var(--text-2xl);line-height:var(--line-snug);margin:0">{{ segName }}</h3>
+        <p style="margin:var(--space-3) 0 0;font-size:var(--text-base);line-height:var(--line-relaxed);color:#d7deef;max-width:44rem;text-wrap:pretty">{{ segNode }}</p>
+
+        <div style="margin-top:var(--space-5);background:rgba(231,215,127,.08);border:1px solid rgba(231,215,127,.3);border-radius:var(--radius-lg);padding:var(--space-5)">
+          <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);letter-spacing:.12em;text-transform:uppercase;color:var(--c-accent-400)">The opportunity</div>
+          <p style="margin:var(--space-2) 0 0;font-size:var(--text-base);line-height:var(--line-relaxed);color:#fff;text-wrap:pretty">{{ segOpportunity }}</p>
+        </div>
+
+        <div style="margin-top:var(--space-6);padding-top:var(--space-6);border-top:1px solid rgba(255,255,255,.12)">
+          <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);letter-spacing:.12em;text-transform:uppercase;color:#a8d0db;margin-bottom:var(--space-4)">Example Activities (Build, Buy, Comply, or Commercialize)</div>
+          <div style="display:grid;gap:var(--space-2)">
+            <sc-for list="{{ activities }}" as="act" hint-placeholder-count="5">
+              <details class="act-row" style="background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-md)">
+                <summary style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4)">
+                  <span style="flex:1;min-width:0;font-size:var(--text-sm);font-weight:var(--font-semibold);color:#fff;text-wrap:pretty">{{ act.name }}</span>
+                  <span class="act-mark" aria-hidden="true" style="display:block;flex:none;font-size:var(--text-lg);line-height:1;color:var(--c-accent-400)">+</span>
+                </summary>
+                <p style="margin:0;padding:0 var(--space-4) var(--space-4);font-size:var(--text-xs);line-height:1.65;color:#a9b6d6;text-wrap:pretty">{{ act.desc }}</p>
+              </details>
+            </sc-for>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section-cta"><a href="/who-we-work-with/" class="btn btn-primary">See Who We Work With</a></div>
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="digital-solutions-heading">
+  <div class="container digital-solutions-grid">
+    <img class="digital-solutions-mockup" src="apps/web/public/images/live-site/terranexus-slate-family-16x9-dark.png" alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown.">
+    <div class="digital-solutions-copy">
+      <span class="eyebrow">Insights Designed to Deliver</span>
+      <h2 id="digital-solutions-heading">Digital Solutions that Catalyze Change</h2>
+      <p>Delivery is in the details.  It's not what you do, but where, how, and who you partner with that drives results. That's why leading consulting firms and solution providers utilize our expertise to close the gap between advice and action.</p>
+      <p>From digital MRV to next generation verification systems, we provide fit-for-purpose solutions that build market integrity.  Every verifiable claim or GHG translation is supported by investment level emissions accounting that's expected by 3rd party verifiers, regulators, investors, and premium buyers.</p>
+      <a href="/digital-solutions/" class="btn btn-primary">See our Digital Solutions</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="track-record-heading">
+  <div class="container">
+    <header class="section-header split-header">
+      <span class="eyebrow split-header-eyebrow">Our Track Record</span>
+      <div class="split-header-title"><h2 id="track-record-heading">Proven Portfolio of Successful Impact</h2></div>
+      <div class="split-header-lead"><p class="section-lead">There is absolutely no legitimate reason that creating a better planet should be so damn complicated, especially when it means the world to so many.</p></div>
+    </header>
+    <div class="stat-strip">
+      <div class="stat-item"><p class="stat-value stat-value-md">$3B+</p><p class="stat-label">Cumulative commercial value created for clients since Terra Nexus started</p></div>
+      <div class="stat-item"><p class="stat-value stat-value-md">25+</p><p class="stat-label">Global Projects Across 25+ Countries</p></div>
+      <div class="stat-item"><p class="stat-value stat-value-md">15+</p><p class="stat-label">Commodities worked with</p></div>
+      <div class="stat-item"><p class="stat-value stat-value-md">20+</p><p class="stat-label">20+ Sustainable Food Systems Certifications</p></div>
+      <div class="stat-item"><p class="stat-value stat-value-md">10+</p><p class="stat-label">10+ Carbon Registries Focused on Food, Agriculture, Land Management, Energy, &amp; Fuels</p></div>
+      <div class="stat-item"><p class="stat-value stat-value-md">5M+</p><p class="stat-label">Acres of regenerative ecosystems</p></div>
+    </div>
+    <div class="section-cta"><a href="/about/" class="btn btn-primary">Learn More About Us</a></div>
+  </div>
+</section>
+
+<section class="section section-dark" aria-labelledby="final-cta-heading">
+  <div class="container text-center">
+    <h2 id="final-cta-heading">Build the Right Path from Opportunity to Value</h2>
+    <p class="cta-description">Whether the starting point is a sourcing challenge, environmental program, technology, investment, new product, regulatory opportunity, or operating problem, Terra Nexus helps determine what should happen next to turn potential into progress.</p>
+    <div class="hero-actions">
+      <a href="/contact/" class="btn btn-primary">Discuss Your Opportunity</a>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--color-dark);border-top:1px solid rgba(255,255,255,.1);padding-block:var(--space-12)">
+  <div class="container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-8)">
+    <div>
+      <img src="apps/web/public/brand/logo-wordmark-dark.png" alt="Terra Nexus" style="height:30px;width:auto">
+      <p style="color:#a9b6d6;font-size:var(--text-sm);line-height:var(--line-relaxed);margin:var(--space-4) 0 0;max-width:30rem">An innovation and insights studio at the intersection of food and climate. We advise, manage, and operate commercial sustainability programs at scale for a more resilient, sustainable, and prosperous food system.</p>
+    </div>
+    <div>
+      <h3 style="color:#fff;font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;margin:0 0 var(--space-3)">Explore</h3>
+      <div class="topnav" style="display:grid;gap:var(--space-2)">
+        <a href="/expertise/">Expertise</a><a href="/capabilities/">Capabilities</a><a href="/who-we-work-with/">Who We Work With</a><a href="/case-studies/">Case Studies</a>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#fff;font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;margin:0 0 var(--space-3)">Company</h3>
+      <div class="topnav" style="display:grid;gap:var(--space-2)">
+        <a href="/about/">About</a><a href="/contact/">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid rgba(255,255,255,.1);color:#8f9dc5;font-size:var(--text-xs)">© 2026 Terra Nexus. All rights reserved.</div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280}}">
+class Component extends DCLogic {
+  // Default view, synchronously available so the first paint is never empty.
+  fallback = {
+    stages: [{ id: "evaluate", n: "01", title: "Evaluate the Opportunity",
+      description: "Decide where the next dollar goes before committing to a path. A real environmental opportunity still has to fit the company's footprint, its influence over suppliers, what customers require, where the accounting boundary sits, and what the organization can actually execute.",
+      core: "Where can the company create the most useful combination of environmental and commercial value?",
+      developer: "Find where to create a product, outcome, credit, certificate or differentiated supply that customers will actually buy.",
+      buyer: "Compare internal investments, supplier programs, differentiated supply, credits and attributes based on what the company can actually use." }],
+    capabilities: [
+      { byStage: { evaluate: ["Market and customer landscape", "Strategic opportunity prioritization", "Growth and differentiation thesis"] } },
+      { byStage: { evaluate: ["Investment and transaction diligence", "Valuation and scenario analysis", "Capital-allocation case"] } },
+      { byStage: { evaluate: ["Supply-shed and sourcing analysis", "Operational baseline", "Supplier opportunity screen"] } },
+      { byStage: { evaluate: ["Target and inventory alignment", "Materiality and prioritization", "Accounting-use screen"] } },
+      { byStage: { evaluate: ["Protocol / methodology screen", "Credit, inset and EAC quality diligence", "Environmental-market alternatives"] } },
+    ],
+    objects: [
+      { id: "project", name: "A value chain program", short: "Create verified outcomes upstream in the Scope 3 value chain" },
+      { id: "inventory", name: "A corporate inventory", short: "Decarbonize your own Scope 1 and 2 footprint" },
+      { id: "product", name: "A product or commodity", short: "Sell a product carrying the performance characteristics buyers want" },
+    ],
+    objectViews: {
+      project: { evaluate: "Whether a program of this type, in this geography, under this methodology, produces outcomes worth developing." },
+      inventory: { evaluate: "Which reductions in your own operations are worth funding first, and which ones you will actually be able to count." },
+      product: { evaluate: "Whether the performance can be attached to the product, and whether a customer pays for it once it is." },
+    },
+    marketRoles: [],
+    segments: [{
+      slug: "inputs-companies", name: "Inputs Companies",
+      node: "Seed, crop protection, biologicals, nutrients, animal health, feed additive and agricultural technology suppliers.",
+      opportunity: "The environmental benefit of an input shows up on a customer's operation and usually gets claimed further downstream. Capturing it means proving the effect at field or herd level and connecting it to the economics of everyone who touches the result.",
+      activities: [
+        { name: "Build a practice-based program around your technology", desc: "Enroll customers, quantify what the product does in the field, and keep the resulting evidence instead of passing it downstream for free." },
+        { name: "Position the product inside a downstream supplier program", desc: "Make a biological, additive or nutrient tool the intervention a trader or brand is already paying to fund upstream." },
+        { name: "Substantiate product-level claims", desc: "Prove what the product does at the precision a customer's auditor will actually test." },
+      ],
+    }],
+  };
+
+  // Which capability areas each phase draws on — from index.astro's approachSteps.
+  ALL_CAPS = ["strategy-and-innovation", "financial-investments-and-new-venture-development", "sustainable-supply-chain-and-operations", "corporate-sustainability", "carbon-and-ecosystem-services"];
+  stageCaps = {
+    evaluate: ["strategy-and-innovation"],
+    design: ["strategy-and-innovation", "financial-investments-and-new-venture-development"],
+    build: ["financial-investments-and-new-venture-development", "sustainable-supply-chain-and-operations", "corporate-sustainability"],
+    launch: ["sustainable-supply-chain-and-operations", "corporate-sustainability", "carbon-and-ecosystem-services"],
+    operate: null,
+    commercialize: null,
+  };
+
+  state = { data: null, stage: "evaluate", pick: { kind: "segment", key: "inputs-companies" } };
+
+  componentDidMount() {
+    import("./data/homepage-content.js").then((m) => {
+      this.setState({ data: { stages: m.stages, capabilities: m.capabilities, objects: m.objects, objectViews: m.objectViews, segments: m.segments, marketRoles: m.marketRoles } });
+    });
+    document.addEventListener("click", this.onClick);
+    document.addEventListener("keydown", this.onKeyDown);
+    this.roving();
+    this.syncCaps(this.state.stage);
+    this.startHero();
+  }
+
+  // Transparent-over-photo header seam and the scroll-driven star, following
+  // the behavior documented in index.astro's own hero script.
+  startHero() {
+    document.body.classList.add("has-photo-hero");
+    const header = document.getElementById("site-header");
+    const hero = document.querySelector(".photo-hero");
+    const band = document.querySelector(".photo-hero-band");
+    const star = document.querySelector(".photo-hero-star");
+    if (!header || !hero) return;
+    const syncHeight = () => { hero.style.marginTop = "-" + header.offsetHeight + "px"; };
+    syncHeight();
+    window.addEventListener("resize", syncHeight);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ramp = (v, a, b) => Math.min(Math.max((v - a) / (b - a), 0), 1);
+    const loop = () => {
+      if (band) {
+        const solidifyAt = band.getBoundingClientRect().bottom + window.scrollY - header.offsetHeight;
+        document.body.classList.toggle("past-hero", window.scrollY >= solidifyAt);
+      }
+      if (star && !reduce) {
+        const t = Math.min(Math.max(window.scrollY / (hero.offsetHeight || 1), 0), 1.3) * 100;
+        const travel = ramp(t, 10, 85);
+        const eased = travel * travel * (3 - 2 * travel);
+        star.style.setProperty("--star-tx", (-eased * window.innerWidth * 0.55).toFixed(1) + "px");
+        star.style.setProperty("--star-ty", (-eased * window.innerHeight * 0.85).toFixed(1) + "px");
+        star.style.setProperty("--star-scale", (1 + eased * 1.1).toFixed(3));
+        star.style.setProperty("--star-opacity", Math.min(ramp(t, 0, 6), 1 - ramp(t, 88, 98)).toFixed(3));
+      }
+      this.heroFrame = window.requestAnimationFrame(loop);
+    };
+    this.heroFrame = window.requestAnimationFrame(loop);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("click", this.onClick);
+    document.removeEventListener("keydown", this.onKeyDown);
+  }
+
+  onClick = (e) => {
+    // Mechanism selector, variant="overview": first click swaps the 2x2 grid
+    // for the deep-dive panel; re-clicking the active card returns to the grid.
+    const mech = e.target.closest("[data-mech-select]");
+    if (mech) {
+      const grid = document.querySelector("[data-mech-overview-grid]");
+      const panel = document.querySelector("[data-mech-detail-panel]");
+      const cards = Array.from(document.querySelectorAll("[data-mech-select]"));
+      if (grid && panel && mech.getAttribute("aria-pressed") === "true") {
+        cards.forEach((c) => { c.classList.add("mech-selector-card-active"); c.setAttribute("aria-pressed", "false"); });
+        grid.hidden = false;
+        panel.hidden = true;
+        return;
+      }
+      cards.forEach((c) => {
+        c.classList.remove("mech-selector-card-active");
+        c.setAttribute("aria-pressed", String(c === mech));
+      });
+      document.querySelectorAll("[data-mech-detail]").forEach((p) => { p.hidden = p.dataset.mechDetail !== mech.dataset.mechSelect; });
+      if (grid && panel) { grid.hidden = true; panel.hidden = false; }
+      return;
+    }
+    const stage = e.target.closest("[data-stage]");
+    if (stage) { this.selectStage(stage.dataset.stage); return; }
+    const tab = e.target.closest("[data-segment],[data-role]");
+    if (tab) {
+      document.querySelectorAll("[data-segment],[data-role]").forEach((b) => {
+        const on = b === tab;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-selected", String(on));
+        if (on) document.getElementById("segment-panel")?.setAttribute("aria-labelledby", b.id);
+      });
+      this.setState({
+        pick: tab.dataset.role
+          ? { kind: "role", key: tab.dataset.role }
+          : { kind: "segment", key: tab.dataset.segment },
+      });
+    }
+  };
+
+  onKeyDown = (e) => {
+    if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+    const el = e.target.closest(".approach-stop");
+    if (!el) return;
+    const items = Array.from(document.querySelectorAll(".approach-stop"));
+    const i = items.indexOf(el);
+    let next = i;
+    if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = items.length - 1;
+    else if (e.key === "ArrowRight" || e.key === "ArrowDown") next = (i + 1) % items.length;
+    else next = (i - 1 + items.length) % items.length;
+    e.preventDefault();
+    items[next].focus();
+    this.selectStage(items[next].dataset.stage);
+  };
+
+  roving() {
+    document.querySelectorAll(".approach-stop").forEach((el) => el.setAttribute("tabindex", el.classList.contains("is-active") ? "0" : "-1"));
+  }
+
+  selectStage(stage) {
+    document.querySelectorAll(".approach-stop").forEach((s) => {
+      const on = s.dataset.stage === stage;
+      s.classList.toggle("is-active", on);
+      s.setAttribute("aria-selected", String(on));
+      if (on) document.getElementById("approach-panel")?.setAttribute("aria-labelledby", s.id);
+    });
+    this.roving();
+    this.syncCaps(stage);
+    this.setState({ stage });
+  }
+
+  syncCaps(stage) {
+    const grid = document.getElementById("approach-cap-grid");
+    if (!grid) return;
+    const caps = this.stageCaps[stage] || this.ALL_CAPS;
+    grid.querySelectorAll(".approach-cap").forEach((c) => c.classList.toggle("is-linked", caps.includes(c.dataset.cap)));
+    // Stage 06 closes the loop — sweep every card rather than filtering.
+    grid.classList.toggle("is-loop", stage === "commercialize");
+    grid.classList.toggle("is-filtering", stage !== "commercialize");
+  }
+
+  renderVals() {
+    const d = this.state.data || this.fallback;
+    const stage = d.stages.find((s) => s.id === this.state.stage) || d.stages[0];
+    const view = (id) => (d.objectViews[id] || {})[stage.id] || "";
+
+    const pick = this.state.pick;
+    const list = pick.kind === "role" ? (d.marketRoles || []) : d.segments;
+    const seg = list.find((s) => s.slug === pick.key) || d.segments[0];
+
+    return {
+      stageTitle: stage.title,
+      stageDescription: stage.description || "",
+      focusSuppliers: view("project"),
+      focusInternal: view("inventory"),
+      focusCustomers: view("product"),
+      segName: seg.name,
+      segNode: seg.node,
+      segOpportunity: seg.opportunity,
+      activities: seg.activities,
+    };
+  }
+}
+</script>
+</body>
+</html>

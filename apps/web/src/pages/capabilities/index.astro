@@ -3,15 +3,8 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import { capabilityAreas } from '../../data/lifecycle';
 const mode = getBuildMode();
-
-const capabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.' },
-  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
-];
 
 const workstreams = [
   { title: 'Evaluate the Opportunity', items: ['Market, customer, competitor, and landscape analysis', 'Business cases, economics, scenarios, and value allocation', 'Technology, methodology, partner, project, and transaction diligence', 'Build-buy-partner and investment decisions', 'Risk, feasibility, and strategic-fit assessment'] },
@@ -62,7 +55,7 @@ const workstreams = [
         <h2 id="delivery-heading">Our Delivery</h2>
       </header>
       <div class="card-grid">
-        {capabilities.map((cap) => (
+        {capabilityAreas.map((cap) => (
           <a href={`/capabilities/${cap.slug}/`} class="card-link">
             <article class="card">
               <h3>{cap.title}</h3>

@@ -14,6 +14,9 @@ import { getBuildMode } from '../lib/build-mode.js';
 import ClosingCta from '../components/ClosingCta.astro';
 import MechanismSelector from '../components/MechanismSelector.astro';
 import { marketMechanisms } from '../data/market-mechanisms';
+import { stages, capabilityAreas } from '../data/lifecycle';
+import { focusObjects, focusViews } from '../data/how-we-work';
+import { marketRoles, segments } from '../data/who-we-work-with';
 
 const mode = getBuildMode();
 
@@ -21,10 +24,10 @@ const mode = getBuildMode();
 // as the current homepage (approved 2026-08-10).
 const portfolioStats = [
   { value: '$3B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
-  { value: '25+', label: 'Global Projects Across 25+ Countries' },
+  { value: '25+', label: 'Global Projects Across Countries' },
   { value: '15+', label: 'Commodities worked with' },
-  { value: '20+', label: '20+ Sustainable Food Systems Certifications' },
-  { value: '10+', label: '10+ Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
+  { value: '20+', label: 'Sustainable Food Systems Certifications' },
+  { value: '10+', label: 'Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
   { value: '5M+', label: 'Acres of regenerative ecosystems' },
 ];
 
@@ -40,68 +43,28 @@ const expertiseAreas = [
   { title: 'Food Waste: Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.', heroImage: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1200' },
 ];
 
-const capabilities = [
-  { title: 'Strategy & Innovation', slug: 'strategy-and-innovation', description: 'Determine where to play, how to win, and how to create differentiated growth at the intersection of food and climate.' },
-  { title: 'Financial Investments & New Venture Development', slug: 'financial-investments-and-new-venture-development', description: 'Screen, value, fund, structure, incubate, acquire, and scale food, agriculture, climate, nature, and circularity opportunities.' },
-  { title: 'Sustainable Supply Chain & Operations', slug: 'sustainable-supply-chain-and-operations', description: 'Reduce impact, risk, cost, and volatility by changing what is sourced and how it is produced, moved, processed, used, and recovered.' },
-  { title: 'Corporate Sustainability', slug: 'corporate-sustainability', description: 'Set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance.' },
-  { title: 'Carbon & Ecosystem Services', slug: 'carbon-and-ecosystem-services', description: 'Create, access, value, verify, account for, manage, and commercialize environmental assets, attributes, credits, insets, offsets, and claims.' },
-];
-
-// Condensed for the homepage — full "Decisions We Help Resolve" / related expertise & capabilities
-// detail for each segment lives on /who-we-work-with/food-and-agribusiness-value-chain/#<slug>.
-const valueChainSegments = [
-  { name: 'Inputs Companies', slug: 'inputs-companies', description: 'Strategy, market entry, product innovation, customer insight, technology diligence, sustainability positioning, partnerships, claims, and commercialization for agricultural and animal-production solutions.', image: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Agricultural Producers & Integrated Protein Companies', slug: 'agricultural-producers', description: 'Program opportunity, producer economics, fit-for-place change, technology, measurement, incentives, traceability, commercialization, and buyer requirements.', image: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Commodity Traders', slug: 'commodity-traders', description: 'Market and program strategy, sourcing, producer engagement, traceability, data systems, environmental programs, commercialization, claims controls, managed operations, and diligence.', image: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Ingredient & Feed Processors', slug: 'ingredient-feed-processors', description: 'Sourcing, feed and ingredient strategy, process improvement, footprinting, traceability, low-emissions products, byproduct value, commercialization, and claims.', image: 'https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Food & Beverage Companies', slug: 'food-beverage-companies', description: 'Product and portfolio strategy, supplier programs, traceability, Scope 3 and insetting, footprinting, certification, claims, pricing, commercialization, and managed value-chain programs.', image: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Food Retail & Distribution', slug: 'food-retail-distribution', description: 'Responsible sourcing, category and supplier strategy, private-label propositions, traceability, customer insight, logistics, food-waste programs, claims, and collaboration.', image: 'https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Energy & Biofuels Refiners', slug: 'energy-biofuels-refiners', description: 'Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.', image: 'https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-  { name: 'Food Waste Prevention, Diversion & Recovery', slug: 'food-waste-prevention-diversion-recovery', description: 'Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.', image: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-];
-
-// Condensed for the homepage — the full workstream detail (bullet lists) lives on /capabilities/.
-const allCapSlugs = capabilities.map((cap) => cap.slug);
-const approachSteps = [
-  {
-    title: 'Evaluate the Opportunity',
-    short: 'Evaluate',
-    description: 'Assess the market, economics, and strategic fit before committing to a path.',
-    caps: ['strategy-and-innovation'],
-  },
-  {
-    title: 'Design the Program',
-    short: 'Design',
-    description: 'Define the commercial model, governance, and route to market.',
-    caps: ['strategy-and-innovation', 'financial-investments-and-new-venture-development'],
-  },
-  {
-    title: 'Build the Operating Infrastructure',
-    short: 'Build',
-    description: 'Stand up the workflows, data, and controls a program needs to run.',
-    caps: ['financial-investments-and-new-venture-development', 'sustainable-supply-chain-and-operations', 'corporate-sustainability'],
-  },
-  {
-    title: 'Launch and Scale',
-    short: 'Launch & Scale',
-    description: 'Pilot, prove, and expand across partners, geographies, and products.',
-    caps: ['sustainable-supply-chain-and-operations', 'corporate-sustainability', 'carbon-and-ecosystem-services'],
-  },
-  {
-    title: 'Manage Client-Owned Programs',
-    short: 'Manage & Verify',
-    description: 'Run the recurring operations, ledgers, and reporting clients own.',
-    caps: allCapSlugs,
-  },
-  {
-    title: 'Connect Performance to Claims and Market Value',
-    short: 'Unlock Shared Value',
-    description: 'Translate results into credible claims and commercial value. This step closes the loop — connecting performance back to the original opportunity to drive continuous improvement toward best-in-class performance and profitability.',
-    caps: allCapSlugs,
-    loop: true,
-  },
-];
+// Which capability areas (see data/lifecycle.ts) each lifecycle stage draws
+// on, keyed by stage id — unchanged from the previous approachSteps.caps
+// values. Title/description now come from data/lifecycle.ts's `stages`
+// (the full lifecycle definitions) instead of a separate local copy — see
+// that file's header comment for provenance.
+const allCapSlugs = capabilityAreas.map((cap) => cap.slug);
+const capsByStage: Record<string, string[]> = {
+  evaluate: ['strategy-and-innovation'],
+  design: ['strategy-and-innovation', 'financial-investments-and-new-venture-development'],
+  build: ['financial-investments-and-new-venture-development', 'sustainable-supply-chain-and-operations', 'corporate-sustainability'],
+  launch: ['sustainable-supply-chain-and-operations', 'corporate-sustainability', 'carbon-and-ecosystem-services'],
+  operate: allCapSlugs,
+  commercialize: allCapSlugs,
+};
+const approachSteps = stages.map((stage) => ({
+  id: stage.id,
+  title: stage.title,
+  short: stage.short,
+  description: stage.description,
+  caps: capsByStage[stage.id] ?? allCapSlugs,
+  loop: stage.id === 'commercialize',
+}));
 ---
 
 <SiteLayout
@@ -250,6 +213,8 @@ const approachSteps = [
       </header>
 
       <div class="approach-card">
+        <div class="approach-band-label">Approach</div>
+        <div class="approach-band-rule" aria-hidden="true"></div>
         <div class="approach-rail">
           <div class="approach-track" role="tablist" aria-label="Approach steps">
             {approachSteps.map((step, i) => (
@@ -261,7 +226,9 @@ const approachSteps = [
                 aria-selected={i === 0 ? 'true' : 'false'}
                 aria-controls="approach-panel"
                 id={`approach-tab-${i}`}
+                tabindex={i === 0 ? '0' : '-1'}
                 data-index={i}
+                data-stage={step.id}
                 data-loop={step.loop ? 'true' : 'false'}
                 data-caps={step.caps.join(',')}
                 data-desc={step.description}
@@ -279,8 +246,24 @@ const approachSteps = [
             <strong>{approachSteps[0].title}</strong> — {approachSteps[0].description}
           </p>
 
+          <div class="approach-band-label">Focus</div>
+          <div class="approach-band-rule" aria-hidden="true"></div>
+          <div class="approach-focus-grid" id="approach-focus-grid">
+            {focusObjects.map((obj) => (
+              <div class="approach-focus-item" data-focus={obj.id} data-views={JSON.stringify(focusViews[obj.id])}>
+                <div class="approach-focus-label"><span>{obj.label}</span></div>
+                <div class="approach-focus-card">
+                  <div class="approach-focus-eyebrow">{obj.name}</div>
+                  <p class="approach-focus-line">{focusViews[obj.id][approachSteps[0].id]}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="approach-band-label">Function</div>
+          <div class="approach-band-rule" aria-hidden="true"></div>
           <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
-            {capabilities.map((cap) => (
+            {capabilityAreas.map((cap) => (
               <a href={`/capabilities/${cap.slug}/`} class="approach-cap" data-cap={cap.slug} class:list={{ 'is-linked': approachSteps[0].caps.includes(cap.slug) }}>
                 <h4>{cap.title}</h4>
                 <p>{cap.description}</p>
@@ -298,27 +281,10 @@ const approachSteps = [
     </div>
   </section>
 
-  <!-- Digital Solutions -->
-  <section class="section section-alt" aria-labelledby="digital-solutions-heading">
-    <div class="container digital-solutions-grid">
-      <img
-        class="digital-solutions-mockup"
-        src="/images/live-site/terranexus-slate-family-16x9-dark.png"
-        alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown."
-      />
-      <div class="digital-solutions-copy">
-        <span class="eyebrow">Designed to Deliver</span>
-        <h2 id="digital-solutions-heading">Digital Solutions that Catalyze Change</h2>
-        <p>Delivery is in the details.  It's not what you do, but where, how, and who you partner with that drives results. That's why leading consulting firms and solution providers utilize our expertise to close the gap between advice and action.</p>
-        <p>From digital MRV to next generation verification systems, we provide fit-for-purpose solutions that build market integrity.  Every verifiable claim or GHG translation is supported by investment level emissions accounting that's expected by 3rd party verifiers, regulators, investors, and premium buyers.</p>
-        <a href="/digital-solutions/" class="btn btn-primary">See our Digital Solutions</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Who We Work With — moved here (owner request, 2026-08-18): now sits
-       between Digital Solutions and Our Track Record instead of between
-       Our Markets and Capabilities. -->
+  <!-- Who We Work With — two tab groups (By Market Role / By Value-Chain
+       Segment) sharing one roving-tabindex selection and one panel. Sits
+       between Our Markets/Capabilities and Digital Solutions (owner
+       request, 2026-08-18, preserved). -->
   <section class="section" id="who-we-work-with" aria-labelledby="audiences-heading">
     <div class="container">
       <header class="section-header split-header">
@@ -333,18 +299,39 @@ const approachSteps = [
 
       <div class="segment-slider">
         <div class="segment-slider-nav">
-          <span class="segment-slider-label">By Value-Chain Segment</span>
-          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
-            {valueChainSegments.map((seg, i) => (
+          <span class="segment-slider-label">By Market Role</span>
+          <div class="segment-tabs segment-tabs-roles" role="tablist" aria-label="Market roles" aria-orientation="vertical">
+            {marketRoles.map((role) => (
               <button
                 type="button"
-                class="segment-tab"
+                class="segment-tab wwt-tab"
+                role="tab"
+                aria-selected="false"
+                aria-controls="wwt-panel"
+                id={`wwt-tab-role-${role.slug}`}
+                data-kind="role"
+                data-key={role.slug}
+                tabindex="-1"
+              >
+                {role.name}
+              </button>
+            ))}
+          </div>
+
+          <span class="segment-slider-label">By Value-Chain Segment</span>
+          <div class="segment-tabs" role="tablist" aria-label="Value-chain segments" aria-orientation="vertical">
+            {segments.map((seg, i) => (
+              <button
+                type="button"
+                class="segment-tab wwt-tab"
                 class:list={{ 'is-active': i === 0 }}
                 role="tab"
                 aria-selected={i === 0 ? 'true' : 'false'}
-                aria-controls={`segment-panel-${seg.slug}`}
-                id={`segment-tab-${seg.slug}`}
-                data-index={i}
+                aria-controls="wwt-panel"
+                id={`wwt-tab-segment-${seg.slug}`}
+                data-kind="segment"
+                data-key={seg.slug}
+                tabindex={i === 0 ? '0' : '-1'}
               >
                 {seg.name}
               </button>
@@ -353,29 +340,52 @@ const approachSteps = [
         </div>
 
         <div class="segment-slider-panel">
-          <div class="segment-frame">
-            {valueChainSegments.map((seg, i) => (
-              <div
-                class="segment-slide"
-                class:list={{ 'is-active': i === 0 }}
-                id={`segment-panel-${seg.slug}`}
-                role="tabpanel"
-                aria-labelledby={`segment-tab-${seg.slug}`}
-              >
-                <img
-                  src={seg.image}
-                  alt=""
-                  aria-hidden="true"
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  class="segment-slide-img"
-                />
-                <div class="segment-slide-copy">
-                  <h3>{seg.name}</h3>
-                  <p>{seg.description}</p>
-                  <a href={`/who-we-work-with/food-and-agribusiness-value-chain/#${seg.slug}`} class="segment-explore">
-                    Explore
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                  </a>
+          <div class="wwt-panel" id="wwt-panel" role="tabpanel" aria-labelledby={`wwt-tab-segment-${segments[0].slug}`}>
+            {marketRoles.map((role) => (
+              <div class="wwt-slide" data-kind="role" data-key={role.slug}>
+                <h3>{role.name}</h3>
+                <p class="wwt-node">{role.node}</p>
+                <div class="wwt-opportunity">
+                  <div class="wwt-opportunity-label">The Opportunity</div>
+                  <p>{role.opportunity}</p>
+                </div>
+                <div class="wwt-activities">
+                  <div class="wwt-activities-label">Example Activities (Build, Buy, Comply, or Commercialize)</div>
+                  <div class="wwt-activities-list">
+                    {role.activities.map((act) => (
+                      <details class="wwt-activity">
+                        <summary>
+                          <span class="wwt-activity-name">{act.name}</span>
+                          <span class="wwt-activity-mark" aria-hidden="true">+</span>
+                        </summary>
+                        <p class="wwt-activity-desc">{act.desc}</p>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {segments.map((seg, i) => (
+              <div class="wwt-slide" class:list={{ 'is-active': i === 0 }} data-kind="segment" data-key={seg.slug}>
+                <h3>{seg.name}</h3>
+                <p class="wwt-node">{seg.node}</p>
+                <div class="wwt-opportunity">
+                  <div class="wwt-opportunity-label">The Opportunity</div>
+                  <p>{seg.opportunity}</p>
+                </div>
+                <div class="wwt-activities">
+                  <div class="wwt-activities-label">Example Activities (Build, Buy, Comply, or Commercialize)</div>
+                  <div class="wwt-activities-list">
+                    {seg.activities.map((act) => (
+                      <details class="wwt-activity">
+                        <summary>
+                          <span class="wwt-activity-name">{act.name}</span>
+                          <span class="wwt-activity-mark" aria-hidden="true">+</span>
+                        </summary>
+                        <p class="wwt-activity-desc">{act.desc}</p>
+                      </details>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
@@ -389,13 +399,32 @@ const approachSteps = [
     </div>
   </section>
 
+  <!-- Digital Solutions — moved here (this change): now sits between Who We
+       Work With and Our Track Record instead of before Who We Work With. -->
+  <section class="section section-alt" aria-labelledby="digital-solutions-heading">
+    <div class="container digital-solutions-grid">
+      <img
+        class="digital-solutions-mockup"
+        src="/images/live-site/terranexus-slate-family-16x9-dark.png"
+        alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown."
+      />
+      <div class="digital-solutions-copy">
+        <span class="eyebrow">Insights Designed to Deliver</span>
+        <h2 id="digital-solutions-heading">Digital Solutions that Catalyze Change</h2>
+        <p>Delivery is in the details.  It's not what you do, but where, how, and who you partner with that drives results. That's why leading consulting firms and solution providers utilize our expertise to close the gap between advice and action.</p>
+        <p>From digital MRV to next generation verification systems, we provide fit-for-purpose solutions that build market integrity.  Every verifiable claim or GHG translation is supported by investment level emissions accounting that's expected by 3rd party verifiers, regulators, investors, and premium buyers.</p>
+        <a href="/digital-solutions/" class="btn btn-primary">See our Digital Solutions</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Our Proven Track Record -->
   <section class="section section-alt" aria-labelledby="track-record-heading">
     <div class="container">
       <header class="section-header split-header">
         <span class="eyebrow split-header-eyebrow">Our Track Record</span>
         <div class="split-header-title">
-          <h2 id="track-record-heading">Proven Porfolio of Successful Impact</h2>
+          <h2 id="track-record-heading">Proven Portfolio of Successful Impact</h2>
         </div>
         <div class="split-header-lead">
           <p class="section-lead">There is absolutely no legitimate reason that creating a better planet should be so damn complicated, especially when it means the world to so many.</p>
@@ -427,40 +456,52 @@ const approachSteps = [
 </SiteLayout>
 
 <script>
-  // Who We Work With — segment slider tabs (mirrors the nav-toggle pattern in Header.astro)
+  // Who We Work With — two tab groups (By Market Role / By Value-Chain
+  // Segment) sharing one roving-tabindex selection and one panel. Panel
+  // content for all 11 tabs is pre-rendered server-side (see the wwt-slide
+  // markup above); this script only toggles which one is visible and moves
+  // focus/aria-selected across the combined tab set. No auto-advance here
+  // (unlike the previous single-list segment slider) — panel content now
+  // includes an accordion a visitor may have opened, which auto-rotating
+  // out from under them would be a poor experience the design brief didn't
+  // ask for.
   (function () {
-    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.segment-tab'));
-    const slides = Array.from(document.querySelectorAll<HTMLDivElement>('.segment-slide'));
-    const panel = document.querySelector('.segment-slider-panel');
-    if (!tabs.length || !slides.length) return;
-
-    let current = 0;
-    let timer: ReturnType<typeof setInterval> | null = null;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.wwt-tab'));
+    const slides = Array.from(document.querySelectorAll<HTMLDivElement>('.wwt-slide'));
+    const panelMaybe = document.getElementById('wwt-panel');
+    if (!tabs.length || !slides.length || !panelMaybe) return;
+    const panel = panelMaybe;
 
     function activate(index: number) {
-      current = index;
-      tabs.forEach((tab, idx) => {
+      const tab = tabs[index];
+      tabs.forEach((t, idx) => {
         const active = idx === index;
-        tab.classList.toggle('is-active', active);
-        tab.setAttribute('aria-selected', String(active));
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+        t.setAttribute('tabindex', active ? '0' : '-1');
       });
-      slides.forEach((slide, idx) => slide.classList.toggle('is-active', idx === index));
-    }
-    function advance() { activate((current + 1) % tabs.length); }
-    function resetAuto() {
-      if (timer) clearInterval(timer);
-      if (!reduceMotion) timer = setInterval(advance, 6000);
+      const kind = tab.dataset.kind;
+      const key = tab.dataset.key;
+      slides.forEach((slide) => {
+        slide.classList.toggle('is-active', slide.dataset.kind === kind && slide.dataset.key === key);
+      });
+      panel.setAttribute('aria-labelledby', tab.id);
     }
 
     tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => { activate(i); resetAuto(); });
+      tab.addEventListener('click', () => activate(i));
+      tab.addEventListener('keydown', (e) => {
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+        e.preventDefault();
+        let next = i;
+        if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % tabs.length;
+        else next = (i - 1 + tabs.length) % tabs.length;
+        tabs[next].focus();
+        activate(next);
+      });
     });
-    if (panel) {
-      panel.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
-      panel.addEventListener('mouseleave', resetAuto);
-    }
-    resetAuto();
   })();
 </script>
 
@@ -468,10 +509,15 @@ const approachSteps = [
   // How We Work — approach rail tabs. Step→capability relationships come from
   // each button's data-caps attribute (set server-side from approachSteps in
   // the frontmatter above), so this script has no content of its own to keep
-  // in sync — it just reads the DOM.
+  // in sync for the Approach/Function bands — it just reads the DOM. The
+  // Focus band (Band 2) is the exception: each focus card carries its
+  // per-stage lines as a JSON data-views attribute (set server-side from
+  // data/how-we-work.ts), so this script looks up the active stage's line
+  // for each of the three focus objects on every activation.
   (function () {
     const stops = Array.from(document.querySelectorAll<HTMLButtonElement>('.approach-stop'));
     const capCards = Array.from(document.querySelectorAll<HTMLAnchorElement>('.approach-cap'));
+    const focusItems = Array.from(document.querySelectorAll<HTMLDivElement>('.approach-focus-item'));
     const descElMaybe = document.getElementById('approach-desc');
     const gridElMaybe = document.getElementById('approach-cap-grid');
     const panelEl = document.getElementById('approach-panel');
@@ -484,12 +530,27 @@ const approachSteps = [
         const active = idx === index;
         stop.classList.toggle('is-active', active);
         stop.setAttribute('aria-selected', String(active));
+        stop.setAttribute('tabindex', active ? '0' : '-1');
       });
       const step = stops[index];
+      const stage = step.dataset.stage ?? '';
       const title = step.dataset.title ?? '';
       const desc = step.dataset.desc ?? '';
       panelEl?.setAttribute('aria-labelledby', `approach-tab-${index}`);
       descEl.innerHTML = `<strong>${title}</strong> — ${desc}`;
+
+      focusItems.forEach((item) => {
+        const lineEl = item.querySelector<HTMLParagraphElement>('.approach-focus-line');
+        if (!lineEl) return;
+        try {
+          const views = JSON.parse(item.dataset.views ?? '{}') as Record<string, string>;
+          lineEl.textContent = views[stage] ?? '';
+        } catch {
+          // data-views is server-rendered JSON — malformed only if the
+          // upstream data itself is malformed; fail quietly rather than
+          // throw on every stage change.
+        }
+      });
 
       const caps = (step.dataset.caps ?? '').split(',').filter(Boolean);
       if (step.dataset.loop === 'true') {
@@ -507,6 +568,17 @@ const approachSteps = [
     stops.forEach((stop, i) => {
       stop.addEventListener('click', () => activate(i));
       stop.addEventListener('mouseenter', () => activate(i));
+      stop.addEventListener('keydown', (e) => {
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+        e.preventDefault();
+        let next = i;
+        if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = stops.length - 1;
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % stops.length;
+        else next = (i - 1 + stops.length) % stops.length;
+        stops[next].focus();
+        activate(next);
+      });
     });
   })();
 </script>
@@ -1119,26 +1191,49 @@ const approachSteps = [
     background: linear-gradient(90deg, rgba(231, 215, 127, 0.08), transparent);
   }
   .segment-slider-panel { position: relative; }
-  .segment-frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16 / 11; box-shadow: var(--shadow-xl); }
-  @media (max-width: 30rem) { .segment-frame { aspect-ratio: 4 / 5; } }
-  .segment-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow); pointer-events: none; }
-  .segment-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
-  .segment-slide-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-  .segment-slide::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(0deg, rgba(13, 21, 48, 0.92) 0%, rgba(13, 21, 48, 0.25) 50%, transparent 80%);
+  /* Slightly more breathing room above the second (segment) tab list, since
+     the nav rail now stacks two role/segment tab groups instead of one. */
+  .segment-tabs-roles { margin-bottom: var(--space-6); }
+
+  /* ── Who We Work With — shared panel content (name, node, opportunity,
+     activities accordion), rendered once per tab and toggled with
+     .is-active — see the driving script above. Normal document flow
+     (display: none/block), not the old absolutely-positioned crossfade,
+     since accordion content makes panel height variable. ── */
+  .wwt-panel { position: relative; }
+  .wwt-slide { display: none; }
+  .wwt-slide.is-active { display: block; }
+  .wwt-slide h3 { color: #fff; font-size: var(--text-2xl); line-height: var(--line-snug); margin: 0; }
+  .wwt-node { margin: var(--space-3) 0 0; font-size: var(--text-base); line-height: var(--line-relaxed); color: #d7deef; max-width: 44rem; }
+  .wwt-opportunity {
+    margin-top: var(--space-5); background: rgba(231, 215, 127, 0.08); border: 1px solid rgba(231, 215, 127, 0.3);
+    border-radius: var(--radius-lg); padding: var(--space-5);
   }
-  .segment-slide-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8); z-index: 1; }
-  .segment-slide-copy h3 { color: #fff; font-size: var(--text-xl); margin-bottom: var(--space-3); }
-  .segment-slide-copy p { color: #d7deef; font-size: var(--text-sm); max-width: 30rem; margin-bottom: var(--space-6); line-height: var(--line-relaxed); }
-  .segment-explore {
-    display: inline-flex; align-items: center; gap: var(--space-2);
-    background: #fff; color: var(--color-dark); font-size: var(--text-sm); font-weight: var(--font-semibold);
-    padding: var(--space-3) var(--space-5); border-radius: var(--radius-full);
-    transition: background var(--transition-fast), transform var(--transition-fast);
+  .wwt-opportunity-label { font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent-400); }
+  .wwt-opportunity p { margin: var(--space-2) 0 0; font-size: var(--text-base); line-height: var(--line-relaxed); color: #fff; }
+  .wwt-activities { margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid rgba(255, 255, 255, 0.12); }
+  .wwt-activities-label {
+    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--c-sky-300); margin-bottom: var(--space-4);
   }
-  .segment-explore:hover { background: var(--c-sky-100); color: var(--color-dark); transform: translateX(2px); }
-  @media (prefers-reduced-motion: reduce) { .segment-slide { transition: none; } }
+  .wwt-activities-list { display: grid; gap: var(--space-2); }
+  .wwt-activity {
+    background: rgba(255, 255, 255, 0.04); border: 1.5px solid rgba(255, 255, 255, 0.14); border-radius: var(--radius-md);
+  }
+  .wwt-activity summary {
+    display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4);
+    list-style: none; cursor: pointer;
+  }
+  .wwt-activity summary::-webkit-details-marker { display: none; }
+  .wwt-activity summary:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: 2px; }
+  .wwt-activity-name { flex: 1; min-width: 0; font-size: var(--text-sm); font-weight: var(--font-semibold); color: #fff; }
+  .wwt-activity-mark {
+    display: block; flex: none; font-size: var(--text-lg); line-height: 1; color: var(--c-accent-400);
+    transition: transform var(--transition-base);
+  }
+  .wwt-activity[open] .wwt-activity-mark { transform: rotate(45deg); }
+  .wwt-activity-desc { margin: 0; padding: 0 var(--space-4) var(--space-4); font-size: var(--text-xs); line-height: 1.65; color: #a9b6d6; }
+  @media (prefers-reduced-motion: reduce) { .wwt-activity-mark { transition: none; } }
 
   /* ── Track record stat strip ──────────────────────────
      Boxed cards (the previous version) put six labels of very different
@@ -1198,6 +1293,41 @@ const approachSteps = [
     pointer-events: none;
   }
   @media (max-width: 48rem) { .approach-card { padding: var(--space-8) var(--space-6); } }
+
+  /* ── How We Work — band labels (Approach / Focus / Function) ──
+     A small gold eyebrow over a 1px rule, echoing the eyebrow-over-rule
+     idiom used elsewhere on the page (.segment-slider-label, etc.) but
+     tuned for this card's dark background. */
+  .approach-band-label {
+    position: relative; z-index: 1;
+    font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--c-accent-400);
+  }
+  .approach-band-rule {
+    position: relative; z-index: 1;
+    height: 1px; background: rgba(255, 255, 255, 0.14);
+    margin: var(--space-3) 0 var(--space-6);
+  }
+
+  /* ── How We Work — Focus band. One grid per label+card pair (not two
+     parallel grids) so a label never separates from its card at narrow
+     widths — see index.astro's Change 2 notes. ── */
+  .approach-focus-grid {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-4); margin-bottom: var(--space-10); align-items: stretch;
+  }
+  .approach-focus-item { min-width: 0; display: flex; flex-direction: column; }
+  .approach-focus-label { padding-bottom: var(--space-3); border-bottom: 2px solid rgba(154, 209, 220, 0.5); }
+  .approach-focus-label span { font-size: var(--text-base); font-weight: var(--font-semibold); color: #fff; }
+  .approach-focus-card {
+    flex: 1; margin-top: var(--space-4);
+    background: rgba(255, 255, 255, 0.04); border: 1.5px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-lg); padding: var(--space-5);
+  }
+  .approach-focus-eyebrow { font-size: 11px; font-weight: var(--font-semibold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-sky-300); }
+  .approach-focus-line { margin: var(--space-3) 0 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: #fff; }
+
   .approach-track { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; }
   .approach-track::before {
     content: ''; position: absolute; top: 22px; left: 8.3%; right: 8.3%; height: 2px;
