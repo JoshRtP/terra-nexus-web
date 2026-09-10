@@ -5,23 +5,25 @@ import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
-// Product suite elevation pass (2026-09-09) — see
-// plans/content/digital-solutions-2026-09/ for the full brief. Builds on
-// the 2026-09-08 two-tier rebuild: swaps flat screenshots for the
-// real-device-framed renders, expands Tier 2 from 3 to 5 products now that
-// Food Waste Collaboration Platform and Environmental Asset Pricing &
-// Stranded Claims Optimization have real assets, and adds a live,
-// client-side colorway switcher (white-label branding is a real product
-// capability, not decoration — see the switcher markup/script below).
+// Product suite elevation pass (2026-09-09), reframed 2026-09-09 around
+// capability rather than device tier — see
+// plans/content/digital-solutions-2026-09/README.md, "Update 2026-09-09 —
+// reframed around capability, not device". The eight products are grouped
+// into Quantify → Verify → Commercialize, the same lifecycle vocabulary
+// already used for the Carbon & Ecosystem Services capability
+// (src/data/lifecycle.ts) and market-mechanisms.ts. A product's form
+// factor (phone vs. desktop screenshot) is incidental to this grouping,
+// never the organizing idea.
 //
 // Every product image on this page is addressed by a stable `slug`
 // (matches the `{tool}-16x9-{variant}` segment of its filename) so the
-// switcher can rewrite every <img> src in one pass by string-substituting
-// the colorway prefix — see the `filenameFor()` helper in the page script.
-// No invented client/case-study claims; descriptions only restate what the
-// mockup screens themselves show — see CLAUDE.md.
+// colorway switcher can rewrite every <img> src in one pass by
+// string-substituting the colorway prefix — see the `filenameFor()`
+// helper in the page script. No invented client/case-study claims;
+// descriptions only restate what the mockup screens themselves show —
+// see CLAUDE.md.
 
-const fieldSolutions = [
+const quantifySolutions = [
   {
     slug: 'grazing-detection-16x9-framed-dark',
     title: 'Grazing & Biomass Monitoring',
@@ -42,7 +44,7 @@ const fieldSolutions = [
   },
 ];
 
-const analystSolutions = [
+const verifySolutions = [
   {
     slug: 'dmrv-audit-verification-16x9-framed-dark',
     title: 'Audit & Diligence Verification',
@@ -55,23 +57,26 @@ const analystSolutions = [
     summary: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it’s implemented.',
     altBase: "Terra Nexus Advanced Biogeochemical & DSM Soil Carbon Prediction dashboard on a real-device-framed desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.",
   },
+];
+
+const commercializeSolutions = [
   {
     slug: 'biofuels-origination-16x9-framed-dark',
-    title: 'Feedstock Origination Mapping',
-    summary: 'Maps low-carbon-intensity feedstock supply against processing capacity, so sourcing decisions are grounded in where the qualifying material actually is.',
+    title: 'Biofuels Origination Economics',
+    summary: 'Low-carbon-intensity feedstock evaluation for biofuel producers, mapping supply against processing capacity so sourcing decisions are grounded in where the qualifying material actually is.',
     altBase: "Terra Nexus Biofuels Origination Economics dashboard on a real-device-framed desktop monitor, showing a US county-level heat map of carbon-intensity impact for corn feedstock under a cover-crop and no-till scenario, with county results and feedstock-to-facility mapping actions.",
-  },
-  {
-    slug: 'food-waste-platform-16x9-framed-dark',
-    title: 'Food Waste Collaboration Platform',
-    summary: 'Quantifies prevented food-waste reductions under VM0046 and converts them into carbon credits and monetized value across the supply chain.',
-    altBase: "Terra Nexus Food Waste Collaboration Platform dashboard on a real-device-framed desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.",
   },
   {
     slug: 'asset-pricing-optimization-16x9-framed-dark',
     title: 'Asset Pricing & Stranded Claims Optimization',
     summary: 'Optimizes bid allocation and carbon-development economics across an insetting program, and surfaces the value left on the table when eligible supply goes undeveloped.',
     altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization dashboard on a real-device-framed desktop monitor, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+  },
+  {
+    slug: 'food-waste-platform-16x9-framed-dark',
+    title: 'Food Waste Collaboration Platform',
+    summary: 'Quantifies prevented food-waste reductions under VM0046 and converts them into carbon credits and monetized value across the supply chain.',
+    altBase: "Terra Nexus Food Waste Collaboration Platform dashboard on a real-device-framed desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.",
   },
 ];
 
@@ -92,7 +97,7 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
   <PageHero
     eyebrow="Digital Solutions"
     title="Digital Solutions that Catalyze Change"
-    lead="From digital MRV to next-generation verification systems, we build fit-for-purpose tools that turn on-the-ground and remote-sensed data into investment-grade emissions accounting — the evidence standard 3rd-party verifiers, regulators, investors, and premium buyers expect."
+    lead="From digital MRV to next-generation verification systems, we build fit-for-purpose tools that quantify what's happening in a program, verify it holds up to scrutiny, and commercialize the result — turning on-the-ground and remote-sensed data into the evidence standard 3rd-party verifiers, regulators, investors, and premium buyers expect."
     primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
     secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
   />
@@ -102,7 +107,7 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
       <header class="section-header text-center">
         <span class="eyebrow">The Full Suite</span>
         <h2 id="suite-heading">Eight Tools, One Evidence Chain</h2>
-        <p class="section-lead" style="margin-inline: auto;">From paddock to portfolio: field and herd data capture, remote-sensing verification, biogeochemical modeling, and origination and pricing economics — every screen built to hold up under third-party review.</p>
+        <p class="section-lead" style="margin-inline: auto;">The suite below is organized around how a program actually runs, not what device a screen happens to sit on: <strong>quantify</strong> what's happening on the ground, <strong>verify</strong> it holds up to scrutiny, then <strong>commercialize</strong> the result into credits, contracts, and value.</p>
       </header>
 
       <div class="colorway-switcher card-static" data-colorway-switcher>
@@ -139,12 +144,12 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
     </div>
   </section>
 
-  <section class="section section-alt" aria-labelledby="field-heading">
+  <section class="section section-alt" aria-labelledby="quantify-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Field &amp; Herd Intelligence</span>
-        <h2 id="field-heading">Built for Investment-Grade Evidence</h2>
-        <p class="section-lead">On-the-ground data capture and satellite monitoring, purpose-built for herds, paddocks, and fields.</p>
+        <span class="eyebrow">Quantify</span>
+        <h2 id="quantify-heading">Turn Field and Herd Activity Into a Verifiable Number</h2>
+        <p class="section-lead">Every program starts with a measurement problem: what's actually happening on the ground, and how much of it counts. These tools capture that activity directly — grazing events and biomass recovery from satellite, enteric methane by herd and cohort, and field-level carbon intensity — producing the base figures a verifier can trace back to source.</p>
       </header>
 
       <figure class="solutions-showcase">
@@ -158,7 +163,7 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
       </figure>
 
       <div class="card-grid card-grid-3">
-        {fieldSolutions.map((solution) => (
+        {quantifySolutions.map((solution) => (
           <article class="card card-media solution-card-media">
             <img
               class="product-ui-img"
@@ -178,26 +183,45 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
     </div>
   </section>
 
-  <section class="section" aria-labelledby="analyst-heading">
+  <section class="section" aria-labelledby="verify-heading">
     <div class="container">
       <header class="section-header">
-        <span class="eyebrow">Analyst-Grade Verification &amp; Modeling</span>
-        <h2 id="analyst-heading">Desktop Tools for Diligence, Origination, and Monetization</h2>
-        <p class="section-lead">Remote-sensing verification, biogeochemical modeling, origination economics, and carbon-asset monetization, built for analysts and third-party reviewers.</p>
+        <span class="eyebrow">Verify</span>
+        <h2 id="verify-heading">Make the Evidence Hold Up to a Third Party</h2>
+        <p class="section-lead">A number is only as good as what backs it up. These tools produce the audit-ready record and the pre-commitment modeling a verifier or investor needs — remote-sensing evidence of the practice actually detected in the field, and biogeochemical forecasting that quantifies a soil carbon benefit before a program commits to it.</p>
       </header>
 
-      <figure class="solutions-showcase">
-        <img
-          class="product-ui-img"
-          data-product-slug="desktop-suite-16x9-dark"
-          data-alt-base="The five Terra Nexus desktop tools shown as an overlapping suite."
-          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-desktop-suite-16x9-dark.png`}
-          alt="The five Terra Nexus desktop tools in the Terrain colorway shown as an overlapping suite."
-        />
-      </figure>
+      <div class="card-grid card-grid-3">
+        {verifySolutions.map((solution) => (
+          <article class="card card-media solution-card-media">
+            <img
+              class="product-ui-img"
+              data-product-slug={solution.slug}
+              data-alt-base={solution.altBase}
+              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
+              alt={`${solution.altBase} Terrain colorway.`}
+              loading="lazy"
+            />
+            <div class="card-media-body">
+              <h3>{solution.title}</h3>
+              <p>{solution.summary}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="commercialize-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Commercialize</span>
+        <h2 id="commercialize-heading">Convert Verified Performance Into Market Value</h2>
+        <p class="section-lead">Once activity is measured and the evidence holds up, it has to become something transactable — credits, contracts, or margin. These tools price low-carbon feedstock against real supply, optimize what an environmental asset is worth and surface what's left on the table when it isn't developed, and turn prevented food waste into monetized, verified credits.</p>
+      </header>
 
       <div class="card-grid card-grid-3">
-        {analystSolutions.map((solution) => (
+        {commercializeSolutions.map((solution) => (
           <article class="card card-media solution-card-media">
             <img
               class="product-ui-img"
