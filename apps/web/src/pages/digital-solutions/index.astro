@@ -282,7 +282,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
           const asset = assetFor(DEFAULT_COLORWAY, solution.tool, solution.kind);
           const d = dims(solution.kind);
           return (
-            <article class="card card-media solution-card-media">
+            <article class="card card-static card-media solution-card-media">
               <img
                 class="product-ui-img"
                 data-tool={solution.tool}
@@ -462,12 +462,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     margin: 0;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    transition: box-shadow var(--transition-base), transform var(--transition-base);
     box-shadow: var(--shadow-lg);
-  }
-  .quantify-viewer-media:hover {
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-2px);
   }
   .quantify-viewer-media img {
     display: block;
@@ -514,15 +509,6 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    transition: box-shadow var(--transition-base), transform var(--transition-base);
-  }
-  .product-row-media:hover {
-    /* The one recurring "subtle wow" micro-interaction on this page — a
-       slight lift + deepened shadow on hover, matching .card's existing
-       hover-lift convention rather than inventing a new motion language.
-       Plain CSS only; no GSAP, no scroll-trigger (M9 scope). */
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-4px);
   }
   .product-row-media img {
     display: block;
