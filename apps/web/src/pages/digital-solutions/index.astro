@@ -5,78 +5,118 @@ import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
-// Product suite elevation pass (2026-09-09), reframed 2026-09-09 around
-// capability rather than device tier — see
-// plans/content/digital-solutions-2026-09/README.md, "Update 2026-09-09 —
-// reframed around capability, not device". The eight products are grouped
-// into Quantify → Verify → Commercialize, the same lifecycle vocabulary
-// already used for the Carbon & Ecosystem Services capability
-// (src/data/lifecycle.ts) and market-mechanisms.ts. A product's form
-// factor (phone vs. desktop screenshot) is incidental to this grouping,
-// never the organizing idea.
+// Visual + copy redesign pass (2026-09-09) — see
+// plans/content/digital-solutions-2026-09/README.md for the prior
+// capability-grouping rationale (Quantify → Verify → Commercialize, kept
+// unchanged this pass) and the task brief that drove this specific rework:
+// the owner rejected every "device floating on a synthetic AI-gradient
+// scene" image outright, and asked for the framing to move away from
+// white-label/brand-flexibility and onto "Terra Nexus builds these tools
+// itself to run its own programs."
 //
-// Every product image on this page is addressed by a stable `slug`
-// (matches the `{tool}-16x9-{variant}` segment of its filename) so the
-// colorway switcher can rewrite every <img> src in one pass by
-// string-substituting the colorway prefix — see the `filenameFor()`
-// helper in the page script. No invented client/case-study claims;
-// descriptions only restate what the mockup screens themselves show —
-// see CLAUDE.md.
+// New asset strategy: transparent, real-photographed device cutouts
+// (monitor/phone) composited onto the SITE's own dark surface tokens
+// (--color-dark / --gradient-dark), not a rendered gradient backdrop; plus
+// one real photographed office-desk composite used once, large, right
+// after the hero, as the page's one deliberate "wow" moment. All served as
+// WebP with a real srcset ladder (480/960/1440w for device shots,
+// 960/1440/1672w for the office-desk composite) copied from
+// brand/product-ui/09-web-export/** — see
+// plans/content/digital-solutions-2026-09/product-ui-srcset-reference.md
+// for the exact markup pattern this is built from.
+//
+// Every product image is addressed by a stable `tool` id (e.g.
+// "dmrv-audit-verification") plus a `kind` ("monitor" | "phone" |
+// "office-desk") so the colorway switcher's client-side script can
+// reconstruct both `src` and `srcset` for any colorway without a full
+// re-render — see the `assetFor()` helper in the page script. No invented
+// client/case-study claims; descriptions only restate what the mockup
+// screens themselves show — see CLAUDE.md.
 
 const quantifySolutions = [
   {
-    slug: 'grazing-detection-16x9-framed-dark',
+    tool: 'grazing-detection',
+    kind: 'phone' as const,
     title: 'Grazing & Biomass Monitoring',
     summary: 'Satellite-verified rotational grazing events and biomass recovery, paddock by paddock.',
-    altBase: "Terra Nexus Grazing Detection dashboard on a real-device-framed mobile screen, showing a rotational grazing event on an NDVI paddock map with a 10-week biomass recovery curve.",
+    altBase: 'Terra Nexus Grazing Detection tool on a real mobile phone, showing a rotational grazing event on an NDVI paddock map with a 10-week biomass recovery curve.',
   },
   {
-    slug: 'enteric-emissions-16x9-framed-dark',
+    tool: 'enteric-emissions',
+    kind: 'phone' as const,
     title: 'Herd Emissions Intelligence',
     summary: 'Enteric methane tracking by herd and cohort, with emission-factor adjustments that hold up to verifier scrutiny.',
-    altBase: "Terra Nexus Enteric Emissions dashboard on a real-device-framed mobile screen, showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.",
+    altBase: 'Terra Nexus Enteric Emissions tool on a real mobile phone, showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.',
   },
   {
-    slug: 'crop-carbon-intensity-16x9-framed-dark',
+    tool: 'crop-carbon-intensity',
+    kind: 'phone' as const,
     title: 'Crop Carbon Intensity',
     summary: 'Field-level GHG breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
-    altBase: "Terra Nexus Crop Carbon Intensity dashboard on a real-device-framed mobile screen, showing GREET volume-weighted carbon intensity for corn with a seven-line GHG breakdown.",
+    altBase: 'Terra Nexus Crop Carbon Intensity tool on a real mobile phone, showing GREET volume-weighted carbon intensity for corn with a seven-line GHG breakdown.',
   },
 ];
 
 const verifySolutions = [
   {
-    slug: 'dmrv-audit-verification-16x9-framed-dark',
+    tool: 'dmrv-audit-verification',
+    kind: 'monitor' as const,
     title: 'Audit & Diligence Verification',
     summary: "Independent, remote-sensing-based verification of regenerative practices and soil health indicators — NDVI, tillage, and cover-crop detection — with an audit-ready export a third-party reviewer can act on directly.",
-    altBase: "Terra Nexus Regenerative Agriculture — Audit & Diligence Verification dashboard on a real-device-framed desktop monitor, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.",
+    altBase: 'Terra Nexus Audit & Diligence Verification tool on a real desktop monitor, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
   },
   {
-    slug: 'soil-carbon-prediction-16x9-framed-dark',
+    tool: 'soil-carbon-prediction',
+    kind: 'monitor' as const,
     title: 'Soil Carbon Prediction',
     summary: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it’s implemented.',
-    altBase: "Terra Nexus Advanced Biogeochemical & DSM Soil Carbon Prediction dashboard on a real-device-framed desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.",
+    altBase: 'Terra Nexus Soil Carbon Prediction tool on a real desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.',
   },
 ];
 
 const commercializeSolutions = [
   {
-    slug: 'biofuels-origination-16x9-framed-dark',
+    tool: 'biofuels-origination',
+    kind: 'monitor' as const,
+    eyebrow: 'Feedstock Sourcing',
     title: 'Biofuels Origination Economics',
     summary: 'Low-carbon-intensity feedstock evaluation for biofuel producers, mapping supply against processing capacity so sourcing decisions are grounded in where the qualifying material actually is.',
-    altBase: "Terra Nexus Biofuels Origination Economics dashboard on a real-device-framed desktop monitor, showing a US county-level heat map of carbon-intensity impact for corn feedstock under a cover-crop and no-till scenario, with county results and feedstock-to-facility mapping actions.",
+    altBase: 'Terra Nexus Biofuels Origination Economics tool on a real desktop monitor, showing a US county-level heat map of carbon-intensity impact for corn feedstock under a cover-crop and no-till scenario, with county results and feedstock-to-facility mapping actions.',
+    // Bullets paraphrase real capabilities from plans/content/digital-solutions-2026-09/
+    // product-ui-mockup-brief.md §4.2 — no invented figures, no raw KPI dump.
+    bullets: [
+      '~800 counties evaluated against real carbon-intensity deltas, not a blanket regional estimate.',
+      'Maps qualifying feedstock straight to processing capacity, so sourcing decisions start from where the material actually is.',
+      'Every scenario carries its own side-by-side 45Z and incentive comparison, not a generic one-size-fits-all estimate.',
+    ],
   },
   {
-    slug: 'asset-pricing-optimization-16x9-framed-dark',
-    title: 'Asset Pricing & Stranded Claims Optimization',
+    tool: 'asset-pricing-optimization',
+    kind: 'monitor' as const,
+    eyebrow: 'Insetting Economics',
+    title: 'Environmental Asset Pricing & Stranded Claims Optimization',
     summary: 'Optimizes bid allocation and carbon-development economics across an insetting program, and surfaces the value left on the table when eligible supply goes undeveloped.',
-    altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization dashboard on a real-device-framed desktop monitor, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+    altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization tool on a real desktop monitor, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+    // §4.5 — no raw KPI dump (e.g. exact dollar figures), paraphrased.
+    bullets: [
+      'Surfaces the dollar value of undeveloped supply, not just what’s enrolled.',
+      'Optimizes bid allocation across an insetting program’s full supply-to-demand pool, not farm by farm.',
+      'Quantifies exactly what enrolling the next farm would add to a program’s reduction rate.',
+    ],
   },
   {
-    slug: 'food-waste-platform-16x9-framed-dark',
+    tool: 'food-waste-platform',
+    kind: 'monitor' as const,
+    eyebrow: 'Food Waste Credits',
     title: 'Food Waste Collaboration Platform',
     summary: 'Quantifies prevented food-waste reductions under VM0046 and converts them into carbon credits and monetized value across the supply chain.',
-    altBase: "Terra Nexus Food Waste Collaboration Platform dashboard on a real-device-framed desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.",
+    altBase: 'Terra Nexus Food Waste Collaboration Platform tool on a real desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.',
+    // §4.4 — no raw KPI dump, paraphrased.
+    bullets: [
+      'Reconciles diverted volume to monetized, VM0046-aligned credits.',
+      'Tracks food from origin through shipped, accepted, and sold, accounting for what’s donated versus diverted along the way.',
+      'Splits verified value across solution provider, CPG-farmer, and administrator on a transparent, auditable basis.',
+    ],
   },
 ];
 
@@ -87,33 +127,238 @@ const colorways = [
   { id: 'slate', label: 'Slate' },
 ];
 const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
+
+// Server-side mirror of the client `assetFor()` helper below — kept in
+// sync manually (see that function's own comment for why it isn't shared
+// via a module import).
+const DEVICE_WIDTHS = [480, 960, 1440];
+const OFFICE_DESK_WIDTHS = [960, 1440, 1672];
+type Kind = 'monitor' | 'phone' | 'office-desk';
+function assetFor(colorway: string, tool: string, kind: Kind) {
+  const widths = kind === 'office-desk' ? OFFICE_DESK_WIDTHS : DEVICE_WIDTHS;
+  const prefix = colorway === 'default' ? '' : `${colorway}-`;
+  const suffix = kind === 'office-desk' ? 'office-desk' : kind;
+  const base = `terranexus-${prefix}${tool}-${suffix}`;
+  const srcset = widths.map((w) => `/images/product-ui/${base}-${w}w.webp ${w}w`).join(', ');
+  const src = `/images/product-ui/${base}-${widths[widths.length - 1]}w.webp`;
+  return { src, srcset };
+}
+function dims(kind: Kind): { width: number; height: number } {
+  if (kind === 'office-desk') return { width: 1672, height: 941 };
+  if (kind === 'phone') return { width: 1520, height: 2780 };
+  return { width: 2400, height: 1740 };
+}
+const SIZES = '(max-width: 900px) 100vw, 1440px';
 ---
 
 <SiteLayout
   title="Digital Solutions | Terra Nexus"
-  description="Digital MRV and verification tools that turn on-the-ground and remote-sensed data into investment-grade emissions accounting."
+  description="The fit-for-purpose digital tools Terra Nexus builds to run its own carbon, food-system, and verification programs — quantify, verify, and commercialize environmental outcomes."
   preview={mode === 'preview'}
 >
   <PageHero
     eyebrow="Digital Solutions"
-    title="Digital Solutions that Catalyze Change"
-    lead="From digital MRV to next-generation verification systems, we build fit-for-purpose tools that quantify what's happening in a program, verify it holds up to scrutiny, and commercialize the result — turning on-the-ground and remote-sensed data into the evidence standard 3rd-party verifiers, regulators, investors, and premium buyers expect."
+    title="Tools We Built Because the Work Demanded Them"
+    lead="Terra Nexus is an Innovation & Insight Studio that advises, manages, and operates climate and food-system programs — not a software vendor. Running that work at investment grade required instruments that didn't exist off the shelf, so our own team built them: eight proprietary tools that quantify what's happening on the ground, verify it holds up to scrutiny, and commercialize the result into credits, contracts, and value."
     primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
     secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
   />
 
-  <section class="section" aria-labelledby="suite-heading">
+  <section class="section" aria-labelledby="showcase-heading">
+    <div class="container">
+      <figure class="solutions-showcase solutions-showcase-hero">
+        {(() => {
+          const asset = assetFor(DEFAULT_COLORWAY, 'dmrv-audit-verification', 'office-desk');
+          const d = dims('office-desk');
+          const altBase = "A real office desk with an ultrawide monitor showing the Terra Nexus Audit & Diligence Verification tool — field NDVI, cover-crop and tillage classification, and a season-long biomass curve — with the Flatirons visible through the window behind it.";
+          return (
+            <img
+              class="product-ui-img"
+              id="showcase-heading-img"
+              data-tool="dmrv-audit-verification"
+              data-kind="office-desk"
+              data-alt-base={altBase}
+              src={asset.src}
+              srcset={asset.srcset}
+              sizes={SIZES}
+              width={d.width}
+              height={d.height}
+              loading="eager"
+              decoding="async"
+              alt={`${altBase} Terrain colorway.`}
+            />
+          );
+        })()}
+        <figcaption class="solutions-showcase-caption" id="showcase-heading">This is a real desk, not a rendered scene — where the evidence from all eight tools below actually gets reviewed and exported before it goes to a verifier.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="suite-heading">
     <div class="container">
       <header class="section-header text-center">
         <span class="eyebrow">The Full Suite</span>
         <h2 id="suite-heading">Eight Tools, One Evidence Chain</h2>
-        <p class="section-lead" style="margin-inline: auto;">The suite below is organized around how a program actually runs, not what device a screen happens to sit on: <strong>quantify</strong> what's happening on the ground, <strong>verify</strong> it holds up to scrutiny, then <strong>commercialize</strong> the result into credits, contracts, and value.</p>
+        <p class="section-lead" style="margin-inline: auto;">We didn't buy this suite or white-label someone else's platform — we built it, because running a real environmental-outcomes program end to end meant we needed instruments that don't exist anywhere else. It's organized the way a program actually runs, not by device tier: <strong>quantify</strong> what's happening on the ground, <strong>verify</strong> it holds up to scrutiny, then <strong>commercialize</strong> the result into credits, contracts, and value.</p>
+      </header>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="quantify-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Quantify</span>
+        <h2 id="quantify-heading">Turn Field and Herd Activity Into a Verifiable Number</h2>
+        <p class="section-lead">Every program we run starts with the same measurement problem: what's actually happening on the ground, and how much of it counts. We built these tools to capture that activity directly — grazing events and biomass recovery from satellite, enteric methane by herd and cohort, and field-level carbon intensity — producing the base figures a verifier can trace back to source.</p>
       </header>
 
-      <div class="colorway-switcher card-static" data-colorway-switcher>
-        <p class="colorway-switcher-copy">
-          Every dashboard ships in your brand — this whole suite is white-label. Try a colorway below and watch every screen on this page repaint.
-        </p>
+      <div class="quantify-viewer">
+        <div class="quantify-tabs" role="tablist" aria-label="Quantify products">
+          {quantifySolutions.map((solution, i) => (
+            <button
+              type="button"
+              class="quantify-tab"
+              class:list={{ 'is-active': i === 0 }}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls="quantify-panel"
+              id={`quantify-tab-${i}`}
+              tabindex={i === 0 ? '0' : '-1'}
+              data-index={i}
+              data-tool={solution.tool}
+              data-kind={solution.kind}
+              data-title={solution.title}
+              data-desc={solution.summary}
+              data-alt-base={solution.altBase}
+            >
+              {solution.title}
+            </button>
+          ))}
+        </div>
+
+        <div class="quantify-panel" id="quantify-panel" role="tabpanel" aria-labelledby="quantify-tab-0">
+          <figure class="quantify-viewer-media">
+            {(() => {
+              const first = quantifySolutions[0];
+              const asset = assetFor(DEFAULT_COLORWAY, first.tool, first.kind);
+              const d = dims(first.kind);
+              return (
+                <img
+                  class="product-ui-img quantify-viewer-img"
+                  data-tool={first.tool}
+                  data-kind={first.kind}
+                  data-alt-base={first.altBase}
+                  src={asset.src}
+                  srcset={asset.srcset}
+                  sizes={SIZES}
+                  width={d.width}
+                  height={d.height}
+                  loading="lazy"
+                  decoding="async"
+                  alt={`${first.altBase} Terrain colorway.`}
+                />
+              );
+            })()}
+          </figure>
+          <div class="quantify-viewer-copy">
+            <h3 id="quantify-viewer-title">{quantifySolutions[0].title}</h3>
+            <p id="quantify-viewer-desc">{quantifySolutions[0].summary}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="verify-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Verify</span>
+        <h2 id="verify-heading">Make the Evidence Hold Up to a Third Party</h2>
+        <p class="section-lead">A number is only as good as what backs it up. We built these tools to produce the audit-ready record and the pre-commitment modeling our own programs' verifiers and investors need — remote-sensing evidence of the practice actually detected in the field, and biogeochemical forecasting that quantifies a soil carbon benefit before a program commits to it.</p>
+      </header>
+
+      <div class="card-grid card-grid-3">
+        {verifySolutions.map((solution) => {
+          const asset = assetFor(DEFAULT_COLORWAY, solution.tool, solution.kind);
+          const d = dims(solution.kind);
+          return (
+            <article class="card card-media solution-card-media">
+              <img
+                class="product-ui-img"
+                data-tool={solution.tool}
+                data-kind={solution.kind}
+                data-alt-base={solution.altBase}
+                src={asset.src}
+                srcset={asset.srcset}
+                sizes={SIZES}
+                width={d.width}
+                height={d.height}
+                loading="lazy"
+                decoding="async"
+                alt={`${solution.altBase} Terrain colorway.`}
+              />
+              <div class="card-media-body">
+                <h3>{solution.title}</h3>
+                <p>{solution.summary}</p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="commercialize-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Commercialize</span>
+        <h2 id="commercialize-heading">Convert Verified Performance Into Market Value</h2>
+        <p class="section-lead">Once activity is measured and the evidence holds up, it has to become something transactable — credits, contracts, or margin. We built these tools to price low-carbon feedstock against real supply, optimize what an environmental asset is worth and surface what's left on the table when it isn't developed, and turn prevented food waste into monetized, verified credits.</p>
+      </header>
+
+      <div class="product-rows">
+        {commercializeSolutions.map((solution) => {
+          const asset = assetFor(DEFAULT_COLORWAY, solution.tool, solution.kind);
+          const d = dims(solution.kind);
+          return (
+            <article class="product-row">
+              <figure class="product-row-media">
+                <img
+                  class="product-ui-img"
+                  data-tool={solution.tool}
+                  data-kind={solution.kind}
+                  data-alt-base={solution.altBase}
+                  src={asset.src}
+                  srcset={asset.srcset}
+                  sizes={SIZES}
+                  width={d.width}
+                  height={d.height}
+                  loading="lazy"
+                  decoding="async"
+                  alt={`${solution.altBase} Terrain colorway.`}
+                />
+              </figure>
+              <div class="product-row-copy">
+                <span class="eyebrow">{solution.eyebrow}</span>
+                <h3>{solution.title}</h3>
+                <p>{solution.summary}</p>
+                <ul class="product-row-bullets">
+                  {solution.bullets.map((bullet) => (
+                    <li>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt colorway-footnote-section" aria-labelledby="colorway-footnote-heading">
+    <div class="container">
+      <div class="colorway-switcher" data-colorway-switcher>
+        <p class="colorway-switcher-copy" id="colorway-footnote-heading">Also available in your organization's colors.</p>
         <div class="colorway-options" role="radiogroup" aria-label="Preview a dashboard colorway">
           {colorways.map((cw) => (
             <button
@@ -131,113 +376,6 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
           ))}
         </div>
       </div>
-
-      <figure class="solutions-showcase solutions-showcase-hero">
-        <img
-          class="product-ui-img"
-          data-product-slug="family-16x9-dark"
-          data-alt-base="The Terra Nexus product family — desktop dashboards alongside phone screens."
-          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-family-16x9-dark.png`}
-          alt="The Terra Nexus product family in the Terrain colorway — desktop dashboards alongside phone screens."
-        />
-      </figure>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="quantify-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Quantify</span>
-        <h2 id="quantify-heading">Turn Field and Herd Activity Into a Verifiable Number</h2>
-        <p class="section-lead">Every program starts with a measurement problem: what's actually happening on the ground, and how much of it counts. These tools capture that activity directly — grazing events and biomass recovery from satellite, enteric methane by herd and cohort, and field-level carbon intensity — producing the base figures a verifier can trace back to source.</p>
-      </header>
-
-      <figure class="solutions-showcase">
-        <img
-          class="product-ui-img"
-          data-product-slug="mobile-trio-16x9-dark"
-          data-alt-base="Three Terra Nexus mobile screens: grazing detection, enteric emissions, and crop carbon intensity dashboards."
-          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-mobile-trio-16x9-dark.png`}
-          alt="Three Terra Nexus mobile screens in the Terrain colorway: grazing detection, enteric emissions, and crop carbon intensity dashboards."
-        />
-      </figure>
-
-      <div class="card-grid card-grid-3">
-        {quantifySolutions.map((solution) => (
-          <article class="card card-media solution-card-media">
-            <img
-              class="product-ui-img"
-              data-product-slug={solution.slug}
-              data-alt-base={solution.altBase}
-              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
-              alt={`${solution.altBase} Terrain colorway.`}
-              loading="lazy"
-            />
-            <div class="card-media-body">
-              <h3>{solution.title}</h3>
-              <p>{solution.summary}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="verify-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Verify</span>
-        <h2 id="verify-heading">Make the Evidence Hold Up to a Third Party</h2>
-        <p class="section-lead">A number is only as good as what backs it up. These tools produce the audit-ready record and the pre-commitment modeling a verifier or investor needs — remote-sensing evidence of the practice actually detected in the field, and biogeochemical forecasting that quantifies a soil carbon benefit before a program commits to it.</p>
-      </header>
-
-      <div class="card-grid card-grid-3">
-        {verifySolutions.map((solution) => (
-          <article class="card card-media solution-card-media">
-            <img
-              class="product-ui-img"
-              data-product-slug={solution.slug}
-              data-alt-base={solution.altBase}
-              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
-              alt={`${solution.altBase} Terrain colorway.`}
-              loading="lazy"
-            />
-            <div class="card-media-body">
-              <h3>{solution.title}</h3>
-              <p>{solution.summary}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="commercialize-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Commercialize</span>
-        <h2 id="commercialize-heading">Convert Verified Performance Into Market Value</h2>
-        <p class="section-lead">Once activity is measured and the evidence holds up, it has to become something transactable — credits, contracts, or margin. These tools price low-carbon feedstock against real supply, optimize what an environmental asset is worth and surface what's left on the table when it isn't developed, and turn prevented food waste into monetized, verified credits.</p>
-      </header>
-
-      <div class="card-grid card-grid-3">
-        {commercializeSolutions.map((solution) => (
-          <article class="card card-media solution-card-media">
-            <img
-              class="product-ui-img"
-              data-product-slug={solution.slug}
-              data-alt-base={solution.altBase}
-              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
-              alt={`${solution.altBase} Terrain colorway.`}
-              loading="lazy"
-            />
-            <div class="card-media-body">
-              <h3>{solution.title}</h3>
-              <p>{solution.summary}</p>
-            </div>
-          </article>
-        ))}
-      </div>
     </div>
   </section>
 
@@ -250,17 +388,193 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
 
 <style>
   .solutions-showcase {
-    margin: 0 0 var(--space-12);
+    margin: 0;
   }
-  .solutions-showcase-hero {
-    margin-bottom: var(--space-16);
-  }
-  .solutions-showcase img {
+  .solutions-showcase-hero img {
     width: 100%;
     height: auto;
     display: block;
     border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+  }
+  .solutions-showcase-caption {
+    margin-top: var(--space-4);
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    max-width: var(--max-width-text, 42rem);
+    margin-inline: auto;
+  }
+
+  /* ── Quantify tabbed viewer — Fix 2, 2026-09-09. Reuses the tab-interaction
+     idiom already established by index.astro's How We Work
+     `.approach-track`/`.approach-stop` pattern (role="tablist"/"tab",
+     aria-selected, roving tabindex) rather than inventing a new one; the
+     visual treatment here is page-local because this section's light
+     background differs from that pattern's dark `.approach-card`. ── */
+  .quantify-viewer {
+    margin: 0 0 var(--space-4);
+  }
+  .quantify-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+  }
+  .quantify-tab {
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-surface-elevated);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    transition: border-color var(--transition-fast), color var(--transition-fast),
+                box-shadow var(--transition-fast);
+  }
+  .quantify-tab:hover {
+    border-color: var(--c-sky-300);
+    color: var(--color-text);
+  }
+  .quantify-tab:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .quantify-tab.is-active {
+    border-color: var(--color-dark);
+    color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+    font-weight: var(--font-semibold);
+  }
+  .quantify-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: center;
+  }
+  .quantify-viewer-media {
+    margin: 0;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--gradient-dark);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
     box-shadow: var(--shadow-lg);
+  }
+  .quantify-viewer-media:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+  }
+  .quantify-viewer-media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    /* object-fit: contain (not the generic .card-media's `cover`) so the
+       whole real device — bezel included — reads clearly against the
+       site's own dark surface, since these are transparent device
+       cutouts, not a pre-composited scene. */
+    object-fit: contain;
+  }
+  .quantify-viewer-copy h3 {
+    margin-bottom: var(--space-3);
+  }
+  .quantify-viewer-copy p {
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  @media (max-width: 40rem) {
+    .quantify-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Commercialize product rows — Fix 3, 2026-09-09. No equivalent
+     alternating image/copy editorial row exists elsewhere on the site. ── */
+  .product-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+  .product-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+  }
+  .product-row:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+  .product-row-media {
+    flex: 1 1 55%;
+    margin: 0;
+    min-width: 0;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--gradient-dark);
+    box-shadow: var(--shadow-lg);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  }
+  .product-row-media:hover {
+    /* The one recurring "subtle wow" micro-interaction on this page — a
+       slight lift + deepened shadow on hover, matching .card's existing
+       hover-lift convention rather than inventing a new motion language.
+       Plain CSS only; no GSAP, no scroll-trigger (M9 scope). */
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+  }
+  .product-row-media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+  }
+  .product-row-copy {
+    flex: 1 1 45%;
+    min-width: 0;
+  }
+  .product-row-copy h3 {
+    margin: var(--space-3) 0;
+  }
+  .product-row-copy p {
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  .product-row-bullets {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .product-row-bullets li {
+    position: relative;
+    padding-inline-start: var(--space-5);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .product-row-bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--c-sky-400);
+  }
+  @media (max-width: 40rem) {
+    .product-row,
+    .product-row:nth-child(even) {
+      flex-direction: column;
+    }
+    .product-row-media,
+    .product-row-copy {
+      flex-basis: auto;
+      width: 100%;
+    }
   }
 
   .solution-card-media .card-media-body {
@@ -269,46 +583,58 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
     gap: var(--space-3);
   }
   .solution-card-media h3 { margin-bottom: 0; }
+  /* Verify cards: same transparent-device-on-dark-surface treatment as the
+     Quantify/Commercialize sections, overriding .card-media's default
+     white `cover` thumbnail recipe (built for opaque photos, not
+     transparent cutouts). */
+  .solution-card-media img {
+    aspect-ratio: 16 / 10;
+    object-fit: contain;
+    background: var(--gradient-dark);
+  }
 
-  /* Colorway switcher — the one deliberate exception to "tokens only":
-     the swatch chips render each colorway's own real brand-bar + accent
-     hex values (see plans/content/digital-solutions-2026-09/
-     product-ui-mockup-brief.md §2). That's the entire point of the
-     feature — showing the actual palette a licensee would get — so a
-     token substitute would misrepresent the product. Everything else
-     (panel, buttons, spacing, radius, focus ring, type) uses existing
-     design-system.css tokens/classes. */
+  /* Colorway switcher — demoted 2026-09-09 (owner feedback: white-labeling
+     isn't the story this page should tell). Was a prominent radiogroup
+     near the top of the page with its own explanatory paragraph; now a
+     small, quiet footnote control just before the closing CTA. Still the
+     one deliberate exception to "tokens only": the swatch chips render
+     each colorway's own real brand-bar + accent hex values (see
+     plans/content/digital-solutions-2026-09/product-ui-mockup-brief.md
+     §2) — that's the entire point of the feature, so a token substitute
+     would misrepresent the product. Everything else (spacing, radius,
+     focus ring, type) uses existing design-system.css tokens/classes. */
+  .colorway-footnote-section {
+    padding-block: var(--space-10);
+  }
   .colorway-switcher {
-    margin-bottom: var(--space-10);
-    padding: var(--space-6) var(--space-8);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-6);
+    justify-content: center;
+    gap: var(--space-4);
   }
   .colorway-switcher-copy {
-    flex: 1 1 20rem;
     margin: 0;
     color: var(--color-text-secondary);
-    font-size: var(--text-sm);
-    line-height: var(--line-relaxed);
+    font-size: var(--text-xs);
   }
   .colorway-options {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3);
+    justify-content: center;
+    gap: var(--space-2);
   }
   .colorway-option {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-1) var(--space-3);
     background: var(--color-surface-elevated);
-    border: 1.5px solid var(--color-border);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-full);
     cursor: pointer;
     font-family: var(--font-sans);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: var(--font-medium);
     color: var(--color-text-secondary);
     transition: border-color var(--transition-fast), color var(--transition-fast),
@@ -330,8 +656,8 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
   }
   .colorway-chip {
     display: inline-block;
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 0.85rem;
+    height: 0.85rem;
     border-radius: var(--radius-full);
     border: 1px solid rgba(15, 23, 42, 0.12);
     flex-shrink: 0;
@@ -343,28 +669,38 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
   .colorway-chip-slate { background: linear-gradient(135deg, #232A38 50%, #7FA9F0 50%); }
 
   @media (max-width: 40rem) {
-    .colorway-switcher { flex-direction: column; align-items: stretch; }
+    .colorway-switcher { flex-direction: column; }
   }
 </style>
 
 <script>
   // Live colorway switcher — every product-suite image on the page shares
-  // the `{tool}-16x9-{variant}` slug convention (data-product-slug), so
-  // swapping colorway is a pure filename substitution, not a re-render.
-  // Instant swap, no crossfade: the change is a data/branding toggle, not
-  // a narrative transition — an animated cross-fade would only add a
-  // flash on every click for no communicative benefit, and this also
+  // a `{tool}` + `{kind}` pair (data-tool/data-kind), so swapping colorway
+  // is a pure filename substitution across `src` + `srcset`, not a
+  // re-render. Instant swap, no crossfade: the change is a data/branding
+  // toggle, not a narrative transition — an animated cross-fade would only
+  // add a flash on every click for no communicative benefit, and this also
   // means there's nothing to gate behind `prefers-reduced-motion` (no
   // motion is introduced either way).
   const STORAGE_KEY = 'tnx-digital-solutions-colorway';
   const VALID = ['default', 'terrain', 'copper', 'slate'];
   const LABELS: Record<string, string> = { default: 'Default', terrain: 'Terrain', copper: 'Copper', slate: 'Slate' };
+  const DEVICE_WIDTHS = [480, 960, 1440];
+  const OFFICE_DESK_WIDTHS = [960, 1440, 1672];
 
-  function filenameFor(colorway: string, slug: string): string {
-    if (colorway === 'default') {
-      return slug.startsWith('family') ? `terranexus-product-${slug}.png` : `terranexus-${slug}.png`;
-    }
-    return `terranexus-${colorway}-${slug}.png`;
+  // Mirrors the server-side `assetFor()` helper in this page's frontmatter
+  // — kept in sync manually, same trade-off already accepted for
+  // `filenameFor` before this rework (Astro inline <script> tags don't
+  // share a module scope with frontmatter or with each other by default,
+  // and this is small/stable enough that manual sync is reasonable).
+  function assetFor(colorway: string, tool: string, kind: string): { src: string; srcset: string } {
+    const widths = kind === 'office-desk' ? OFFICE_DESK_WIDTHS : DEVICE_WIDTHS;
+    const prefix = colorway === 'default' ? '' : `${colorway}-`;
+    const suffix = kind === 'office-desk' ? 'office-desk' : kind;
+    const base = `terranexus-${prefix}${tool}-${suffix}`;
+    const srcset = widths.map((w) => `/images/product-ui/${base}-${w}w.webp ${w}w`).join(', ');
+    const src = `/images/product-ui/${base}-${widths[widths.length - 1]}w.webp`;
+    return { src, srcset };
   }
 
   function readStoredColorway(): string | null {
@@ -386,20 +722,24 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
   }
 
   function init(): void {
-    const switcher = document.querySelector<HTMLElement>('[data-colorway-switcher]');
-    if (!switcher) return;
+    const switcherMaybe = document.querySelector<HTMLElement>('[data-colorway-switcher]');
+    if (!switcherMaybe) return;
+    const switcher = switcherMaybe;
 
     const buttons = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-colorway]'));
-    const images = Array.from(document.querySelectorAll<HTMLImageElement>('[data-product-slug]'));
+    const images = Array.from(document.querySelectorAll<HTMLImageElement>('[data-tool]'));
     if (buttons.length === 0 || images.length === 0) return;
 
     function applyColorway(colorway: string, persist: boolean): void {
       const label = LABELS[colorway] ?? colorway;
       images.forEach((img) => {
-        const slug = img.dataset.productSlug;
+        const tool = img.dataset.tool;
+        const kind = img.dataset.kind;
         const altBase = img.dataset.altBase;
-        if (!slug) return;
-        img.src = `/images/product-ui/${filenameFor(colorway, slug)}`;
+        if (!tool || !kind) return;
+        const asset = assetFor(colorway, tool, kind);
+        img.src = asset.src;
+        img.srcset = asset.srcset;
         if (altBase) {
           img.alt = colorway === 'default' ? altBase : `${altBase} ${label} colorway.`;
         }
@@ -409,6 +749,10 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
         btn.setAttribute('aria-checked', active ? 'true' : 'false');
         btn.tabIndex = active ? 0 : -1;
       });
+      // Exposed so the Quantify tab-viewer script (a separate <script>
+      // block, hence no shared closure) can read the currently-active
+      // colorway when a tab is switched, without duplicating switcher state.
+      switcher.dataset.activeColorway = colorway;
       if (persist) storeColorway(colorway);
     }
 
@@ -440,4 +784,94 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
   }
 
   init();
+</script>
+
+<script>
+  // Quantify tabbed viewer — mirrors the tab-interaction idiom already
+  // established by index.astro's How We Work `.approach-track`/
+  // `.approach-stop` (role="tablist"/"tab", aria-selected, roving
+  // tabindex, click + arrow-key/Home/End navigation) rather than inventing
+  // a new one.
+  //
+  // Two pieces of state have to combine to pick an image: which tab is
+  // active, and which colorway is active. Colorway is owned by the
+  // colorway-switcher script above (a separate <script> block/closure), so
+  // rather than duplicate that state, this script reads it off
+  // `[data-colorway-switcher]`'s `data-active-colorway` attribute (kept in
+  // sync by that script on every colorway change) each time a tab is
+  // activated. `assetFor` is duplicated here (same shape as the switcher's
+  // copy and the frontmatter's server-side version) rather than shared
+  // across script blocks — Astro inline <script> tags don't share a module
+  // scope by default, and this is small/stable enough that keeping it in
+  // sync manually is a reasonable trade against real module wiring.
+  const DEVICE_WIDTHS = [480, 960, 1440];
+  const OFFICE_DESK_WIDTHS = [960, 1440, 1672];
+
+  function assetFor(colorway: string, tool: string, kind: string): { src: string; srcset: string } {
+    const widths = kind === 'office-desk' ? OFFICE_DESK_WIDTHS : DEVICE_WIDTHS;
+    const prefix = colorway === 'default' ? '' : `${colorway}-`;
+    const suffix = kind === 'office-desk' ? 'office-desk' : kind;
+    const base = `terranexus-${prefix}${tool}-${suffix}`;
+    const srcset = widths.map((w) => `/images/product-ui/${base}-${w}w.webp ${w}w`).join(', ');
+    const src = `/images/product-ui/${base}-${widths[widths.length - 1]}w.webp`;
+    return { src, srcset };
+  }
+
+  function currentColorway(): string {
+    const switcher = document.querySelector<HTMLElement>('[data-colorway-switcher]');
+    return switcher?.dataset.activeColorway ?? 'terrain';
+  }
+
+  function initQuantifyViewer(): void {
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.quantify-tab'));
+    const img = document.querySelector<HTMLImageElement>('.quantify-viewer-img');
+    const titleEl = document.getElementById('quantify-viewer-title');
+    const descEl = document.getElementById('quantify-viewer-desc');
+    const panelEl = document.getElementById('quantify-panel');
+    if (!tabs.length || !img || !titleEl || !descEl) return;
+
+    function activate(index: number): void {
+      const tab = tabs[index];
+      tabs.forEach((t, idx) => {
+        const active = idx === index;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+        t.tabIndex = active ? 0 : -1;
+      });
+      panelEl?.setAttribute('aria-labelledby', tab.id);
+
+      const tool = tab.dataset.tool;
+      const kind = tab.dataset.kind;
+      const altBase = tab.dataset.altBase ?? '';
+      const colorway = currentColorway();
+      if (tool && kind) {
+        const asset = assetFor(colorway, tool, kind);
+        img!.dataset.tool = tool;
+        img!.dataset.kind = kind;
+        img!.dataset.altBase = altBase;
+        img!.src = asset.src;
+        img!.srcset = asset.srcset;
+        img!.alt = colorway === 'default' ? altBase : `${altBase} ${colorway[0].toUpperCase()}${colorway.slice(1)} colorway.`;
+      }
+      titleEl!.textContent = tab.dataset.title ?? '';
+      descEl!.textContent = tab.dataset.desc ?? '';
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activate(i));
+      tab.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        let next = i;
+        if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (i + 1) % tabs.length;
+        else next = (i - 1 + tabs.length) % tabs.length;
+        tabs[next].focus();
+        activate(next);
+      });
+    });
+  }
+
+  initQuantifyViewer();
 </script>
