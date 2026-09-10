@@ -936,7 +936,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     const switcher = switcherMaybe;
 
     const buttons = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-colorway]'));
-    const images = Array.from(document.querySelectorAll<HTMLImageElement>('[data-tool]'));
+    const images = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-tool]'));
     if (buttons.length === 0 || images.length === 0) return;
 
     function applyColorway(colorway: string, persist: boolean): void {
