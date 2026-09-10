@@ -62,14 +62,14 @@ const verifySolutions = [
     tool: 'dmrv-audit-verification',
     kind: 'monitor' as const,
     title: 'Audit & Diligence Verification',
-    summary: "Independent, remote-sensing-based verification of regenerative practices and soil health indicators — NDVI, tillage, and cover-crop detection — with an audit-ready export a third-party reviewer can act on directly.",
+    summary: 'Independent, remote-sensing verification of regenerative practices and soil health indicators (NDVI, tillage, and cover-crop detection), with an audit-ready export a third-party reviewer can act on directly.',
     altBase: 'Terra Nexus Audit & Diligence Verification tool on a real desktop monitor, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
   },
   {
     tool: 'soil-carbon-prediction',
     kind: 'monitor' as const,
     title: 'Soil Carbon Prediction',
-    summary: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it’s implemented.',
+    summary: "Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it's implemented.",
     altBase: 'Terra Nexus Soil Carbon Prediction tool on a real desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.',
   },
 ];
@@ -153,13 +153,13 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
 
 <SiteLayout
   title="Digital Solutions | Terra Nexus"
-  description="The fit-for-purpose digital tools Terra Nexus builds to run its own carbon, food-system, and verification programs — quantify, verify, and commercialize environmental outcomes."
+  description="The fit-for-purpose digital tools Terra Nexus builds to run its own carbon, food-system, and verification programs: quantify, verify, and commercialize environmental outcomes."
   preview={mode === 'preview'}
 >
   <PageHero
     eyebrow="Digital Solutions"
     title="Tools We Built Because the Work Demanded Them"
-    lead="Terra Nexus is an Innovation & Insight Studio that advises, manages, and operates climate and food-system programs — not a software vendor. Running that work at investment grade required instruments that didn't exist off the shelf, so our own team built them: eight proprietary tools that quantify what's happening on the ground, verify it holds up to scrutiny, and commercialize the result into credits, contracts, and value."
+    lead="Terra Nexus is an Innovation & Insight Studio that advises, manages, and operates climate and food-system programs, not a software vendor. Running that work at investment grade meant building instruments that did not exist off the shelf, so our own team built them: eight proprietary tools that quantify what is happening on the ground, verify it holds up to scrutiny, and commercialize the result into credits, contracts, and value. Every one stays in the hands of the same team that is accountable for the program it supports."
     primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
     secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
   />
@@ -170,7 +170,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
         {(() => {
           const asset = assetFor(DEFAULT_COLORWAY, 'dmrv-audit-verification', 'office-desk');
           const d = dims('office-desk');
-          const altBase = "A real office desk with an ultrawide monitor showing the Terra Nexus Audit & Diligence Verification tool — field NDVI, cover-crop and tillage classification, and a season-long biomass curve — with the Flatirons visible through the window behind it.";
+          const altBase = "A real office desk with an ultrawide monitor showing the Terra Nexus Audit & Diligence Verification tool: field NDVI, cover-crop and tillage classification, and a season-long biomass curve, with the Flatirons visible through the window behind it.";
           return (
             <img
               class="product-ui-img"
@@ -189,7 +189,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
             />
           );
         })()}
-        <figcaption class="solutions-showcase-caption" id="showcase-heading">This is a real desk, not a rendered scene — where the evidence from all eight tools below actually gets reviewed and exported before it goes to a verifier.</figcaption>
+        <figcaption class="solutions-showcase-caption" id="showcase-heading">This is a real desk, not a rendered scene. It is where the evidence from all eight tools below gets reviewed and exported before it goes to a verifier.</figcaption>
       </figure>
     </div>
   </section>
@@ -199,7 +199,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
       <header class="section-header text-center">
         <span class="eyebrow">The Full Suite</span>
         <h2 id="suite-heading">Eight Tools, One Evidence Chain</h2>
-        <p class="section-lead" style="margin-inline: auto;">We didn't buy this suite or white-label someone else's platform — we built it, because running a real environmental-outcomes program end to end meant we needed instruments that don't exist anywhere else. It's organized the way a program actually runs, not by device tier: <strong>quantify</strong> what's happening on the ground, <strong>verify</strong> it holds up to scrutiny, then <strong>commercialize</strong> the result into credits, contracts, and value.</p>
+        <p class="section-lead section-lead-centered">We did not buy this suite or white label someone else's platform. We built it because running a real environmental-outcomes program end to end meant we needed instruments that matched exactly how our programs get verified and paid, not a generic dashboard retrofitted to fit. It is organized the way a program actually runs, not by device tier: <strong>quantify</strong> what is happening on the ground, <strong>verify</strong> it holds up to scrutiny, then <strong>commercialize</strong> the result into credits, contracts, and value.</p>
       </header>
     </div>
   </section>
@@ -209,7 +209,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
       <header class="section-header">
         <span class="eyebrow">Quantify</span>
         <h2 id="quantify-heading">Turn Field and Herd Activity Into a Verifiable Number</h2>
-        <p class="section-lead">Every program we run starts with the same measurement problem: what's actually happening on the ground, and how much of it counts. We built these tools to capture that activity directly — grazing events and biomass recovery from satellite, enteric methane by herd and cohort, and field-level carbon intensity — producing the base figures a verifier can trace back to source.</p>
+        <p class="section-lead">Every program we run starts with the same measurement problem: what is happening on the ground, and how much of it counts. We built these tools to capture that activity directly: grazing events and biomass recovery from satellite, enteric methane by herd and cohort, field-level carbon intensity. Each one produces a base figure a verifier can trace back to source.</p>
       </header>
 
       <div class="quantify-viewer">
@@ -274,7 +274,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
       <header class="section-header">
         <span class="eyebrow">Verify</span>
         <h2 id="verify-heading">Make the Evidence Hold Up to a Third Party</h2>
-        <p class="section-lead">A number is only as good as what backs it up. We built these tools to produce the audit-ready record and the pre-commitment modeling our own programs' verifiers and investors need — remote-sensing evidence of the practice actually detected in the field, and biogeochemical forecasting that quantifies a soil carbon benefit before a program commits to it.</p>
+        <p class="section-lead">A number is only as good as what backs it up. We built these tools to produce the audit-ready record and the pre-commitment modeling our own programs' verifiers and investors need: remote-sensing evidence of the practice detected in the field, and biogeochemical forecasting that quantifies a soil carbon benefit before a program commits to it.</p>
       </header>
 
       <div class="card-grid card-grid-3">
@@ -313,7 +313,7 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
       <header class="section-header">
         <span class="eyebrow">Commercialize</span>
         <h2 id="commercialize-heading">Convert Verified Performance Into Market Value</h2>
-        <p class="section-lead">Once activity is measured and the evidence holds up, it has to become something transactable — credits, contracts, or margin. We built these tools to price low-carbon feedstock against real supply, optimize what an environmental asset is worth and surface what's left on the table when it isn't developed, and turn prevented food waste into monetized, verified credits.</p>
+        <p class="section-lead">Once activity is measured and the evidence holds up, it has to become something transactable: credits, contracts, or margin. We built these tools to price low-carbon feedstock against real supply, to work out what an environmental asset is worth and what is left on the table when it goes undeveloped, and to turn prevented food waste into monetized, verified credits.</p>
       </header>
 
       <div class="product-rows">
@@ -397,6 +397,9 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
   }
+  .section-lead-centered {
+    margin-inline: auto;
+  }
   .solutions-showcase-caption {
     margin-top: var(--space-4);
     text-align: center;
@@ -459,7 +462,6 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     margin: 0;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    background: var(--gradient-dark);
     transition: box-shadow var(--transition-base), transform var(--transition-base);
     box-shadow: var(--shadow-lg);
   }
@@ -511,7 +513,6 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     min-width: 0;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    background: var(--gradient-dark);
     box-shadow: var(--shadow-lg);
     transition: box-shadow var(--transition-base), transform var(--transition-base);
   }
@@ -590,7 +591,6 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
   .solution-card-media img {
     aspect-ratio: 16 / 10;
     object-fit: contain;
-    background: var(--gradient-dark);
   }
 
   /* Colorway switcher — demoted 2026-09-09 (owner feedback: white-labeling
