@@ -27,11 +27,24 @@ const mode = getBuildMode();
 //
 // Every product image is addressed by a stable `tool` id (e.g.
 // "dmrv-audit-verification") plus a `kind` ("monitor" | "phone" |
-// "office-desk") so the colorway switcher's client-side script can
-// reconstruct both `src` and `srcset` for any colorway without a full
-// re-render — see the `assetFor()` helper in the page script. No invented
-// client/case-study claims; descriptions only restate what the mockup
-// screens themselves show — see CLAUDE.md.
+// "office-desk" | "laptop" | "tablet" | "tablet-portrait" | "tablet-split")
+// so the colorway switcher's client-side script can reconstruct both `src`
+// and `srcset` for any colorway without a full re-render — see the
+// `assetFor()` helper in the page script. No invented client/case-study
+// claims; descriptions only restate what the mockup screens themselves
+// show — see CLAUDE.md.
+//
+// Device-mix pass (2026-09-10): owner feedback that repeating only
+// "phone" (Quantify) and "monitor" (Verify/Commercialize) across all eight
+// products read as redundant. Each product below now carries a distinct
+// device kind within its section (tablet-portrait, tablet-split, laptop,
+// tablet), keeping the same real dashboard content per product — only the
+// device photographed around it changed. The closing full-width
+// `terranexus-suite-office-ultrawide-*` figure below the Commercialize
+// section is a Default-colorway-only asset (no `data-tool`/`data-kind`
+// attributes, so the colorway switcher's `[data-tool]` query intentionally
+// does not pick it up) bookending the office-desk hero at the top of the
+// page.
 
 const quantifySolutions = [
   {
@@ -43,34 +56,34 @@ const quantifySolutions = [
   },
   {
     tool: 'enteric-emissions',
-    kind: 'phone' as const,
+    kind: 'tablet-portrait' as const,
     title: 'Herd Emissions Intelligence',
     summary: 'Enteric methane tracking by herd and cohort, with emission-factor adjustments that hold up to verifier scrutiny.',
-    altBase: 'Terra Nexus Enteric Emissions tool on a real mobile phone, showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.',
+    altBase: 'Terra Nexus Enteric Emissions tool on a real tablet held in portrait orientation, showing VM0042 herd methane for 350 head across two cohorts with the emission-factor adjustment, the screen filling the height with a workspace column of navigation and activity cards beside it.',
   },
   {
     tool: 'crop-carbon-intensity',
-    kind: 'phone' as const,
+    kind: 'tablet-split' as const,
     title: 'Crop Carbon Intensity',
     summary: 'Field-level GHG breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
-    altBase: 'Terra Nexus Crop Carbon Intensity tool on a real mobile phone, showing GREET volume-weighted carbon intensity for corn with a seven-line GHG breakdown.',
+    altBase: 'Terra Nexus Crop Carbon Intensity tool on a real white tablet with a stylus, in landscape split view: GREET volume-weighted carbon intensity for corn with a seven-line GHG breakdown beside a workspace column of navigation and activity cards.',
   },
 ];
 
 const verifySolutions = [
   {
     tool: 'dmrv-audit-verification',
-    kind: 'monitor' as const,
+    kind: 'laptop' as const,
     title: 'Audit & Diligence Verification',
     summary: 'Independent, remote-sensing verification of regenerative practices and soil health indicators (NDVI, tillage, and cover-crop detection), with an audit-ready export a third-party reviewer can act on directly.',
-    altBase: 'Terra Nexus Audit & Diligence Verification tool on a real desktop monitor, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
+    altBase: 'Terra Nexus Audit & Diligence Verification tool on a real laptop screen, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
   },
   {
     tool: 'soil-carbon-prediction',
-    kind: 'monitor' as const,
+    kind: 'tablet' as const,
     title: 'Soil Carbon Prediction',
     summary: "Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it's implemented.",
-    altBase: 'Terra Nexus Soil Carbon Prediction tool on a real desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.',
+    altBase: 'Terra Nexus Soil Carbon Prediction tool on a real tablet in landscape orientation, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions, top-aligned with a compact workspace strip (projects, season summary, recent runs, alerts, data sources) beneath it.',
   },
 ];
 
@@ -92,11 +105,11 @@ const commercializeSolutions = [
   },
   {
     tool: 'asset-pricing-optimization',
-    kind: 'monitor' as const,
+    kind: 'tablet' as const,
     eyebrow: 'Insetting Economics',
     title: 'Environmental Asset Pricing & Stranded Claims Optimization',
     summary: 'Optimizes bid allocation and carbon-development economics across an insetting program, and surfaces the value left on the table when eligible supply goes undeveloped.',
-    altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization tool on a real desktop monitor, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+    altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization tool on a real tablet in landscape orientation, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
     // §4.5 — no raw KPI dump (e.g. exact dollar figures), paraphrased.
     bullets: [
       'Surfaces the dollar value of undeveloped supply, not just what’s enrolled.',
@@ -106,11 +119,11 @@ const commercializeSolutions = [
   },
   {
     tool: 'food-waste-platform',
-    kind: 'monitor' as const,
+    kind: 'laptop' as const,
     eyebrow: 'Food Waste Credits',
     title: 'Food Waste Collaboration Platform',
     summary: 'Quantifies prevented food-waste reductions under VM0046 and converts them into carbon credits and monetized value across the supply chain.',
-    altBase: 'Terra Nexus Food Waste Collaboration Platform tool on a real desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.',
+    altBase: 'Terra Nexus Food Waste Collaboration Platform tool on a real laptop screen, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.',
     // §4.4 — no raw KPI dump, paraphrased.
     bullets: [
       'Reconciles diverted volume to monetized, VM0046-aligned credits.',
@@ -133,7 +146,7 @@ const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
 // via a module import).
 const DEVICE_WIDTHS = [480, 960, 1440];
 const OFFICE_DESK_WIDTHS = [960, 1440, 1672];
-type Kind = 'monitor' | 'phone' | 'office-desk';
+type Kind = 'monitor' | 'phone' | 'office-desk' | 'laptop' | 'tablet' | 'tablet-portrait' | 'tablet-split';
 function assetFor(colorway: string, tool: string, kind: Kind) {
   const widths = kind === 'office-desk' ? OFFICE_DESK_WIDTHS : DEVICE_WIDTHS;
   const prefix = colorway === 'default' ? '' : `${colorway}-`;
@@ -146,6 +159,7 @@ function assetFor(colorway: string, tool: string, kind: Kind) {
 function dims(kind: Kind): { width: number; height: number } {
   if (kind === 'office-desk') return { width: 1672, height: 941 };
   if (kind === 'phone') return { width: 1520, height: 2780 };
+  if (kind === 'tablet-portrait') return { width: 1740, height: 2400 };
   return { width: 2400, height: 1740 };
 }
 const SIZES = '(max-width: 900px) 100vw, 1440px';
@@ -410,6 +424,25 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
     </div>
   </section>
 
+  <section class="section" aria-labelledby="suite-closing-heading">
+    <div class="container">
+      <figure class="solutions-showcase solutions-showcase-suite" data-reveal>
+        <img
+          class="product-ui-img"
+          src="/images/product-ui/terranexus-suite-office-ultrawide-1920w.webp"
+          srcset="/images/product-ui/terranexus-suite-office-ultrawide-960w.webp 960w, /images/product-ui/terranexus-suite-office-ultrawide-1440w.webp 1440w, /images/product-ui/terranexus-suite-office-ultrawide-1920w.webp 1920w"
+          sizes={SIZES}
+          width="3832"
+          height="1642"
+          loading="lazy"
+          decoding="async"
+          alt="A real office desk with an ultrawide monitor showing three Terra Nexus dashboards side by side on one screen: a soil-health map, a set of GHG and Monte Carlo charts, and an asset-pricing flow diagram, with a taskbar along the bottom and the same window and mountain view behind it as the desk hero above."
+        />
+        <figcaption class="solutions-showcase-caption" id="suite-closing-heading">Same desk, same evidence chain, this time with the whole suite open at once. It is one connected workspace, not eight separate products bolted together.</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="section section-alt colorway-footnote-section" aria-labelledby="colorway-footnote-heading">
     <div class="container">
       <div class="colorway-switcher" data-colorway-switcher>
@@ -445,7 +478,8 @@ const SIZES = '(max-width: 900px) 100vw, 1440px';
   .solutions-showcase {
     margin: 0;
   }
-  .solutions-showcase-hero img {
+  .solutions-showcase-hero img,
+  .solutions-showcase-suite img {
     width: 100%;
     height: auto;
     display: block;
