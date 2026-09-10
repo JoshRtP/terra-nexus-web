@@ -5,49 +5,83 @@ import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
 const mode = getBuildMode();
 
-// Product suite rebuild (2026-09-08) — see
-// plans/content/digital-solutions-2026-09/README.md for the full brief.
-// Tier 1 (field/herd, phone-screen products) copy is carried over verbatim
-// from the original placeholder. Tier 2 (analyst-grade desktop products) is
-// new copy drafted directly from the dashboard screenshots. Full
-// per-solution detail pages remain a future milestone (out of scope here).
-// See CLAUDE.md — no invented client/case-study claims; descriptions only
-// restate what the mockup screens themselves show.
+// Product suite elevation pass (2026-09-09) — see
+// plans/content/digital-solutions-2026-09/ for the full brief. Builds on
+// the 2026-09-08 two-tier rebuild: swaps flat screenshots for the
+// real-device-framed renders, expands Tier 2 from 3 to 5 products now that
+// Food Waste Collaboration Platform and Environmental Asset Pricing &
+// Stranded Claims Optimization have real assets, and adds a live,
+// client-side colorway switcher (white-label branding is a real product
+// capability, not decoration — see the switcher markup/script below).
+//
+// Every product image on this page is addressed by a stable `slug`
+// (matches the `{tool}-16x9-{variant}` segment of its filename) so the
+// switcher can rewrite every <img> src in one pass by string-substituting
+// the colorway prefix — see the `filenameFor()` helper in the page script.
+// No invented client/case-study claims; descriptions only restate what the
+// mockup screens themselves show — see CLAUDE.md.
+
 const fieldSolutions = [
   {
-    title: 'Herd Emissions Intelligence',
-    summary: 'Enteric methane tracking by herd and cohort, with emission-factor adjustments that hold up to verifier scrutiny.',
-  },
-  {
+    slug: 'grazing-detection-16x9-framed-dark',
     title: 'Grazing & Biomass Monitoring',
     summary: 'Satellite-verified rotational grazing events and biomass recovery, paddock by paddock.',
+    altBase: "Terra Nexus Grazing Detection dashboard on a real-device-framed mobile screen, showing a rotational grazing event on an NDVI paddock map with a 10-week biomass recovery curve.",
   },
   {
+    slug: 'enteric-emissions-16x9-framed-dark',
+    title: 'Herd Emissions Intelligence',
+    summary: 'Enteric methane tracking by herd and cohort, with emission-factor adjustments that hold up to verifier scrutiny.',
+    altBase: "Terra Nexus Enteric Emissions dashboard on a real-device-framed mobile screen, showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.",
+  },
+  {
+    slug: 'crop-carbon-intensity-16x9-framed-dark',
     title: 'Crop Carbon Intensity',
     summary: 'Field-level GHG breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
+    altBase: "Terra Nexus Crop Carbon Intensity dashboard on a real-device-framed mobile screen, showing GREET volume-weighted carbon intensity for corn with a seven-line GHG breakdown.",
   },
 ];
 
 const analystSolutions = [
   {
+    slug: 'dmrv-audit-verification-16x9-framed-dark',
     title: 'Audit & Diligence Verification',
     summary: "Independent, remote-sensing-based verification of regenerative practices and soil health indicators — NDVI, tillage, and cover-crop detection — with an audit-ready export a third-party reviewer can act on directly.",
-    image: '/images/live-site/terranexus-dmrv-audit-verification-16x9-dark.png',
-    imageAlt: 'Terra Nexus audit and diligence verification dashboard showing a field boundary with NDVI vegetation-index imagery, cover-crop and tillage classification, a 24-frame MODIS NDVI time series, and soil covariates, with an export-audit-package action.',
+    altBase: "Terra Nexus Regenerative Agriculture — Audit & Diligence Verification dashboard on a real-device-framed desktop monitor, showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.",
   },
   {
+    slug: 'soil-carbon-prediction-16x9-framed-dark',
     title: 'Soil Carbon Prediction',
     summary: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it’s implemented.',
-    image: '/images/live-site/terranexus-soil-carbon-prediction-16x9-dark.png',
-    imageAlt: 'Terra Nexus soil carbon prediction dashboard showing project-versus-baseline soil organic carbon trajectories over 50 years, a carbon sequestration benefit curve, and a calibrated soil-carbon-model library with validated scenario presets.',
+    altBase: "Terra Nexus Advanced Biogeochemical & DSM Soil Carbon Prediction dashboard on a real-device-framed desktop monitor, showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories and benefit and economic-value distributions.",
   },
   {
+    slug: 'biofuels-origination-16x9-framed-dark',
     title: 'Feedstock Origination Mapping',
     summary: 'Maps low-carbon-intensity feedstock supply against processing capacity, so sourcing decisions are grounded in where the qualifying material actually is.',
-    image: '/images/live-site/terranexus-biofuels-origination-16x9-dark.png',
-    imageAlt: 'Terra Nexus feedstock origination dashboard showing a U.S. county-level heat map of carbon-intensity impact for corn feedstock under a cover-crop and no-till scenario, with county results and feedstock-to-facility mapping actions.',
+    altBase: "Terra Nexus Biofuels Origination Economics dashboard on a real-device-framed desktop monitor, showing a US county-level heat map of carbon-intensity impact for corn feedstock under a cover-crop and no-till scenario, with county results and feedstock-to-facility mapping actions.",
+  },
+  {
+    slug: 'food-waste-platform-16x9-framed-dark',
+    title: 'Food Waste Collaboration Platform',
+    summary: 'Quantifies prevented food-waste reductions under VM0046 and converts them into carbon credits and monetized value across the supply chain.',
+    altBase: "Terra Nexus Food Waste Collaboration Platform dashboard on a real-device-framed desktop monitor, showing a simulated food-system waste flow, the gross-to-issuable credit waterfall, and 10-year stakeholder economics under VM0046.",
+  },
+  {
+    slug: 'asset-pricing-optimization-16x9-framed-dark',
+    title: 'Asset Pricing & Stranded Claims Optimization',
+    summary: 'Optimizes bid allocation and carbon-development economics across an insetting program, and surfaces the value left on the table when eligible supply goes undeveloped.',
+    altBase: "Terra Nexus Environmental Asset Pricing & Stranded Claims Optimization dashboard on a real-device-framed desktop monitor, showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
   },
 ];
+
+const colorways = [
+  { id: 'default', label: 'Default' },
+  { id: 'terrain', label: 'Terrain' },
+  { id: 'copper', label: 'Copper' },
+  { id: 'slate', label: 'Slate' },
+];
+const DEFAULT_COLORWAY = 'terrain'; // matches what has been live on this page
 ---
 
 <SiteLayout
@@ -63,49 +97,116 @@ const analystSolutions = [
     secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
   />
 
-  <section class="section" aria-labelledby="field-heading">
+  <section class="section" aria-labelledby="suite-heading">
     <div class="container">
-      <figure class="solutions-showcase">
+      <header class="section-header text-center">
+        <span class="eyebrow">The Full Suite</span>
+        <h2 id="suite-heading">Eight Tools, One Evidence Chain</h2>
+        <p class="section-lead" style="margin-inline: auto;">From paddock to portfolio: field and herd data capture, remote-sensing verification, biogeochemical modeling, and origination and pricing economics — every screen built to hold up under third-party review.</p>
+      </header>
+
+      <div class="colorway-switcher card-static" data-colorway-switcher>
+        <p class="colorway-switcher-copy">
+          Every dashboard ships in your brand — this whole suite is white-label. Try a colorway below and watch every screen on this page repaint.
+        </p>
+        <div class="colorway-options" role="radiogroup" aria-label="Preview a dashboard colorway">
+          {colorways.map((cw) => (
+            <button
+              type="button"
+              class="colorway-option"
+              role="radio"
+              data-colorway={cw.id}
+              aria-checked={cw.id === DEFAULT_COLORWAY ? 'true' : 'false'}
+              aria-label={`${cw.label} colorway`}
+              tabindex={cw.id === DEFAULT_COLORWAY ? 0 : -1}
+            >
+              <span class={`colorway-chip colorway-chip-${cw.id}`} aria-hidden="true"></span>
+              <span class="colorway-name">{cw.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <figure class="solutions-showcase solutions-showcase-hero">
         <img
-          class="solutions-showcase-image"
-          src="/images/live-site/terranexus-terrain-family-16x9-dark.png"
-          alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown."
+          class="product-ui-img"
+          data-product-slug="family-16x9-dark"
+          data-alt-base="The Terra Nexus product family — desktop dashboards alongside phone screens."
+          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-family-16x9-dark.png`}
+          alt="The Terra Nexus product family in the Terrain colorway — desktop dashboards alongside phone screens."
         />
       </figure>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="field-heading">
+    <div class="container">
       <header class="section-header">
         <span class="eyebrow">Field &amp; Herd Intelligence</span>
         <h2 id="field-heading">Built for Investment-Grade Evidence</h2>
         <p class="section-lead">On-the-ground data capture and satellite monitoring, purpose-built for herds, paddocks, and fields.</p>
       </header>
+
+      <figure class="solutions-showcase">
+        <img
+          class="product-ui-img"
+          data-product-slug="mobile-trio-16x9-dark"
+          data-alt-base="Three Terra Nexus mobile screens: grazing detection, enteric emissions, and crop carbon intensity dashboards."
+          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-mobile-trio-16x9-dark.png`}
+          alt="Three Terra Nexus mobile screens in the Terrain colorway: grazing detection, enteric emissions, and crop carbon intensity dashboards."
+        />
+      </figure>
+
       <div class="card-grid card-grid-3">
         {fieldSolutions.map((solution) => (
-          <article class="card solution-card">
-            <h3>{solution.title}</h3>
-            <p>{solution.summary}</p>
+          <article class="card card-media solution-card-media">
+            <img
+              class="product-ui-img"
+              data-product-slug={solution.slug}
+              data-alt-base={solution.altBase}
+              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
+              alt={`${solution.altBase} Terrain colorway.`}
+              loading="lazy"
+            />
+            <div class="card-media-body">
+              <h3>{solution.title}</h3>
+              <p>{solution.summary}</p>
+            </div>
           </article>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section section-alt" aria-labelledby="analyst-heading">
+  <section class="section" aria-labelledby="analyst-heading">
     <div class="container">
-      <figure class="solutions-showcase">
-        <img
-          class="solutions-showcase-image"
-          src="/images/live-site/terranexus-desktop-suite-16x9-dark.png"
-          alt="Three Terra Nexus desktop dashboards on separate monitors: soil carbon prediction with sequestration trajectories, audit and diligence verification with field NDVI imagery, and feedstock origination economics with a county-level carbon-intensity map."
-        />
-      </figure>
       <header class="section-header">
         <span class="eyebrow">Analyst-Grade Verification &amp; Modeling</span>
-        <h2 id="analyst-heading">Desktop Tools for Diligence and Origination</h2>
-        <p class="section-lead">Remote-sensing verification, biogeochemical modeling, and origination economics, built for analysts and third-party reviewers.</p>
+        <h2 id="analyst-heading">Desktop Tools for Diligence, Origination, and Monetization</h2>
+        <p class="section-lead">Remote-sensing verification, biogeochemical modeling, origination economics, and carbon-asset monetization, built for analysts and third-party reviewers.</p>
       </header>
+
+      <figure class="solutions-showcase">
+        <img
+          class="product-ui-img"
+          data-product-slug="desktop-suite-16x9-dark"
+          data-alt-base="The five Terra Nexus desktop tools shown as an overlapping suite."
+          src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-desktop-suite-16x9-dark.png`}
+          alt="The five Terra Nexus desktop tools in the Terrain colorway shown as an overlapping suite."
+        />
+      </figure>
+
       <div class="card-grid card-grid-3">
         {analystSolutions.map((solution) => (
           <article class="card card-media solution-card-media">
-            <img src={solution.image} alt={solution.imageAlt} loading="lazy" />
+            <img
+              class="product-ui-img"
+              data-product-slug={solution.slug}
+              data-alt-base={solution.altBase}
+              src={`/images/product-ui/terranexus-${DEFAULT_COLORWAY}-${solution.slug}.png`}
+              alt={`${solution.altBase} Terrain colorway.`}
+              loading="lazy"
+            />
             <div class="card-media-body">
               <h3>{solution.title}</h3>
               <p>{solution.summary}</p>
@@ -127,7 +228,10 @@ const analystSolutions = [
   .solutions-showcase {
     margin: 0 0 var(--space-12);
   }
-  .solutions-showcase-image {
+  .solutions-showcase-hero {
+    margin-bottom: var(--space-16);
+  }
+  .solutions-showcase img {
     width: 100%;
     height: auto;
     display: block;
@@ -135,18 +239,181 @@ const analystSolutions = [
     box-shadow: var(--shadow-lg);
   }
 
-  .solution-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  .solution-card h3 { margin-bottom: 0; }
-
   .solution-card-media .card-media-body {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
   }
   .solution-card-media h3 { margin-bottom: 0; }
+
+  /* Colorway switcher — the one deliberate exception to "tokens only":
+     the swatch chips render each colorway's own real brand-bar + accent
+     hex values (see plans/content/digital-solutions-2026-09/
+     product-ui-mockup-brief.md §2). That's the entire point of the
+     feature — showing the actual palette a licensee would get — so a
+     token substitute would misrepresent the product. Everything else
+     (panel, buttons, spacing, radius, focus ring, type) uses existing
+     design-system.css tokens/classes. */
+  .colorway-switcher {
+    margin-bottom: var(--space-10);
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .colorway-switcher-copy {
+    flex: 1 1 20rem;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+  }
+  .colorway-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .colorway-option {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface-elevated);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    transition: border-color var(--transition-fast), color var(--transition-fast),
+                box-shadow var(--transition-fast);
+  }
+  .colorway-option:hover {
+    border-color: var(--c-sky-300);
+    color: var(--color-text);
+  }
+  .colorway-option:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .colorway-option[aria-checked="true"] {
+    border-color: var(--color-dark);
+    color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+    font-weight: var(--font-semibold);
+  }
+  .colorway-chip {
+    display: inline-block;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    flex-shrink: 0;
+  }
+  /* Real per-colorway hex pairs (brandbar / accent) — see brief §2. */
+  .colorway-chip-default { background: linear-gradient(135deg, #131F48 50%, #2DD4C4 50%); }
+  .colorway-chip-terrain { background: linear-gradient(135deg, #1B2E23 50%, #E2762F 50%); }
+  .colorway-chip-copper { background: linear-gradient(135deg, #26201A 50%, #D98A4B 50%); }
+  .colorway-chip-slate { background: linear-gradient(135deg, #232A38 50%, #7FA9F0 50%); }
+
+  @media (max-width: 40rem) {
+    .colorway-switcher { flex-direction: column; align-items: stretch; }
+  }
 </style>
+
+<script>
+  // Live colorway switcher — every product-suite image on the page shares
+  // the `{tool}-16x9-{variant}` slug convention (data-product-slug), so
+  // swapping colorway is a pure filename substitution, not a re-render.
+  // Instant swap, no crossfade: the change is a data/branding toggle, not
+  // a narrative transition — an animated cross-fade would only add a
+  // flash on every click for no communicative benefit, and this also
+  // means there's nothing to gate behind `prefers-reduced-motion` (no
+  // motion is introduced either way).
+  const STORAGE_KEY = 'tnx-digital-solutions-colorway';
+  const VALID = ['default', 'terrain', 'copper', 'slate'];
+  const LABELS: Record<string, string> = { default: 'Default', terrain: 'Terrain', copper: 'Copper', slate: 'Slate' };
+
+  function filenameFor(colorway: string, slug: string): string {
+    if (colorway === 'default') {
+      return slug.startsWith('family') ? `terranexus-product-${slug}.png` : `terranexus-${slug}.png`;
+    }
+    return `terranexus-${colorway}-${slug}.png`;
+  }
+
+  function readStoredColorway(): string | null {
+    try {
+      return window.localStorage.getItem(STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function storeColorway(colorway: string): void {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, colorway);
+    } catch {
+      // Storage can fail (private browsing, quota, disabled) — the
+      // switcher still works for the rest of the session, it just won't
+      // persist. Never let this break the page.
+    }
+  }
+
+  function init(): void {
+    const switcher = document.querySelector<HTMLElement>('[data-colorway-switcher]');
+    if (!switcher) return;
+
+    const buttons = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-colorway]'));
+    const images = Array.from(document.querySelectorAll<HTMLImageElement>('[data-product-slug]'));
+    if (buttons.length === 0 || images.length === 0) return;
+
+    function applyColorway(colorway: string, persist: boolean): void {
+      const label = LABELS[colorway] ?? colorway;
+      images.forEach((img) => {
+        const slug = img.dataset.productSlug;
+        const altBase = img.dataset.altBase;
+        if (!slug) return;
+        img.src = `/images/product-ui/${filenameFor(colorway, slug)}`;
+        if (altBase) {
+          img.alt = colorway === 'default' ? altBase : `${altBase} ${label} colorway.`;
+        }
+      });
+      buttons.forEach((btn) => {
+        const active = btn.dataset.colorway === colorway;
+        btn.setAttribute('aria-checked', active ? 'true' : 'false');
+        btn.tabIndex = active ? 0 : -1;
+      });
+      if (persist) storeColorway(colorway);
+    }
+
+    const stored = readStoredColorway();
+    const initial = stored && VALID.includes(stored) ? stored : (buttons.find((b) => b.getAttribute('aria-checked') === 'true')?.dataset.colorway ?? 'terrain');
+    applyColorway(initial, false);
+
+    buttons.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        const colorway = btn.dataset.colorway;
+        if (colorway) applyColorway(colorway, true);
+      });
+      btn.addEventListener('keydown', (event: KeyboardEvent) => {
+        let targetIndex: number | null = null;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          targetIndex = (index + 1) % buttons.length;
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          targetIndex = (index - 1 + buttons.length) % buttons.length;
+        }
+        if (targetIndex !== null) {
+          event.preventDefault();
+          const target = buttons[targetIndex];
+          target.focus();
+          const colorway = target.dataset.colorway;
+          if (colorway) applyColorway(colorway, true);
+        }
+      });
+    });
+  }
+
+  init();
+</script>
