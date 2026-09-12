@@ -32,8 +32,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
     'Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims.',
   heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1600',
   heroImageAlt: 'Aerial view of cropland under regenerative management',
-  heroCta: 'Compare with Regenerative Rangeland',
-  heroCtaHref: '/expertise/regenerative-rangeland/',
 
   meta: {
     title: 'Regenerative Agriculture | Terra Nexus',
@@ -310,12 +308,12 @@ export const regenerativeAgriculture: ExpertiseTopic = {
       },
       {
         n: '03',
-        title: 'Reduce the evidence burden',
+        title: 'Right size the management and implementation burden',
         text: 'Programs often ask producers to collect more evidence than the available payment justifies. Collect only what the intended buyer use requires, and make the data workflow part of the program rather than homework.',
       },
       {
         n: '04',
-        title: 'Move downstream value upstream',
+        title: 'Move value across the chain',
         text: 'Food companies may receive the Scope 3, sourcing or product value while the producer bears most of the change cost. Scope 3 budgets, product premiums, procurement commitments and environmental markets can close that gap.',
       },
       {
@@ -330,7 +328,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
 
   verifying: {
     label: 'Verifying What Matters Most',
-    heading: 'Measure Enough to Support the Claim',
+    heading: 'Measure Twice Credit Once',
     lead: 'Evidence is a cost, so the question is never how much can we measure. It is how much does this specific claim require. Five layers, and the claim decides how far up you have to go.',
     layers: [
       { n: '01', name: 'Practice', question: 'What changed?', examples: 'Nutrient plan, tillage, cover, rotation, timing, placement' },

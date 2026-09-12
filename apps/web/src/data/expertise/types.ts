@@ -130,8 +130,6 @@ export interface ExpertiseTopic {
   heroLead: string;
   heroImage: string;
   heroImageAlt: string;
-  heroCta: string;
-  heroCtaHref: string;
 
   meta: TopicMeta;
   cta: { heading: string; text: string };

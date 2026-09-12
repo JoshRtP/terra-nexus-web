@@ -33,8 +33,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
     'Terra Nexus helps livestock producers, protein companies, traders, and buyers design and manage regenerative rangeland programs that connect grazing management, producer economics, livestock performance, environmental outcomes, supply-chain value, and credible claims.',
   heroImage: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1600',
   heroImageAlt: 'Cattle grazing managed rangeland at sunset',
-  heroCta: 'Compare with Regenerative Agriculture',
-  heroCtaHref: '/expertise/regenerative-agriculture/',
 
   meta: {
     title: 'Regenerative Rangeland | Terra Nexus',
@@ -325,12 +323,12 @@ export const regenerativeRangeland: ExpertiseTopic = {
       },
       {
         n: '03',
-        title: 'Reduce the management and evidence burden',
+        title: 'Right size the management and implementation burden',
         text: 'Planning, movement, records and coordination can consume a modest operating gain. Collect only what the intended buyer use requires, and resource the coordination rather than assuming it.',
       },
       {
         n: '04',
-        title: 'Move downstream value upstream',
+        title: 'Move value across the chain',
         text: 'Beef, dairy and retail buyers may receive the Scope 3 or product value while the ranch bears the change cost. Scope 3 budgets, product premiums, procurement commitments and environmental markets can close that gap.',
       },
       {
@@ -345,7 +343,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
 
   verifying: {
     label: 'Verifying What Matters Most',
-    heading: 'Measure Enough to Support the Claim',
+    heading: 'Measure Twice Credit Once',
     lead: 'Evidence is a cost, so the question is never how much can we measure. It is how much does this specific claim require. Five layers, and the claim decides how far up you have to go.',
     layers: [
       { n: '01', name: 'Practice', question: 'What changed?', examples: 'Grazing plan, stocking, infrastructure, feed, management' },
