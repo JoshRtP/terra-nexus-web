@@ -449,6 +449,60 @@ second 2026-08-16 M7 entry; summary:
   forcing pages into a rigid shared template that would prevent visual
   storytelling differences between page families.
 
+### 5.4 Expertise topic template (2026-09-12)
+
+Two of the nine expertise topics — Regenerative Rangeland and Regenerative
+Agriculture — now render from **one template plus one content record per
+topic**, implementing the reviewed design prototype in
+`plans/ExpertiseTemplate-Upgrade.zip` (`EXPERTISE-TEMPLATE-HANDOVER.md` is the
+spec). Built on branch `feature/expertise-template-2026-09`.
+
+- `components/ExpertiseTopicPage.astro` renders ten sections in a fixed order
+  (Overview, The Potential, Course Correcting, Priority Investments,
+  Accelerating Adoption, Validating Market Fit, Verifying What Matters Most,
+  Market Pathways, Delivery Approach, Digital Enablers) plus hero and a
+  closing CTA. The order is the owner's and carries the argument — do not
+  reorder.
+- `src/data/expertise/` holds the typed records. Five fields are deliberately
+  per-record rather than shared (`correcting.indicators`,
+  `adoption.constraints`, `pathways.items` order plus an `applicable` flag,
+  `investments.frame` labels, `enablers.tools` including an empty state), plus
+  an influence/incentive/mechanism triplet. That is what lets the remaining
+  seven topics — several of which are later links in the same chain rather
+  than production topics — use this template instead of a second one.
+- It **reuses production components rather than reproducing them**: `PageHero`
+  (`variant="media"`), `StrategyFrameworkDVF`, `MechanismSelector`, and the
+  lifecycle stages from `src/data/lifecycle.ts` that the homepage Approach band
+  also renders, so stage copy cannot drift. Three small additive extension
+  points were added rather than forking: DVF's `variant="validation-only"`,
+  MechanismSelector's `detailBlocks` and `showDetailHeading`, and SiteLayout's
+  optional `canonical`/`ogImage`. Every existing consumer is unchanged.
+- Two structural invariants are covered by
+  `test/expertise-topic-template.test.ts`, asserted against built HTML because
+  both are properties of what ships: **every selector panel is in the served
+  HTML with `hidden` on the inactive ones** (4 pathways, 6 stages, every
+  intervention, 5 framework regions — roughly three times the indexable body
+  copy), and **no inline `style` attributes** survive the port from the
+  inline-styled prototype, apart from PageHero's per-topic hero image.
+- The right-hand section rail is sticky in a grid gutter, not
+  `position: fixed`. That needs the rail's grid column to stretch the full row
+  and **no `overflow: hidden` anywhere in its ancestor chain**; without either
+  it silently will not travel. Use `overflow: clip` for local clipping in this
+  subtree.
+- Routes are unchanged: `/expertise/regenerative-rangeland/` and
+  `/expertise/regenerative-agriculture/`. The other seven topics still use
+  `components/ExpertisePage.astro`, which stays until they migrate.
+- The regenerative-agriculture page's previous scroll-stack composition and its
+  seven-participant "Who We Support" band have no place in the fixed section
+  order; that content is parked, not deleted, in
+  `src/data/expertise/_parked-participants.ts`.
+
+Deferred by owner decision, not omissions: structured data (BreadcrumbList /
+Service / FAQPage, to be added once on the template so all nine topics
+inherit it), the four unsourced statistics in section 01, proof content such as
+case studies, and the selector count. Content still needing owner review before
+publish is listed in each data module's header comment.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
