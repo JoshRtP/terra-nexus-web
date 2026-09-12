@@ -38,7 +38,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
     description:
       'Terra Nexus helps traders and food-system companies design, launch and manage regenerative agriculture programs that connect producer economics to credible claims.',
     canonical: '/expertise/regenerative-agriculture/',
-    ogImage: '/images/live-site/og-regenerative-agriculture.jpg',
   },
 
   cta: {

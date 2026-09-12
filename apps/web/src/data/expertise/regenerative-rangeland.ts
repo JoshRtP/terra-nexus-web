@@ -39,7 +39,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
     description:
       'Terra Nexus helps producers, protein companies and buyers design and manage rangeland programs connecting grazing management to supply-chain value and credible claims.',
     canonical: '/expertise/regenerative-rangeland/',
-    ogImage: '/images/live-site/og-regenerative-rangeland.jpg',
   },
 
   cta: {

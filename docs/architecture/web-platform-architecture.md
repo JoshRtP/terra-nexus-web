@@ -497,6 +497,37 @@ spec). Built on branch `feature/expertise-template-2026-09`.
   order; that content is parked, not deleted, in
   `src/data/expertise/_parked-participants.ts`.
 
+**Integration pass (2026-09-12, after owner review).** The prototype was built
+standalone by an agent without access to this codebase, so it reimplemented a
+visual vocabulary the site already owned. The template was reworked onto the
+site's own rhythm and primitives — full-bleed `.section`/`.section-alt` with
+`.container` inside, `.section-header`/`.eyebrow`/`.section-lead`/
+`.numbered-index`, the global fluid `h2` scale, and the M7
+`.card`/`.card-media`/`.card-grid`/`.stat-group`/`.tag` primitives. The closing
+band is now `ClosingCta` (extended with an optional `links` row, available to
+any page) rather than a bespoke maroon section, so all 18 pages that close with
+a CTA close the same way. Only the navy challenge band, the four selectors and
+the section rail remain page-family-specific.
+
+The section rail is now `position: fixed` in the right page margin rather than a
+sticky grid gutter, which is what the handover's §5.1 prescribes for a
+single-instance production page. The gutter version cost the content column 27%
+of its width the moment it appeared at 56rem; the fixed version costs nothing at
+any viewport. It carries its own surface because it floats over sections that
+alternate white and full-bleed navy. Thresholds are measured, not guessed:
+visible from 85rem (below that the page margin is narrower than the 70px
+collapsed rail), all ten labels permanently from 100rem (the labelled rail is
+176px and only clears the 75rem container there); in between it rests as a
+numbered column and expands every label on hover or keyboard focus.
+
+Also fixed in the same pass: both topics' `ogImage` pointed at
+`/images/live-site/og-<slug>.jpg`, which was never created — the pages shipped a
+404 social preview, so the field is now unset and the working site default
+applies (the acceptance test asserts whatever og:image is emitted resolves to a
+real file). The six lifecycle stage titles and every intervention name were
+paragraphs and are now `h3`s, so the two largest pre-rendered content blocks are
+in the document outline.
+
 Deferred by owner decision, not omissions: structured data (BreadcrumbList /
 Service / FAQPage, to be added once on the template so all nine topics
 inherit it), the four unsourced statistics in section 01, proof content such as

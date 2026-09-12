@@ -23,7 +23,12 @@ export interface TopicMeta {
   title: string;
   description: string;
   canonical: string;
-  ogImage: string;
+  /** Optional per-topic social preview. Unset on both topics today: the
+   * handover specified /images/live-site/og-<slug>.jpg and neither file was
+   * ever created, so setting it produced a 404 preview where the site-wide
+   * /brand/og-image.png default works. Set it once real per-topic art
+   * exists. */
+  ogImage?: string;
 }
 
 export interface OverviewStat {

@@ -91,6 +91,17 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     expect(count(html[slug], /data-iv="[a-z]+"/g)).toBe(total);
   });
 
+  it('uses the site section rhythm and shared primitives, not a parallel set', () => {
+    // Full-bleed .section / .section-alt with .container inside, as on every
+    // other page — the prototype banded everything inside one container.
+    expect(count(html[slug], /<section class="section[^"]*" id="/g)).toBe(10);
+    expect(count(html[slug], /<div class="container"/g)).toBeGreaterThanOrEqual(10);
+    // The M7 primitives rather than local near-misses.
+    for (const primitive of ['class="eyebrow', 'class="numbered-index', 'class="section-lead', 'class="section-header', 'class="card-grid', 'class="stat-value']) {
+      expect(html[slug], primitive).toContain(primitive);
+    }
+  });
+
   it('carries the empty state for a filter that matches nothing', () => {
     expect(html[slug]).toMatch(/data-iv-empty/);
     expect(html[slug]).toContain('No interventions in this topic are tagged to that indicator');
@@ -127,6 +138,10 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     expect(html[slug]).toContain(`href="${links.digital.href}"`); // 10 + CTA
     expect(html[slug]).toContain(`href="${links.expertise.href}"`); // CTA
     expect(html[slug]).toContain(`href="${links.caseStudies.href}"`); // CTA
+    // The closing band is the site-wide ClosingCta, not a page-local one, so
+    // all 18 pages that close with a CTA close the same way.
+    expect(html[slug]).toMatch(/<section class="section section-dark"/);
+    expect(html[slug]).toMatch(/class="cta-links"/);
     // 06 — one capability link per functional-fit card.
     for (const group of ['strategy-and-innovation', 'corporate-sustainability', 'carbon-and-ecosystem-services']) {
       expect(html[slug]).toContain(`href="/capabilities/${group}/"`);
@@ -148,9 +163,15 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     }
   });
 
-  it('emits the per-topic canonical and og:image', () => {
+  it('emits the per-topic canonical, and an og:image that actually exists', async () => {
     expect(html[slug]).toContain(`<link rel="canonical" href="${topic().meta.canonical}">`);
-    expect(html[slug]).toContain(`content="${topic().meta.ogImage}"`);
+    // The handover specified /images/live-site/og-<slug>.jpg for both topics
+    // and neither file was ever created, so the pages shipped a 404 social
+    // preview. Whatever og:image the page emits — the per-topic one or
+    // SiteLayout's default — has to resolve to a real file.
+    const og = html[slug].match(/property="og:image" content="([^"]+)"/)?.[1];
+    expect(og, 'og:image missing').toBeTruthy();
+    await expect(readFile(resolve(DIST, og!.replace(/^\//, '')))).resolves.toBeDefined();
   });
 
   it('points every tool screenshot at an asset that exists', async () => {
