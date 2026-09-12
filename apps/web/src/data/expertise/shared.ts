@@ -377,26 +377,20 @@ export const validationQuestions: Record<string, QuestionGroup[]> = {
 };
 
 // ── Product screenshots ──
-// The same responsive-asset contract digital-solutions/index.astro uses
-// (`assetFor`): one base name per framing, three widths. The handover data
-// file's `-monitor-`/`-phone-` paths predate the device-mix rework and no
-// longer exist in public/images/product-ui/ — each tool's `asset` in the topic
-// records points at the current real file instead.
-export const DEVICE_WIDTHS = [480, 960, 1440] as const;
+// The brand kit's unframed 16:9 hero renders, copied from
+// brand/product-ui/09-web-export/04-hero-16x9 into public/images/product-ui/.
+// Every tool uses the same framing and the same 16:9 aspect, so unlike
+// digital-solutions/index.astro's `assetFor` there is no per-device shape to
+// carry — the card can let the image bleed to its edges the way .card-media
+// expects. The widths are the two the brand kit exports that this page needs;
+// a 22rem card is 352px, so 960w already covers a 2x display.
+export const TOOL_WIDTHS = [960, 1440] as const;
+const TOOL_ASPECT = { width: 1440, height: 810 };
 
-const SHAPE_DIMS: Record<string, { width: number; height: number }> = {
-  phone: { width: 1520, height: 2780 },
-  'tablet-portrait': { width: 1740, height: 2400 },
-  tablet: { width: 2400, height: 1740 },
-  'tablet-split': { width: 2400, height: 1740 },
-  laptop: { width: 2400, height: 1740 },
-  monitor: { width: 2400, height: 1740 },
-};
-
-export function toolAsset(asset: string, shape: string) {
-  const srcset = DEVICE_WIDTHS.map((w) => `/images/product-ui/${asset}-${w}w.webp ${w}w`).join(', ');
-  const src = `/images/product-ui/${asset}-${DEVICE_WIDTHS[DEVICE_WIDTHS.length - 1]}w.webp`;
-  return { src, srcset, ...(SHAPE_DIMS[shape] ?? SHAPE_DIMS.tablet) };
+export function toolAsset(asset: string) {
+  const srcset = TOOL_WIDTHS.map((w) => `/images/product-ui/${asset}-${w}w.webp ${w}w`).join(', ');
+  const src = `/images/product-ui/${asset}-${TOOL_WIDTHS[TOOL_WIDTHS.length - 1]}w.webp`;
+  return { src, srcset, ...TOOL_ASPECT };
 }
 
 /** Every topic record, keyed by slug. Populated by ./index.ts. */

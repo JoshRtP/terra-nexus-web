@@ -17,8 +17,8 @@
 // rather than a parallel set —
 //   * full-bleed `.section` / `.section-alt` with `.container` inside, the same
 //     as every other page, instead of bands inside a single container;
-//   * `.section-header` / `.eyebrow` / `.section-lead` / `.numbered-index`
-//     instead of local equivalents that were near-misses on all four;
+//   * `.section-header` / `.eyebrow` / `.section-lead` instead of local
+//     equivalents that were near-misses on all three;
 //   * the global fluid `h2` scale instead of a fixed 30px override that never
 //     stepped down on phones;
 //   * `.card` / `.card-media` / `.card-grid` / `.stat-group` / `.tag` — the M7
@@ -71,9 +71,6 @@ interface Props {
 
 const { topic } = Astro.props;
 const mode = getBuildMode();
-
-const railIndex = Object.fromEntries(sectionRail.map((s) => [s.id, s.n]));
-const num = (id: string) => railIndex[id] ?? '';
 
 // Section 06 — the same grouping the regenerative-agriculture page did before
 // the template existed: validation rows grouped by category, in first-seen
@@ -128,7 +125,7 @@ const detailBlocks: Record<string, MechanismDetailBlock[]> = Object.fromEntries(
 );
 
 const initialStage = lifecycle[0]?.id ?? '';
-const tools = topic.enablers.tools.map((t) => ({ ...t, ...toolAsset(t.asset, t.shape) }));
+const tools = topic.enablers.tools.map((t) => ({ ...t, ...toolAsset(t.asset) }));
 
 const ctaLinks = [
   topic.links.expertise,
@@ -162,10 +159,7 @@ const ctaLinks = [
     <section class="section" id="overview" aria-labelledby="overview-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('overview')}</span>
-            <span class="eyebrow">{topic.overview.label}</span>
-          </div>
+          <span class="eyebrow">{topic.overview.label}</span>
           <h2 id="overview-h" class="xp-h2">{topic.overview.heading}</h2>
           <p class="section-lead">{topic.overview.lead}</p>
         </header>
@@ -213,10 +207,7 @@ const ctaLinks = [
     <section class="section section-alt" id="potential" aria-labelledby="potential-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('potential')}</span>
-            <span class="eyebrow">{topic.potential.label}</span>
-          </div>
+          <span class="eyebrow">{topic.potential.label}</span>
           <h2 id="potential-h" class="xp-h2">{topic.potential.heading}</h2>
           <p class="section-lead xp-lead-wide">{topic.potential.lead}</p>
           <p class="xp-transition">{topic.potential.transition}</p>
@@ -250,10 +241,7 @@ const ctaLinks = [
     <section class="section section-navy" id="correcting" aria-labelledby="correcting-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index xp-num-light" aria-hidden="true">{num('correcting')}</span>
-            <span class="eyebrow eyebrow-light">{topic.correcting.label}</span>
-          </div>
+          <span class="eyebrow eyebrow-light">{topic.correcting.label}</span>
           <h2 id="correcting-h" class="xp-h2">{topic.correcting.heading}</h2>
           <p class="section-lead">{topic.correcting.lead}</p>
         </header>
@@ -291,10 +279,7 @@ const ctaLinks = [
     <section class="section" id="investments" aria-labelledby="investments-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('investments')}</span>
-            <span class="eyebrow">{topic.investments.label}</span>
-          </div>
+          <span class="eyebrow">{topic.investments.label}</span>
           <h2 id="investments-h" class="xp-h2">{topic.investments.heading}</h2>
           <p class="section-lead">{topic.investments.lead}</p>
         </header>
@@ -407,10 +392,7 @@ const ctaLinks = [
     <section class="section section-alt" id="adoption" aria-labelledby="adoption-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('adoption')}</span>
-            <span class="eyebrow">{topic.adoption.label}</span>
-          </div>
+          <span class="eyebrow">{topic.adoption.label}</span>
           <h2 id="adoption-h" class="xp-h2">{topic.adoption.heading}</h2>
           <p class="section-lead">{topic.adoption.lead}</p>
         </header>
@@ -438,10 +420,7 @@ const ctaLinks = [
     <section class="section" id="fit" aria-labelledby="fit-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('fit')}</span>
-            <span class="eyebrow">{topic.fit.label}</span>
-          </div>
+          <span class="eyebrow">{topic.fit.label}</span>
           <h2 id="fit-h" class="xp-h2">{topic.fit.heading}</h2>
           <p class="section-lead">{validationLead}</p>
         </header>
@@ -477,10 +456,7 @@ const ctaLinks = [
     <section class="section section-alt" id="verifying" aria-labelledby="verifying-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('verifying')}</span>
-            <span class="eyebrow">{topic.verifying.label}</span>
-          </div>
+          <span class="eyebrow">{topic.verifying.label}</span>
           <h2 id="verifying-h" class="xp-h2">{topic.verifying.heading}</h2>
           <p class="section-lead">{topic.verifying.lead}</p>
         </header>
@@ -506,10 +482,7 @@ const ctaLinks = [
     <section class="section" id="pathways" aria-labelledby="pathways-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('pathways')}</span>
-            <span class="eyebrow">{topic.pathways.label}</span>
-          </div>
+          <span class="eyebrow">{topic.pathways.label}</span>
           <h2 id="pathways-h" class="xp-h2">{topic.pathways.heading}</h2>
           <p class="section-lead">{topic.pathways.lead}</p>
         </header>
@@ -533,10 +506,7 @@ const ctaLinks = [
     <section class="section section-alt" id="approach" aria-labelledby="approach-h">
       <div class="container">
         <header class="section-header">
-          <div class="xp-kicker-row">
-            <span class="numbered-index" aria-hidden="true">{num('approach')}</span>
-            <span class="eyebrow">{topic.approach.label}</span>
-          </div>
+          <span class="eyebrow">{topic.approach.label}</span>
           <h2 id="approach-h" class="xp-h2">{topic.approach.heading}</h2>
           <p class="section-lead">{topic.approach.lead}</p>
         </header>
@@ -590,10 +560,7 @@ const ctaLinks = [
       <section class="section" id="enablers" aria-labelledby="enablers-h">
         <div class="container">
           <header class="section-header">
-            <div class="xp-kicker-row">
-              <span class="numbered-index" aria-hidden="true">{num('enablers')}</span>
-              <span class="eyebrow">{topic.enablers.label}</span>
-            </div>
+            <span class="eyebrow">{topic.enablers.label}</span>
             <h2 id="enablers-h" class="xp-h2">{topic.enablers.heading}</h2>
             <p class="section-lead">{topic.enablers.lead}</p>
             <p class="xp-lead-secondary">{topic.enablers.leadTwo}</p>
@@ -602,21 +569,21 @@ const ctaLinks = [
           <div class="card-grid card-grid-3">
             {tools.map((tool) => (
               <article class="card card-static card-media xp-tool">
-                <div class="xp-tool-media">
-                  {/* TODO (P3 11): alt text is "<tool name> interface" by
-                      decision. Replace with a description of what each screen
-                      actually shows, for accessibility and image SEO. */}
-                  <img
-                    src={tool.src}
-                    srcset={tool.srcset}
-                    sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 45vw, 22rem"
-                    width={tool.width}
-                    height={tool.height}
-                    alt={`${tool.name} interface`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
+                {/* TODO (P3 11): alt text is "<tool name> interface" by
+                    decision. brand/product-ui/09-web-export/alt-text.md now
+                    carries a real description of each render, so replacing
+                    this is a copy decision rather than a writing job. */}
+                <img
+                  class="xp-tool-img"
+                  src={tool.src}
+                  srcset={tool.srcset}
+                  sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 45vw, 22rem"
+                  width={tool.width}
+                  height={tool.height}
+                  alt={`${tool.name} interface`}
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div class="card-media-body">
                   <h3 class="xp-tool-name">{tool.name}</h3>
                   <p class="xp-tool-text">{tool.text}</p>
@@ -781,15 +748,10 @@ const ctaLinks = [
 
   /* ── Section furniture ──
      .section / .section-alt / .container / .section-header / .eyebrow /
-     .section-lead / .numbered-index all come from design-system.css. Only the
-     number-plus-eyebrow row and the heading measure are local. */
-  .xp-kicker-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-4);
-    margin-bottom: var(--space-3);
-  }
-  .xp-kicker-row .eyebrow { margin-bottom: 0; }
+     .section-lead all come from design-system.css; only the heading measure is
+     local. Section numbers live in the rail only — ahead of a section heading
+     they read as an ordinal the reader has to keep track of rather than a
+     label (owner, 2026-09-12). */
   .xp-h2 {
     max-width: 34ch;
     text-wrap: pretty;
@@ -812,7 +774,6 @@ const ctaLinks = [
   .section-navy { background: var(--gradient-dark); }
   .section-navy :global(h2) { color: #fff; }
   .section-navy :global(.section-lead) { color: #d7deef; }
-  .xp-num-light { color: var(--c-sky-300); }
 
   .xp-micro-label {
     display: block;
@@ -1312,28 +1273,12 @@ const ctaLinks = [
   }
 
   /* ── 10 Tools & Enablers ── */
-  /* .card-media expects a single <img> that fills the card's top edge; these
-     screenshots are device renders that need letterboxing on a tinted field
-     rather than a 16/10 crop, so the image sits in its own padded box and the
-     primitive's aspect/cover rules are overridden. */
-  .xp-tool-media {
-    background: var(--color-surface);
-    padding: var(--space-6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 11rem;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
-  .xp-tool-media img {
-    width: auto;
-    max-width: 100%;
-    height: auto;
-    max-height: 12rem;
-    aspect-ratio: auto;
-    object-fit: contain;
-    border-radius: var(--radius-sm);
-  }
+  /* The brand kit's unframed 16:9 hero renders, so the image fills the card's
+     top edge exactly as .card-media intends — only the aspect differs from the
+     primitive's 16/10 default. Digital Solutions owns the device-mockup
+     treatment; repeating it here made a section of a topic page read as a
+     second product page (owner, 2026-09-12). */
+  .xp-tool-img { aspect-ratio: 16 / 9; }
   .xp-tool-name { font-size: var(--text-base); font-weight: var(--font-semibold); margin: 0 0 var(--space-2); text-wrap: pretty; }
   .xp-tool-text { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
 

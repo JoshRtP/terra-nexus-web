@@ -14,7 +14,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { stages } from '../src/data/lifecycle';
-import { expertiseTopics } from '../src/data/expertise';
+import { expertiseTopics, TOOL_WIDTHS } from '../src/data/expertise';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -97,9 +97,13 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     expect(count(html[slug], /<section class="section[^"]*" id="/g)).toBe(10);
     expect(count(html[slug], /<div class="container"/g)).toBeGreaterThanOrEqual(10);
     // The M7 primitives rather than local near-misses.
-    for (const primitive of ['class="eyebrow', 'class="numbered-index', 'class="section-lead', 'class="section-header', 'class="card-grid', 'class="stat-value']) {
+    for (const primitive of ['class="eyebrow', 'class="section-lead', 'class="section-header', 'class="card-grid', 'class="stat-value']) {
       expect(html[slug], primitive).toContain(primitive);
     }
+    // Section numbers belong to the rail, not the section headings (owner,
+    // 2026-09-12): ahead of a heading they read as an ordinal to track.
+    expect(html[slug]).not.toContain('class="numbered-index');
+    expect(count(html[slug], /class="journey-rail-num"/g)).toBe(10);
   });
 
   it('carries the empty state for a filter that matches nothing', () => {
@@ -174,9 +178,12 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     await expect(readFile(resolve(DIST, og!.replace(/^\//, '')))).resolves.toBeDefined();
   });
 
-  it('points every tool screenshot at an asset that exists', async () => {
+  it('points every tool screenshot at an unframed render that exists', async () => {
     for (const tool of topic().enablers.tools) {
-      for (const width of [480, 960, 1440]) {
+      // The brand kit's unframed 16:9 heroes — Digital Solutions owns the
+      // device-mockup treatment, so these deliberately are not the framed set.
+      expect(tool.asset, tool.name).toMatch(/-16x9-dark$/);
+      for (const width of TOOL_WIDTHS) {
         const file = resolve(DIST, `images/product-ui/${tool.asset}-${width}w.webp`);
         await expect(readFile(file)).resolves.toBeDefined();
       }

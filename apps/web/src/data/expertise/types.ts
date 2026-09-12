@@ -108,12 +108,14 @@ export interface Pathway {
 export interface Tool {
   name: string;
   text: string;
-  /** Repo-real path under /images/product-ui/, without the width suffix —
-   * e.g. "terranexus-soil-carbon-prediction-tablet". Widths come from
-   * DEVICE_WIDTHS in shared.ts. */
+  /** Repo-real path under /images/product-ui/, without the width suffix — e.g.
+   * "terranexus-soil-carbon-prediction-16x9-dark". These are the brand kit's
+   * unframed 16:9 hero renders (brand/product-ui/09-web-export/04-hero-16x9),
+   * not the device-framed variants: the Digital Solutions page already carries
+   * the device-mockup treatment, so repeating it here read as a second product
+   * page rather than a section of a topic page (owner, 2026-09-12). Widths come
+   * from TOOL_WIDTHS in shared.ts. */
   asset: string;
-  /** Intrinsic aspect of the source framing, for width/height attributes. */
-  shape: 'tablet' | 'tablet-portrait' | 'tablet-split' | 'laptop' | 'phone' | 'monitor';
 }
 
 /** Section 00 band. Scales to nine: what actually varies across the topics is
