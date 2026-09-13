@@ -88,10 +88,16 @@ check, or an editorial checklist:
   credentials/standards/partnerships. These are editorial rules, not
   technical ones — worth an explicit editorial checklist or a lightweight
   linter over MDX frontmatter/body before this matters at production scale.
-  The sample article added in this session (`what-soil-carbon-data-
-  actually-tells-buyers`) uses a generic, illustrative subject and an
-  explicitly-labeled-as-illustrative stat — not a real Terra Nexus client
-  claim.
+  **Removed 2026-09-12**: the sample article added in the M2/M3 session
+  (`what-soil-carbon-data-actually-tells-buyers`) and its author record
+  (`maren-okafor`) were test fixtures for the publication pipeline, but the
+  author was a fabricated Terra Nexus staff member with a title, bio and
+  photo — which the rule above exists to prevent. The 2026-09-12 merge to
+  `main` made it publicly crawlable for the first time, which is how it was
+  caught. Both deleted and replaced with the first real bylined article.
+  The lesson worth keeping: a fixture becomes a publication risk the moment
+  the build mode that hides it changes, so fixtures should carry
+  `editorialStatus: draft` rather than `approved`.
 - **`[agent-draft]` labeling** for agent-generated content sections.
 - **Relationship integrity**: OKF validates that relationship fields
   resolve to known IDs and rejects duplicates. Keystatic's

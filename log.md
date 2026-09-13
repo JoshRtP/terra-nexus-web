@@ -811,3 +811,45 @@ merged.
 * **Validation before merge**: `npm run web:build`, `npm run web:typecheck`
   (0 errors, 0 warnings), `npm run web:test` (212 passing), `npm run check`
   (exit 0) — all green.
+
+## 2026-09-12 — Insights: remove the fabricated test author, first real bylined post
+
+* **Why**: `/insights/what-soil-carbon-data-actually-tells-buyers/` was a
+  publication-pipeline test fixture from M2/M3, but it carried
+  `editorialStatus: approved` and was bylined to "Maren Okafor, Director,
+  Regenerative Agriculture Practice" — a fabricated staff member with a title,
+  bio and headshot, not on the real roster (Laura Klein, Josh Mellinger, Isaac
+  Carroo). `AGENTS.md` rules out invented credentials and people. It sat
+  harmlessly behind the preview build's sitewide noindex for a month; the
+  2026-09-12 merge to `main` made it publicly crawlable for the first time,
+  which is how it surfaced. Owner confirmed it was a test and asked for it to
+  be deleted.
+* **Removed**: `posts/what-soil-carbon-data-actually-tells-buyers.mdx`,
+  `authors/maren-okafor.mdx`, and both of their images.
+* **Added**: `authors/laura-klein.mdx` (role, photo and bio all derived from
+  the About page roster entry, which was itself owner-supplied 2026-09-07;
+  headshot copied from `images/team/laura-klein/`) and
+  `posts/climate-week-2026.mdx` — the first real bylined article.
+* **Post sourcing**: written from Laura's own public LinkedIn post about the
+  First Annual NYCW Food, Ag, Land Field Day, in her voice and first person.
+  Event details verified against the Luma event page rather than inferred:
+  Central Park, 8:00–11:00 AM, bagels then competition games then awards,
+  presented by Farmhand Ventures and co-organized by Carbon A List. Climate
+  Week NYC 2026 dates (September 20–27) verified separately. A first draft
+  said "the Monday of Climate Week" — the Luma page gives no date, so that was
+  removed rather than guessed. Co-attendees are named as Laura named them in
+  her own public post.
+* **Hero image**: Pexels 2062386 (Sheep Meadow with the Midtown skyline),
+  downloaded to `public/images/insights/climate-week-2026/` rather than
+  hotlinked, since the Keystatic `image` field expects a local path. Alt text
+  describes the rendered crop (skyline above the treeline), not the full frame.
+* **Fixed during QA**: `seoTitle` read "Climate Week 2026 — Terra Nexus" and
+  `SiteLayout` appends " | Terra Nexus", so the tab showed the brand twice.
+* **Note on the routes**: `/insights/` and `/insights/[slug]` are
+  `prerender = false` by design — visibility depends on request time, so they
+  never appear in `dist/`. Absence from the build output is correct, not a
+  missing page.
+* **QA**: 1440 and 390, screenshots in `artifacts/qa/`. No horizontal overflow,
+  zero console errors, old URL returns 404, new post listed on `/insights/`.
+* **Follow-up worth doing**: fixtures should carry `editorialStatus: draft`,
+  not `approved`, so a build-mode change can never publish them.
