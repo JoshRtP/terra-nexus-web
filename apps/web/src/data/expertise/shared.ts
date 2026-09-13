@@ -137,6 +137,115 @@ export interface QuestionGroup {
  * existed per topic in the previous pages and are lifted from them verbatim,
  * except the one row marked AUTHORED. */
 export const validationRows: Record<string, ValidationRow[]> = {
+  'biodiversity-and-ecosystem-resilience': [
+    {
+      category: 'Desirability',
+      pitfall: 'The program starts from a disclosure framework rather than a business decision anyone is waiting on.',
+      validation: 'Start from the decision the business actually needs to make, then choose the framework that serves it.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'The company begins with a disclosure framework rather than a business decision.',
+      validation: 'Start with the business decision the program must support, then map disclosure frameworks to it.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Global targets are not translated into place-based priorities.',
+      validation: 'Translate global targets into specific, place-based priorities before acting.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Biodiversity is reduced to one metric without ecological context.',
+      validation: 'Use ecologically contextual metrics rather than a single proxy for biodiversity.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Climate, water, sourcing, and nature programs operate in separate silos.',
+      validation: 'Integrate climate, water, sourcing, and nature programs under a shared strategy.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Spatial and supply-chain boundaries are inconsistent.',
+      validation: 'Align spatial and supply-chain boundaries across all program components.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Interventions are selected without producer, community, or landscape capacity.',
+      validation: 'Assess producer, community, and landscape capacity before selecting interventions.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Data precision exceeds what is necessary or affordable for the decision.',
+      validation: 'Match data precision to what the decision actually requires and can afford.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Claims are made without clear attribution, ownership, or assurance.',
+      validation: 'Establish attribution, ownership, and assurance before making claims.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Project-level benefits are not connected to enterprise risk or commercial value.',
+      validation: 'Connect project-level benefits to enterprise risk and commercial value explicitly.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'The program lacks long-term governance and adaptive management.',
+      validation: 'Build long-term governance and adaptive management into the program from the start.',
+    },
+  ],
+  'aquaculture': [
+    {
+      category: 'Desirability',
+      pitfall: 'Technology is selected before the production and commercial problem is clear.',
+      validation: 'Define the production and commercial problem first, then select technology that fits it.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Biological and operating assumptions are not stress-tested.',
+      validation: 'Stress-test biological and operating assumptions under realistic conditions before investing.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Feed availability, cost, performance, and sourcing risks are evaluated separately.',
+      validation: 'Evaluate feed availability, cost, performance, and sourcing risks together as an integrated model.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Farm improvements are not connected to processing or market requirements.',
+      validation: 'Connect farm improvements directly to processing and market requirements from the start.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Data systems do not align farm, feed, product, and claims boundaries.',
+      validation: 'Align data systems across farm, feed, product, and claims boundaries before launch.',
+    },
+    {
+      category: 'Desirability',
+      pitfall: 'Certification is treated as a substitute for customer value or operating performance.',
+      validation: 'Validate customer value and operating performance independently of certification.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Environmental claims lack appropriate local or lifecycle evidence.',
+      validation: 'Gather local and lifecycle evidence before making environmental claims.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Capital needs, ramp time, mortality, and working capital are underestimated.',
+      validation: 'Model capital needs, ramp time, mortality, and working capital under realistic scenarios.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Ownership across farms, processors, brands, and technology partners is unclear.',
+      validation: 'Clarify ownership across farms, processors, brands, and technology partners before launch.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Recurring program management is insufficient after pilot launch.',
+      validation: 'Resource recurring program management adequately from pilot through scale.',
+    },
+  ],
   agroforestry: [
     {
       category: 'Desirability',
@@ -304,6 +413,86 @@ export const validationRows: Record<string, ValidationRow[]> = {
  * Ecosystem Services. Questions are each topic's approved `decisionGroups`,
  * lifted verbatim from its previous index.astro. */
 export const validationQuestions: Record<string, QuestionGroup[]> = {
+  'biodiversity-and-ecosystem-resilience': [
+    {
+      team: 'Strategy & Nature Assessment',
+      questions: [
+        'Where does the business depend on ecosystems and natural capital?',
+        'Which impacts and risks are material enough to act on?',
+        'At what geographic and value-chain level should priorities be set?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Integration & Measurement',
+      questions: [
+        'How should climate, water, biodiversity, sourcing, and resilience be integrated?',
+        'Which indicators are proportionate and decision-useful?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Implementation, Communities & Claims',
+      questions: [
+        'Which actions belong inside the company, with suppliers, through partnerships, or in markets?',
+        'How should communities and local stakeholders participate and benefit?',
+        'What outcomes can be attributed and claimed credibly?',
+      ],
+      capHref: '/capabilities/corporate-sustainability/',
+      capName: 'Corporate Sustainability',
+    },
+    {
+      team: 'Allocation & Governance',
+      questions: [
+        'How should carbon, water, biodiversity, and community benefits be allocated without double counting?',
+        'What governance is required as ecological conditions and stakeholder expectations change?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+  ],
+  'aquaculture': [
+    {
+      team: 'Strategy & Commercial Leaders',
+      questions: [
+        'Which species, systems, geographies, and products fit the strategy?',
+        'Which farm-performance and environmental indicators matter commercially?',
+        'What must be validated before capital, partnership, acquisition, or scale?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Feed, Technology & Operations',
+      questions: [
+        'How should feed performance, cost, availability, and footprint be balanced?',
+        'Which technologies are ready for the intended operating environment?',
+        'Which processing and cold-chain requirements determine market access?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Health, Risk & Ecosystem Governance',
+      questions: [
+        'How will disease, mortality, escapes, water, and ecosystem risks be governed?',
+      ],
+      capHref: '/capabilities/corporate-sustainability/',
+      capName: 'Corporate Sustainability',
+    },
+    {
+      team: 'Data, Evidence & Claims',
+      questions: [
+        'What data are decision-useful and what evidence supports a public claim?',
+        'How should farm, feed, processing, and product impacts be allocated?',
+        'Which certification, chain-of-custody, food-safety, welfare, or customer systems apply?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+  ],
   agroforestry: [
     {
       team: 'System Design & Business Fit',

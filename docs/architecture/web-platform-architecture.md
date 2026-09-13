@@ -641,6 +641,26 @@ only Regen Ag and Rangeland used the template:
   section 10 correctly, but the rail still linked to a missing `#enablers`. It
   now derives from the sections that actually render — Agroforestry ships nine.
 
+**Wave 2 — Aquaculture and Biodiversity & Ecosystem Resilience (2026-09-12).**
+Five of the nine topics now run on the template; the four value-chain topics
+remain. Two things worth recording:
+
+- **Aquaculture reorders the pathways.** Product & Commodity Claims leads and
+  Carbon & Ecosystem Credits comes last, the reverse of Agroforestry. In
+  seafood a recognised certification is the condition of shelf access rather
+  than a premium, and most farm improvements lower impact per kilogram instead
+  of creating a transferable unit. This is the per-record pathway ordering the
+  gap assessment specified, used in earnest for the first time.
+- **Biodiversity is the first cross-cutting topic**, and its indicators are
+  nature domains — Habitat, Water, Species, Communities, Resilience — not the
+  production topics' biophysical five. It is the clearest demonstration of why
+  the taxonomy had to become per-record: nothing in that set exists in the
+  shared `indicatorDefinitions` map, so all five definitions are supplied
+  inline. Its interventions are also the first written rather than extracted,
+  because the ChatGPT pass does not cover this topic. It had no Desirability
+  row upstream, so one is authored in `shared.ts` and marked — the same gap
+  Rangeland had, now caught by a test rather than by review.
+
 Content sourcing for the remaining topics is an assembly job, not a writing one.
 Every topic has an owner-verified brief (`knowledge/expertise/briefs/`), a
 2,200–2,800 word page-copy draft and a research memo (`plans/content/`), plus

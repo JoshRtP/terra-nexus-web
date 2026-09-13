@@ -27,7 +27,13 @@ const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
 const DIST = resolve(APP_ROOT, 'dist/client');
 
-const TOPIC_SLUGS = ['regenerative-rangeland', 'regenerative-agriculture', 'agroforestry'] as const;
+const TOPIC_SLUGS = [
+  'regenerative-rangeland',
+  'regenerative-agriculture',
+  'agroforestry',
+  'aquaculture',
+  'biodiversity-and-ecosystem-resilience',
+] as const;
 /** astro.config.ts's `site`. Canonical, og:url and og:image all resolve against it. */
 const SITE = 'https://terra.nexus';
 const html: Record<string, string> = {};
