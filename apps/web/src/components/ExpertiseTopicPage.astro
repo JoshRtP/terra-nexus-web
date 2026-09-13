@@ -1,0 +1,1542 @@
+---
+// ExpertiseTopicPage — the expertise topic template.
+//
+// Ten sections in a fixed order, plus hero and closing CTA, driven by one
+// content record per topic (src/data/expertise/<slug>.ts). The order is Josh's
+// and carries the argument: Overview → The Potential → Course Correcting →
+// Priority Investments → Accelerating Adoption → Validating Market Fit →
+// Verifying What Matters Most → Market Pathways → Delivery Approach → Digital
+// Enablers. Do not reorder. Section rail labels are the short menu names in
+// shared.ts's `sectionRail`; the headings keep their longer titles.
+//
+// Implements the design prototype handed over 2026-09-12
+// (plans/ExpertiseTemplate-Upgrade.zip). The prototype was built standalone by
+// an agent that did not have the real site, so it reimplemented a visual
+// vocabulary this codebase already owns. Integration pass, 2026-09-12 (owner
+// review): the page now uses the site's own section rhythm and primitives
+// rather than a parallel set —
+//   * full-bleed `.section` / `.section-alt` with `.container` inside, the same
+//     as every other page, instead of bands inside a single container;
+//   * `.section-header` / `.eyebrow` / `.section-lead` instead of local
+//     equivalents that were near-misses on all three;
+//   * the global fluid `h2` scale instead of a fixed 30px override that never
+//     stepped down on phones;
+//   * `.card` / `.card-media` / `.card-grid` / `.stat-group` / `.tag` — the M7
+//     primitives — for tools, questions, stats and impact tags;
+//   * `ClosingCta` (extended with an optional link row) instead of a bespoke
+//     maroon band, so every page that closes with a CTA closes the same way.
+// Only what is genuinely specific to this page family stays local: the navy
+// challenge band, the four selectors, and the section rail.
+//
+// Four production components do the heavy lifting and are imported rather than
+// reproduced: PageHero (media variant), StrategyFrameworkDVF, MechanismSelector
+// and the lifecycle stages from src/data/lifecycle.ts that the homepage
+// Approach band also renders.
+//
+// Traps this deliberately designs against (handover section 5):
+//  * Every selector panel is in the served HTML with `hidden` on the inactive
+//    ones — never rendered conditionally. 4 pathways, 6 stages, every
+//    intervention, 5 framework regions. Roughly three times the indexable body
+//    copy, and the reader still sees one panel at a time.
+//  * `[hidden]` loses to any author `display` rule, so every class that both
+//    uses `hidden` and sets `display` restates `[hidden] { display: none }`.
+//  * No `gap: 1px` hairline separators (they paint empty cells when the
+//    auto-fit track count does not divide the item count, and disappear to
+//    subpixel rounding); real per-row borders instead.
+//  * No inline grid-template-columns — it cannot carry a media query, which is
+//    what ribbons rows on a phone.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from './PageHero.astro';
+import ClosingCta from './ClosingCta.astro';
+import StrategyFrameworkDVF from './StrategyFrameworkDVF.astro';
+import MechanismSelector, { type MechanismDetailBlock } from './MechanismSelector.astro';
+import { getBuildMode } from '../lib/build-mode.js';
+import type { MarketMechanism } from '../data/market-mechanisms';
+import type { ExpertiseTopic } from '../data/expertise/types';
+import { expertiseTools } from '../data/expertise/tools';
+import {
+  lifecycle,
+  sectionRail,
+  ALL_INDICATORS_LABEL,
+  validationRows,
+  validationQuestions,
+  validationLead,
+  categoryToRegion,
+  toolAsset,
+  topicHeroSrcSet,
+} from '../data/expertise/shared';
+
+interface Props {
+  topic: ExpertiseTopic;
+}
+
+const { topic } = Astro.props;
+const mode = getBuildMode();
+
+// Section 06 — the same grouping the regenerative-agriculture page did before
+// the template existed: validation rows grouped by category, in first-seen
+// order, then fed to the DVF component as each base dimension's content.
+// variant="validation-only" renders the validation side as a checklist rather
+// than pitfall/fix pairs (Josh, 2026-09-12).
+const rows = validationRows[topic.slug] ?? [];
+const dvfContent: Record<string, { beforeAfter: Array<{ pitfall: string; validation: string }> }> = {};
+for (const row of rows) {
+  const regionId = categoryToRegion[row.category];
+  if (!regionId) continue;
+  dvfContent[regionId] ??= { beforeAfter: [] };
+  dvfContent[regionId].beforeAfter.push({ pitfall: row.pitfall, validation: row.validation });
+}
+const questionGroups = validationQuestions[topic.slug] ?? [];
+
+// Section 04 — the filter chips are this topic's own indicators, in the order
+// section 03 lists them, so the two sections cannot drift. The first
+// intervention is selected on load; every intervention renders and the filter
+// only toggles `hidden`.
+const indicators = topic.correcting.indicators;
+const indicatorName = (key: string) => indicators.find((i) => i.key === key)?.name ?? key;
+const chips = [
+  { id: 'all', label: ALL_INDICATORS_LABEL },
+  ...indicators.map((i) => ({ id: i.key, label: i.name })),
+];
+const interventions = topic.investments.interventions;
+const initialIntervention = interventions[0]?.id ?? '';
+
+// Section 08 — the topic's pathways expressed as MarketMechanism records so
+// MechanismSelector renders them unchanged. `summary` and `examples` are empty
+// on purpose: the overview grid is not used here, and the topic-specific
+// "When to use it" / "Programs & instruments" blocks come through the
+// component's detailBlocks prop instead of its generic Examples block.
+const mechanisms: MarketMechanism[] = topic.pathways.items
+  .filter((p) => p.applicable !== false)
+  .map((p) => ({
+    id: p.id,
+    num: p.n,
+    title: p.name,
+    carrier: p.carrier,
+    headline: p.tagline,
+    summary: '',
+    body: [p.detail],
+    examples: '',
+  }));
+const initialPathway = mechanisms[0]?.id ?? '';
+
+const detailBlocks: Record<string, MechanismDetailBlock[]> = Object.fromEntries(
+  topic.pathways.items
+    .filter((p) => p.applicable !== false)
+    .map((p) => [
+      p.id,
+      [
+        { label: 'When to use it', text: p.whenToUse, position: 'before' as const },
+        { label: `Programs & instruments in ${topic.name}`, items: p.examples, position: 'after' as const },
+      ],
+    ]),
+);
+
+const initialStage = lifecycle[0]?.id ?? '';
+// Tools resolve through the shared catalogue (data/expertise/tools.ts) so the
+// asset path and alt text are written once; a topic may override `text`.
+const tools = topic.enablers.tools.map((ref) => {
+  const tool = expertiseTools[ref.id];
+  if (!tool) throw new Error(`Unknown expertise tool id '${ref.id}' on ${topic.slug}`);
+  return { ...tool, text: ref.text ?? tool.text, ...toolAsset(tool.asset) };
+});
+
+// The rail lists only sections that actually render. Section 10 is omitted for
+// a topic with no tools assigned yet, and a rail entry pointing at a missing
+// #enablers is a dead link.
+const renderedSections = sectionRail.filter((s) => s.id !== 'enablers' || tools.length > 0);
+
+const ctaLinks = [
+  topic.links.expertise,
+  topic.links.whoWeWorkWith,
+  topic.links.capabilities,
+  topic.links.digital,
+  topic.links.caseStudies,
+];
+---
+
+<SiteLayout
+  title={topic.meta.title}
+  description={topic.meta.description}
+  canonical={topic.meta.canonical}
+  ogImage={topic.meta.ogImage}
+  preview={mode === 'preview'}
+>
+  <PageHero
+    variant="media"
+    heroImage={topic.heroImage}
+    heroImageSrcSet={topicHeroSrcSet(topic.slug)}
+    heroImageAlt={topic.heroImageAlt}
+    eyebrow={topic.eyebrow}
+    title={topic.hero}
+    lead={topic.heroLead}
+    primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
+  />
+
+  <article aria-label={`${topic.name} expertise`}>
+
+    {/* 01 Overview — why this topic, now. */}
+    <section class="section" id="overview" aria-labelledby="overview-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.overview.label}</span>
+          <h2 id="overview-h" class="xp-h2">{topic.overview.heading}</h2>
+          <p class="section-lead">{topic.overview.lead}</p>
+        </header>
+
+        <div class="stat-group xp-stats">
+          {topic.overview.stats.map((stat) => (
+            <div class="xp-stat">
+              <span class="stat-value stat-value-md stat-value-accent">{stat.figure}</span>
+              <p class="stat-label xp-stat-label">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="xp-arguments">
+          {topic.overview.body.map((block) => (
+            <div class="xp-argument">
+              <h3 class="xp-argument-title">{block.title}</h3>
+              <p class="xp-argument-text">{block.text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Influence / incentive / mechanism — what actually differs between
+            the nine topics when the practices are shared. */}
+        <dl class="xp-positioning">
+          <div class="xp-positioning-item">
+            <dt>Influence over production</dt>
+            <dd>{topic.positioning.influence}</dd>
+          </div>
+          <div class="xp-positioning-item">
+            <dt>What pays for the change</dt>
+            <dd>{topic.positioning.incentive}</dd>
+          </div>
+          <div class="xp-positioning-item">
+            <dt>Preferred market mechanism</dt>
+            <dd>{topic.positioning.mechanism}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    {/* 02 The Potential — Resilient / Sustainable / Prosperous. The order is
+        the argument: an operation that cannot survive its climate will never be
+        sustainable or prosperous. */}
+    <section class="section section-alt" id="potential" aria-labelledby="potential-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.potential.label}</span>
+          <h2 id="potential-h" class="xp-h2">{topic.potential.heading}</h2>
+          <p class="section-lead xp-lead-wide">{topic.potential.lead}</p>
+          <p class="xp-transition">{topic.potential.transition}</p>
+        </header>
+
+        <div class="xp-pillars">
+          {topic.potential.pillars.map((pillar) => (
+            <div class="xp-pillar">
+              <div class="xp-pillar-head">
+                <span class="xp-pillar-tag">{pillar.tag}</span>
+                <h3 class="xp-pillar-title">{pillar.title}</h3>
+              </div>
+              <p class="xp-pillar-text">{pillar.text}</p>
+              <ul class="xp-dash-list" role="list">
+                {pillar.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p class="xp-pillar-kicker">{topic.potential.kicker}</p>
+      </div>
+    </section>
+
+    {/* 03 Challenges — five accordions, one per indicator. Open state splits
+        the category definition from the topic-specific issues so the indicator
+        and the erosion read as different things. No "reversed by" line:
+        section 04 is where the reversal lives.
+        Full-bleed navy, using the same --gradient-dark the homepage's own dark
+        panels use. design-system's .section-dark is the light-blue CTA band, a
+        different treatment despite the name. */}
+    <section class="section section-navy" id="correcting" aria-labelledby="correcting-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow eyebrow-light">{topic.correcting.label}</span>
+          <h2 id="correcting-h" class="xp-h2">{topic.correcting.heading}</h2>
+          <p class="section-lead">{topic.correcting.lead}</p>
+        </header>
+
+        <div class="xp-indicators">
+          {topic.correcting.indicators.map((indicator) => (
+            <details class="xp-indicator">
+              <summary class="xp-indicator-summary">
+                <h3 class="xp-indicator-name">{indicator.name}</h3>
+                <span class="xp-indicator-count">
+                  {indicator.issues.length} {indicator.issues.length === 1 ? 'indicator' : 'indicators'}
+                </span>
+                <span class="xp-chevron" aria-hidden="true">▼</span>
+              </summary>
+              <div class="xp-indicator-body">
+                <div class="xp-indicator-col">
+                  <span class="xp-micro-label xp-micro-gold">What it means</span>
+                  <p class="xp-indicator-definition">{indicator.definition}</p>
+                </div>
+                <div class="xp-indicator-col">
+                  <span class="xp-micro-label xp-micro-sky">Where the value is going</span>
+                  <ul class="xp-dash-list xp-dash-list-sky" role="list">
+                    {indicator.issues.map((issue) => <li>{issue}</li>)}
+                  </ul>
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* 04 Investments — the three-part frame, an indicator filter, then the
+        intervention list beside a detail panel. */}
+    <section class="section" id="investments" aria-labelledby="investments-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.investments.label}</span>
+          <h2 id="investments-h" class="xp-h2">{topic.investments.heading}</h2>
+          <p class="section-lead">{topic.investments.lead}</p>
+        </header>
+
+        <div class="card-grid card-grid-3">
+          {topic.investments.frame.map((f) => (
+            <article class="card card-static card-accent-start xp-frame-card">
+              <h3 class="xp-frame-title">{f.title}</h3>
+              <p class="xp-frame-text">{f.text}</p>
+            </article>
+          ))}
+        </div>
+
+        {/* A radio group, not a set of toggle buttons: exactly one indicator
+            is ever active, which is what aria-checked on a radio says and what
+            aria-pressed on six independent toggles does not. It also collapses
+            six tab stops into one, with arrow keys moving between them. */}
+        <div class="xp-filter" data-iv-filter>
+          <span class="xp-filter-label" id="iv-filter-label">Filter by indicator</span>
+          <div class="xp-chips" role="radiogroup" aria-labelledby="iv-filter-label" data-chip-group>
+            {chips.map((chip) => (
+              <button
+                type="button"
+                class="xp-chip"
+                role="radio"
+                aria-checked={chip.id === 'all' ? 'true' : 'false'}
+                tabindex={chip.id === 'all' ? '0' : '-1'}
+                data-impact={chip.id}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="xp-iv-layout">
+          <div class="xp-iv-col">
+            <p class="xp-iv-count" data-iv-count>
+              {interventions.length} {interventions.length === 1 ? 'intervention' : 'interventions'}
+            </p>
+            {/* The visible count is not itself a live region: it also changes
+                when the reader arrows through the list, and re-announcing
+                "9 interventions" on every keypress is noise. This announces
+                the outcome of a filter change only, and says which filter. */}
+            <p class="sr-only" role="status" aria-live="polite" data-iv-status></p>
+            <div class="xp-iv-list" role="tablist" aria-label="Interventions" aria-orientation="vertical" data-iv-tablist>
+              {interventions.map((iv) => (
+                <button
+                  type="button"
+                  class="xp-iv"
+                  role="tab"
+                  id={`iv-tab-${iv.id}`}
+                  aria-controls={`iv-panel-${iv.id}`}
+                  aria-selected={iv.id === initialIntervention ? 'true' : 'false'}
+                  tabindex={iv.id === initialIntervention ? '0' : '-1'}
+                  data-iv={iv.id}
+                  data-impacts={iv.impacts.join(' ')}
+                >
+                  <span class="xp-iv-group">{iv.group}</span>
+                  <span class="xp-iv-name">{iv.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div class="xp-iv-col">
+            <p class="xp-iv-empty" data-iv-empty hidden>
+              No interventions in this topic are tagged to that indicator. Select another
+              indicator, or choose All.
+            </p>
+            {/* tabindex="0" on each panel because they hold no focusable
+                content of their own — without it a keyboard user can select a
+                tab but never reach what it reveals. */}
+            {interventions.map((iv) => (
+              <div
+                class="xp-iv-panel"
+                role="tabpanel"
+                id={`iv-panel-${iv.id}`}
+                aria-labelledby={`iv-tab-${iv.id}`}
+                tabindex="0"
+                data-iv-panel={iv.id}
+                hidden={iv.id !== initialIntervention}
+              >
+                <span class="xp-micro-label xp-micro-sky">{iv.group}</span>
+                <h3 class="xp-iv-panel-name">{iv.name}</h3>
+                <ul class="xp-tags" role="list">
+                  {iv.impacts.map((k) => <li class="tag xp-tag-dark">{indicatorName(k)}</li>)}
+                </ul>
+                <dl class="xp-iv-rows">
+                  <div class="xp-iv-row">
+                    <dt class="xp-micro-label xp-micro-gold">How it works</dt>
+                    <dd>{iv.mechanism}</dd>
+                  </div>
+                  <div class="xp-iv-row">
+                    <dt class="xp-micro-label xp-micro-gold">Value created</dt>
+                    <dd>{iv.value}</dd>
+                  </div>
+                  <div class="xp-iv-row">
+                    <dt class="xp-micro-label xp-micro-gold">What the evidence supports</dt>
+                    <dd>{iv.evidence}</dd>
+                  </div>
+                  <div class="xp-iv-row">
+                    <dt class="xp-micro-label xp-micro-gold">Adoption barrier</dt>
+                    <dd>{iv.barrier}</dd>
+                  </div>
+                </dl>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p class="xp-onward-wrap">
+          <a class="xp-onward" href={topic.links.whoWeWorkWith.href}>{topic.links.whoWeWorkWith.label}</a>
+        </p>
+      </div>
+    </section>
+
+    {/* 05 Incentives — one card of five constraints, each naming the constraint
+        as an action beside what blocks the decision and how a program relieves
+        it. */}
+    <section class="section section-alt" id="adoption" aria-labelledby="adoption-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.adoption.label}</span>
+          <h2 id="adoption-h" class="xp-h2">{topic.adoption.heading}</h2>
+          <p class="section-lead">{topic.adoption.lead}</p>
+        </header>
+
+        <div class="xp-constraints">
+          <span class="xp-micro-label xp-micro-gold">{topic.adoption.constraintEyebrow}</span>
+          <h3 class="xp-constraints-title">{topic.adoption.constraintHeading}</h3>
+          <p class="xp-constraints-lead">{topic.adoption.constraintLead}</p>
+          <div class="xp-constraint-list">
+            {topic.adoption.constraints.map((c) => (
+              <div class="xp-constraint-row">
+                <span class="xp-constraint-num" aria-hidden="true">{c.n}</span>
+                <h4 class="xp-constraint-title">{c.title}</h4>
+                <p class="xp-constraint-text">{c.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* 06 Program Fit — the DVF diagram with Strategic Fit as the boundary
+        rather than a fourth criterion, then the functional-fit question cards
+        in the site's Offerings order. */}
+    <section class="section" id="fit" aria-labelledby="fit-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.fit.label}</span>
+          <h2 id="fit-h" class="xp-h2">{topic.fit.heading}</h2>
+          <p class="section-lead">{validationLead}</p>
+        </header>
+
+        <StrategyFrameworkDVF
+          heading="Evaluating an Opportunity"
+          eyebrow="Interactive Framework"
+          content={dvfContent}
+          variant="validation-only"
+        />
+
+        <div class="xp-questions">
+          <h3 class="xp-subhead">Addressing the Functional Fit Questions</h3>
+          <div class="card-grid card-grid-3">
+            {questionGroups.map((group) => (
+              <article class="card card-static xp-question-card">
+                <h4 class="xp-question-team">{group.team}</h4>
+                <ul class="xp-question-list" role="list">
+                  {group.questions.map((q) => <li>{q}</li>)}
+                </ul>
+                <p class="xp-onward-wrap">
+                  <a class="xp-onward xp-onward-sm" href={group.capHref}>{group.capName}</a>
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* 07 Performance — five evidence layers. The claim decides how far up the
+        reader has to go; no claim-ladder callouts. */}
+    <section class="section section-alt" id="verifying" aria-labelledby="verifying-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.verifying.label}</span>
+          <h2 id="verifying-h" class="xp-h2">{topic.verifying.heading}</h2>
+          <p class="section-lead">{topic.verifying.lead}</p>
+        </header>
+
+        <div class="xp-layers">
+          {topic.verifying.layers.map((layer) => (
+            <div class="xp-layer">
+              <span class="xp-layer-num" aria-hidden="true">{layer.n}</span>
+              <span class="xp-layer-id">
+                <h3 class="xp-layer-name">{layer.name}</h3>
+                <span class="xp-layer-question">{layer.question}</span>
+              </span>
+              <span class="xp-layer-examples">{layer.examples}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* 08 Market Access — the production mechanism selector, with the topic's
+        own instruments pushed in through its detailBlocks prop rather than
+        forking the component. */}
+    <section class="section" id="pathways" aria-labelledby="pathways-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.pathways.label}</span>
+          <h2 id="pathways-h" class="xp-h2">{topic.pathways.heading}</h2>
+          <p class="section-lead">{topic.pathways.lead}</p>
+        </header>
+
+        <MechanismSelector
+          mechanisms={mechanisms}
+          initialId={initialPathway}
+          showDetailHeading
+          detailBlocks={detailBlocks}
+        />
+
+        <p class="xp-onward-wrap">
+          <a class="xp-onward" href={topic.links.markets.href}>{topic.links.markets.label}</a>
+        </p>
+      </div>
+    </section>
+
+    {/* 09 Delivery Approach — the same six lifecycle stages the homepage
+        Approach band renders, from src/data/lifecycle.ts. No Focus band, no
+        Function band. */}
+    <section class="section section-alt" id="approach" aria-labelledby="approach-h">
+      <div class="container">
+        <header class="section-header">
+          <span class="eyebrow">{topic.approach.label}</span>
+          <h2 id="approach-h" class="xp-h2">{topic.approach.heading}</h2>
+          <p class="section-lead">{topic.approach.lead}</p>
+        </header>
+
+        <div class="xp-stages" role="tablist" aria-label="Development lifecycle" data-stage-tablist>
+          {lifecycle.map((stage) => (
+            <button
+              type="button"
+              class="xp-stage"
+              role="tab"
+              id={`stage-tab-${stage.id}`}
+              aria-controls={`stage-panel-${stage.id}`}
+              aria-selected={stage.id === initialStage ? 'true' : 'false'}
+              tabindex={stage.id === initialStage ? '0' : '-1'}
+              data-stage={stage.id}
+            >
+              <span class="xp-stage-num">{stage.n}</span>
+              <span class="xp-stage-short">{stage.short}</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="xp-stage-panels">
+          {lifecycle.map((stage) => (
+            <div
+              class="xp-stage-panel"
+              role="tabpanel"
+              id={`stage-panel-${stage.id}`}
+              aria-labelledby={`stage-tab-${stage.id}`}
+              tabindex="0"
+              data-stage-panel={stage.id}
+              hidden={stage.id !== initialStage}
+            >
+              <span class="xp-micro-label xp-micro-gold">Stage {stage.n}</span>
+              <h3 class="xp-stage-title">{stage.title}</h3>
+              <p class="xp-stage-text">{stage.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <p class="xp-onward-wrap">
+          <a class="xp-onward" href={topic.links.capabilities.href}>{topic.links.capabilities.label}</a>
+        </p>
+      </div>
+    </section>
+
+    {/* 10 Tools & Enablers — the tools in order, no phase rail, no per-tool
+        phase tags, no filtering (the tool count stays small until several more
+        expertise areas exist). Omitted entirely when a topic has no tools. */}
+    {tools.length > 0 && (
+      <section class="section" id="enablers" aria-labelledby="enablers-h">
+        <div class="container">
+          <header class="section-header">
+            <span class="eyebrow">{topic.enablers.label}</span>
+            <h2 id="enablers-h" class="xp-h2">{topic.enablers.heading}</h2>
+            <p class="section-lead">{topic.enablers.lead}</p>
+            <p class="xp-lead-secondary">{topic.enablers.leadTwo}</p>
+          </header>
+
+          <div class="card-grid card-grid-3">
+            {tools.map((tool) => (
+              <article class="card card-static card-media xp-tool">
+                <img
+                  class="xp-tool-img"
+                  src={tool.src}
+                  srcset={tool.srcset}
+                  sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 45vw, 22rem"
+                  width={tool.width}
+                  height={tool.height}
+                  alt={tool.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="card-media-body">
+                  <h3 class="xp-tool-name">{tool.name}</h3>
+                  <p class="xp-tool-text">{tool.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <p class="xp-onward-wrap">
+            <a class="xp-onward" href={topic.links.digital.href}>{topic.links.digital.label}</a>
+          </p>
+        </div>
+      </section>
+    )}
+  </article>
+
+  {/* Section rail. A fixed right-margin menu, the same mechanism
+      digital-solutions/index.astro's .journey-rail uses — it overlays the page
+      margin and takes no width from the content column, so the topic reads at
+      the site's normal measure at every viewport (owner, 2026-09-12; the
+      earlier sticky-grid-gutter version cost 27% of the content width the
+      moment it appeared at 56rem).
+      Kept from the prototype: anchors rather than buttons, so the rail is real
+      in-page navigation that works without JS and contributes internal links;
+      and a geometric scroll pick rather than an IntersectionObserver band.
+      Labels need roughly 176px, which only clears the 75rem container above
+      100rem. Below that the rail rests as a numbered column and reveals every
+      label on hover or keyboard focus, so it never permanently overlaps the
+      text it is meant to navigate. */}
+  <nav class="journey-rail" data-section-rail aria-label="Sections on this page">
+    <ol class="journey-rail-list" role="list">
+      {renderedSections.map((s) => (
+        <li>
+          <a
+            class="journey-rail-item"
+            href={`#${s.id}`}
+            data-rail-item={s.id}
+            aria-current={s.id === 'overview' ? 'true' : 'false'}
+          >
+            <span class="journey-rail-num" aria-hidden="true">{s.n}</span>
+            <span class="journey-rail-label">{s.label}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <ClosingCta
+    headingId="cta-h"
+    heading={topic.cta.heading}
+    description={topic.cta.text}
+    primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Priority Investments', href: '#investments' }}
+    links={ctaLinks}
+  />
+</SiteLayout>
+
+<style>
+  /* ── Section rail ──
+     position: fixed, so it lives in the page margin and costs the content
+     column nothing. Hidden below 85rem, where the margin beside the 75rem
+     container is narrower than the rail itself — measured: the collapsed rail
+     is 70px and needs (viewport - 1152px content) / 2 to exceed 86px, which
+     happens at 1324px. 85rem/1360px is the first comfortable step past that. */
+  .journey-rail { display: none; }
+
+  @media (min-width: 85rem) {
+    .journey-rail {
+      display: block;
+      position: fixed;
+      right: var(--space-4);
+      /* Top-aligned with the section title rather than centred in the
+         viewport (owner, 2026-09-12). Measured, not guessed: with a section
+         anchored at the top of the viewport, the 70px sticky header plus the
+         section's scroll-margin and padding put the h2 at 182px, so the rail
+         starts on the same line as the heading it belongs to. */
+      top: 11.5rem;
+      z-index: 40;
+    }
+    /* Ten labelled rows are ~470px; on a short window that would run past the
+       bottom, so the list scrolls inside itself rather than off the screen. */
+    .journey-rail-list {
+      max-height: calc(100vh - 14rem);
+      overflow-y: auto;
+    }
+  }
+  /* The rail belongs to the body of the page, not the hero — over a full-bleed
+     photo it reads as a stray panel floating on the image, and there is nothing
+     to navigate yet. It arrives when the reader reaches the first section, the
+     same move the homepage header makes when it solidifies past its photo hero
+     (body.past-hero in pages/index.astro). `visibility` rather than opacity
+     alone so it is not a tab stop while it is invisible. */
+  .journey-rail {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(0.75rem);
+    transition: opacity 240ms ease, transform 240ms ease, visibility 240ms;
+  }
+  .journey-rail.is-revealed {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  /* The rail floats over sections that alternate white and full-bleed navy, so
+     it carries its own surface rather than borrowing the page's — otherwise
+     the labels are unreadable every time it crosses a dark band. */
+  .journey-rail-list {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: var(--space-3) var(--space-2);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+  /* Unselected rows sit back: --c-secondary-500 rather than the body's
+     --color-text-secondary, which is a visible step lighter and still clears
+     the 4.5:1 floor that applies at 12px/500 (4.76:1 on white).
+     --color-text-muted would read better still but measures 2.56:1 and fails. */
+  .journey-rail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-left: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    color: var(--c-secondary-500);
+    text-decoration: none;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .journey-rail-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--c-secondary-200);
+    background: var(--color-bg);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    flex-shrink: 0;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  }
+  /* The label inherits the item's colour rather than taking a lighter one of
+     its own: at 12px/500 the 4.5:1 contrast floor applies, --color-text-muted
+     measures 2.56:1 on white and inheriting gives 7.58:1. */
+  .journey-rail-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width var(--transition-fast), opacity var(--transition-fast);
+  }
+  /* 85–100rem: numbers only at rest, every label on hover or keyboard focus.
+     Even the current label alone is enough to widen the rail past the page
+     margin at 1440 and cover the text it is meant to navigate, so the resting
+     state stays inside the margin and the expansion is transient. */
+  .journey-rail:hover .journey-rail-label,
+  .journey-rail:focus-within .journey-rail-label {
+    max-width: 10rem;
+    opacity: 1;
+  }
+  /* ≥100rem the margin is wide enough to hold all ten labels permanently with
+     real clearance, which is how the reader sees what is ahead without
+     hovering. Measured, not guessed: the labelled rail is ~176px wide and the
+     page margin is (viewport - 75rem container) / 2, so 1536px leaves it
+     grazing the content edge and 1600px clears it. */
+  @media (min-width: 100rem) {
+    .journey-rail-label { max-width: 10rem; opacity: 1; }
+  }
+  /* Active state differs on colour, weight and border, so it still reads under
+     forced-colors and for colourblind visitors. */
+  .journey-rail-item[aria-current='true'] {
+    color: var(--color-text);
+    border-left-color: var(--color-dark);
+    background: var(--color-surface);
+  }
+  .journey-rail-item[aria-current='true'] .journey-rail-num {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: #fff;
+  }
+  .journey-rail-item[aria-current='true'] .journey-rail-label { font-weight: var(--font-semibold); }
+  .journey-rail-item:hover { color: var(--color-text); }
+  .journey-rail-item:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+  /* ── Section furniture ──
+     .section / .section-alt / .container / .section-header / .eyebrow /
+     .section-lead all come from design-system.css; only the heading measure is
+     local. Section numbers live in the rail only — ahead of a section heading
+     they read as an ordinal the reader has to keep track of rather than a
+     label (owner, 2026-09-12). */
+  .xp-h2 {
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  .xp-lead-wide { max-width: 54rem; }
+  .xp-lead-secondary {
+    margin-top: var(--space-4);
+    max-width: var(--max-width-text);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  /* The site header is sticky and 70px tall, so an anchor jump from the rail
+     would otherwise land with the section's number/eyebrow row hidden behind
+     it. Same idiom as CaseStudyArticle.astro's anchored headings. */
+  .section[id] { scroll-margin-top: var(--space-16); }
+
+  /* Full-bleed navy band. design-system's .section-dark is the light-blue CTA
+     treatment despite the name, so this is its own class, using the same
+     --gradient-dark the homepage's dark panels use. */
+  .section-navy { background: var(--gradient-dark); }
+  .section-navy :global(h2) { color: #fff; }
+  .section-navy :global(.section-lead) { color: #d7deef; }
+
+  .xp-micro-label {
+    display: block;
+    font-size: 0.625rem;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .xp-micro-gold { color: var(--c-accent-400); }
+  .xp-micro-sky { color: var(--c-sky-300); }
+
+  .xp-dash-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: var(--space-2); }
+  .xp-dash-list li {
+    position: relative;
+    padding-left: 0.875rem;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+  .xp-dash-list li::before { content: '–'; position: absolute; left: 0; color: var(--c-sky-600); }
+  .xp-dash-list-sky li { color: #9ad1dc; }
+  .xp-dash-list-sky li::before { color: var(--c-sky-300); }
+
+  .xp-onward-wrap { margin: var(--space-6) 0 0; }
+  .xp-onward {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    text-decoration: none;
+    color: var(--color-link);
+  }
+  .xp-onward:hover { color: var(--color-link-hover); }
+  .xp-onward::after { content: '→'; }
+  .xp-onward-sm { font-size: var(--text-xs); }
+
+  .xp-subhead { margin: 0 0 var(--space-6); }
+
+  /* ── 01 Overview ── */
+  /* .stat-group is the shared recipe; only the per-item measure is local, so
+     four figures sit on one row instead of stretching edge to edge. */
+  .xp-stats { gap: var(--space-8) var(--space-10); }
+  .xp-stat { flex: 1 1 12rem; min-width: 0; max-width: 18rem; }
+  .xp-stat-label { color: var(--color-text-secondary); text-wrap: pretty; }
+
+  .xp-arguments {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-12);
+  }
+  .xp-argument { border-top: 2px solid var(--color-dark); padding-top: var(--space-3); }
+  .xp-argument-title { font-size: var(--text-base); font-weight: var(--font-semibold); margin: 0; }
+  .xp-argument-text {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .xp-positioning {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-6);
+    margin: var(--space-12) 0 0;
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+  .xp-positioning-item { min-width: 0; }
+  .xp-positioning dt {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-sky-700);
+  }
+  .xp-positioning dd {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* ── 02 The Potential ── */
+  .xp-transition {
+    margin: var(--space-5) 0 0;
+    max-width: 44rem;
+    font-size: var(--text-xl);
+    font-weight: var(--font-medium);
+    line-height: var(--line-snug);
+    color: var(--color-text);
+    text-wrap: pretty;
+  }
+  .xp-pillars {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-elevated);
+    overflow: clip;
+  }
+  .xp-pillar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .xp-pillar:first-child { border-top: 0; }
+  .xp-pillar-head { min-width: 0; }
+  .xp-pillar-tag {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-sky-700);
+  }
+  .xp-pillar-title { font-size: var(--text-lg); line-height: var(--line-snug); margin: var(--space-2) 0 0; text-wrap: pretty; }
+  .xp-pillar-text {
+    margin: 0;
+    min-width: 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+  .xp-pillar .xp-dash-list { margin-top: 0; min-width: 0; }
+  .xp-pillar .xp-dash-list li { font-size: var(--text-xs); }
+  .xp-pillar-kicker {
+    margin: var(--space-10) auto 0;
+    max-width: 50rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    line-height: var(--line-snug);
+    color: var(--color-text);
+    text-wrap: pretty;
+  }
+
+  /* ── 03 Challenges ── */
+  .xp-indicators {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-lg);
+    overflow: clip;
+  }
+  .xp-indicator { border-top: 1px solid rgba(255, 255, 255, 0.16); }
+  .xp-indicator:first-child { border-top: 0; }
+  /* summary needs both of these or the default marker shows through. */
+  .xp-indicator-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    list-style: none;
+  }
+  .xp-indicator-summary::-webkit-details-marker { display: none; }
+  .xp-indicator-summary:hover { background: rgba(255, 255, 255, 0.07); }
+  .xp-indicator-summary:focus-visible { outline: 2px solid var(--c-accent-400); outline-offset: -2px; }
+  .xp-indicator-name {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--c-accent-400);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .xp-indicator-count { flex: none; font-size: var(--text-xs); color: #8f9dc5; }
+  /* display: block, not the inline default — a transform is dropped on an
+     inline element, so the chevron would never rotate. */
+  .xp-chevron {
+    display: block;
+    flex: none;
+    color: var(--c-accent-400);
+    font-size: 0.6875rem;
+    transition: transform var(--transition-base);
+  }
+  .xp-indicator[open] .xp-chevron { transform: rotate(180deg); }
+  .xp-indicator-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-5) var(--space-6);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .xp-indicator-col { min-width: 0; }
+  .xp-indicator-definition {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: #fff;
+    text-wrap: pretty;
+  }
+
+  /* ── 04 Investments ── */
+  .xp-frame-card { padding: var(--space-6); }
+  .xp-frame-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--space-2);
+    color: var(--c-sky-700);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .xp-frame-text { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
+
+  .xp-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .xp-filter-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  .xp-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .xp-chip {
+    cursor: pointer;
+    font-family: inherit;
+    background: var(--color-surface-elevated);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-full);
+    padding: 0.375rem 0.875rem;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+  }
+  .xp-chip:hover { border-color: var(--c-sky-400); background: var(--c-sky-50); }
+  .xp-chip:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .xp-chip[aria-checked='true'] { background: var(--color-dark); border-color: var(--color-dark); color: #fff; }
+
+  .xp-iv-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 60rem) {
+    .xp-iv-layout { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: var(--space-8); }
+  }
+  .xp-iv-col { min-width: 0; }
+  .xp-iv-count { font-size: var(--text-xs); color: var(--color-text-secondary); margin: 0 0 var(--space-2); }
+  .xp-iv-list { display: grid; gap: var(--space-2); }
+  .xp-iv {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 0.625rem 0.875rem;
+    transition: border-color var(--transition-base), background var(--transition-base);
+  }
+  /* The UA rule is [hidden] { display: none }, which an author `display`
+     declaration beats. Without this, filtered-out interventions stay visible
+     and clicking one selects nothing. */
+  .xp-iv[hidden] { display: none; }
+  .xp-iv:hover { background: var(--c-sky-50); }
+  .xp-iv:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .xp-iv[aria-selected='true'] { background: var(--c-sky-50); border-left-color: var(--c-sky-500); }
+  .xp-iv-group {
+    display: block;
+    font-size: 0.625rem;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+  .xp-iv-name {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-top: 2px;
+    text-wrap: pretty;
+  }
+
+  .xp-iv-empty {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .xp-iv-empty[hidden] { display: none; }
+  .xp-iv-panel {
+    background: var(--gradient-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+  }
+  .xp-iv-panel[hidden] { display: none; }
+  .xp-iv-panel-name {
+    color: #fff;
+    font-size: var(--text-xl);
+    line-height: var(--line-snug);
+    margin: var(--space-2) 0 0;
+    text-wrap: pretty;
+  }
+  .xp-tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: var(--space-4) 0 0; padding: 0; }
+  /* .tag is the shared pill; on navy it needs the inverse foreground. */
+  .xp-tag-dark {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+    font-size: 0.625rem;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .xp-iv-rows {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-5) 0 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .xp-iv-row dd {
+    margin: 6px 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: #fff;
+    text-wrap: pretty;
+  }
+
+  /* ── 05 Incentives ── */
+  .xp-constraints {
+    background: var(--gradient-dark);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-8) var(--space-6);
+  }
+  @media (min-width: 48rem) {
+    .xp-constraints { padding: var(--space-10); }
+  }
+  .xp-constraints-title {
+    color: #fff;
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    line-height: var(--line-snug);
+    margin: var(--space-4) 0 0;
+    text-wrap: pretty;
+  }
+  .xp-constraints-lead {
+    margin: var(--space-4) 0 var(--space-6);
+    max-width: 44rem;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: #d7deef;
+    text-wrap: pretty;
+  }
+  .xp-constraint-list { display: grid; }
+  /* A real border per row, not a gap:1px separator — those vanish to subpixel
+     rounding when row heights are fractional. */
+  .xp-constraint-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-5) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .xp-constraint-row:first-child { border-top: 0; padding-top: 0; }
+  .xp-constraint-num {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--c-accent-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    color: var(--c-accent-400);
+  }
+  .xp-constraint-title {
+    flex: 1 1 13rem;
+    min-width: 0;
+    color: #fff;
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .xp-constraint-text {
+    flex: 2 1 22rem;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: #a9b6d6;
+    text-wrap: pretty;
+  }
+
+  /* ── 06 Program Fit ── */
+  .xp-questions { margin-top: var(--space-12); padding-top: var(--space-10); border-top: 1px solid var(--color-border); }
+  .xp-question-card { padding: var(--space-6); }
+  .xp-question-team { font-size: var(--text-base); margin: 0 0 var(--space-3); }
+  .xp-question-list { list-style: none; margin: 0; padding: 0; }
+  .xp-question-list li {
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    padding-top: var(--space-3);
+    margin-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    text-wrap: pretty;
+  }
+  .xp-question-list li:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+
+  /* ── 07 Performance ── */
+  .xp-layers {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-elevated);
+    overflow: clip;
+  }
+  .xp-layer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    align-items: baseline;
+    padding: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .xp-layer:first-child { border-top: 0; }
+  .xp-layer-num { flex: 0 0 1.75rem; font-family: var(--font-serif); color: var(--c-sky-600); }
+  .xp-layer-id { flex: 1 1 11rem; min-width: 0; }
+  .xp-layer-name { font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text); margin: 0; }
+  .xp-layer-question { display: block; font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 2px; }
+  .xp-layer-examples {
+    flex: 2 1 20rem;
+    min-width: 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* ── 09 Delivery Approach ── */
+  .xp-stages { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .xp-stage {
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text-secondary);
+    transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+  }
+  .xp-stage:hover { border-color: var(--c-sky-400); background: var(--c-sky-50); }
+  .xp-stage:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  .xp-stage[aria-selected='true'] { background: var(--color-dark); border-color: var(--color-dark); color: #fff; }
+  .xp-stage-num { display: block; font-family: var(--font-serif); font-size: var(--text-xs); }
+  .xp-stage-short { display: block; font-size: var(--text-sm); font-weight: var(--font-semibold); margin-top: 2px; }
+
+  .xp-stage-panels { margin-top: var(--space-5); }
+  .xp-stage-panel { background: var(--gradient-dark); border-radius: var(--radius-lg); padding: var(--space-8); }
+  .xp-stage-panel[hidden] { display: none; }
+  .xp-stage-title {
+    color: #fff;
+    font-size: var(--text-xl);
+    line-height: var(--line-snug);
+    margin: var(--space-2) 0 0;
+    text-wrap: pretty;
+  }
+  .xp-stage-text {
+    margin: var(--space-3) 0 0;
+    max-width: 52rem;
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+    color: #d7deef;
+    text-wrap: pretty;
+  }
+
+  /* ── 10 Tools & Enablers ── */
+  /* The brand kit's unframed 16:9 hero renders, so the image fills the card's
+     top edge exactly as .card-media intends — only the aspect differs from the
+     primitive's 16/10 default. Digital Solutions owns the device-mockup
+     treatment; repeating it here made a section of a topic page read as a
+     second product page (owner, 2026-09-12). */
+  .xp-tool-img { aspect-ratio: 16 / 9; }
+  .xp-tool-name { font-size: var(--text-base); font-weight: var(--font-semibold); margin: 0 0 var(--space-2); text-wrap: pretty; }
+  .xp-tool-text { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Still appears and disappears, just without the slide or the fade. */
+    .journey-rail { transition: none; }
+    .journey-rail-item,
+    .journey-rail-num,
+    .journey-rail-label,
+    .journey-rail-list,
+    .xp-chevron { transition: none; }
+  }
+</style>
+
+<script>
+  // Three interactions plus the section rail. The pathway selector in section
+  // 08 is MechanismSelector's own script and is untouched here.
+  //
+  // Tab lists implement the full model — roving tabindex, arrow/Home/End keys,
+  // real tabpanels — the same pattern the homepage's Approach rail and Who We
+  // Work With tabs use. Declaring role="tab" without the behaviour is worse
+  // than no ARIA at all.
+
+  /** Wires one roving-tabindex widget — a tablist or a radio group; both use
+   * the same keyboard model (arrows move and select, Home/End jump, one tab
+   * stop for the whole set). `isEnabled` lets the caller exclude items that
+   * are currently filtered out. */
+  function wireTabs(
+    tabs: HTMLElement[],
+    onSelect: (id: string) => void,
+    idOf: (el: HTMLElement) => string,
+    isEnabled: (el: HTMLElement) => boolean = () => true,
+  ) {
+    const focusTab = (el: HTMLElement) => {
+      onSelect(idOf(el));
+      el.focus();
+    };
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => onSelect(idOf(tab)));
+      tab.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+        const usable = tabs.filter(isEnabled);
+        if (!usable.length) return;
+        e.preventDefault();
+        const i = usable.indexOf(tab);
+        let next = i;
+        if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = usable.length - 1;
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % usable.length;
+        else next = (i - 1 + usable.length) % usable.length;
+        focusTab(usable[next]);
+      });
+    });
+  }
+
+  // ── Section 04: indicator filter + intervention tabs ──
+  const ivTablist = document.querySelector<HTMLElement>('[data-iv-tablist]');
+  if (ivTablist) {
+    const ivTabs = Array.from(ivTablist.querySelectorAll<HTMLElement>('[data-iv]'));
+    const ivPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-iv-panel]'));
+    const chips = Array.from(document.querySelectorAll<HTMLElement>('[data-impact]'));
+    const countEl = document.querySelector<HTMLElement>('[data-iv-count]');
+    const statusEl = document.querySelector<HTMLElement>('[data-iv-status]');
+    const emptyEl = document.querySelector<HTMLElement>('[data-iv-empty]');
+    let impact = 'all';
+
+    const matches = (tab: HTMLElement) =>
+      impact === 'all' || (tab.dataset.impacts ?? '').split(' ').includes(impact);
+
+    const select = (id: string, reveal = false) => {
+      ivTabs.forEach((tab) => {
+        const on = tab.dataset.iv === id;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        tab.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      ivPanels.forEach((panel) => {
+        panel.hidden = panel.dataset.ivPanel !== id;
+      });
+      // Below 60rem the panel sits under the whole list, so choosing an
+      // intervention on a phone otherwise looks like it did nothing. Only when
+      // the panel is actually off-screen, and never on a filter change the
+      // reader did not initiate from the list.
+      if (!reveal) return;
+      const panel = ivPanels.find((p) => p.dataset.ivPanel === id);
+      if (!panel) return;
+      const box = panel.getBoundingClientRect();
+      if (box.top >= 0 && box.top < window.innerHeight) return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      panel.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    };
+
+    const applyFilter = (announce = false) => {
+      const visible = ivTabs.filter(matches);
+      ivTabs.forEach((tab) => {
+        tab.hidden = !matches(tab);
+      });
+      if (countEl) {
+        countEl.textContent = `${visible.length} ${visible.length === 1 ? 'intervention' : 'interventions'}`;
+      }
+      if (emptyEl) emptyEl.hidden = visible.length > 0;
+      // Announce what the filter did, not just a bare number, and only when
+      // the reader actually changed it.
+      if (announce && statusEl) {
+        const label = chips.find((c) => c.dataset.impact === impact)?.textContent?.trim() ?? 'All';
+        statusEl.textContent =
+          visible.length === 0
+            ? `No interventions match ${label}.`
+            : `${visible.length} ${visible.length === 1 ? 'intervention' : 'interventions'} ${impact === 'all' ? 'shown' : `match ${label}`}.`;
+      }
+      // The detail panel follows the first still-visible item rather than
+      // stranding a selection the reader can no longer see.
+      const selected = ivTabs.find((t) => t.getAttribute('aria-selected') === 'true');
+      if (visible.length === 0) {
+        ivPanels.forEach((panel) => { panel.hidden = true; });
+      } else if (!selected || !matches(selected)) {
+        select(visible[0].dataset.iv ?? '');
+      }
+    };
+
+    wireTabs(ivTabs, (id) => select(id, true), (el) => el.dataset.iv ?? '', matches);
+
+    const selectChip = (id: string) => {
+      impact = id;
+      chips.forEach((c) => {
+        const on = c.dataset.impact === id;
+        c.setAttribute('aria-checked', on ? 'true' : 'false');
+        c.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      applyFilter(true);
+    };
+    wireTabs(chips, selectChip, (el) => el.dataset.impact ?? 'all');
+  }
+
+  // ── Section 09: lifecycle stage tabs ──
+  const stageTablist = document.querySelector<HTMLElement>('[data-stage-tablist]');
+  if (stageTablist) {
+    const stageTabs = Array.from(stageTablist.querySelectorAll<HTMLElement>('[data-stage]'));
+    const stagePanels = Array.from(document.querySelectorAll<HTMLElement>('[data-stage-panel]'));
+    const selectStage = (id: string) => {
+      stageTabs.forEach((tab) => {
+        const on = tab.dataset.stage === id;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        tab.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      stagePanels.forEach((panel) => {
+        panel.hidden = panel.dataset.stagePanel !== id;
+      });
+    };
+    wireTabs(stageTabs, selectStage, (el) => el.dataset.stage ?? '');
+  }
+
+  // ── Section rail ──
+  // A rAF-throttled scroll read takes the last section whose top has passed the
+  // viewport midpoint. A thin IntersectionObserver band batches unreliably when
+  // sections are several viewports tall, which these are. The listener is
+  // capture-phase on document so it works whether the window or a container is
+  // the thing that scrolls.
+  const rail = document.querySelector<HTMLElement>('[data-section-rail]');
+  if (rail) {
+    const items = Array.from(rail.querySelectorAll<HTMLElement>('[data-rail-item]'));
+    const sections = items
+      .map((item) => document.getElementById(item.dataset.railItem ?? ''))
+      .filter((el): el is HTMLElement => el !== null);
+
+    // Revealed once the hero has scrolled past, so the rail never sits over the
+    // hero photo with nothing yet to navigate. No second scroll listener: this
+    // rides the same rAF-throttled read that picks the active section.
+    const hero = document.querySelector<HTMLElement>('.expertise-hero');
+    const header = document.querySelector<HTMLElement>('header');
+    const syncReveal = () => {
+      if (!hero) {
+        rail.classList.add('is-revealed');
+        return;
+      }
+      const heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
+      const revealAt = heroBottom - (header ? header.offsetHeight : 0);
+      rail.classList.toggle('is-revealed', window.scrollY >= revealAt);
+    };
+
+    let frame = 0;
+    const pick = () => {
+      frame = 0;
+      syncReveal();
+      if (!sections.length) return;
+      const mid = window.innerHeight / 2;
+      let active = sections[0];
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= mid) active = section;
+        else break;
+      }
+      items.forEach((item) => {
+        item.setAttribute('aria-current', item.dataset.railItem === active.id ? 'true' : 'false');
+      });
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(pick);
+    };
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    pick();
+  }
+</script>

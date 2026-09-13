@@ -59,6 +59,15 @@ const BASE_IDS: DvfBaseId[] = ['strategic-fit', 'desirable', 'feasible', 'viable
 export interface Props {
   heading?: string;
   eyebrow?: string;
+  /** How each region's `beforeAfter` rows are presented.
+   * 'before-after' (default) keeps the paired pitfall/fix treatment with the
+   * error/success icons and Before/After labels — the homepage and the Carbon
+   * & Ecosystem Services page are unaffected by this prop existing.
+   * 'validation-only' renders just the `validation` side as a plain checklist,
+   * no pairs and no labels — the expertise topic template's section 06
+   * (Josh, 2026-09-12: the pitfall column read as a list of accusations
+   * against the reader on a page that is otherwise forward-looking). */
+  variant?: 'before-after' | 'validation-only';
   /** Optional content override — defaults below are placeholder copy,
    * clearly meant to be refined per CLAUDE.md/AGENTS.md (framework
    * description, not a claim about any real client or engagement). */
@@ -99,7 +108,7 @@ const DEFAULT_CONTENT: Record<DvfRegionId, DvfRegionContent> = {
   },
 };
 
-const { heading = 'Evaluating an Opportunity', eyebrow = 'Framework', content } = Astro.props;
+const { heading = 'Evaluating an Opportunity', eyebrow = 'Framework', content, variant = 'before-after' } = Astro.props;
 // Unique per rendered instance so a second copy of this component on the
 // same page doesn't collide on <clipPath>/<mask> ids (SVG ids are global
 // to the document, not scoped like Astro's component-style hashing).
@@ -215,16 +224,16 @@ const CLIENT_GEOMETRY = {
         ))}
       </defs>
 
-      <!-- Base circles — thin stroke, subtle fill, always visible. -->
+      {/* Base circles — thin stroke, subtle fill, always visible. */}
       <circle class="dvf-circle dvf-circle-strategic" data-circle="strategic" cx={CENTER.x} cy={CENTER.y} r={STRATEGIC_R} />
       <circle class="dvf-circle dvf-circle-d" data-circle="d" cx={D.x} cy={D.y} r={DVF_R} />
       <circle class="dvf-circle dvf-circle-f" data-circle="f" cx={F.x} cy={F.y} r={DVF_R} />
       <circle class="dvf-circle dvf-circle-v" data-circle="v" cx={V.x} cy={V.y} r={DVF_R} />
 
-      <!-- Region highlight overlays — one per selectable state, built from
+      {/* Region highlight overlays — one per selectable state, built from
            nested clip-path intersections (+ mask subtraction where a
            region must exclude a third circle). Invisible until hovered/
-           selected (see CSS). -->
+           selected (see CSS). */}
       {REGIONS.map((region) => {
         const clipIds = region.clip.map((k) => `dvf-${uid}-clip-${k}`);
         const maskAttr = region.exclude.length > 0 ? `dvf-${uid}-mask-not-${region.id}` : null;
@@ -254,11 +263,11 @@ const CLIENT_GEOMETRY = {
         );
       })}
 
-      <!-- Static gray overlays — the 3 pairwise-only lens shapes. Always
+      {/* Static gray overlays — the 3 pairwise-only lens shapes. Always
            visible (not tied to hover/select state), pointer-events: none,
            and never returned by deriveRegion below — clicking/hovering
            here does nothing, by design (owner decision, 2026-08-18: these
-           don't need their own actions). -->
+           don't need their own actions). */}
       {GRAY_OVERLAPS.map((overlap) => {
         const clipIds = overlap.clip.map((k) => `dvf-${uid}-clip-${k}`);
         const maskAttr = `dvf-${uid}-mask-not-${overlap.id}`;
@@ -273,17 +282,17 @@ const CLIENT_GEOMETRY = {
         );
       })}
 
-      <!-- Labels — short caps only; explanations live in the content panel. -->
+      {/* Labels — short caps only; explanations live in the content panel. */}
       <text class="dvf-label dvf-label-strategic" x={LABELS.strategic.x} y={LABELS.strategic.y} text-anchor="middle">STRATEGIC FIT</text>
       <text class="dvf-label" x={LABELS.desirable.x} y={LABELS.desirable.y} text-anchor="middle">DESIRABLE</text>
       <text class="dvf-label" x={LABELS.viable.x} y={LABELS.viable.y} text-anchor="middle">VIABLE</text>
       <text class="dvf-label" x={LABELS.feasible.x} y={LABELS.feasible.y} text-anchor="middle">FEASIBLE</text>
     </svg>
 
-    <!-- Genuine accessible control surface — keyboard/screen-reader users
+    {/* Genuine accessible control surface — keyboard/screen-reader users
          drive the same state through these, independent of SVG pointer
          geometry. Visually integrated as a compact selector row, not
-         hidden. -->
+         hidden. */}
     <div class="dvf-controls" role="group" aria-label="Framework dimensions">
       {REGIONS.map((region) => (
         <button
@@ -299,14 +308,14 @@ const CLIENT_GEOMETRY = {
   </div>
 
   <div class="dvf-content" data-dvf-content aria-live="polite">
-    <!-- The 4 base-dimension panels — no eyebrow, no heading (owner
+    {/* The 4 base-dimension panels — no eyebrow, no heading (owner
          feedback, 2026-08-18: dropped the "FRAMEWORK · X" divider label
          entirely, on top of the earlier removal of the <h4> title). The
          bolded description line is the only headline now. Shown fully
          expanded, not an accordion — selecting a single circle is already
          the explicit "show me this one" action, unlike the combined view
          below where 4 full before/after blocks at once is the actual
-         clutter problem. -->
+         clutter problem. */}
     {BASE_IDS.map((id) => {
       const c = REGION_CONTENT[id];
       return (
@@ -314,7 +323,16 @@ const CLIENT_GEOMETRY = {
           <p class="dvf-content-desc">{c.description}</p>
           {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
 
-          {c.beforeAfter && c.beforeAfter.length > 0 && (
+          {c.beforeAfter && c.beforeAfter.length > 0 && (variant === 'validation-only' ? (
+            <ul class="dvf-validation-list" role="list">
+              {c.beforeAfter.map((row) => (
+                <li class="dvf-validation-item">
+                  <span class="dvf-ba-icon dvf-validation-icon" aria-hidden="true">✓</span>
+                  <span class="dvf-validation-text">{row.validation}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
             <div class="dvf-before-after">
               {c.beforeAfter.map((row) => (
                 <div class="dvf-ba-row">
@@ -335,21 +353,21 @@ const CLIENT_GEOMETRY = {
                 </div>
               ))}
             </div>
-          )}
+          ))}
 
           {c.cta && <a href={c.cta.href} class="btn btn-secondary dvf-content-cta">{c.cta.label}</a>}
         </div>
       );
     })}
 
-    <!-- Center panel — clicking the middle (all three circles) shows the
+    {/* Center panel — clicking the middle (all three circles) shows the
          full picture: Strategic Fit + all three base dimensions together.
          Each subsection is a <details> accordion, collapsed on load —
          the bold description is the clickable summary; before/after only
          appears once clicked (owner mockup, 2026-08-18: "collapse" —
          showing 4 full before/after blocks open at once read as too much
          at first paint). Native <details>/<summary> rather than a JS
-         toggle: free keyboard/screen-reader support, no extra script. -->
+         toggle: free keyboard/screen-reader support, no extra script. */}
     <div
       class="dvf-content-panel dvf-content-panel-all"
       data-dvf-panel="desirable-feasible-viable"
@@ -368,7 +386,16 @@ const CLIENT_GEOMETRY = {
             <div class="dvf-subsection-body">
               {c.supporting && <p class="dvf-content-supporting">{c.supporting}</p>}
 
-              {c.beforeAfter && c.beforeAfter.length > 0 && (
+              {c.beforeAfter && c.beforeAfter.length > 0 && (variant === 'validation-only' ? (
+                <ul class="dvf-validation-list" role="list">
+                  {c.beforeAfter.map((row) => (
+                    <li class="dvf-validation-item">
+                      <span class="dvf-ba-icon dvf-validation-icon" aria-hidden="true">✓</span>
+                      <span class="dvf-validation-text">{row.validation}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
                 <div class="dvf-before-after">
                   {c.beforeAfter.map((row) => (
                     <div class="dvf-ba-row">
@@ -389,7 +416,7 @@ const CLIENT_GEOMETRY = {
                     </div>
                   ))}
                 </div>
-              )}
+              ))}
             </div>
           </details>
         );
@@ -656,6 +683,39 @@ const CLIENT_GEOMETRY = {
   .dvf-ba-before .dvf-ba-label { color: var(--c-error-500); }
   .dvf-ba-after .dvf-ba-label { color: var(--c-success-600); }
   .dvf-ba-text { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--line-normal); }
+
+  /* variant="validation-only" — the same rows, validation side only, as a
+     plain checklist. Used by the expertise topic template's section 06. */
+  .dvf-validation-list {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: var(--space-6) 0 0;
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: var(--space-3);
+  }
+  .dvf-validation-item {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+  .dvf-validation-icon {
+    background: var(--c-success-50);
+    color: var(--c-success-600);
+  }
+  .dvf-validation-text {
+    min-width: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-normal);
+  }
+  /* Inside the combined view's <details> subsections the list is already
+     separated by the summary above it. */
+  .dvf-subsection-body .dvf-validation-list {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
 
   .dvf-content-panel {
     animation: dvf-panel-in 320ms ease both;

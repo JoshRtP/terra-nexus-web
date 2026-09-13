@@ -10,9 +10,14 @@ interface Props {
   primaryCta: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   headingId?: string;
+  /** Optional row of onward links below the buttons, separated by a rule.
+   * Added 2026-09-12 for the expertise topic template, which needs to hand
+   * the reader the rest of the site from its closing band. Any page can use
+   * it; pages that omit it render exactly as before. */
+  links?: Array<{ label: string; href: string }>;
 }
 
-const { heading, description, primaryCta, secondaryCta, headingId } = Astro.props;
+const { heading, description, primaryCta, secondaryCta, headingId, links } = Astro.props;
 ---
 
 <section class="section section-dark" aria-labelledby={headingId ?? 'closing-cta-heading'}>
@@ -23,5 +28,33 @@ const { heading, description, primaryCta, secondaryCta, headingId } = Astro.prop
       <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>
       {secondaryCta && <a href={secondaryCta.href} class="btn btn-secondary">{secondaryCta.label}</a>}
     </div>
+    {links && links.length > 0 && (
+      <div class="cta-links">
+        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    )}
   </div>
 </section>
+
+<style>
+  /* Onward-link row. Borrows .section-dark's own foreground colour rather
+     than introducing one, so it stays correct if that band is retoned. */
+  .cta-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3) var(--space-6);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid rgba(19, 31, 72, 0.2);
+  }
+  .cta-links a {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-dark);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .cta-links a:hover { border-bottom-color: currentColor; }
+  .cta-links a:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+</style>

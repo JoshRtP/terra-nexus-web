@@ -3,62 +3,58 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import { topicHeroImage } from '../../data/expertise/shared';
 const mode = getBuildMode();
 
+// Tile photography comes from src/data/expertise/shared.ts rather than a
+// literal per entry: the same photo was also declared in each topic page, and
+// nothing kept the two in step. Titles and descriptions stay here — they are
+// index copy, not topic-record copy.
 const expertiseAreas = [
   {
     title: 'Regenerative Agriculture',
     slug: 'regenerative-agriculture',
     description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.',
-    heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Regenerative Rangeland',
     slug: 'regenerative-rangeland',
     description: 'Build resilient grazing and livestock systems that improve land performance, producer value, and downstream market opportunities.',
-    heroImage: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Agroforestry',
     slug: 'agroforestry',
     description: 'Integrate trees, crops, livestock, long-term land value, environmental outcomes, and reliable routes to market.',
-    heroImage: 'https://images.pexels.com/photos/5838949/pexels-photo-5838949.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Aquaculture',
     slug: 'aquaculture',
     description: 'Improve aquatic production, feed, operations, traceability, environmental performance, product strategy, and market access.',
-    heroImage: 'https://images.pexels.com/photos/14992906/pexels-photo-14992906.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Biodiversity & Ecosystem Resilience',
     slug: 'biodiversity-and-ecosystem-resilience',
     description: 'Translate nature dependencies, impacts, risks, and opportunities into prioritized business and landscape action.',
-    heroImage: 'https://images.pexels.com/photos/17475325/pexels-photo-17475325.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Sustainable Supply Chains',
     slug: 'sustainable-supply-chains',
     description: 'Connect responsible production with sourcing, traceability, operations, environmental attributes, products, customers, and credible claims.',
-    heroImage: 'https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Low Carbon Energy & Biofuels',
     slug: 'low-carbon-energy-and-biofuels',
     description: 'Create more value from feedstock, origination, processing, carbon-intensity, chain-of-custody, and regulatory opportunities.',
-    heroImage: 'https://images.pexels.com/photos/35284297/pexels-photo-35284297.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Purpose-Driven Food Brands & Retailers',
     slug: 'purpose-driven-food-brands-and-retailers',
     description: 'Turn better products and sourcing into customer value through credible product, portfolio, pricing, channel, and claims strategies.',
-    heroImage: 'https://images.pexels.com/photos/15455017/pexels-photo-15455017.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
   {
     title: 'Food Waste: Prevention, Diversion & Recovery',
     slug: 'food-waste-prevention-diversion-recovery',
     description: 'Prevent loss, keep edible food in use, create value from byproducts, and recover remaining resources through the highest practical use.',
-    heroImage: 'https://images.pexels.com/photos/36751332/pexels-photo-36751332.jpeg?auto=compress&cs=tinysrgb&w=1200',
   },
 ];
 ---
@@ -84,7 +80,7 @@ const expertiseAreas = [
             <a
               href={`/expertise/${area.slug}/`}
               class="expertise-tile"
-              style={`background-image: url('${area.heroImage}')`}
+              style={`background-image: url('${topicHeroImage(area.slug, 1200)}')`}
               aria-label={area.title}
             >
               <div class="tile-overlay" aria-hidden="true"></div>

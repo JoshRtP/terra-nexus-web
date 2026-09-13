@@ -11,10 +11,24 @@ interface Props {
    * hand-roll locally (M7 session 2 consolidation). */
   variant?: 'standard' | 'media';
   heroImage?: string;
+  /** Optional width-descriptor srcset for the media variant. The hero is
+   * full-bleed, so `sizes` is always 100vw and the browser picks by viewport
+   * width — without this a single 1600w file upscales on wide displays. */
+  heroImageSrcSet?: string;
   heroImageAlt?: string;
 }
 
-const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', heroImage, heroImageAlt } = Astro.props;
+const {
+  eyebrow,
+  title,
+  lead,
+  primaryCta,
+  secondaryCta,
+  variant = 'standard',
+  heroImage,
+  heroImageSrcSet,
+  heroImageAlt,
+} = Astro.props;
 ---
 
 {/*
@@ -68,12 +82,25 @@ const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', he
 */}
 {variant === 'media' ? (
   <section class="expertise-hero" aria-labelledby="hero-heading">
-    <div
+    {/* A real <img>, not a CSS background (2026-09-12). The hero is the
+        largest paint on every page that uses this variant, and a
+        background-image is invisible to the preload scanner: the browser
+        cannot start fetching it until CSS has loaded and the box has been
+        laid out, and there is no way to mark it high priority. As an <img>
+        with fetchpriority="high" it is discovered in the initial HTML parse.
+        Decorative here rather than role="img": the heading beside it carries
+        the meaning, and heroImageAlt stays available for the cases where the
+        photo is doing real work. */}
+    <img
       class="hero-bg"
-      style={`background-image: url('${heroImage}')`}
-      role="img"
-      aria-label={heroImageAlt ?? title}
-    ></div>
+      src={heroImage}
+      srcset={heroImageSrcSet}
+      sizes={heroImageSrcSet ? '100vw' : undefined}
+      alt={heroImageAlt ?? ''}
+      fetchpriority="high"
+      loading="eager"
+      decoding="async"
+    />
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="container hero-content">
       {eyebrow && <span class="eyebrow eyebrow-light">{eyebrow}</span>}
@@ -135,11 +162,15 @@ const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', he
     align-items: flex-end;
     overflow: hidden;
   }
+  /* object-fit/object-position replace the former background-size/-position
+     now that this is an <img>; everything else is unchanged. */
   .hero-bg {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center 40%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
     transform: scale(1.03);
     transition: transform 8s ease-out;
   }

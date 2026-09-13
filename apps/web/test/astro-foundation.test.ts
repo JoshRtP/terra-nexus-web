@@ -76,7 +76,13 @@ describe('Astro static foundation', () => {
     expect(productionIndex).toContain('Terra Nexus');
     expect(productionIndex).toContain('Impact at the Intersection of Food');
     expect(productionIndex).not.toContain('noindex, nofollow');
-    expect(productionRobots).toBe('User-agent: *\nDisallow:\n');
+    // A production build advertises the sitemap @astrojs/sitemap writes
+    // (added 2026-09-12 with astro.config.ts's `site`). A preview build
+    // still gets the blanket Disallow and no Sitemap line, asserted below.
+    expect(productionRobots).toBe(
+      'User-agent: *\nDisallow:\n\nSitemap: https://terra.nexus/sitemap-index.xml\n',
+    );
+    expect(existsSync(resolve(dist, 'sitemap-index.xml'))).toBe(true);
 
     expect(existsSync(resolve(dist, 'case-studies/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, `case-studies/${pilotRoute}/index.html`))).toBe(true);
@@ -113,6 +119,9 @@ describe('Astro static foundation', () => {
     expect(previewCaseStudies).toContain('noindex, nofollow');
     expect(previewDetail).toContain('noindex, nofollow');
     expect(previewRobots).toBe('User-agent: *\nDisallow: /\n');
+    // No sitemap in a preview build: the whole site is noindex there, and
+    // shipping one would invite exactly the crawl the noindex prevents.
+    expect(existsSync(resolve(dist, 'sitemap-index.xml'))).toBe(false);
     expect(previewGraphData.mode).toBe('preview');
     expect(Array.isArray(previewGraphData.records)).toBe(true);
     expect(

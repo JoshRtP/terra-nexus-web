@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 import cloudflare from '@astrojs/cloudflare';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 const buildMode = process.env.TNX_BUILD_MODE === 'preview' ? 'preview' : 'production';
@@ -55,6 +56,13 @@ function keystaticCloudflareCompatShim(): AstroIntegration {
 // requires Astro 7 and is an explicit non-goal for this milestone (see
 // docs/architecture/web-platform-architecture.md §6).
 export default defineConfig({
+  // Production origin (owner decision, 2026-09-12). Absolute canonical URLs
+  // and sitemap entries both need it, and neither is possible without it.
+  // terra.nexus still serves WordPress while this migration is in flight —
+  // that is deliberate: this is where the Astro site is going, so nothing has
+  // to change at cutover, and preview builds are noindex anyway (see
+  // SiteLayout.astro) so no canonical pointing here is ever crawled early.
+  site: 'https://terra.nexus',
   output: 'static',
   // prerenderEnvironment: 'node' — the OKF compiler (src/lib/okf/compiler.ts)
   // uses node:fs/promises, node:path, node:crypto, node:url at build time to
@@ -102,6 +110,15 @@ export default defineConfig({
   integrations: [
     mdx(),
     react(),
+    // Sitemap (2026-09-12). Emitted for production builds only: a preview
+    // build is noindex sitewide, and shipping it a sitemap would invite
+    // exactly the crawl the noindex is there to prevent. Keystatic's admin
+    // routes are excluded for the same reason — they are on-demand and never
+    // present in a production build, but the filter documents the intent and
+    // keeps a dev/preview build from listing them.
+    ...(buildMode === 'production'
+      ? [sitemap({ filter: (page) => !page.includes('/keystatic') && !page.includes('/api/') })]
+      : []),
     ...(includeKeystatic ? [keystaticCloudflareCompatShim(), keystatic()] : []),
   ],
 });

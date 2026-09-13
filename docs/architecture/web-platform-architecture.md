@@ -449,6 +449,296 @@ second 2026-08-16 M7 entry; summary:
   forcing pages into a rigid shared template that would prevent visual
   storytelling differences between page families.
 
+### 5.4 Expertise topic template (2026-09-12)
+
+Two of the nine expertise topics — Regenerative Rangeland and Regenerative
+Agriculture — now render from **one template plus one content record per
+topic**, implementing the reviewed design prototype in
+`plans/ExpertiseTemplate-Upgrade.zip` (`EXPERTISE-TEMPLATE-HANDOVER.md` is the
+spec). Built on branch `feature/expertise-template-2026-09`.
+
+- `components/ExpertiseTopicPage.astro` renders ten sections in a fixed order
+  (Overview, The Potential, Course Correcting, Priority Investments,
+  Accelerating Adoption, Validating Market Fit, Verifying What Matters Most,
+  Market Pathways, Delivery Approach, Digital Enablers) plus hero and a
+  closing CTA. The order is the owner's and carries the argument — do not
+  reorder.
+- `src/data/expertise/` holds the typed records. Five fields are deliberately
+  per-record rather than shared (`correcting.indicators`,
+  `adoption.constraints`, `pathways.items` order plus an `applicable` flag,
+  `investments.frame` labels, `enablers.tools` including an empty state), plus
+  an influence/incentive/mechanism triplet. That is what lets the remaining
+  seven topics — several of which are later links in the same chain rather
+  than production topics — use this template instead of a second one.
+- It **reuses production components rather than reproducing them**: `PageHero`
+  (`variant="media"`), `StrategyFrameworkDVF`, `MechanismSelector`, and the
+  lifecycle stages from `src/data/lifecycle.ts` that the homepage Approach band
+  also renders, so stage copy cannot drift. Three small additive extension
+  points were added rather than forking: DVF's `variant="validation-only"`,
+  MechanismSelector's `detailBlocks` and `showDetailHeading`, and SiteLayout's
+  optional `canonical`/`ogImage`. Every existing consumer is unchanged.
+- Two structural invariants are covered by
+  `test/expertise-topic-template.test.ts`, asserted against built HTML because
+  both are properties of what ships: **every selector panel is in the served
+  HTML with `hidden` on the inactive ones** (4 pathways, 6 stages, every
+  intervention, 5 framework regions — roughly three times the indexable body
+  copy), and **no inline `style` attributes** survive the port from the
+  inline-styled prototype, apart from PageHero's per-topic hero image.
+- The right-hand section rail is sticky in a grid gutter, not
+  `position: fixed`. That needs the rail's grid column to stretch the full row
+  and **no `overflow: hidden` anywhere in its ancestor chain**; without either
+  it silently will not travel. Use `overflow: clip` for local clipping in this
+  subtree.
+- Routes are unchanged: `/expertise/regenerative-rangeland/` and
+  `/expertise/regenerative-agriculture/`. The other seven topics still use
+  `components/ExpertisePage.astro`, which stays until they migrate.
+- The regenerative-agriculture page's previous scroll-stack composition and its
+  seven-participant "Who We Support" band have no place in the fixed section
+  order; that content is parked, not deleted, in
+  `src/data/expertise/_parked-participants.ts`.
+
+**Integration pass (2026-09-12, after owner review).** The prototype was built
+standalone by an agent without access to this codebase, so it reimplemented a
+visual vocabulary the site already owned. The template was reworked onto the
+site's own rhythm and primitives — full-bleed `.section`/`.section-alt` with
+`.container` inside, `.section-header`/`.eyebrow`/`.section-lead`/
+`.numbered-index`, the global fluid `h2` scale, and the M7
+`.card`/`.card-media`/`.card-grid`/`.stat-group`/`.tag` primitives. The closing
+band is now `ClosingCta` (extended with an optional `links` row, available to
+any page) rather than a bespoke maroon section, so all 18 pages that close with
+a CTA close the same way. Only the navy challenge band, the four selectors and
+the section rail remain page-family-specific.
+
+The section rail is now `position: fixed` in the right page margin rather than a
+sticky grid gutter, which is what the handover's §5.1 prescribes for a
+single-instance production page. The gutter version cost the content column 27%
+of its width the moment it appeared at 56rem; the fixed version costs nothing at
+any viewport. It carries its own surface because it floats over sections that
+alternate white and full-bleed navy. Thresholds are measured, not guessed:
+visible from 85rem (below that the page margin is narrower than the 70px
+collapsed rail), all ten labels permanently from 100rem (the labelled rail is
+176px and only clears the 75rem container there); in between it rests as a
+numbered column and expands every label on hover or keyboard focus.
+
+Also fixed in the same pass: both topics' `ogImage` pointed at
+`/images/live-site/og-<slug>.jpg`, which was never created — the pages shipped a
+404 social preview, so the field is now unset and the working site default
+applies (the acceptance test asserts whatever og:image is emitted resolves to a
+real file). The six lifecycle stage titles and every intervention name were
+paragraphs and are now `h3`s, so the two largest pre-rendered content blocks are
+in the document outline.
+
+**SEO and copy pass (2026-09-12, P3/P4 of the owner review).** Several of these
+are site-wide, not template-scoped:
+
+- **`site: 'https://terra.nexus'` in `astro.config.ts`** (owner decision). The
+  production origin, set while terra.nexus still serves WordPress: this is where
+  the Astro site is going, so nothing changes at cutover, and preview builds are
+  noindex sitewide so no canonical pointing there is crawled early. Everything
+  below depends on it.
+- **`@astrojs/sitemap`**, a new top-level integration. Production builds only —
+  a preview build is noindex and shipping it a sitemap would invite exactly the
+  crawl the noindex prevents. Keystatic/API routes are filtered out. 31 URLs;
+  `robots.txt` advertises it in production and stays a blanket `Disallow: /`
+  with no Sitemap line in preview. Both halves are asserted in
+  `astro-foundation.test.ts`.
+- **`SiteLayout` canonical and og:image are now absolute**, resolved against
+  `Astro.site`. A relative canonical is legal; absolute is the recommendation,
+  and og:url does not work relative at all.
+- **`PageHero`'s `media` variant renders a real `<img>`**, not a CSS background.
+  The hero is the largest paint on all nine expertise topic pages (the only
+  consumers of that variant) and a background image is invisible to the preload
+  scanner — the browser cannot start fetching it until CSS has loaded and the
+  box is laid out, and it cannot be prioritised. Now discovered in the initial
+  parse with `fetchpriority="high"`. `object-fit`/`object-position` replace
+  `background-size`/`-position`; the render is otherwise unchanged, verified on
+  both the old `ExpertisePage` and the new template.
+- **Tool `alt` text** is now a real description per screen, adapted from
+  `brand/product-ui/09-web-export/alt-text.md`, replacing the placeholder
+  "<tool name> interface".
+- **Meta descriptions** trimmed to 131–135 characters, under the ~155 truncation
+  point. The seven topics still on `ExpertisePage` run 262–279 and were left
+  alone; worth a pass when they migrate.
+- **Author comments no longer ship to the browser.** `StrategyFrameworkDVF`'s
+  seven HTML comments (1.9 KB on every page that renders it) became `{/* */}`
+  comments, which Astro strips at build. They were implementation notes for
+  whoever next edits the component, not anything a visitor needs. Nothing
+  actionable was buried in them: the one TODO they carried (tool alt text) is
+  resolved above, and the rest record owner decisions already captured here.
+- **Four rhetorical constructions rewritten** (owner: fine to remove entirely).
+  All were of the same "X is not Y. It is Z." shape, which recurred four times
+  across two pages and would have recurred nine times once every topic uses the
+  template. Meaning preserved, inversion dropped. The same construction in one
+  authored indicator definition was rewritten with them.
+
+Accepted as-is, not fixed: ~870 words repeat on every topic page (588 shared
+between the two topics plus 282 words of lifecycle copy that also appears on the
+homepage). At 77% unique per page the owner accepted the duplication rather than
+varying approved copy.
+
+**Functionality pass (2026-09-12, P5 of the owner review).**
+
+- **The indicator filter is a radio group**, not six toggle buttons. Exactly one
+  indicator is ever active, which is what `aria-checked` on a radio says and
+  what `aria-pressed` on independent toggles does not. It also collapses six tab
+  stops into one, with arrow keys moving between them — the same roving-tabindex
+  helper the two tablists already use.
+- **The visible intervention count is no longer a live region.** It changes when
+  the reader arrows through the intervention list as well as when they filter,
+  so announcing it re-read "9 interventions" on every keypress. A separate
+  visually-hidden `role="status"` now announces the outcome of a filter change
+  only, and names the filter: "3 interventions match Water."
+- **Hero photography has one source.** `topicHeroPhotoIds` / `topicHeroImage()`
+  in `src/data/expertise/shared.ts` covers all nine topics, including the seven
+  still on `ExpertisePage`. The same photo was previously a literal in the topic
+  record and again in the `/expertise/` index tile, at different widths, with
+  nothing keeping them in step; the width is now applied per use.
+- The trailing section border above the closing CTA went away with the
+  full-bleed rewrite — `.section` carries no border.
+- **The rail is revealed on scroll, not present over the hero** (owner,
+  2026-09-12). Over a full-bleed photo it read as a stray panel floating on the
+  image, with nothing to navigate yet. It now arrives once the hero has
+  scrolled past, the same move the homepage header makes past its own photo
+  hero (`body.past-hero` in `pages/index.astro`). `visibility: hidden` rather
+  than opacity alone, so it is not a tab stop while invisible; it rides the
+  rail's existing rAF scroll read rather than adding a second listener.
+- **Top-aligned with the section title**, not centred in the viewport: with a
+  section anchored at the top, the sticky header plus the section's
+  scroll-margin and padding put the h2 at 182px, so `top: 11.5rem` puts the
+  rail on the same line as the heading it belongs to. The list caps its height
+  and scrolls internally on a short window.
+- **Unselected rows sit back** at `--c-secondary-500` rather than the body's
+  `--color-text-secondary`. A visible step lighter, and it still clears the
+  4.5:1 floor that applies at 12px/500 (4.76:1 on white). `--color-text-muted`
+  would read better still but measures 2.56:1 and fails.
+
+Kept deliberately: **`StrategyFrameworkDVF`'s controls stay visually hidden
+until focused** (owner, 2026-09-12). Clicking the diagram is the intended
+interaction; the buttons exist so keyboard and screen-reader users are never
+dependent on pointer geometry, which is the accessibility contract, not a
+discoverability one.
+
+Complete as of 2026-09-12: all nine topics run on this template and
+`ExpertisePage` has no callers. See the wave notes below.
+
+**Third topic, and the data-shape work the first two hid (2026-09-12).**
+Agroforestry is the first topic assembled from the repo's own sources rather
+than the handover bundle, and it surfaced three gaps that were invisible while
+only Regen Ag and Rangeland used the template:
+
+- **The indicator taxonomy was still global.** `ImpactKey` was a fixed
+  five-value union and shared `impactLabels`/`impactOrder` drove the section 04
+  chips, while section 03's indicators were per-record — two structures that
+  happened to agree because both shipped topics use the same five production
+  indicators. They are now one per-topic list (`Indicator` gains a `key`), so
+  Agroforestry's six work, Aquaculture can drop Soil, and biofuels can run an
+  entirely different five. `indicatorDefinitions` remains the default for the
+  recurring production names; an indicator can override inline.
+- **Tools moved to a catalogue** (`data/expertise/tools.ts`). Topics reference a
+  tool by id and may override `text`; asset paths and alt text are written once.
+- **The section rail listed a fixed ten entries.** A topic with no tools omits
+  section 10 correctly, but the rail still linked to a missing `#enablers`. It
+  now derives from the sections that actually render — Agroforestry ships nine.
+
+**Wave 2 — Aquaculture and Biodiversity & Ecosystem Resilience (2026-09-12).**
+Five of the nine topics now run on the template; the four value-chain topics
+remain. Two things worth recording:
+
+- **Aquaculture reorders the pathways.** Product & Commodity Claims leads and
+  Carbon & Ecosystem Credits comes last, the reverse of Agroforestry. In
+  seafood a recognised certification is the condition of shelf access rather
+  than a premium, and most farm improvements lower impact per kilogram instead
+  of creating a transferable unit. This is the per-record pathway ordering the
+  gap assessment specified, used in earnest for the first time.
+- **Biodiversity is the first cross-cutting topic**, and its indicators are
+  nature domains — Habitat, Water, Species, Communities, Resilience — not the
+  production topics' biophysical five. It is the clearest demonstration of why
+  the taxonomy had to become per-record: nothing in that set exists in the
+  shared `indicatorDefinitions` map, so all five definitions are supplied
+  inline. Its interventions are also the first written rather than extracted,
+  because the ChatGPT pass does not cover this topic. It had no Desirability
+  row upstream, so one is authored in `shared.ts` and marked — the same gap
+  Rangeland had, now caught by a test rather than by review.
+
+**Wave 3 — the four value-chain topics (2026-09-12). All nine topics now run on
+the template**, and `components/ExpertisePage.astro` has no callers left. These
+four are the real test of the per-record fields, because none of them is about
+production at all:
+
+- **Every indicator set is different, and none is biophysical.** Supply Chains
+  runs Continuity / Supplier economics / Traceability / Emissions / Integrity;
+  Biofuels runs Carbon intensity / Feedstock quality / Regulatory qualification
+  / Chain of custody / Facility performance; Brands runs Customer relevance /
+  Claim integrity / Supply reliability / Product performance / Program
+  economics; Food Waste runs Loss generation / Material quality / Outlet value
+  / Logistics feasibility / Accounting integrity. All twenty definitions are
+  supplied inline — the shared `indicatorDefinitions` map contributes nothing
+  to any of them, which is the strongest evidence the taxonomy had to become
+  per-record.
+- **`investments.frame` earns its place.** Procurement/Transformation/Evidence,
+  Feedstock/Conversion/Qualification, Product/Claim/Channel, and
+  Generation/Recovery/Second Use. On the production topics the frame was close
+  to decorative; here it is the only thing that makes seven interventions
+  legible as a set.
+- **Pathway ordering diverges furthest.** Biofuels and Brands lead with Product
+  & Commodity Claims, Food Waste leads with Scope 3 & Insets (most of its value
+  never goes to market at all — it stays inside the business as avoided cost),
+  and all four demote Carbon & Ecosystem Credits to last with an explicit note
+  on why the fit is weak.
+- **Biofuels had no Desirability row upstream**, the third topic to hit that
+  gap. One is authored in `shared.ts` and marked. The Wave 2 test now catches
+  this at build rather than in review, which is how it was found.
+- **Biofuels' publication gate was lifted by the owner on 2026-09-12.** Its
+  brief had blocked the public page until citations were packaged and the
+  regulatory claims rechecked; that is waived, and the topic now publishes on
+  the same terms as the other eight. The underlying concern is not waived and
+  is not a gate — 45Z's 2030 sunset, the June 2026 45ZCF-GREET revision
+  removing indirect land-use change, and the North America feedstock
+  restriction all date faster than the page will, so this page needs recurring
+  regulatory maintenance rather than a one-time check. Recorded in the module
+  header.
+- **Food Waste names Verra VM0046** at the owner's direction — a protocol Terra
+  Nexus has direct expertise in, and the only owner-approved rather than
+  researched instrument in the four Wave 3 records. It also corrected the
+  page: the Carbon & Ecosystem Credits pathway had said prevention was hard to
+  credit because the counterfactual is a business decision, which VM0046
+  specifically disproves by crediting food kept in the human supply chain at
+  farm, processing, retail, foodservice and residential level. The detail now
+  says so, while noting the route is early — active since 2023, first project
+  registered May 2026 — so it is modelled alongside the avoided-cost case
+  rather than instead of it.
+
+The parameterised template test now covers nine topics (212 assertions, up from
+the five-topic run) and all four Wave 3 topics pass unchanged — no template
+edits were needed for any of them. The one defect browser QA found was
+content-shaped, not structural: a stat figure reading `11.2% vs 6.8%` wrapped
+and broke the stat band's baseline alignment in a ~960–1090px band, fixed by
+moving the comparison into the label. Screenshots at 1440/1024/768/390 for all
+four are in `artifacts/qa/`.
+
+Content sourcing for the remaining topics is an assembly job, not a writing one.
+Every topic has an owner-verified brief (`knowledge/expertise/briefs/`), a
+2,200–2,800 word page-copy draft and a research memo (`plans/content/`), plus
+approved copy already in its current page. Only the stat band, indicator issue
+lists, adoption constraints, the positioning triplet and the named instruments
+in section 08 are written fresh. Owner decisions, 2026-09-12: stats match the
+two live pages (researched, uncited, flagged); section 08 instruments are named
+and flagged for verification; sequencing is the three production topics first,
+then the four value-chain topics.
+
+`enablers.tools` is deliberately empty on all seven migrated topics pending the
+owner's tool-to-topic assignment — which tools honestly serve which topic is a
+product-truth call. Section 10 and its rail entry are omitted while a topic has
+none. See the owner-input block at the top of `tools.ts`; the Food Waste
+Platform render is the obvious candidate for the Food Waste topic but the
+assignment is still the owner's.
+
+Deferred by owner decision, not omissions: structured data (BreadcrumbList /
+Service / FAQPage, to be added once on the template so all nine topics inherit
+it — deferred to M6+ / P6, and now unblocked by the `site` config above), the four unsourced statistics in section 01, proof content such as
+case studies, and the selector count. Content still needing owner review before
+publish is listed in each data module's header comment.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
@@ -788,7 +1078,7 @@ see §6 for why the site otherwise stays `output: 'static'`.
 | M6 — GitHub-backed production Keystatic workflow + Cloudflare Git auto-deploy (**COMPLETE, 2026-08-16**) | Compatibility shim resolves the upstream `@keystatic/astro@5.2.0`/Cloudflare-adapter blocker (§6.1). GitHub App created manually (§6.2), Wrangler secrets set, `pathPrefix` monorepo bug fixed, content-component image round-trip bug fixed, repository-owned `apps/web/wrangler.jsonc` landed (§11). Hosted publishing loop proved end-to-end: GitHub OAuth login → collection reads → edit + save → real commit on `main` → correct reflection back in the editor, including uploaded images. **Git auto-deploy connected and proven end-to-end 2026-08-16** (owner completed the Cloudflare dashboard connection; this session verified it, not assumed): merging PR #4 to `main` at commit `07e80a7` triggered a real GitHub check run (`Workers Builds: terra-nexus-web-preview`, Cloudflare's own GitHub App, `conclusion: success`) that deployed Version ID `3aee1200` and promoted it to the stable `terra-nexus-web-preview` Worker at 100% — confirmed via `wrangler deployments list` and live routes (`/`, `/insights`, `/keystatic` all 200; `/homepage-alt` 301→`/`). A throwaway branch (`test/m6-workers-build-preview`, deleted after the test) proved the non-production path separately: its build produced a distinct, unpromoted Version ID (`107b0bf4`) with its own preview URL (`noindex` `robots.txt`, confirmed serving), while `wrangler deployments list` showed no new 100% entry — the stable deployment (`3aee1200`) and its `robots.txt` (indexable) were unchanged throughout. Full record: §11 |
 | M6.1 — Repository reconciliation + homepage canonicalization + publication model (done 2026-08-12) | `origin/main` (CMS commits) and `homepage-alt-draft` (M5/M6 app work) reconciled via merge, not rewrite (§7). The `/homepage-alt` draft promoted to be the one canonical `/` homepage — no more parallel "real" vs. "draft" homepage (§3, CLAUDE.md §5). Real editorial approval + scheduled-publication model implemented end-to-end, not decorative metadata (§8): `editorialStatus`/`publishAt` schema, America/Denver timezone policy, on-demand gating on `/insights`/`/insights/[slug]`, unit-tested MST/MDT handling. `build/typecheck/test/check` all green; browser QA at 4 viewports on the new `/`, zero console errors |
 | M7 — Expanded reusable visual/design system (**COMPLETE, both sessions landed 2026-08-16 on `feature/m7-visual-system`, PR #7**) | Reusable component vocabulary for sections/editorial blocks, built on the M4 Tailwind foundation. Session 1: full repo audit + card/tag/stat/CTA primitive consolidation (§5.2). Session 2: PageHero `media` variant, `ClosingCta` composition, stat-band consolidation, broader page-family adoption (Capabilities/Expertise/Digital Solutions/About/Case Studies/Insights), editorial/MDX typography pass, Header/Footer `:focus-visible` a11y fix, BackToTop verified consistent — see §5.3 and `log.md`'s second 2026-08-16 M7 entry. Full validation green both sessions; independent `visual-qa` browser QA at 1440/1024/768/390 across the required route matrix, one regression found and fixed (MDX CTA color contrast) and re-verified |
-| M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning |
+| M8 — WordPress content + SEO + remaining CMS/OKF migration (reordered ahead of M9, 2026-08-16; **in progress**) | Real production content inventory, URL/redirect preservation, SEO metadata/structured data/sitemap, real Insights content, Case Studies migrated from OKF to Keystatic, remaining website-facing OKF dependency retired or explicitly accounted for. Deliberately sequenced before cinematic polish so M9 responds to real final content/IA, not placeholders — see the M4 session record for the full reasoning. **Landed 2026-09-12**: the Digital Solutions rebuild, and all nine Expertise topics migrated onto one data-driven template (§5.4) with `site`/canonical/sitemap/robots wired up. **Still open**: Case Studies off OKF to Keystatic, real Insights content, the WordPress inventory and redirect map, structured data (BreadcrumbList/Service/FAQPage — deferred, now unblocked by the `site` config), and the expertise tool-to-topic assignment that is owner input |
 | M9 — Cinematic homepage hero + GSAP/motion system (reordered after M8, 2026-08-16) | GSAP hero (desktop/mobile/reduced-motion) passes performance + visual QA, applied to the settled post-M8 content/IA |
 | M10 — Production cutover | DNS moved — requires explicit owner authorization, never automatic |
 
