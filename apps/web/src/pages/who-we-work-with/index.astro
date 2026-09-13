@@ -83,7 +83,8 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
 
 <SiteLayout
   title="Who We Work With | Terra Nexus"
-  description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it."
+  description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology, assurance, and capital partners that enable it."
+  breadcrumbs={[{ name: 'Who We Work With', path: '/who-we-work-with/' }]}
   canonical="/who-we-work-with/"
   preview={mode === 'preview'}
 >

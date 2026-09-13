@@ -48,7 +48,7 @@ export const purposeDrivenFoodBrandsAndRetailers: ExpertiseTopic = {
   meta: {
     title: 'Purpose-Driven Food Brands & Retailers | Terra Nexus',
     description:
-      'Terra Nexus helps food brands, manufacturers, retailers, and their partners connect purpose, product design, sourcing, evidence, claims, customer experience, and commercial performance.',
+      'Terra Nexus helps food brands, manufacturers, and retailers connect purpose, product design, sourcing, evidence, claims, and commercial performance.',
     canonical: '/expertise/purpose-driven-food-brands-and-retailers/',
   },
 

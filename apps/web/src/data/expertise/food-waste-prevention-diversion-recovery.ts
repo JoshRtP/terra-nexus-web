@@ -58,7 +58,7 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
   meta: {
     title: 'Food Waste: Prevention, Diversion & Recovery | Terra Nexus',
     description:
-      'Terra Nexus helps food businesses prevent loss, redesign operations, create markets for surplus and byproducts, select recovery pathways, and build circular programs that improve economics and environmental performance.',
+      'Terra Nexus helps food businesses prevent loss, create markets for surplus and byproducts, choose recovery pathways, and build circular programs.',
     canonical: '/expertise/food-waste-prevention-diversion-recovery/',
   },
 
