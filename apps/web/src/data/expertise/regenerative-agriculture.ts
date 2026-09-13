@@ -138,6 +138,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
     lead: 'Conventional intensification eroded more than the land. It eroded the value and the optionality the land once represented. Five indicators show where that value went.',
     indicators: attachDefinitions([
       {
+        key: 'climate',
         name: 'Climate',
         issues: [
           'Nitrous oxide from synthetic nitrogen',
@@ -147,6 +148,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         ],
       },
       {
+        key: 'soil',
         name: 'Soil',
         issues: [
           'Organic matter decline',
@@ -156,6 +158,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         ],
       },
       {
+        key: 'water',
         name: 'Water',
         issues: [
           'Runoff and sedimentation',
@@ -165,6 +168,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         ],
       },
       {
+        key: 'biodiversity',
         name: 'Land & biodiversity',
         issues: [
           'Simplified rotations',
@@ -174,6 +178,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         ],
       },
       {
+        key: 'resilience',
         name: 'Resilience & productivity',
         issues: [
           'Low water-holding capacity going into a dry spell',
@@ -420,39 +425,29 @@ export const regenerativeAgriculture: ExpertiseTopic = {
     leadTwo: 'We build fit-for-purpose tools where they are required the most. The operating infrastructure that supports recurring data, calculations, evidence, traceability or reconciliation that often constrain the success of a program to profitably scale.',
     tools: [
       {
-        name: 'Soil Carbon Prediction',
-        text: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it is implemented.',
-        asset: 'terranexus-soil-carbon-prediction-16x9-dark',
-        alt:
-          'Soil Carbon Prediction dashboard showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories, and benefit and economic-value distributions.',
+        id: 'soil-carbon-prediction',
+        text:
+          'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it is implemented.',
       },
       {
-        name: 'Biofuels Origination Economics',
-        text: 'Low-carbon-intensity feedstock evaluation that maps supply against processing capacity, so sourcing decisions start from where the qualifying material actually is.',
-        asset: 'terranexus-biofuels-origination-16x9-dark',
-        alt:
-          'Biofuels Origination Economics dashboard showing a US county choropleth of carbon-intensity impact for corn under cover crop and no till, with the county results table.',
+        id: 'biofuels-origination',
+        text:
+          'Low-carbon-intensity feedstock evaluation that maps supply against processing capacity, so sourcing decisions start from where the qualifying material actually is.',
       },
       {
-        name: 'Crop Carbon Intensity',
-        text: 'Field-level greenhouse gas breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
-        asset: 'terranexus-crop-carbon-intensity-16x9-dark',
-        alt:
-          'Crop Carbon Intensity dashboard showing GREET volume-weighted carbon intensity for corn with a seven-line greenhouse gas breakdown.',
+        id: 'crop-carbon-intensity',
+        text:
+          'Field-level greenhouse gas breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
       },
       {
-        name: 'Practice Detection, Audit & Due Diligence',
-        text: 'Independent remote-sensing verification of practices and soil health indicators, with an audit-ready export a third-party reviewer can act on directly.',
-        asset: 'terranexus-dmrv-audit-verification-16x9-dark',
-        alt:
-          'Audit and diligence verification dashboard showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
+        id: 'dmrv-audit-verification',
+        text:
+          'Independent remote-sensing verification of practices and soil health indicators, with an audit-ready export a third-party reviewer can act on directly.',
       },
       {
-        name: 'Environmental Asset Pricing & Stranded Claims Optimization',
-        text: 'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
-        asset: 'terranexus-asset-pricing-optimization-16x9-dark',
-        alt:
-          "Environmental Asset Pricing and Stranded Claims Optimization dashboard showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+        id: 'asset-pricing-optimization',
+        text:
+          'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
       },
     ],
   },

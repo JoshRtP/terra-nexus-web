@@ -14,7 +14,14 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { stages } from '../src/data/lifecycle';
-import { expertiseTopics, TOOL_WIDTHS, topicHeroPhotoIds } from '../src/data/expertise';
+import {
+  expertiseTopics,
+  TOOL_WIDTHS,
+  topicHeroPhotoIds,
+  validationRows,
+  categoryToRegion,
+} from '../src/data/expertise';
+import { expertiseTools } from '../src/data/expertise/tools';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -207,7 +214,9 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
   });
 
   it('points every tool screenshot at an unframed render that exists', async () => {
-    for (const tool of topic().enablers.tools) {
+    for (const ref of topic().enablers.tools) {
+      const tool = expertiseTools[ref.id];
+      expect(tool, `unknown tool id '${ref.id}'`).toBeTruthy();
       // The brand kit's unframed 16:9 heroes — Digital Solutions owns the
       // device-mockup treatment, so these deliberately are not the framed set.
       expect(tool.asset, tool.name).toMatch(/-16x9-dark$/);
@@ -216,6 +225,38 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
         await expect(readFile(file)).resolves.toBeDefined();
       }
     }
+  });
+
+  // The indicator list is the single source for section 03's accordion and
+  // section 04's filter chips. Before 2026-09-12 those were two structures that
+  // happened to agree, because the first two topics shipped with the same five
+  // production indicators; an intervention tagged to a key the topic does not
+  // define would render a chip that filters everything away.
+  it('tags every intervention with indicator keys this topic actually defines', () => {
+    const keys = new Set(topic().correcting.indicators.map((i) => i.key));
+    expect(keys.size).toBe(topic().correcting.indicators.length);
+    for (const iv of topic().investments.interventions) {
+      for (const key of iv.impacts) {
+        expect(keys.has(key), `${iv.name} is tagged '${key}', not an indicator of ${slug}`).toBe(true);
+      }
+    }
+  });
+
+  // An empty framework region renders a panel with a heading and nothing under
+  // it. Rangeland needed one row authored for exactly this reason.
+  it('covers all four framework regions in its validation rows', () => {
+    const covered = new Set((validationRows[slug] ?? []).map((r) => categoryToRegion[r.category]));
+    for (const region of ['desirable', 'viable', 'feasible', 'strategic-fit'] as const) {
+      expect(covered.has(region), `${slug} has no ${region} row — section 06 would show an empty panel`).toBe(true);
+    }
+  });
+
+  // Section 10 is omitted for a topic with no tools assigned yet, so the rail
+  // must drop it too rather than linking at a missing #enablers.
+  it('lists only sections that actually render in the section rail', () => {
+    const railIds = Array.from(html[slug].matchAll(/data-rail-item="([a-z]+)"/g)).map((m) => m[1]);
+    const sectionIds = Array.from(html[slug].matchAll(/<section class="section[^"]*" id="([a-z]+)"/g)).map((m) => m[1]);
+    expect(railIds).toEqual(sectionIds);
   });
 });
 

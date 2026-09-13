@@ -53,11 +53,11 @@ import MechanismSelector, { type MechanismDetailBlock } from './MechanismSelecto
 import { getBuildMode } from '../lib/build-mode.js';
 import type { MarketMechanism } from '../data/market-mechanisms';
 import type { ExpertiseTopic } from '../data/expertise/types';
+import { expertiseTools } from '../data/expertise/tools';
 import {
   lifecycle,
   sectionRail,
-  impactLabels,
-  impactOrder,
+  ALL_INDICATORS_LABEL,
   validationRows,
   validationQuestions,
   validationLead,
@@ -87,9 +87,16 @@ for (const row of rows) {
 }
 const questionGroups = validationQuestions[topic.slug] ?? [];
 
-// Section 04 — chips in display order; the first intervention is selected on
-// load. Every intervention renders; the filter only toggles `hidden`.
-const chips = impactOrder.map((id) => ({ id, label: impactLabels[id] }));
+// Section 04 — the filter chips are this topic's own indicators, in the order
+// section 03 lists them, so the two sections cannot drift. The first
+// intervention is selected on load; every intervention renders and the filter
+// only toggles `hidden`.
+const indicators = topic.correcting.indicators;
+const indicatorName = (key: string) => indicators.find((i) => i.key === key)?.name ?? key;
+const chips = [
+  { id: 'all', label: ALL_INDICATORS_LABEL },
+  ...indicators.map((i) => ({ id: i.key, label: i.name })),
+];
 const interventions = topic.investments.interventions;
 const initialIntervention = interventions[0]?.id ?? '';
 
@@ -125,7 +132,18 @@ const detailBlocks: Record<string, MechanismDetailBlock[]> = Object.fromEntries(
 );
 
 const initialStage = lifecycle[0]?.id ?? '';
-const tools = topic.enablers.tools.map((t) => ({ ...t, ...toolAsset(t.asset) }));
+// Tools resolve through the shared catalogue (data/expertise/tools.ts) so the
+// asset path and alt text are written once; a topic may override `text`.
+const tools = topic.enablers.tools.map((ref) => {
+  const tool = expertiseTools[ref.id];
+  if (!tool) throw new Error(`Unknown expertise tool id '${ref.id}' on ${topic.slug}`);
+  return { ...tool, text: ref.text ?? tool.text, ...toolAsset(tool.asset) };
+});
+
+// The rail lists only sections that actually render. Section 10 is omitted for
+// a topic with no tools assigned yet, and a rail entry pointing at a missing
+// #enablers is a dead link.
+const renderedSections = sectionRail.filter((s) => s.id !== 'enablers' || tools.length > 0);
 
 const ctaLinks = [
   topic.links.expertise,
@@ -366,7 +384,7 @@ const ctaLinks = [
                 <span class="xp-micro-label xp-micro-sky">{iv.group}</span>
                 <h3 class="xp-iv-panel-name">{iv.name}</h3>
                 <ul class="xp-tags" role="list">
-                  {iv.impacts.map((k) => <li class="tag xp-tag-dark">{impactLabels[k]}</li>)}
+                  {iv.impacts.map((k) => <li class="tag xp-tag-dark">{indicatorName(k)}</li>)}
                 </ul>
                 <dl class="xp-iv-rows">
                   <div class="xp-iv-row">
@@ -622,7 +640,7 @@ const ctaLinks = [
       text it is meant to navigate. */}
   <nav class="journey-rail" data-section-rail aria-label="Sections on this page">
     <ol class="journey-rail-list" role="list">
-      {sectionRail.map((s) => (
+      {renderedSections.map((s) => (
         <li>
           <a
             class="journey-rail-item"

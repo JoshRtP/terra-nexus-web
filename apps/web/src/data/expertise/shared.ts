@@ -17,7 +17,7 @@
 //  * each topic's `overview.stats` and `pathways[].examples` (see the topic
 //    record files).
 import { stages, type Stage } from '../lifecycle';
-import type { ImpactKey, Indicator, ExpertiseTopic } from './types';
+import type { Indicator, ExpertiseTopic } from './types';
 
 /** The six development lifecycle stages, section 09. Single source of truth
  * lives in ../lifecycle.ts and is shared with the homepage Approach band —
@@ -25,26 +25,15 @@ import type { ImpactKey, Indicator, ExpertiseTopic } from './types';
 export const lifecycle: Stage[] = stages;
 export type { Stage };
 
-export const impactLabels: Record<'all' | ImpactKey, string> = {
-  all: 'All',
-  climate: 'Climate',
-  soil: 'Soil',
-  water: 'Water',
-  biodiversity: 'Land & biodiversity',
-  resilience: 'Resilience & productivity',
-};
+/** The label for the section 04 filter chip that clears the filter. The other
+ * chips are the topic's own indicators, so there is no shared chip list: that
+ * was the thing keeping section 03 and section 04 in two parallel structures. */
+export const ALL_INDICATORS_LABEL = 'All';
 
-export const impactOrder: Array<'all' | ImpactKey> = [
-  'all',
-  'climate',
-  'soil',
-  'water',
-  'biodiversity',
-  'resilience',
-];
-
-/** One definition per indicator, attached to each topic's indicators at module
- * load (see `attachDefinitions`) so each string exists in exactly one place.
+/** Definitions for the indicators that recur across the production topics, so
+ * Regen Ag, Rangeland and Agroforestry do not each retype them. A topic with
+ * an indicator of its own supplies `definition` inline on that indicator
+ * instead; `attachDefinitions` leaves anything already set alone.
  * AUTHORED — needs owner review before publish. */
 export const indicatorDefinitions: Record<string, string> = {
   Climate:
@@ -62,7 +51,10 @@ export const indicatorDefinitions: Record<string, string> = {
 /** Attaches the shared definition to each of a topic's indicators, so the
  * definition strings live here only. Applied by each topic record module. */
 export function attachDefinitions(indicators: Indicator[]): Indicator[] {
-  return indicators.map((i) => ({ ...i, definition: indicatorDefinitions[i.name] ?? '' }));
+  return indicators.map((i) => ({
+    ...i,
+    definition: i.definition ?? indicatorDefinitions[i.name] ?? '',
+  }));
 }
 
 export interface DvfRegion {

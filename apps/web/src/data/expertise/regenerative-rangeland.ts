@@ -142,6 +142,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
     lead: 'Decades of pressure eroded more than range condition. They eroded the economic case for keeping land in grazing at all. Five indicators show where that value went.',
     indicators: attachDefinitions([
       {
+        key: 'climate',
         name: 'Climate',
         issues: [
           'Enteric methane from ruminant digestion',
@@ -151,6 +152,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
         ],
       },
       {
+        key: 'soil',
         name: 'Soil',
         issues: [
           'Reduced ground cover',
@@ -160,6 +162,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
         ],
       },
       {
+        key: 'water',
         name: 'Water',
         issues: [
           'Use concentrated around limited water points',
@@ -169,6 +172,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
         ],
       },
       {
+        key: 'biodiversity',
         name: 'Land & biodiversity',
         issues: [
           'Grassland converted to cropland',
@@ -178,6 +182,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
         ],
       },
       {
+        key: 'resilience',
         name: 'Resilience & productivity',
         issues: [
           'Thin forage reserves entering a drought',
@@ -439,32 +444,24 @@ export const regenerativeRangeland: ExpertiseTopic = {
     leadTwo: 'We build fit-for-purpose tools where they are required the most. The operating infrastructure that supports recurring data, calculations, evidence, traceability or reconciliation that often constrain the success of a program to profitably scale.',
     tools: [
       {
-        name: 'Soil Carbon Prediction',
-        text: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a management change before it is implemented.',
-        asset: 'terranexus-soil-carbon-prediction-16x9-dark',
-        alt:
-          'Soil Carbon Prediction dashboard showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories, and benefit and economic-value distributions.',
+        id: 'soil-carbon-prediction',
+        text:
+          'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a management change before it is implemented.',
       },
       {
-        name: 'Enteric Emissions',
-        text: 'Herd-level methane accounting built around composition, feed and management, so the largest part of the footprint is measured where it is produced.',
-        asset: 'terranexus-enteric-emissions-16x9-dark',
-        alt:
-          'Enteric Emissions dashboard showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.',
+        id: 'enteric-emissions',
+        text:
+          'Herd-level methane accounting built around composition, feed and management, so the largest part of the footprint is measured where it is produced.',
       },
       {
-        name: 'Grazing Practice Detection',
-        text: 'Remote-sensing detection of grazing events, rest periods and biomass response, so a rotational grazing claim carries evidence a reviewer can test.',
-        asset: 'terranexus-grazing-detection-16x9-dark',
-        alt:
-          'Grazing Detection dashboard showing a rotational grazing event on an NDVI paddock map with a 10-week biomass recovery curve.',
+        id: 'grazing-detection',
+        text:
+          'Remote-sensing detection of grazing events, rest periods and biomass response, so a rotational grazing claim carries evidence a reviewer can test.',
       },
       {
-        name: 'Environmental Asset Pricing & Stranded Claims Optimization',
-        text: 'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
-        asset: 'terranexus-asset-pricing-optimization-16x9-dark',
-        alt:
-          "Environmental Asset Pricing and Stranded Claims Optimization dashboard showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
+        id: 'asset-pricing-optimization',
+        text:
+          'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
       },
     ],
   },

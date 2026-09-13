@@ -11,8 +11,12 @@
 // Content provenance and what still needs owner review before publish are
 // recorded in ./shared.ts.
 
-/** Indicator keys used by the section 04 filter chips and intervention tags. */
-export type ImpactKey = 'climate' | 'soil' | 'water' | 'biodiversity' | 'resilience';
+/** An indicator key, e.g. 'climate'. Not a fixed union: the five production
+ * indicators are only the production topics' set. Agroforestry adds Production,
+ * Aquaculture drops Soil, and a refiner runs carbon intensity, feedstock
+ * quality, regulatory qualification, chain of custody and facility performance
+ * instead. Each topic's own `correcting.indicators` is the authority. */
+export type ImpactKey = string;
 
 export interface TopicLink {
   label: string;
@@ -50,12 +54,20 @@ export interface Pillar {
   bullets: string[];
 }
 
+/** One indicator, and the single source for both section 03's accordion and
+ * section 04's filter chips. Those were two parallel structures that happened
+ * to agree on the first two topics, because both shipped with the same five
+ * production indicators; they cannot stay in step across nine. */
 export interface Indicator {
-  /** Must match a key in shared.ts `indicatorDefinitions`. */
+  /** Stable key referenced by `Intervention.impacts`. */
+  key: string;
+  /** Display name, used as the accordion heading and the chip label. */
   name: string;
   issues: string[];
-  /** Attached at module load from `indicatorDefinitions` so each definition
-   * string exists in exactly one place. Not authored per topic. */
+  /** Filled at module load from shared.ts's `indicatorDefinitions` when the
+   * name is one of the recurring production indicators, so those strings exist
+   * in exactly one place. Supply it inline for an indicator that is specific to
+   * one topic. */
   definition?: string;
 }
 
@@ -63,6 +75,8 @@ export interface Intervention {
   id: string;
   group: string;
   name: string;
+  /** Indicator keys, every one of which must exist in this topic's own
+   * `correcting.indicators` — asserted by the template test suite. */
   impacts: ImpactKey[];
   mechanism: string;
   value: string;
@@ -105,23 +119,14 @@ export interface Pathway {
   applicable?: boolean;
 }
 
-export interface Tool {
-  name: string;
-  text: string;
-  /** Repo-real path under /images/product-ui/, without the width suffix — e.g.
-   * "terranexus-soil-carbon-prediction-16x9-dark". These are the brand kit's
-   * unframed 16:9 hero renders (brand/product-ui/09-web-export/04-hero-16x9),
-   * not the device-framed variants: the Digital Solutions page already carries
-   * the device-mockup treatment, so repeating it here read as a second product
-   * page rather than a section of a topic page (owner, 2026-09-12). Widths come
-   * from TOOL_WIDTHS in shared.ts. */
-  asset: string;
-  /** What the screen actually shows. Adapted from the brand kit's own
-   * descriptions (brand/product-ui/09-web-export/alt-text.md), with its
-   * "as a product hero" framing dropped — that describes the asset's role in
-   * the kit, not what a reader would see. Replaces the placeholder
-   * "<tool name> interface" the handover shipped with. */
-  alt: string;
+/** A tool shown in section 10, referenced by id from the catalogue in
+ * ./tools.ts so the asset path and alt text are written once rather than
+ * retyped per topic. `text` overrides the catalogue's default where a topic
+ * describes the same tool differently — Regen Ag says "practice change" where
+ * Rangeland says "management change". */
+export interface ToolRef {
+  id: string;
+  text?: string;
 }
 
 /** Section 00 band. Scales to nine: what actually varies across the topics is
@@ -234,7 +239,8 @@ export interface ExpertiseTopic {
     leadTwo: string;
     /** Scales to nine: regen ag has five tools, rangeland four, several topics
      * will have one or none. An empty array is a defined state — the template
-     * omits the section rather than rendering an empty grid. */
-    tools: Tool[];
+     * omits section 10 entirely and drops it from the section rail, rather than
+     * rendering an empty grid or a rail entry pointing at nothing. */
+    tools: ToolRef[];
   };
 }
