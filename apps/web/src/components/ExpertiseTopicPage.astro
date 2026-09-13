@@ -293,15 +293,21 @@ const ctaLinks = [
           ))}
         </div>
 
+        {/* A radio group, not a set of toggle buttons: exactly one indicator
+            is ever active, which is what aria-checked on a radio says and what
+            aria-pressed on six independent toggles does not. It also collapses
+            six tab stops into one, with arrow keys moving between them. */}
         <div class="xp-filter" data-iv-filter>
           <span class="xp-filter-label" id="iv-filter-label">Filter by indicator</span>
-          <div class="xp-chips" role="group" aria-labelledby="iv-filter-label">
+          <div class="xp-chips" role="radiogroup" aria-labelledby="iv-filter-label" data-chip-group>
             {chips.map((chip) => (
               <button
                 type="button"
                 class="xp-chip"
+                role="radio"
+                aria-checked={chip.id === 'all' ? 'true' : 'false'}
+                tabindex={chip.id === 'all' ? '0' : '-1'}
                 data-impact={chip.id}
-                aria-pressed={chip.id === 'all' ? 'true' : 'false'}
               >
                 {chip.label}
               </button>
@@ -314,6 +320,11 @@ const ctaLinks = [
             <p class="xp-iv-count" data-iv-count>
               {interventions.length} {interventions.length === 1 ? 'intervention' : 'interventions'}
             </p>
+            {/* The visible count is not itself a live region: it also changes
+                when the reader arrows through the list, and re-announcing
+                "9 interventions" on every keypress is noise. This announces
+                the outcome of a filter change only, and says which filter. */}
+            <p class="sr-only" role="status" aria-live="polite" data-iv-status></p>
             <div class="xp-iv-list" role="tablist" aria-label="Interventions" aria-orientation="vertical" data-iv-tablist>
               {interventions.map((iv) => (
                 <button
@@ -1013,7 +1024,7 @@ const ctaLinks = [
   }
   .xp-chip:hover { border-color: var(--c-sky-400); background: var(--c-sky-50); }
   .xp-chip:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
-  .xp-chip[aria-pressed='true'] { background: var(--color-dark); border-color: var(--color-dark); color: #fff; }
+  .xp-chip[aria-checked='true'] { background: var(--color-dark); border-color: var(--color-dark); color: #fff; }
 
   .xp-iv-layout {
     display: grid;
@@ -1296,8 +1307,10 @@ const ctaLinks = [
   // Work With tabs use. Declaring role="tab" without the behaviour is worse
   // than no ARIA at all.
 
-  /** Wires one roving-tabindex tablist. `isEnabled` lets the caller exclude
-   * tabs that are currently filtered out. */
+  /** Wires one roving-tabindex widget — a tablist or a radio group; both use
+   * the same keyboard model (arrows move and select, Home/End jump, one tab
+   * stop for the whole set). `isEnabled` lets the caller exclude items that
+   * are currently filtered out. */
   function wireTabs(
     tabs: HTMLElement[],
     onSelect: (id: string) => void,
@@ -1333,6 +1346,7 @@ const ctaLinks = [
     const ivPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-iv-panel]'));
     const chips = Array.from(document.querySelectorAll<HTMLElement>('[data-impact]'));
     const countEl = document.querySelector<HTMLElement>('[data-iv-count]');
+    const statusEl = document.querySelector<HTMLElement>('[data-iv-status]');
     const emptyEl = document.querySelector<HTMLElement>('[data-iv-empty]');
     let impact = 'all';
 
@@ -1361,7 +1375,7 @@ const ctaLinks = [
       panel.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
     };
 
-    const applyFilter = () => {
+    const applyFilter = (announce = false) => {
       const visible = ivTabs.filter(matches);
       ivTabs.forEach((tab) => {
         tab.hidden = !matches(tab);
@@ -1370,6 +1384,15 @@ const ctaLinks = [
         countEl.textContent = `${visible.length} ${visible.length === 1 ? 'intervention' : 'interventions'}`;
       }
       if (emptyEl) emptyEl.hidden = visible.length > 0;
+      // Announce what the filter did, not just a bare number, and only when
+      // the reader actually changed it.
+      if (announce && statusEl) {
+        const label = chips.find((c) => c.dataset.impact === impact)?.textContent?.trim() ?? 'All';
+        statusEl.textContent =
+          visible.length === 0
+            ? `No interventions match ${label}.`
+            : `${visible.length} ${visible.length === 1 ? 'intervention' : 'interventions'} ${impact === 'all' ? 'shown' : `match ${label}`}.`;
+      }
       // The detail panel follows the first still-visible item rather than
       // stranding a selection the reader can no longer see.
       const selected = ivTabs.find((t) => t.getAttribute('aria-selected') === 'true');
@@ -1382,13 +1405,16 @@ const ctaLinks = [
 
     wireTabs(ivTabs, (id) => select(id, true), (el) => el.dataset.iv ?? '', matches);
 
-    chips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        impact = chip.dataset.impact ?? 'all';
-        chips.forEach((c) => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
-        applyFilter();
+    const selectChip = (id: string) => {
+      impact = id;
+      chips.forEach((c) => {
+        const on = c.dataset.impact === id;
+        c.setAttribute('aria-checked', on ? 'true' : 'false');
+        c.setAttribute('tabindex', on ? '0' : '-1');
       });
-    });
+      applyFilter(true);
+    };
+    wireTabs(chips, selectChip, (el) => el.dataset.impact ?? 'all');
   }
 
   // ── Section 09: lifecycle stage tabs ──

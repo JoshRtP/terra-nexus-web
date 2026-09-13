@@ -14,7 +14,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { stages } from '../src/data/lifecycle';
-import { expertiseTopics, TOOL_WIDTHS } from '../src/data/expertise';
+import { expertiseTopics, TOOL_WIDTHS, topicHeroPhotoIds } from '../src/data/expertise';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -93,6 +93,14 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     expect(count(html[slug], /data-iv="[a-z]+"/g)).toBe(total);
   });
 
+  it('takes its hero photo from the shared registry, not a second literal', () => {
+    // The same photo used to be declared in the topic record and again in the
+    // /expertise/ index tile, with nothing keeping the two in step.
+    const id = topicHeroPhotoIds[slug];
+    expect(id, `no hero photo registered for ${slug}`).toBeTruthy();
+    expect(html[slug]).toContain(`photos/${id}/pexels-photo-${id}.jpeg`);
+  });
+
   it('uses the site section rhythm and shared primitives, not a parallel set', () => {
     // Full-bleed .section / .section-alt with .container inside, as on every
     // other page — the prototype banded everything inside one container.
@@ -106,6 +114,20 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     // 2026-09-12): ahead of a heading they read as an ordinal to track.
     expect(html[slug]).not.toContain('class="numbered-index');
     expect(count(html[slug], /class="journey-rail-num"/g)).toBe(10);
+  });
+
+  it('exposes the indicator filter as a radio group with one tab stop', () => {
+    // Exactly one indicator is ever active, which is what aria-checked on a
+    // radio says and what aria-pressed on six independent toggles does not.
+    expect(html[slug]).toContain('role="radiogroup"');
+    expect(count(html[slug], /role="radio"/g)).toBe(6);
+    expect(count(html[slug], /aria-checked="true"/g)).toBe(1);
+    expect(count(html[slug], /data-impact="[a-z]+"[^>]*tabindex="0"|tabindex="0"[^>]*data-impact="[a-z]+"/g)).toBe(1);
+    // The visible count must not be a live region — it changes when the reader
+    // arrows through the intervention list too, and re-announcing it on every
+    // keypress is noise. A separate status region announces filter changes.
+    expect(html[slug]).not.toMatch(/class="xp-iv-count"[^>]*aria-live/);
+    expect(html[slug]).toMatch(/data-iv-status/);
   });
 
   it('carries the empty state for a filter that matches nothing', () => {

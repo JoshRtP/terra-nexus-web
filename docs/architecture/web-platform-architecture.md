@@ -576,6 +576,36 @@ between the two topics plus 282 words of lifecycle copy that also appears on the
 homepage). At 77% unique per page the owner accepted the duplication rather than
 varying approved copy.
 
+**Functionality pass (2026-09-12, P5 of the owner review).**
+
+- **The indicator filter is a radio group**, not six toggle buttons. Exactly one
+  indicator is ever active, which is what `aria-checked` on a radio says and
+  what `aria-pressed` on independent toggles does not. It also collapses six tab
+  stops into one, with arrow keys moving between them — the same roving-tabindex
+  helper the two tablists already use.
+- **The visible intervention count is no longer a live region.** It changes when
+  the reader arrows through the intervention list as well as when they filter,
+  so announcing it re-read "9 interventions" on every keypress. A separate
+  visually-hidden `role="status"` now announces the outcome of a filter change
+  only, and names the filter: "3 interventions match Water."
+- **Hero photography has one source.** `topicHeroPhotoIds` / `topicHeroImage()`
+  in `src/data/expertise/shared.ts` covers all nine topics, including the seven
+  still on `ExpertisePage`. The same photo was previously a literal in the topic
+  record and again in the `/expertise/` index tile, at different widths, with
+  nothing keeping them in step; the width is now applied per use.
+- The trailing section border above the closing CTA went away with the
+  full-bleed rewrite — `.section` carries no border.
+
+Kept deliberately: **`StrategyFrameworkDVF`'s controls stay visually hidden
+until focused** (owner, 2026-09-12). Clicking the diagram is the intended
+interaction; the buttons exist so keyboard and screen-reader users are never
+dependent on pointer geometry, which is the accessibility contract, not a
+discoverability one.
+
+Not started: migrating the seven topics still on `ExpertisePage` to this
+template. Paused at the owner's request — the Expertise family is visibly split
+until it happens.
+
 Deferred by owner decision, not omissions: structured data (BreadcrumbList /
 Service / FAQPage, to be added once on the template so all nine topics inherit
 it — deferred to M6+ / P6, and now unblocked by the `site` config above), the four unsourced statistics in section 01, proof content such as

@@ -21,7 +21,7 @@
 //    current.
 //  * `positioning` — authored for the new influence/incentive/mechanism band.
 import type { ExpertiseTopic } from './types';
-import { attachDefinitions } from './shared';
+import { attachDefinitions, topicHeroImage } from './shared';
 
 export const regenerativeRangeland: ExpertiseTopic = {
   slug: 'regenerative-rangeland',
@@ -31,7 +31,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
   hero: 'Create More Value from Resilient Grazing Systems',
   heroLead:
     'Terra Nexus helps livestock producers, protein companies, traders, and buyers design and manage regenerative rangeland programs that connect grazing management, producer economics, livestock performance, environmental outcomes, supply-chain value, and credible claims.',
-  heroImage: 'https://images.pexels.com/photos/29474130/pexels-photo-29474130.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  heroImage: topicHeroImage('regenerative-rangeland', 1600),
   heroImageAlt: 'Cattle grazing managed rangeland at sunset',
 
   meta: {

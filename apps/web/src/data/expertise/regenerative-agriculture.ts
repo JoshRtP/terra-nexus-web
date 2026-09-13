@@ -20,7 +20,7 @@
 //    current.
 //  * `positioning` — authored for the new influence/incentive/mechanism band.
 import type { ExpertiseTopic } from './types';
-import { attachDefinitions } from './shared';
+import { attachDefinitions, topicHeroImage } from './shared';
 
 export const regenerativeAgriculture: ExpertiseTopic = {
   slug: 'regenerative-agriculture',
@@ -30,7 +30,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
   hero: 'Scale Regenerative Agriculture from Field to Market',
   heroLead:
     'Terra Nexus helps commodity traders and food-system companies design, diligence, launch, and manage regenerative agriculture programs that align producer economics, supply-chain operations, environmental outcomes, and credible claims.',
-  heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  heroImage: topicHeroImage('regenerative-agriculture', 1600),
   heroImageAlt: 'Aerial view of cropland under regenerative management',
 
   meta: {

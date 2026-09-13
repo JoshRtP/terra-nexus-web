@@ -376,6 +376,29 @@ export const validationQuestions: Record<string, QuestionGroup[]> = {
   ],
 };
 
+/** Hero photography, keyed by topic slug — one source for the /expertise/
+ * index tiles and each topic page's hero. They were separate literals that
+ * happened to hold the same photo, with nothing keeping them in step. Pexels
+ * ids only: the width is applied per use, because a tile and a full-bleed
+ * hero want different sizes. Covers all nine topics, including the seven
+ * still on the older ExpertisePage component. */
+export const topicHeroPhotoIds: Record<string, number> = {
+  'regenerative-agriculture': 38514489,
+  'regenerative-rangeland': 29474130,
+  'agroforestry': 5838949,
+  'aquaculture': 14992906,
+  'biodiversity-and-ecosystem-resilience': 17475325,
+  'sustainable-supply-chains': 4487383,
+  'low-carbon-energy-and-biofuels': 35284297,
+  'purpose-driven-food-brands-and-retailers': 15455017,
+  'food-waste-prevention-diversion-recovery': 36751332,
+};
+
+export function topicHeroImage(slug: string, width: number): string {
+  const id = topicHeroPhotoIds[slug];
+  if (!id) throw new Error(`No hero photo registered for expertise topic '${slug}'`);
+  return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${width}`;
+}
 // ── Product screenshots ──
 // The brand kit's unframed 16:9 hero renders, copied from
 // brand/product-ui/09-web-export/04-hero-16x9 into public/images/product-ui/.
