@@ -1,0 +1,1418 @@
+---
+// FrameworkViewer — the interactive reference for a three-level framework
+// (categories → types → tactics) from src/data/frameworks/. First used for
+// the Ten Types of Innovation (2026-09-13); built generically so a second
+// framework is a data record, not a component change.
+//
+// Two variants:
+//  * `full` (the /tools/<slug>/ page): the board, one detail panel per type,
+//    a tactic drawer, and a play sheet the reader assembles, persists,
+//    shares by URL and prints.
+//  * `compact` (a capability family page): the board only, with each type
+//    linking into the full tool. No script; a plain set of links.
+//
+// Architecture, following StrategyFrameworkDVF and MechanismSelector rather
+// than a client-side framework (CLAUDE.md rule 1):
+//  * Everything a reader can read is server-rendered: the board, all ten
+//    detail panels and every tactic card are in the HTML, toggled with
+//    [hidden]. The tactics are crawlable, and the board works before the
+//    script runs.
+//  * The only client-built DOM is the play sheet's rows, cloned from a
+//    <template> and filled from a small JSON blob of tactic titles.
+//  * View state lives in the URL hash (#type-<id>, #play-sheet,
+//    #tactic-<id>), so a type or a tactic is linkable, Back works, and the
+//    compact variant can deep-link straight into the tool. The play sheet
+//    persists to localStorage and travels in a `?play=` query for sharing.
+//  * Every control is a real <button> or <a>. The drawer is a <dialog>, so
+//    focus trapping and Escape come from the platform.
+//  * Colours are data (each type and category carries its own hex), so they
+//    are emitted once as custom properties in an inline <style> element,
+//    keyed by data attributes. No inline `style=""` attributes anywhere:
+//    the capability page tests assert there are none.
+import type { Framework } from '../data/frameworks';
+import { tacticId, tacticCount, frameworkHref } from '../data/frameworks';
+
+export interface Props {
+  framework: Framework;
+  variant?: 'full' | 'compact';
+  /** Where the compact variant's types link. Defaults to the framework's own route. */
+  toolHref?: string;
+}
+
+const { framework: fw, variant = 'full', toolHref = frameworkHref(fw.slug) } = Astro.props;
+const compact = variant === 'compact';
+const L = fw.labels;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const firstSentence = (s: string) => {
+  const i = s.indexOf('. ');
+  return i < 0 ? s : s.slice(0, i + 1);
+};
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Relative luminance decides whether a tint takes light or dark text; the
+// palette's lightest type (sage-light, #9AA89B) needs navy text to pass.
+const luminance = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16);
+  return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+};
+const onTint = (hex: string) => (luminance(hex) > 0.5 ? '#131f48' : '#ffffff');
+// Hover colour for a category header: the tint pulled 35% toward the
+// brand's deep navy, as the prototype did.
+const deepen = (hex: string) => {
+  const v = parseInt(hex.slice(1), 16);
+  const target = [6, 25, 39];
+  const ch = [(v >> 16) & 255, (v >> 8) & 255, v & 255].map((c, i) => Math.round(c + (target[i] - c) * 0.35));
+  return '#' + ch.map((c) => c.toString(16).padStart(2, '0')).join('');
+};
+
+const types = fw.types.map((t, i) => ({ ...t, n: pad(i + 1), index: i + 1 }));
+const columns = fw.categories.map((c, i) => ({
+  ...c,
+  index: i,
+  types: types.filter((t) => t.category === c.name),
+}));
+const total = tacticCount(fw);
+
+// Per-framework colour rules. Emitted as a <style> element (not attributes)
+// and scoped by data-fw so two frameworks on one page cannot collide.
+const scope = `[data-fw="${fw.slug}"]`;
+const colourCss = [
+  `${scope} .fw-board{--fw-cols:${columns.length}}`,
+  ...columns.map((c) =>
+    `${scope} [data-fw-cat="${c.index}"]{--fw-cat:${c.color};--fw-cat-hover:${deepen(c.color)};--fw-on-cat:${onTint(c.color)};--fw-cat-eyebrow:${luminance(c.color) > 0.5 ? '#131f48' : '#e7d77f'}}`,
+  ),
+  ...types.map((t) => `${scope} [data-fw-type="${t.id}"]{--fw-tint:${t.color};--fw-on-tint:${onTint(t.color)}}`),
+  // Focusing a category widens its column; the others narrow and dim.
+  `@media (min-width:64rem){${columns
+    .map(
+      (c) =>
+        `${scope} .fw-board[data-fw-focus="${c.index}"]{grid-template-columns:${columns
+          .map((o) => (o.index === c.index ? '1.7fr' : '.65fr'))
+          .join(' ')}}`,
+    )
+    .join('')}}`,
+].join('\n');
+
+// What the script needs beyond the DOM: tactic titles for play-sheet rows,
+// type names for the drawer breadcrumb, the starter set.
+const clientData = compact
+  ? null
+  : JSON.stringify({
+      slug: fw.slug,
+      labels: L,
+      tactics: Object.fromEntries(
+        types.flatMap((t) => t.tactics.map((k) => [tacticId(t, k), { t: k.title, d: k.description, y: t.id }])),
+      ),
+      types: Object.fromEntries(types.map((t) => [t.id, { t: t.title, c: t.category, n: t.n }])),
+      starter: fw.starter?.tactics ?? [],
+    }).replace(/</g, '\\u003c');
+
+// Heading levels follow the page: the tool page has its own h1, so the board
+// starts at h2; on a capability page the board sits under the section's h2.
+const CatH = compact ? 'h3' : 'h2';
+const TypeH = compact ? 'h4' : 'h3';
+const uid = `fw-${fw.slug}`;
+---
+
+<div class={`fw ${compact ? 'fw-compact' : 'fw-full'}`} id={compact ? undefined : 'framework'} data-fw={fw.slug} data-fw-variant={variant} data-fw-total={total}>
+  <style is:inline set:html={colourCss}></style>
+
+  {!compact && (
+    <div class="fw-toolbar" data-print-hide>
+      <nav class="fw-tabs" aria-label={`${fw.name} views`}>
+        <a href="#framework" data-fw-tab="board" aria-current="page">Framework</a>
+        <a href="#play-sheet" data-fw-tab="play">Play sheet <span class="fw-tab-count" data-fw-play-count>0</span></a>
+      </nav>
+      <p class="fw-stats">
+        <span><b>{types.length}</b> {L.typePlural}</span>
+        <span><b>{total}</b> {L.tacticPlural}</span>
+        <span><b data-fw-play-count>0</b> in play</span>
+      </p>
+    </div>
+  )}
+
+  {/* ── Board ─────────────────────────────────────────────────────────── */}
+  <section class="fw-view" data-fw-view="board" aria-label={`${fw.name} board`}>
+    {!compact && <p class="fw-intro">{fw.intro}</p>}
+
+    {!compact && (
+      <p class="fw-focus-note" data-fw-focus-note hidden data-print-hide>
+        <span>Focused on <b data-fw-focus-name></b>. Other {L.groupPlural} are dimmed.</span>
+        <button type="button" class="fw-btn-sm" data-fw-focus-clear>Show all {columns.length}</button>
+      </p>
+    )}
+
+    <div class="fw-board" data-fw-board>
+      {columns.map((col) => (
+        <section class="fw-col" data-fw-cat={col.index} aria-labelledby={`${uid}-cat-${col.index}`}>
+          {compact ? (
+            <div class="fw-col-head">
+              <span class="fw-col-label">{col.name}</span>
+              <CatH class="fw-col-focus" id={`${uid}-cat-${col.index}`}>{col.focus}</CatH>
+              <span class="fw-col-meta">{col.types.length} {L.typePlural} · {col.types.reduce((n, t) => n + t.tactics.length, 0)} {L.tacticPlural}</span>
+            </div>
+          ) : (
+            <button type="button" class="fw-col-head" data-fw-focus={col.index} aria-pressed="false">
+              <span class="fw-col-label">{col.name}</span>
+              <CatH class="fw-col-focus" id={`${uid}-cat-${col.index}`}>{col.focus}</CatH>
+              <span class="fw-col-meta">{col.types.length} {L.typePlural} · {col.types.reduce((n, t) => n + t.tactics.length, 0)} {L.tacticPlural} · <span class="fw-col-hint">focus</span></span>
+            </button>
+          )}
+
+          {col.types.map((t) => (
+            <article class="fw-type" data-fw-type={t.id} data-fw-type-row={t.id}>
+              <span class="fw-pill" aria-hidden="true">{t.n}</span>
+              <div class="fw-type-body">
+                <TypeH class="fw-type-title">
+                  <a href={compact ? `${toolHref}#type-${t.id}` : `#type-${t.id}`} class="fw-type-link" data-fw-open={t.id}>{t.title}</a>
+                </TypeH>
+                <p class="fw-type-blurb">{firstSentence(t.description)}</p>
+                {!compact && (
+                  <ul class="fw-chips" data-fw-chips role="list" hidden>
+                    {t.tactics.map((k) => (
+                      <li>
+                        <button type="button" class="fw-chip" data-fw-drawer={tacticId(t, k)} data-fw-on={tacticId(t, k)} aria-pressed="false">{k.title}</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p class="fw-type-meta">
+                  <span>{t.tactics.length} {L.tacticPlural}</span>
+                  {!compact && <span class="fw-inplay" data-fw-inplay={t.id} hidden></span>}
+                </p>
+              </div>
+            </article>
+          ))}
+
+          {col.note && (
+            <div class="fw-col-note">
+              <span class="field-label">{col.note.label}</span>
+              <p>{col.note.text}</p>
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+
+    {compact && (
+      <p class="fw-compact-foot">
+        <span>{total} {L.tacticPlural} across {types.length} {L.typePlural}.</span>
+        <a href={toolHref}>Open the full {fw.name} tool</a>
+      </p>
+    )}
+  </section>
+
+  {/* ── One detail panel per type ─────────────────────────────────────── */}
+  {!compact &&
+    types.map((t) => {
+      const col = columns.find((c) => c.name === t.category)!;
+      const siblings = col.types;
+      return (
+        <section class="fw-view fw-detail" id={`type-${t.id}`} data-fw-view="detail" data-fw-detail={t.id} data-fw-type={t.id} aria-labelledby={`type-${t.id}-h`} hidden>
+          <aside class="fw-rail" data-print-hide data-fw-cat={col.index}>
+            <span class="fw-rail-cat">{col.name}</span>
+            <a href="#framework" class="fw-back">Back to all {types.length} {L.typePlural}</a>
+            <ul class="fw-rail-list" role="list">
+              {siblings.map((s) => (
+                <li>
+                  <a href={`#type-${s.id}`} data-fw-type={s.id} aria-current={s.id === t.id ? 'page' : undefined}>
+                    <span class="fw-rail-n">{s.n}</span>
+                    {s.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="fw-rail-blurb">{col.blurb}</p>
+          </aside>
+
+          <div class="fw-detail-main">
+            <header class="fw-detail-head">
+              <div>
+                <p class="fw-detail-crumb">
+                  <span class="fw-pill" aria-hidden="true">{t.n}</span>
+                  <span class="field-label">{t.category} · {cap(L.type)} {t.index} of {types.length}</span>
+                </p>
+                <h2 id={`type-${t.id}-h`}>{t.title}</h2>
+                <p class="fw-detail-desc">{t.description}</p>
+              </div>
+              <p class="fw-detail-stat"><b>{t.tactics.length}</b><span>{L.tacticPlural} in this {L.type}</span></p>
+            </header>
+
+            {t.examples && t.examples.length > 0 && (
+              <div class="fw-examples">
+                <span class="field-label">How this {L.type} shows up</span>
+                <ul class="fw-example-list" role="list">
+                  {t.examples.map((e) => (
+                    <li><b>{e.who}</b><span>{e.what}</span></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div class="fw-tactics-head">
+              <span class="field-label">{L.tacticPlural}</span>
+              <span class="fw-hint" data-print-hide>Open one for examples. Use Add to build the play sheet.</span>
+            </div>
+            <ul class="fw-tactics" role="list">
+              {t.tactics.map((k) => {
+                const id = tacticId(t, k);
+                const n = k.examples?.length ?? 0;
+                return (
+                  <li class="fw-tactic" id={`tactic-${id}`} data-fw-tactic={id} data-fw-on={id}>
+                    <div class="fw-tactic-body">
+                      <h3 class="fw-tactic-title">
+                        <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>
+                      </h3>
+                      <p class="fw-tactic-desc">{k.description}</p>
+                    </div>
+                    <div class="fw-tactic-foot">
+                      <span class:list={['fw-tactic-ex', { 'fw-tactic-ex-none': n === 0 }]}>{n === 0 ? 'No examples yet' : `${n} ${n === 1 ? 'example' : 'examples'}`}</span>
+                      <button type="button" class="fw-add" data-fw-toggle={id} aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
+                    </div>
+                    {n > 0 && (
+                      <div class="fw-tactic-examples" data-fw-examples hidden>
+                        <ul class="fw-example-list" role="list">
+                          {k.examples!.map((e) => (
+                            <li><b>{e.who}</b><span>{e.what}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      );
+    })}
+
+  {/* ── Play sheet ────────────────────────────────────────────────────── */}
+  {!compact && (
+    <section class="fw-view fw-play" id="play-sheet" data-fw-view="play" aria-labelledby="play-sheet-h" hidden>
+      <header class="fw-play-head">
+        <div>
+          <span class="eyebrow">Play sheet</span>
+          <h2 id="play-sheet-h">Session play sheet</h2>
+          <p class="fw-play-summary" data-fw-play-summary>Empty. {cap(L.tacticPlural)} you add from any {L.type} land here, grouped by {L.type}, ready to print or share.</p>
+        </div>
+        <div class="fw-play-actions" data-print-hide>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-share>Copy share link</button>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-print>Print / PDF</button>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-clear>Clear sheet</button>
+        </div>
+      </header>
+      <p class="fw-status" role="status" aria-live="polite" data-fw-status></p>
+
+      <div class="fw-coverage">
+        <div class="fw-coverage-head">
+          <span class="field-label">Coverage across the {types.length} {L.typePlural}</span>
+          <span class="fw-hint" data-fw-filter-note data-print-hide>Click a {L.type} to filter the list below.</span>
+          <span class="fw-hint" data-fw-filter-on data-print-hide hidden>
+            Filtered to <b data-fw-filter-name></b>
+            <button type="button" class="fw-btn-sm" data-fw-filter-clear>Show all</button>
+          </span>
+        </div>
+        <ul class="fw-cov-list" role="list">
+          {types.map((t) => (
+            <li>
+              <button type="button" class="fw-cov" data-fw-cov={t.id} data-fw-type={t.id} aria-pressed="false" disabled>
+                <span class="fw-cov-n">{t.n}</span>
+                <span class="fw-cov-title">{t.title}</span>
+                <span class="fw-cov-meta" data-fw-cov-meta>untouched</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="fw-play-empty" data-fw-play-empty>
+        <h3>Nothing on the sheet yet</h3>
+        <p>Open a {L.type} and add {L.tacticPlural}, or click a {L.tactic} chip straight from a focused {L.group} on the board.</p>
+        <div class="fw-play-empty-actions" data-print-hide>
+          <a href="#framework" class="btn btn-secondary fw-btn-sm">Go to the framework</a>
+          {fw.starter && <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-starter>Load the {fw.starter.name} example</button>}
+        </div>
+        {fw.starter && <p class="fw-play-note">{fw.starter.note}</p>}
+      </div>
+
+      <div data-fw-play-groups>
+        {types.map((t) => (
+          <section class="fw-play-group" data-fw-play-group={t.id} data-fw-type={t.id} aria-labelledby={`play-${t.id}-h`} hidden>
+            <h3 id={`play-${t.id}-h`} class="fw-play-group-h">
+              <span class="fw-pill" aria-hidden="true">{t.n}</span>
+              <span>{t.title}</span>
+              <span class="fw-play-cat">{t.category}</span>
+            </h3>
+            <ul class="fw-play-list" role="list" data-fw-play-list></ul>
+          </section>
+        ))}
+      </div>
+      <template data-fw-row>
+        <li class="fw-play-row">
+          <div>
+            <b class="fw-play-title"></b>
+            <p class="fw-play-desc"></p>
+          </div>
+          <button type="button" class="fw-btn-sm" data-fw-remove data-print-hide>Remove</button>
+        </li>
+      </template>
+    </section>
+  )}
+
+  {/* ── Tactic drawer ─────────────────────────────────────────────────── */}
+  {!compact && (
+    <dialog class="fw-drawer" data-fw-dialog aria-labelledby="fw-drawer-h">
+      <div class="fw-drawer-inner">
+        <div class="fw-drawer-head" data-fw-drawer-head>
+          <div class="fw-drawer-top">
+            <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
+            <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
+          </div>
+          <h2 id="fw-drawer-h" data-fw-drawer-title></h2>
+        </div>
+        <div class="fw-drawer-body">
+          <p class="fw-drawer-desc" data-fw-drawer-desc></p>
+          <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
+          <div class="fw-drawer-ex">
+            <span class="field-label">In the field</span>
+            <div data-fw-drawer-examples></div>
+            <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  )}
+
+  {clientData && <script is:inline type="application/json" data-fw-data set:html={clientData}></script>}
+</div>
+
+<style>
+  .fw {
+    color: var(--color-text);
+    scroll-margin-top: var(--space-24);
+  }
+
+  /* ── Small shared pieces ──────────────────────────────────────────── */
+  .fw-pill {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: var(--radius-full);
+    background: var(--fw-tint, var(--color-dark));
+    color: var(--fw-on-tint, #fff);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.02em;
+  }
+  .fw-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-btn-sm:hover { background: var(--c-sky-50); border-color: var(--c-sky-500); }
+  .fw button:focus-visible,
+  .fw a:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .fw-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw .field-label { margin: 0; }
+  .fw-example-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+  .fw-example-list li {
+    display: grid;
+    gap: var(--space-1);
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--c-sky-300);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-example-list b { color: var(--color-text); font-weight: var(--font-semibold); }
+
+  /* ── Toolbar (full) ───────────────────────────────────────────────── */
+  .fw-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw-tabs { display: flex; gap: var(--space-1); }
+  .fw-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3);
+    margin-bottom: -1px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .fw-tabs a:hover { color: var(--color-text); }
+  .fw-tabs a[aria-current="page"] {
+    color: var(--color-text);
+    border-bottom-color: var(--color-eyebrow);
+  }
+  .fw-tab-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding-inline: var(--space-1);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-alt);
+    font-size: var(--text-xs);
+  }
+  .fw-stats {
+    display: flex;
+    gap: var(--space-6);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-stats span { display: inline-flex; align-items: baseline; gap: var(--space-2); }
+  .fw-stats b {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-dark);
+  }
+  .fw-intro {
+    max-width: var(--max-width-text);
+    margin: 0 0 var(--space-6);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  .fw-focus-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  .fw-focus-note b { color: var(--color-text); }
+
+  /* ── Board ────────────────────────────────────────────────────────── */
+  .fw-board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    /* clip, not hidden: overflow:hidden makes the board the scrollport for
+       the sticky column headers below 64rem, which then pin inside the
+       board (pushed down over the first type) instead of to the viewport.
+       Measured 2026-09-13. */
+    overflow: clip;
+    transition: grid-template-columns var(--transition-base);
+  }
+  @media (min-width: 64rem) {
+    .fw-board { grid-template-columns: repeat(var(--fw-cols, 3), minmax(0, 1fr)); }
+  }
+  .fw-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--color-bg);
+  }
+  .fw-col-head {
+    display: block;
+    width: 100%;
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    text-align: left;
+    background: var(--fw-cat);
+    color: var(--fw-on-cat);
+    border: 0;
+    font: inherit;
+  }
+  button.fw-col-head { cursor: pointer; transition: background var(--transition-fast); }
+  button.fw-col-head:hover,
+  button.fw-col-head[aria-pressed="true"] { background: var(--fw-cat-hover); }
+  button.fw-col-head:focus-visible { outline-offset: -4px; }
+  .fw-col-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-cat-eyebrow);
+  }
+  .fw-col-focus {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--line-snug);
+    color: inherit;
+  }
+  .fw-col-meta {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    opacity: 0.8;
+  }
+  .fw-col-hint { text-decoration: underline; text-underline-offset: 2px; }
+  button.fw-col-head[aria-pressed="true"] .fw-col-hint::before { content: 'un'; }
+  /* Below the wide breakpoint the column headers stay put while a long
+     column scrolls, so the reader always knows which category they are in. */
+  @media (max-width: 63.99rem) {
+    .fw-full .fw-col-head { position: sticky; top: 4.375rem; z-index: 2; }
+  }
+
+  .fw-type {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.125rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition-fast), opacity var(--transition-base);
+  }
+  .fw-type:last-of-type { border-bottom: 0; }
+  .fw-type:hover { background: var(--color-surface); }
+  .fw-board[data-fw-focus] .fw-col:not([data-fw-focused]) .fw-type { opacity: 0.45; }
+  .fw-type-body { min-width: 0; }
+  .fw-type-title {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--line-snug);
+  }
+  .fw-compact .fw-type-title { font-size: var(--text-lg); }
+  .fw-type-link { color: inherit; text-decoration: none; }
+  .fw-type-link::after { content: ''; position: absolute; inset: 0; }
+  .fw-type-link:hover { color: var(--c-sky-700); }
+  .fw-type-link:focus-visible { outline: none; }
+  .fw-type:has(.fw-type-link:focus-visible) { outline: var(--focus-ring); outline-offset: -3px; }
+  .fw-type-blurb {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-chips {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+  }
+  .fw-chip {
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    text-align: left;
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-chip:hover { color: var(--c-sky-700); background: var(--c-sky-50); border-color: var(--c-sky-300); }
+  .fw-chip[aria-pressed="true"] {
+    color: var(--color-text);
+    background: var(--c-accent-200);
+    border-color: var(--c-accent-400);
+  }
+  .fw-type-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-inplay {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--c-accent-200);
+    color: var(--color-text);
+    font-weight: var(--font-semibold);
+  }
+  .fw-col-note {
+    margin-top: auto;
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+  .fw-col-note p {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-compact-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Detail ───────────────────────────────────────────────────────── */
+  .fw-detail { display: grid; gap: var(--space-6); }
+  @media (min-width: 64rem) {
+    .fw-detail { grid-template-columns: 17rem minmax(0, 1fr); gap: var(--space-10); align-items: start; }
+  }
+  .fw-rail {
+    padding: var(--space-5) 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .fw-rail-cat {
+    display: block;
+    padding: 0 var(--space-5);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-cat);
+  }
+  .fw-back {
+    display: inline-block;
+    margin: var(--space-3) var(--space-5) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  .fw-rail-list { list-style: none; margin: 0; padding: 0; }
+  .fw-rail-list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-inline-start: 3px solid transparent;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+  .fw-rail-list a:hover { background: var(--color-surface-alt); color: var(--color-text); }
+  .fw-rail-list a[aria-current="page"] {
+    background: var(--color-bg);
+    border-inline-start-color: var(--fw-tint);
+    color: var(--color-text);
+    font-weight: var(--font-semibold);
+  }
+  .fw-rail-n { font-size: var(--text-xs); font-weight: var(--font-bold); color: var(--color-text-secondary); }
+  .fw-rail-blurb {
+    margin: var(--space-5) var(--space-5) 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  @media (max-width: 63.99rem) {
+    .fw-rail-list { display: flex; overflow-x: auto; gap: var(--space-2); padding: 0 var(--space-5); scrollbar-width: thin; }
+    .fw-rail-list a {
+      flex-shrink: 0;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-full);
+    }
+    .fw-rail-list a[aria-current="page"] { border-color: var(--fw-tint); background: var(--color-bg); }
+    .fw-rail-blurb { display: none; }
+  }
+  .fw-detail-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+  }
+  .fw-detail-head > div { max-width: var(--max-width-text); }
+  .fw-detail-crumb { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-4); }
+  .fw-detail-head h2 { margin: 0; }
+  .fw-detail-desc {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-lg);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-detail-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  .fw-detail-stat b {
+    font-family: var(--font-serif);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-dark);
+  }
+  .fw-examples {
+    margin-top: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--fw-tint);
+    border-radius: var(--radius-md);
+  }
+  .fw-examples .fw-example-list {
+    margin-top: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: var(--space-5);
+  }
+  .fw-tactics-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-8) 0 var(--space-4);
+  }
+  .fw-tactics {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--space-4);
+  }
+  .fw-tactic {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--fw-tint);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .fw-tactic:hover { box-shadow: var(--shadow-sm); }
+  .fw-tactic.is-on { border-color: var(--c-accent-400); border-top-color: var(--c-accent-400); }
+  .fw-tactic-body { position: relative; flex: 1; padding: var(--space-4) var(--space-5) var(--space-3); }
+  .fw-tactic-body:hover { background: var(--color-surface); }
+  .fw-tactic-title { margin: 0; font-size: var(--text-base); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw-tactic-open {
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  .fw-tactic-open::after { content: ''; position: absolute; inset: 0; }
+  .fw-tactic-open:focus-visible { outline: none; }
+  .fw-tactic-body:has(.fw-tactic-open:focus-visible) { outline: var(--focus-ring); outline-offset: -3px; }
+  .fw-tactic-desc {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-tactic-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-tactic-ex-none { color: var(--c-secondary-400); }
+  .fw-add {
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-add:hover { background: var(--c-sky-50); border-color: var(--c-sky-500); }
+  .fw-add[aria-pressed="true"] { background: var(--c-accent-200); border-color: var(--c-accent-400); }
+
+  /* ── Play sheet ───────────────────────────────────────────────────── */
+  .fw-play-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+  }
+  .fw-play-head > div { max-width: var(--max-width-text); }
+  .fw-play-head h2 { margin: 0; }
+  .fw-play-summary {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  .fw-play-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .fw-status {
+    min-height: 1.5em;
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--c-sky-700);
+    overflow-wrap: anywhere;
+  }
+  .fw-status:empty { margin: 0; min-height: 0; }
+  .fw-coverage {
+    margin-top: var(--space-6);
+    padding: var(--space-5) var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .fw-coverage-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+  }
+  .fw-coverage-head [data-fw-filter-on] { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .fw-coverage-head [data-fw-filter-on][hidden] { display: none; }
+  .fw-cov-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+    gap: var(--space-2);
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+  }
+  .fw-cov {
+    display: grid;
+    gap: var(--space-1);
+    width: 100%;
+    padding: var(--space-3);
+    text-align: left;
+    font: inherit;
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: default;
+  }
+  .fw-cov:not(:disabled) { cursor: pointer; }
+  .fw-cov:not(:disabled):hover { border-color: var(--fw-tint); }
+  .fw-cov.is-on { background: var(--fw-tint); color: var(--fw-on-tint); border-color: var(--fw-tint); }
+  .fw-cov[aria-pressed="true"] { border-top-color: var(--c-accent-400); }
+  .fw-cov-n { font-size: var(--text-xs); font-weight: var(--font-bold); opacity: 0.75; }
+  .fw-cov-title { font-size: var(--text-sm); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw-cov.is-on .fw-cov-title { color: inherit; }
+  .fw-cov-meta { font-size: var(--text-xs); opacity: 0.8; }
+  .fw-play-empty {
+    margin-top: var(--space-8);
+    padding: var(--space-12) var(--space-6);
+    text-align: center;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
+  .fw-play-empty h3 { margin: 0; }
+  .fw-play-empty p {
+    max-width: 28rem;
+    margin: var(--space-3) auto 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-play-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+  }
+  .fw-play-note { font-size: var(--text-xs); }
+  .fw-play-group { margin-top: var(--space-8); }
+  .fw-play-group-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--text-xl);
+  }
+  .fw-play-cat {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-tint);
+  }
+  .fw-play-list { list-style: none; margin: 0; padding: 0; }
+  .fw-play-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw-play-title { font-weight: var(--font-semibold); }
+  .fw-play-desc {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Drawer ───────────────────────────────────────────────────────── */
+  .fw-drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(28rem, 100vw);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-start: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: var(--shadow-xl);
+  }
+  .fw-drawer::backdrop { background: rgba(19, 31, 72, 0.4); }
+  .fw-drawer-inner { display: flex; flex-direction: column; height: 100%; }
+  .fw-drawer-head {
+    padding: var(--space-5) var(--space-6);
+    background: var(--fw-tint, var(--color-dark));
+    color: var(--fw-on-tint, #fff);
+  }
+  .fw-drawer-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+  .fw-drawer-crumb {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .fw-drawer-close {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    font: inherit;
+    font-size: var(--text-xl);
+    line-height: 1;
+    color: inherit;
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.85;
+  }
+  .fw-drawer-close:hover { opacity: 1; }
+  .fw-drawer-head h2 {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-2xl);
+    color: inherit;
+  }
+  .fw-drawer-body { flex: 1; padding: var(--space-6); overflow-y: auto; }
+  .fw-drawer-desc {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-drawer-toggle { width: 100%; margin-top: var(--space-5); }
+  .fw-drawer-toggle[aria-pressed="true"] {
+    background: var(--c-accent-200);
+    color: var(--color-text);
+    border-color: var(--c-accent-400);
+    box-shadow: none;
+  }
+  .fw-drawer-ex {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .fw-drawer-ex .fw-example-list { margin-top: var(--space-4); }
+  .fw-drawer-none {
+    margin: var(--space-4) 0 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  @media (max-width: 47.99rem) {
+    .fw-drawer {
+      inset: auto 0 0 0;
+      width: 100%;
+      height: auto;
+      max-height: 88dvh;
+      border-inline-start: 0;
+      border-top: 1px solid var(--color-border);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+  }
+
+  /* ── Print: the play sheet only ───────────────────────────────────── */
+  @media print {
+    .fw [data-print-hide],
+    .fw [data-fw-view]:not([data-fw-view="play"]) { display: none !important; }
+    .fw [data-fw-view="play"] { display: block !important; }
+    .fw-coverage, .fw-play-row, .fw-play-group { break-inside: avoid; }
+    .fw-cov.is-on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+
+<script>
+  // Framework viewer, full variant. State: the selected view (from the URL
+  // hash), the focused category, the play sheet (persisted), and a play
+  // filter. All DOM is pre-rendered except play rows.
+  interface FwData {
+    slug: string;
+    labels: Record<string, string>;
+    tactics: Record<string, { t: string; d: string; y: string }>;
+    types: Record<string, { t: string; c: string; n: string }>;
+    starter: string[];
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-fw][data-fw-variant="full"]').forEach((root) => {
+    const dataEl = root.querySelector<HTMLScriptElement>('[data-fw-data]');
+    if (!dataEl) return;
+    const data: FwData = JSON.parse(dataEl.textContent || '{}');
+    const L = data.labels;
+    const STORAGE_KEY = `tnx:framework:${data.slug}:play`;
+    const $ = <T extends Element>(sel: string) => root.querySelector<T>(sel);
+    const $$ = <T extends Element>(sel: string) => Array.from(root.querySelectorAll<T>(sel));
+
+    const views = $$<HTMLElement>('[data-fw-view]');
+    const board = $<HTMLElement>('[data-fw-board]');
+    const dialog = $<HTMLDialogElement>('[data-fw-dialog]');
+    const status = $<HTMLElement>('[data-fw-status]');
+    const rowTemplate = $<HTMLTemplateElement>('template[data-fw-row]');
+
+    let play: string[] = [];
+    let filter: string | null = null;
+    let drawerId: string | null = null;
+
+    // ── Persistence ─────────────────────────────────────────────────
+    const readStored = (): string[] => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string' && data.tactics[id]) : [];
+      } catch {
+        return [];
+      }
+    };
+    const store = () => {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(play));
+      } catch {
+        // Private mode or quota: the sheet still works for the session.
+      }
+    };
+
+    // ── Rendering ───────────────────────────────────────────────────
+    const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+    const inPlayByType = () => {
+      const counts: Record<string, number> = {};
+      play.forEach((id) => {
+        const y = data.tactics[id].y;
+        counts[y] = (counts[y] ?? 0) + 1;
+      });
+      return counts;
+    };
+
+    const render = () => {
+      const counts = inPlayByType();
+      const touched = Object.keys(counts).length;
+      const typeIds = Object.keys(data.types);
+
+      $$<HTMLElement>('[data-fw-play-count]').forEach((el) => { el.textContent = String(play.length); });
+      $$<HTMLElement>('[data-fw-on]').forEach((el) => {
+        const on = play.includes(el.dataset.fwOn || '');
+        if (el instanceof HTMLButtonElement) el.setAttribute('aria-pressed', String(on));
+        el.classList.toggle('is-on', on);
+      });
+      $$<HTMLButtonElement>('[data-fw-toggle]').forEach((btn) => {
+        const on = play.includes(btn.dataset.fwToggle || '');
+        btn.setAttribute('aria-pressed', String(on));
+        const label = btn.querySelector('[data-fw-toggle-label]');
+        if (label) label.textContent = on ? 'On sheet' : 'Add';
+      });
+      $$<HTMLElement>('[data-fw-inplay]').forEach((el) => {
+        const n = counts[el.dataset.fwInplay || ''] ?? 0;
+        el.hidden = n === 0;
+        el.textContent = `${n} in play`;
+      });
+
+      // Play sheet: summary, coverage, groups.
+      const summary = $<HTMLElement>('[data-fw-play-summary]');
+      if (summary) {
+        summary.textContent = touched === 0
+          ? `Empty. ${cap(L.tacticPlural)} you add from any ${L.type} land here, grouped by ${L.type}, ready to print or share.`
+          : `${plural(play.length, L.tactic, L.tacticPlural)} across ${plural(touched, L.type, L.typePlural)}. ${typeIds.length - touched} ${L.typePlural} untouched.`;
+      }
+      $$<HTMLButtonElement>('[data-fw-cov]').forEach((btn) => {
+        const id = btn.dataset.fwCov || '';
+        const n = counts[id] ?? 0;
+        btn.disabled = n === 0;
+        btn.classList.toggle('is-on', n > 0);
+        btn.setAttribute('aria-pressed', String(filter === id));
+        const meta = btn.querySelector('[data-fw-cov-meta]');
+        if (meta) meta.textContent = n ? `${n} selected` : 'untouched';
+      });
+      const filterOn = $<HTMLElement>('[data-fw-filter-on]');
+      const filterNote = $<HTMLElement>('[data-fw-filter-note]');
+      if (filterOn && filterNote) {
+        filterOn.hidden = !filter;
+        filterNote.hidden = !!filter || touched === 0;
+        const name = filterOn.querySelector('[data-fw-filter-name]');
+        if (name && filter) name.textContent = data.types[filter].t;
+      }
+      const empty = $<HTMLElement>('[data-fw-play-empty]');
+      if (empty) empty.hidden = play.length > 0;
+
+      $$<HTMLElement>('[data-fw-play-group]').forEach((group) => {
+        const id = group.dataset.fwPlayGroup || '';
+        const items = play.filter((k) => data.tactics[k].y === id);
+        const show = items.length > 0 && (!filter || filter === id);
+        group.hidden = !show;
+        const list = group.querySelector<HTMLElement>('[data-fw-play-list]');
+        if (!list || !rowTemplate) return;
+        list.replaceChildren();
+        if (!show) return;
+        items.forEach((k) => {
+          const row = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+          row.querySelector('.fw-play-title')!.textContent = data.tactics[k].t;
+          row.querySelector('.fw-play-desc')!.textContent = data.tactics[k].d;
+          const remove = row.querySelector<HTMLButtonElement>('[data-fw-remove]')!;
+          remove.setAttribute('aria-label', `Remove ${data.tactics[k].t}`);
+          remove.addEventListener('click', () => toggle(k));
+          list.appendChild(row);
+        });
+      });
+
+      // Drawer button, if open.
+      const drawerToggle = $<HTMLButtonElement>('[data-fw-drawer-toggle]');
+      if (drawerToggle && drawerId) {
+        const on = play.includes(drawerId);
+        drawerToggle.setAttribute('aria-pressed', String(on));
+        const label = drawerToggle.querySelector('[data-fw-toggle-label]');
+        if (label) label.textContent = on ? 'Remove from play sheet' : 'Add to play sheet';
+      }
+    };
+    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+    const say = (text: string) => { if (status) status.textContent = text; };
+
+    const toggle = (id: string) => {
+      if (!data.tactics[id]) return;
+      const was = play.includes(id);
+      play = was ? play.filter((k) => k !== id) : play.concat(id);
+      store();
+      render();
+      say(`${data.tactics[id].t} ${was ? 'removed from' : 'added to'} the play sheet. ${plural(play.length, L.tactic, L.tacticPlural)} on it.`);
+    };
+
+    // ── Views (URL hash) ────────────────────────────────────────────
+    const showView = (view: string, typeId?: string) => {
+      views.forEach((v) => {
+        const kind = v.dataset.fwView;
+        v.hidden = !(kind === view && (kind !== 'detail' || v.dataset.fwDetail === typeId));
+      });
+      $$<HTMLAnchorElement>('[data-fw-tab]').forEach((tab) => {
+        const current = tab.dataset.fwTab === (view === 'detail' ? 'board' : view);
+        if (current) tab.setAttribute('aria-current', 'page');
+        else tab.removeAttribute('aria-current');
+      });
+    };
+
+    const route = () => {
+      const hash = decodeURIComponent(location.hash.slice(1));
+      if (hash === 'play-sheet') {
+        showView('play');
+        root.scrollIntoView({ block: 'start' });
+        return;
+      }
+      if (hash.startsWith('type-') && data.types[hash.slice(5)]) {
+        showView('detail', hash.slice(5));
+        root.scrollIntoView({ block: 'start' });
+        return;
+      }
+      if (hash.startsWith('tactic-') && data.tactics[hash.slice(7)]) {
+        const id = hash.slice(7);
+        showView('detail', data.tactics[id].y);
+        const card = document.getElementById(`tactic-${id}`);
+        (card ?? root).scrollIntoView({ block: card ? 'center' : 'start' });
+        return;
+      }
+      showView('board');
+      if (hash === 'framework') root.scrollIntoView({ block: 'start' });
+    };
+
+    // ── Category focus ──────────────────────────────────────────────
+    const setFocus = (index: string | null) => {
+      if (!board) return;
+      if (index === null) board.removeAttribute('data-fw-focus');
+      else board.setAttribute('data-fw-focus', index);
+      $$<HTMLElement>('.fw-col').forEach((col) => {
+        const on = index !== null && col.dataset.fwCat === index;
+        if (on) col.setAttribute('data-fw-focused', '');
+        else col.removeAttribute('data-fw-focused');
+        const head = col.querySelector('[data-fw-focus]');
+        if (head) head.setAttribute('aria-pressed', String(on));
+        col.querySelectorAll<HTMLElement>('[data-fw-chips]').forEach((chips) => { chips.hidden = !on; });
+      });
+      const note = $<HTMLElement>('[data-fw-focus-note]');
+      if (note) {
+        note.hidden = index === null;
+        const name = note.querySelector('[data-fw-focus-name]');
+        const head = index !== null ? board.querySelector(`[data-fw-cat="${index}"] .fw-col-label`) : null;
+        if (name && head) name.textContent = head.textContent;
+      }
+    };
+    $$<HTMLButtonElement>('[data-fw-focus]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.fwFocus ?? null;
+        setFocus(board?.getAttribute('data-fw-focus') === idx ? null : idx);
+      });
+    });
+    $<HTMLButtonElement>('[data-fw-focus-clear]')?.addEventListener('click', () => setFocus(null));
+
+    // ── Drawer ──────────────────────────────────────────────────────
+    const openDrawer = (id: string) => {
+      if (!dialog || !data.tactics[id]) return;
+      const tactic = data.tactics[id];
+      const type = data.types[tactic.y];
+      drawerId = id;
+      $<HTMLElement>('[data-fw-drawer-head]')?.setAttribute('data-fw-type', tactic.y);
+      const crumb = $<HTMLElement>('[data-fw-drawer-crumb]');
+      if (crumb) crumb.textContent = `${type.c} · ${type.t}`;
+      const title = $<HTMLElement>('[data-fw-drawer-title]');
+      if (title) title.textContent = tactic.t;
+      const desc = $<HTMLElement>('[data-fw-drawer-desc]');
+      if (desc) desc.textContent = tactic.d;
+      const examples = $<HTMLElement>('[data-fw-drawer-examples]');
+      const none = $<HTMLElement>('[data-fw-drawer-none]');
+      const source = document.getElementById(`tactic-${id}`)?.querySelector('[data-fw-examples]');
+      if (examples) examples.replaceChildren(...(source ? [source.firstElementChild!.cloneNode(true)] : []));
+      if (none) none.hidden = !!source;
+      render();
+      dialog.showModal();
+    };
+    const closeDrawer = () => { dialog?.close(); };
+    $$<HTMLButtonElement>('[data-fw-drawer]').forEach((btn) => {
+      btn.addEventListener('click', () => openDrawer(btn.dataset.fwDrawer || ''));
+    });
+    $<HTMLButtonElement>('[data-fw-drawer-close]')?.addEventListener('click', closeDrawer);
+    $<HTMLButtonElement>('[data-fw-drawer-toggle]')?.addEventListener('click', () => { if (drawerId) toggle(drawerId); });
+    dialog?.addEventListener('click', (event) => {
+      // A click on the backdrop lands on the dialog element itself.
+      if (event.target === dialog) closeDrawer();
+    });
+    dialog?.addEventListener('close', () => { drawerId = null; });
+
+    // ── Play-sheet controls ─────────────────────────────────────────
+    $$<HTMLButtonElement>('[data-fw-toggle]').forEach((btn) => {
+      btn.addEventListener('click', () => toggle(btn.dataset.fwToggle || ''));
+    });
+    $$<HTMLButtonElement>('[data-fw-cov]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.fwCov || '';
+        filter = filter === id ? null : id;
+        render();
+      });
+    });
+    $<HTMLButtonElement>('[data-fw-filter-clear]')?.addEventListener('click', () => { filter = null; render(); });
+    $<HTMLButtonElement>('[data-fw-starter]')?.addEventListener('click', () => {
+      play = data.starter.filter((id) => data.tactics[id]);
+      store();
+      render();
+      say(`Loaded ${plural(play.length, L.tactic, L.tacticPlural)}.`);
+    });
+    $<HTMLButtonElement>('[data-fw-clear]')?.addEventListener('click', () => {
+      if (play.length === 0) return;
+      play = [];
+      filter = null;
+      store();
+      render();
+      say('Play sheet cleared.');
+    });
+    $<HTMLButtonElement>('[data-fw-print]')?.addEventListener('click', () => {
+      showView('play');
+      window.print();
+    });
+    $<HTMLButtonElement>('[data-fw-share]')?.addEventListener('click', async () => {
+      if (play.length === 0) {
+        say('Add something to the sheet first.');
+        return;
+      }
+      const url = new URL(location.href);
+      url.search = '';
+      url.searchParams.set('play', play.join(','));
+      url.hash = 'play-sheet';
+      const link = url.toString();
+      try {
+        await navigator.clipboard.writeText(link);
+        say('Link copied. Anyone who opens it sees this sheet and can add to their own.');
+      } catch {
+        say(`Copy this link: ${link}`);
+      }
+    });
+
+    // ── Init ────────────────────────────────────────────────────────
+    play = readStored();
+    const shared = new URLSearchParams(location.search).get('play');
+    if (shared) {
+      const incoming = shared.split(',').filter((id) => data.tactics[id] && !play.includes(id));
+      if (incoming.length) {
+        play = play.concat(incoming);
+        store();
+      }
+    }
+    render();
+    route();
+    window.addEventListener('hashchange', route);
+  });
+</script>

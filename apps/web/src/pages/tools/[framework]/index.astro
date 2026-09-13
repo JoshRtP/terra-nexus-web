@@ -1,0 +1,99 @@
+---
+// /tools/<framework>/ — one page per record in src/data/frameworks/,
+// rendering the full FrameworkViewer. Added 2026-09-13 with the Ten Types
+// of Innovation (plans/framework-viewer-plan.md).
+//
+// Breadcrumbs run through the capability family that carries the framework
+// as its `tool` section, when one does, so the page sits inside
+// Capabilities rather than floating.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+import FrameworkViewer from '../../../components/FrameworkViewer.astro';
+import { getBuildMode } from '../../../lib/build-mode.js';
+import { frameworks, FRAMEWORK_SLUGS, frameworkHref, tacticCount } from '../../../data/frameworks';
+import { capabilityFamilies, CAPABILITY_SLUGS, capabilityHref } from '../../../data/capabilities';
+
+export function getStaticPaths() {
+  return FRAMEWORK_SLUGS.map((framework) => ({ params: { framework } }));
+}
+
+const { framework: slug } = Astro.params;
+const fw = frameworks[slug!];
+if (!fw) throw new Error(`No framework record for '${slug}'`);
+const mode = getBuildMode();
+const pagePath = frameworkHref(fw.slug);
+
+const family = CAPABILITY_SLUGS.map((s) => capabilityFamilies[s]).find((f) => f.tool?.framework === fw.slug);
+const breadcrumbs = [
+  { name: 'Capabilities', path: '/capabilities/' },
+  ...(family ? [{ name: family.name, path: capabilityHref(family.slug) }] : []),
+  { name: fw.name, path: pagePath },
+];
+
+const ctaLinks = [
+  ...(family ? [{ label: family.name, href: capabilityHref(family.slug) }] : []),
+  { label: 'Our Approach & Capabilities', href: '/capabilities/' },
+  { label: 'Areas of Expertise', href: '/expertise/' },
+  { label: 'Glossary', href: '/glossary/' },
+];
+---
+
+<SiteLayout
+  title={fw.metaTitle}
+  description={fw.metaDescription}
+  canonical={pagePath}
+  breadcrumbs={breadcrumbs}
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow={fw.eyebrow}
+    title={fw.title}
+    lead={fw.lead}
+    primaryCta={{ label: 'Open the framework', href: '#framework' }}
+    secondaryCta={{ label: 'Go to the play sheet', href: '#play-sheet' }}
+  />
+
+  <section class="section" id="tool" aria-label={`${fw.name} tool`}>
+    <div class="container">
+      <FrameworkViewer framework={fw} variant="full" />
+    </div>
+  </section>
+
+  <section class="section section-alt" id="about" aria-labelledby="about-h">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">About this framework</span>
+        <div class="split-header-title">
+          <h2 id="about-h">{fw.name}: {fw.types.length} {fw.labels.typePlural}, {tacticCount(fw)} {fw.labels.tacticPlural}</h2>
+        </div>
+        <div class="split-header-lead">
+          {fw.attribution.map((para) => <p class="section-lead">{para}</p>)}
+          {family && (
+            <p class="section-lead">Terra Nexus uses it in <a href={capabilityHref(family.slug)}>{family.name}</a> work.</p>
+          )}
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Bring the framework into a session"
+    description="Tell us what you are trying to build, change, or take to market."
+    primaryCta={{ label: 'Discuss Your Strategy', href: '/contact/' }}
+    links={ctaLinks}
+  />
+</SiteLayout>
+
+<style is:global>
+  /* Print the play sheet, not the page furniture around it. Global because
+     the hero, the closing band, the header and the footer are other
+     components' elements, out of reach of a scoped selector. */
+  @media print {
+    .site-header,
+    .site-footer,
+    [data-page-hero],
+    .section-dark,
+    #about { display: none !important; }
+  }
+</style>
