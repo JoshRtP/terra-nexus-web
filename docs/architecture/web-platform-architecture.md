@@ -618,9 +618,8 @@ interaction; the buttons exist so keyboard and screen-reader users are never
 dependent on pointer geometry, which is the accessibility contract, not a
 discoverability one.
 
-Not started: migrating the seven topics still on `ExpertisePage` to this
-template. Paused at the owner's request — the Expertise family is visibly split
-until it happens.
+Complete as of 2026-09-12: all nine topics run on this template and
+`ExpertisePage` has no callers. See the wave notes below.
 
 **Third topic, and the data-shape work the first two hid (2026-09-12).**
 Agroforestry is the first topic assembled from the repo's own sources rather
@@ -661,6 +660,50 @@ remain. Two things worth recording:
   row upstream, so one is authored in `shared.ts` and marked — the same gap
   Rangeland had, now caught by a test rather than by review.
 
+**Wave 3 — the four value-chain topics (2026-09-12). All nine topics now run on
+the template**, and `components/ExpertisePage.astro` has no callers left. These
+four are the real test of the per-record fields, because none of them is about
+production at all:
+
+- **Every indicator set is different, and none is biophysical.** Supply Chains
+  runs Continuity / Supplier economics / Traceability / Emissions / Integrity;
+  Biofuels runs Carbon intensity / Feedstock quality / Regulatory qualification
+  / Chain of custody / Facility performance; Brands runs Customer relevance /
+  Claim integrity / Supply reliability / Product performance / Program
+  economics; Food Waste runs Loss generation / Material quality / Outlet value
+  / Logistics feasibility / Accounting integrity. All twenty definitions are
+  supplied inline — the shared `indicatorDefinitions` map contributes nothing
+  to any of them, which is the strongest evidence the taxonomy had to become
+  per-record.
+- **`investments.frame` earns its place.** Procurement/Transformation/Evidence,
+  Feedstock/Conversion/Qualification, Product/Claim/Channel, and
+  Generation/Recovery/Second Use. On the production topics the frame was close
+  to decorative; here it is the only thing that makes seven interventions
+  legible as a set.
+- **Pathway ordering diverges furthest.** Biofuels and Brands lead with Product
+  & Commodity Claims, Food Waste leads with Scope 3 & Insets (most of its value
+  never goes to market at all — it stays inside the business as avoided cost),
+  and all four demote Carbon & Ecosystem Credits to last with an explicit note
+  on why the fit is weak.
+- **Biofuels had no Desirability row upstream**, the third topic to hit that
+  gap. One is authored in `shared.ts` and marked. The Wave 2 test now catches
+  this at build rather than in review, which is how it was found.
+- **Biofuels carries a publication gate.** Its brief blocks the public page
+  until citations are packaged and the regulatory claims are rechecked — 45Z's
+  2030 sunset, the June 2026 45ZCF-GREET revision removing indirect land-use
+  change, and the North America feedstock restriction all move faster than the
+  page will. It ships behind the preview build's sitewide noindex, so building
+  it is safe; publishing is the gated step. The constraint is recorded in the
+  module header.
+
+The parameterised template test now covers nine topics (212 assertions, up from
+the five-topic run) and all four Wave 3 topics pass unchanged — no template
+edits were needed for any of them. The one defect browser QA found was
+content-shaped, not structural: a stat figure reading `11.2% vs 6.8%` wrapped
+and broke the stat band's baseline alignment in a ~960–1090px band, fixed by
+moving the comparison into the label. Screenshots at 1440/1024/768/390 for all
+four are in `artifacts/qa/`.
+
 Content sourcing for the remaining topics is an assembly job, not a writing one.
 Every topic has an owner-verified brief (`knowledge/expertise/briefs/`), a
 2,200–2,800 word page-copy draft and a research memo (`plans/content/`), plus
@@ -671,9 +714,12 @@ two live pages (researched, uncited, flagged); section 08 instruments are named
 and flagged for verification; sequencing is the three production topics first,
 then the four value-chain topics.
 
-Agroforestry's `enablers.tools` is deliberately empty pending the owner's
-tool-to-topic assignment — which tools honestly serve which topic is a
-product-truth call. See the owner-input block at the top of `tools.ts`.
+`enablers.tools` is deliberately empty on all seven migrated topics pending the
+owner's tool-to-topic assignment — which tools honestly serve which topic is a
+product-truth call. Section 10 and its rail entry are omitted while a topic has
+none. See the owner-input block at the top of `tools.ts`; the Food Waste
+Platform render is the obvious candidate for the Food Waste topic but the
+assignment is still the owner's.
 
 Deferred by owner decision, not omissions: structured data (BreadcrumbList /
 Service / FAQPage, to be added once on the template so all nine topics inherit

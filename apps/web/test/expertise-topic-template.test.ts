@@ -33,6 +33,10 @@ const TOPIC_SLUGS = [
   'agroforestry',
   'aquaculture',
   'biodiversity-and-ecosystem-resilience',
+  'sustainable-supply-chains',
+  'low-carbon-energy-and-biofuels',
+  'purpose-driven-food-brands-and-retailers',
+  'food-waste-prevention-diversion-recovery',
 ] as const;
 /** astro.config.ts's `site`. Canonical, og:url and og:image all resolve against it. */
 const SITE = 'https://terra.nexus';

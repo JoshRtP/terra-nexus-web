@@ -137,6 +137,224 @@ export interface QuestionGroup {
  * existed per topic in the previous pages and are lifted from them verbatim,
  * except the one row marked AUTHORED. */
 export const validationRows: Record<string, ValidationRow[]> = {
+  'food-waste-prevention-diversion-recovery': [
+    {
+      category: 'Desirability',
+      pitfall: 'The company begins with disposal rather than root causes and prevention.',
+      validation: 'Start with root-cause analysis and prevention before evaluating disposal options.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Total embedded product value is ignored in favor of hauling cost.',
+      validation: 'Account for total embedded product value, not just hauling cost, in the business case.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Materials are grouped together despite different quality and market potential.',
+      validation: 'Segment materials by quality and market potential to capture the highest value pathway.',
+    },
+    {
+      category: 'Desirability',
+      pitfall: 'Technology is selected before feedstock and output markets are validated.',
+      validation: 'Validate feedstock availability and output market demand before selecting technology.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Expected volume is inconsistent, seasonal, contaminated, or unavailable.',
+      validation: 'Profile volume, seasonality, contamination, and availability before committing to a pathway.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Food safety, liability, quality, and permitting are addressed too late.',
+      validation: 'Address food safety, liability, quality, and permitting early in the design phase.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Logistics consume the value of the proposed pathway.',
+      validation: 'Model logistics costs against pathway value before committing to a location.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'The buyer and generator have mismatched specifications or incentives.',
+      validation: 'Align buyer and generator specifications and incentives before contracting.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Waste and circularity claims use inconsistent boundaries.',
+      validation: 'Define consistent boundaries for waste and circularity claims from the outset.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Pilots launch without recurring ownership, data, or performance management.',
+      validation: 'Establish recurring ownership, data, and performance management before pilot launch.',
+    },
+  ],
+  'purpose-driven-food-brands-and-retailers': [
+    {
+      category: 'Desirability',
+      pitfall: 'The proposition begins with a sustainability message rather than a customer need.',
+      validation: 'Start with the customer need, then translate sustainability into a product that meets it.',
+    },
+    {
+      category: 'Desirability',
+      pitfall: 'The upstream benefit is not translated into a clear product advantage.',
+      validation: 'Translate upstream benefits into clear, tangible product advantages customers can see.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'The claim is broader than the evidence or supply supports.',
+      validation: 'Match claims to the evidence and supply volume that actually supports them.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Procurement and suppliers cannot deliver the required volume consistently.',
+      validation: 'Validate that procurement and suppliers can deliver required volume consistently before launch.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Product, sourcing, footprint, and marketing boundaries do not align.',
+      validation: 'Align product, sourcing, footprint, and marketing boundaries before going to market.',
+    },
+    {
+      category: 'Desirability',
+      pitfall: 'Certification is treated as the complete value proposition.',
+      validation: 'Build the value proposition around customer benefit, using certification as proof rather than the proposition itself.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Willingness to pay and total program cost are not tested.',
+      validation: 'Test willingness to pay against total program cost before committing to launch.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Legal, marketing, sustainability, and operations interpret the promise differently.',
+      validation: 'Align legal, marketing, sustainability, and operations on a shared interpretation of the promise.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Launch materials are ready before operational controls and evidence.',
+      validation: 'Complete operational controls and evidence before finalizing launch materials.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Commercial and impact performance are not reviewed together after launch.',
+      validation: 'Review commercial and impact performance together on a recurring basis after launch.',
+    },
+  ],
+  'low-carbon-energy-and-biofuels': [
+    {
+      category: 'Desirability',
+      pitfall: 'The program is designed around the incentive rather than around a proposition growers would accept.',
+      validation: 'Design the grower offer first, then check that the incentive supports it rather than defines it.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'The business case assumes every sourced bushel or tonne is traceable.',
+      validation: 'Test traceability assumptions against real sourcing conditions before building the business case.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Field inputs are accepted without adequate source documentation.',
+      validation: 'Require adequate source documentation for field inputs before accepting them.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Feedstock CI is analyzed separately from the facility pathway and commercial volume.',
+      validation: 'Analyze feedstock CI alongside facility pathway and commercial volume as one integrated model.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Premiums are based on nominal credit value rather than realizable margin.',
+      validation: 'Base premiums on realizable margin, not nominal credit value, before pricing transactions.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Producer, originator, intermediary, and facility responsibilities are unclear.',
+      validation: 'Clarify producer, originator, intermediary, and facility responsibilities before contracting.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Mass-balance rules do not match actual delivery, storage, and inventory operations.',
+      validation: 'Design mass-balance rules to match actual delivery, storage, and inventory operations.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Contracts do not allocate environmental attributes and representations clearly.',
+      validation: 'Allocate environmental attributes and representations clearly in every contract.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Spreadsheet, platform, tax, and lifecycle-model boundaries are inconsistent.',
+      validation: 'Align spreadsheet, platform, tax, and lifecycle-model boundaries before launch.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Exceptions, corrections, version changes, and unsupported supply are not governed.',
+      validation: 'Establish governance for exceptions, corrections, version changes, and unsupported supply.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Verification is treated as a final document exercise rather than a program-design requirement.',
+      validation: 'Design verification into the program from the start, not as a final document exercise.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Recurring operations are underestimated after the initial pilot.',
+      validation: 'Resource recurring operations adequately beyond the initial pilot phase.',
+    },
+  ],
+  'sustainable-supply-chains': [
+    {
+      category: 'Desirability',
+      pitfall: 'The claim is selected before the physical and commercial flow is understood.',
+      validation: 'Understand the physical and commercial flow before selecting the claim it will support.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Suppliers receive requirements without a viable economic proposition.',
+      validation: 'Give suppliers a viable economic proposition alongside sustainability requirements.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Traceability is more complex than the value it protects.',
+      validation: 'Match traceability complexity to the value it protects — no more, no less.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Chain-of-custody rules do not match actual storage, mixing, or processing.',
+      validation: 'Design chain-of-custody rules to match actual storage, mixing, and processing operations.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Technology is purchased before roles and workflows are defined.',
+      validation: 'Define roles and workflows before purchasing technology.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Product, inventory, carbon, certification, and financial systems use different boundaries.',
+      validation: 'Align product, inventory, carbon, certification, and financial systems on shared boundaries.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Contracts do not clearly allocate attributes, representations, or liabilities.',
+      validation: 'Allocate attributes, representations, and liabilities clearly in every contract.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Processing conversion and co-product allocation are poorly controlled.',
+      validation: 'Control processing conversion and co-product allocation before making claims.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Reconciliation and exception management are underestimated.',
+      validation: 'Resource reconciliation and exception management as core operating costs.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'The pilot is designed but recurring operations are not staffed or governed.',
+      validation: 'Staff and govern recurring operations before scaling beyond the pilot.',
+    },
+  ],
   'biodiversity-and-ecosystem-resilience': [
     {
       category: 'Desirability',
@@ -413,6 +631,145 @@ export const validationRows: Record<string, ValidationRow[]> = {
  * Ecosystem Services. Questions are each topic's approved `decisionGroups`,
  * lifted verbatim from its previous index.astro. */
 export const validationQuestions: Record<string, QuestionGroup[]> = {
+  'food-waste-prevention-diversion-recovery': [
+    {
+      team: 'Assessment & Prevention',
+      questions: [
+        'Where is food or material value being lost and why?',
+        'Which losses can be prevented rather than managed downstream?',
+        'What is edible, safe, stable, and commercially usable?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Pathway & Commercial Decisions',
+      questions: [
+        'Which outlet preserves the highest practical value?',
+        'Is the material consistent enough to support a customer or technology?',
+        'What quality, safety, legal, logistics, and liability requirements apply?',
+        'What are the complete economics, including embedded value and avoided cost?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Technology, Partners & Scale',
+      questions: [
+        'Which technologies and partners fit the operating environment?',
+        'Who owns the material, output, claim, and environmental attribute?',
+        'How will the program scale without shifting cost or impact elsewhere?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+  ],
+  'purpose-driven-food-brands-and-retailers': [
+    {
+      team: 'Strategy & Commercial Leaders',
+      questions: [
+        'Which customer problem or category opportunity should the proposition address?',
+        'Is the sustainability or purpose benefit material to customer choice?',
+        'What price and margin are supportable?',
+        'Who funds upstream performance and who captures downstream value?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Product, Sourcing & Operations',
+      questions: [
+        'Which product, sourcing, packaging, or service changes are required?',
+        'Can suppliers and operations deliver the promise at the required scale?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Claims, Evidence & Communication',
+      questions: [
+        'What evidence, traceability, certification, or assurance supports the claim?',
+        'How should the claim differ by market, channel, customer, or product format?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+    {
+      team: 'Governance & Organizational Alignment',
+      questions: [
+        'How will legal, marketing, sustainability, procurement, product, and sales share accountability?',
+        'What happens when supply, evidence, regulation, or customer expectations change?',
+      ],
+      capHref: '/capabilities/corporate-sustainability/',
+      capName: 'Corporate Sustainability',
+    },
+  ],
+  'low-carbon-energy-and-biofuels': [
+    {
+      team: 'Strategy & Value',
+      questions: [
+        'Which feedstock, geography, and facility opportunities fit the strategy?',
+        'What value is available per unit and at total commercial volume?',
+        'What premium can be paid and how should value be shared?',
+        'Who owns the attribute and makes each representation?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Supply, Evidence & Traceability',
+      questions: [
+        'How much supply is commercially available and verifiable?',
+        'Which producer data must be direct, documented, modeled, or independently reviewed?',
+        'How should existing practices, new adoption, and untraceable supply be treated?',
+        'What chain-of-custody and eligible-volume controls apply at each delivery point?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Pathway & Operations',
+      questions: [
+        'How does feedstock CI connect to the applicable fuel pathway and facility assumptions?',
+        'What recurring operating model is required for tax, customer, regulatory, and assurance scrutiny?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+  ],
+  'sustainable-supply-chains': [
+    {
+      team: 'Strategy, Sourcing & Commercial Leaders',
+      questions: [
+        'Which products, suppliers, sourcing regions, and impacts should be prioritized?',
+        'What level of traceability is required for the decision or claim?',
+        'Which chain-of-custody model fits the product and market?',
+        'How should supplier costs, premiums, incentives, and value be allocated?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Operations, Data & Claims Teams',
+      questions: [
+        'Which data must originate upstream and which can be calculated downstream?',
+        'How will materials, attributes, and claims be reconciled through processing?',
+        'Who owns each attribute and who may use it?',
+        'What evidence and controls are proportionate to the commercial value?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Governance & Risk Teams',
+      questions: [
+        'How should procurement, sustainability, operations, finance, technology, legal, and sales share accountability?',
+        'How will the program manage exceptions, unsupported supply, and changing requirements?',
+      ],
+      capHref: '/capabilities/corporate-sustainability/',
+      capName: 'Corporate Sustainability',
+    },
+  ],
   'biodiversity-and-ecosystem-resilience': [
     {
       team: 'Strategy & Nature Assessment',
