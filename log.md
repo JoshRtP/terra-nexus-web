@@ -853,3 +853,51 @@ merged.
   zero console errors, old URL returns 404, new post listed on `/insights/`.
 * **Follow-up worth doing**: fixtures should carry `editorialStatus: draft`,
   not `approved`, so a build-mode change can never publish them.
+
+## 2026-09-12 — Insights article: layout, spacing and callout pass
+
+Owner review of the first real article, with three marked-up issues. Work run
+against the `terra-nexus-design-system` skill.
+
+* **Alignment (the real one, not marked but underneath the others)**: the
+  article header sat in the full 75rem `.container` with `max-width:
+  var(--max-width-text)` on the `h1`/excerpt, so it left-aligned at the wide
+  container's edge — while `.insight-body` is a 44rem *centred* column. Title
+  and prose were on two different spines, ~240px apart at 1440. The header's
+  wrapper now carries the canonical `.text-container` primitive alongside
+  `.container`, so title, standfirst, byline, body, callout, CTA and author
+  card all share one left edge. Measured at 1440/1024/768/390 — identical
+  `left` for every element at every viewport.
+* **Spacing** (both "space" marks): `h1` had no bottom margin (the global
+  `h1–h6 { margin: 0 }` reset) and the excerpt none either, so title,
+  standfirst and byline were flush against each other. Now `--space-5` and
+  `--space-6`, with header bottom padding `--space-8` → `--space-10`.
+* **Heading line breaks** (the arrowed h2): `text-wrap: balance` on the `h1`
+  and on body `h2`/`h3`. That alone did not fix the marked heading — "This work
+  runs on trust that takes years to build" measured 689px in a 656px column, so
+  it broke regardless. Since it was copy written this session rather than
+  owner-approved copy, it was shortened to "Trust here takes years to build"
+  (438px). All four headings now render on one line at 1440; two wrap to two
+  balanced lines at 390, which is correct.
+* **Callout formatting**: `insight` and `warning` both used
+  `--color-accent-bg`, so an editorial aside rendered in the same alarm-pink as
+  a warning. `insight` now uses the site's sky supporting colour
+  (`--c-sky-50`/`200`/`600`), and the maroon accent is reserved for `warning`
+  where its urgency is wanted. Added a 1px border so the box reads as a
+  contained object, and the label now carries the variant's colour.
+* **Two accessibility bugs found while measuring, both pre-existing**:
+  - `.insight-meta` (the byline) used `--color-text-muted` (#94a3b8), 2.56:1 on
+    white — well under the 4.5:1 AA floor. Now `--c-secondary-500`, 4.76:1.
+  - The callout title was rendering body-navy rather than its own colour. This
+    is exactly the cascade trap the design-system skill documents from M7
+    session 2: `.insight-body :global(p:not(...))` outranks an MDX component's
+    own scoped rule, and `.mdx-callout-title` was missing from the exclusion
+    list — so it had been wrong since the component was written. Added to the
+    list; the label now resolves to `--c-sky-700` at 6.62:1.
+* **QA**: 1440/1024/768/390, screenshots in `artifacts/qa/`
+  (`...-1440-final.png`, `...-390-v2.png`). Zero console errors, no horizontal
+  overflow, spine verified numerically at each width rather than by eye.
+* **Note for future MDX components**: any component that sets its own colour on
+  a `<p>` must be added to the `.insight-body` exclusion list, or it silently
+  renders in body-navy. That list is now three entries and is the third time
+  this trap has bitten.
