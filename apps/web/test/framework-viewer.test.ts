@@ -17,11 +17,16 @@ import {
   frameworks,
   FRAMEWORK_SLUGS,
   tenTypesOfInnovation,
+  sustainabilityChessboard,
+  sustainabilityEnterpriseValueMap,
   flatTactics,
+  flatValueTree,
+  codeUnder,
   tacticCount,
   tacticId,
   validateFramework,
   frameworkHref,
+  TOOLS_INDEX_PATH,
   type Framework,
 } from '../src/data/frameworks';
 import { capabilityFamilies } from '../src/data/capabilities';
@@ -89,6 +94,52 @@ describe('framework records', () => {
     expect(() => validateFramework(badColour)).toThrow(/not a six-digit hex/);
   });
 
+  it('the Chessboard is a 2×2 matrix: 4 quadrants with distinct cells, 16 approaches, 64 levers', () => {
+    const fw = sustainabilityChessboard;
+    expect(fw.layout).toBe('matrix');
+    expect(fw.matrix).toBeDefined();
+    expect(fw.categories.length).toBe(4);
+    expect(new Set(fw.categories.map((c) => c.cell!.join(','))).size).toBe(4);
+    expect(fw.types.length).toBe(16);
+    expect(tacticCount(fw)).toBe(64);
+    for (const c of fw.categories) expect(fw.types.filter((t) => t.category === c.name).length).toBe(4);
+  });
+
+  it('the Value Map crosses 9 areas with a 40-line tree; every action sits on a real line', () => {
+    const fw = sustainabilityEnterpriseValueMap;
+    expect(fw.types.length).toBe(9);
+    expect(tacticCount(fw)).toBe(893);
+    const nodes = flatValueTree(fw.valueMap!.tree);
+    const codes = new Set(nodes.map((n) => n.node.code));
+    expect(nodes.filter((n) => !n.node.children).length).toBe(40);
+    expect(fw.valueMap!.tree.map((r) => r.code)).toEqual(['rg', 'om', 'ae', 'ex']);
+    for (const x of flatTactics(fw)) {
+      expect(x.tactic.at!.length).toBeGreaterThan(0);
+      for (const code of x.tactic.at!) expect(codes.has(code), code).toBe(true);
+    }
+    // Every action reaches a root, so the root-level map has no orphan.
+    const roots = fw.valueMap!.tree.map((r) => r.code);
+    for (const x of flatTactics(fw)) expect(x.tactic.at!.some((c) => roots.some((r) => codeUnder(c, r)))).toBe(true);
+  });
+
+  it('the validator rejects matrix and value-map mistakes', () => {
+    const noCell = clone(sustainabilityChessboard);
+    delete noCell.categories[0].cell;
+    expect(() => validateFramework(noCell)).toThrow(/has no cell/);
+
+    const sharedCell = clone(sustainabilityChessboard);
+    sharedCell.categories[1].cell = [...sharedCell.categories[0].cell!];
+    expect(() => validateFramework(sharedCell)).toThrow(/share matrix cell/);
+
+    const badLine = clone(sustainabilityEnterpriseValueMap);
+    badLine.types[0].tactics[0].at = ['rg.nope'];
+    expect(() => validateFramework(badLine)).toThrow(/unknown value line/);
+
+    const noLine = clone(sustainabilityEnterpriseValueMap);
+    noLine.types[0].tactics[0].at = [];
+    expect(() => validateFramework(noLine)).toThrow(/sits on no value line/);
+  });
+
   it('every registered framework is carried by at most one capability family', () => {
     const carriers = Object.values(capabilityFamilies).filter((f) => f.tool).map((f) => f.tool!.framework);
     for (const slug of carriers) expect(FRAMEWORK_SLUGS, slug).toContain(slug);
@@ -114,6 +165,7 @@ describe('built pages', () => {
     for (const slug of FRAMEWORK_SLUGS) html[slug] = await readFile(pageFor(frameworkHref(slug)), 'utf8');
     html.strategy = await readFile(pageFor('/capabilities/strategy-and-innovation/'), 'utf8');
     html.hub = await readFile(pageFor('/capabilities/'), 'utf8');
+    html.tools = await readFile(pageFor(TOOLS_INDEX_PATH), 'utf8');
   }, 240_000);
 
   describe.each(FRAMEWORK_SLUGS)('tool page: %s', (slug) => {
@@ -143,8 +195,13 @@ describe('built pages', () => {
 
     it('uses real controls: buttons for every add, chip and drawer trigger, no keyboard shims, no fake share', () => {
       const tactics = tacticCount(fw());
-      expect(count(page(), /<button type="button" class="fw-add"/g)).toBe(tactics);
-      expect(count(page(), /<button type="button" class="fw-chip"/g)).toBe(tactics);
+      // Chips only on types with 30 tactics or fewer; larger types are dense rows.
+      const chipTactics = fw().types.filter((t) => t.tactics.length <= 30).reduce((n, t) => n + t.tactics.length, 0);
+      expect(count(page(), /<button type="button" class="fw-add" data-fw-toggle=/g)).toBe(tactics);
+      expect(count(page(), /<button type="button" class="fw-chip"/g)).toBe(chipTactics);
+      for (const t of fw().types) {
+        if (t.tactics.length >= 25) expect(page()).toMatch(new RegExp(`id="type-${t.id}"[\\s\\S]*?class="fw-tactics fw-tactics-dense"`));
+      }
       expect(page()).not.toMatch(/role="button"/);
       expect(page()).not.toMatch(/tabindex="0"/);
       expect(page()).not.toMatch(/mockup/i);
@@ -191,12 +248,50 @@ describe('built pages', () => {
     expect(ids.indexOf('offerings')).toBeGreaterThan(ids.indexOf('tool'));
   });
 
-  it('the hub and the footer link to the tool', () => {
+  it('the hub links to the Strategy tool and the footer links to the tools index', () => {
     const href = frameworkHref('ten-types-of-innovation');
     expect(html.hub).toContain(`href="${href}" class="hub-offering-link"`);
     // Footer anchors carry Astro's scoped-style attribute, so match loosely.
-    const footerLink = new RegExp(`<a href="${href}"[^>]*>Ten Types of Innovation</a>`);
+    const footerLink = new RegExp(`<a href="${TOOLS_INDEX_PATH}"[^>]*>Framework Tools</a>`);
     expect(html.hub).toMatch(footerLink);
     expect(html.strategy).toMatch(footerLink);
+  });
+
+  it('the tools index lists every framework with its counts and links to its page', () => {
+    expect(html.tools).toContain(`<link rel="canonical" href="${SITE}${TOOLS_INDEX_PATH}">`);
+    for (const slug of FRAMEWORK_SLUGS) {
+      const fw = frameworks[slug];
+      expect(html.tools).toContain(`href="${frameworkHref(slug)}"`);
+      expect(html.tools).toContain(encode(fw.name));
+      expect(html.tools).toContain(`${tacticCount(fw)} ${fw.labels.tacticPlural}`);
+    }
+    expect(count(html.tools, /\sstyle="/g)).toBe(0);
+  });
+
+  it('the Chessboard renders as a matrix with its axis labels, and the Value Map with its root grid', () => {
+    const cb = sustainabilityChessboard;
+    const cbPage = html[cb.slug];
+    expect(cbPage).toContain('class="fw-board fw-board-matrix"');
+    for (const label of [cb.matrix!.xLabel, cb.matrix!.yLabel, cb.matrix!.xLow, cb.matrix!.xHigh, cb.matrix!.yLow, cb.matrix!.yHigh]) {
+      expect(cbPage).toContain(encode(label));
+    }
+    expect(cbPage).not.toContain('data-fw-view="map"');
+
+    const vm = sustainabilityEnterpriseValueMap;
+    const vmPage = html[vm.slug];
+    expect(vmPage).toContain('data-fw-view="map"');
+    expect(vmPage).toContain('href="#value-map"');
+    expect(vmPage).toContain(`data-fw-map-cols="${vm.valueMap!.tree.length}"`);
+    for (const root of vm.valueMap!.tree) expect(vmPage).toContain(`data-fw-map-col="${root.code}"`);
+    // One root cell per area per driver; counts sum to at least the action
+    // total (an action on two lines counts twice).
+    expect(count(vmPage, /data-fw-map-cell="/g)).toBe(vm.types.length * vm.valueMap!.tree.length);
+    const cellTotal = Array.from(vmPage.matchAll(/data-fw-map-cell="[^"]+"[^>]*>\s*(\d+|—)\s*</g))
+      .map((m) => (m[1] === '—' ? 0 : Number(m[1])))
+      .reduce((a, b) => a + b, 0);
+    expect(cellTotal).toBeGreaterThanOrEqual(tacticCount(vm));
+    // The Value Map has no examples, so no example furniture renders.
+    expect(vmPage).not.toContain('No examples yet');
+    expect(vmPage).not.toContain('In the field');
   });
 });

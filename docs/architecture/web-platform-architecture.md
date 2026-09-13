@@ -106,11 +106,14 @@ form's submission endpoint.
   visitor-facing form has to work in every deploy). See
   `plans/contact-form-production.md` for the full design and remaining
   setup steps.
-- `/tools/{framework slug}` — interactive framework viewer, one page per
-  record in `src/data/frameworks/` (`getStaticPaths()`, static). First:
-  `/tools/ten-types-of-innovation` (2026-09-13, `plans/framework-viewer-plan.md`).
-  Linked from the Strategy & Innovation family page, the hub and the footer;
-  deliberately not a top-level nav item (owner decision).
+- `/tools`, `/tools/{framework slug}` — the framework tools index and one
+  interactive viewer page per record in `src/data/frameworks/`
+  (`getStaticPaths()`, static): `ten-types-of-innovation`,
+  `sustainability-chessboard`, `sustainability-enterprise-value-map`
+  (all 2026-09-13, `plans/framework-viewer-plan.md`). The Ten Types is also
+  embedded compact on the Strategy & Innovation family page and linked from
+  the hub; the footer links to `/tools/`. Deliberately not a top-level nav
+  item (owner decision).
 - `/insights`, `/insights/[slug]` (added M3 — Keystatic `posts` collection,
   `getStaticPaths()` from Astro Content Collections, `prerender = true`)
 - `/robots.txt` (dynamic; emits `noindex,nofollow` + disallow when `TNX_BUILD_MODE=preview`)
@@ -810,6 +813,17 @@ publish is listed in each data module's header comment.
   breadcrumbs through that family. Strategy & Innovation carries the Ten
   Types. To add a framework: a record, an entry in the registry, a `tool`
   section on the family that uses it.
+- **Second and third frameworks (same day)** added three optional
+  behaviours, each driven by the record: a `matrix` layout (the
+  Sustainability Chessboard's four strategies placed by `cell` on a 2×2
+  with axis labels), dense rows for a type with 25 or more tactics and no
+  board chips above 30 (the Enterprise Value Map's 60 to 141 actions per
+  area), and a `valueMap` (a second hierarchy crossed with the types: the
+  Value Map view counts actions per area × value-tree branch, drills the
+  tree, lists a cell's actions, and the play sheet gains a plays-by-value-
+  line table). The map's root level is server-rendered; drills re-render
+  from a JSON blob that carries only each tactic's type and value-line
+  codes, titles being read back from the cards in the DOM.
 - Gotchas found by measurement: `overflow: hidden` on the board made it
   the scrollport for the sticky column headers below 64rem (`overflow:
   clip` instead); a scoped `@media print` rule cannot reach other

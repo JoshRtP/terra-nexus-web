@@ -1077,3 +1077,42 @@ uncommitted pre-launch batch stayed untouched. From the handover package in
   and footer links). `capability-pages.test.ts` learned the `tool`
   section.
 
+## 2026-09-13 — Framework viewer: Sustainability Chessboard and Enterprise Value Map
+
+Same branch, same day. Owner asked for the two next frameworks from the
+handover package and confirmed Deloitte provided the Value Map for Terra
+Nexus's use as a contractor (attribution wording, not permission, is the
+open item; no copyright text exists in the repo, and the records carry a
+neutral provenance comment plus an editable `attribution` paragraph).
+
+* **Records** generated from the prototype's data modules, no wording
+  changed: the Chessboard (4 quadrants placed on a 2×2 by `cell`, 16
+  approaches, 64 levers) and the Value Map (4 dimensions, 9 improvement
+  areas, 893 actions, each with the value line(s) it sits on, a 67-node
+  tree with 40 lines). The validator learned matrix cells, tree codes and
+  `at` resolution.
+* **Viewer**, all record-driven, the Ten Types page unchanged: a `matrix`
+  board with axis labels (stacked row-major below 64rem); dense one-line
+  rows for a type with 25 or more tactics and no board chips above 30; a
+  value-map view (root grid server-rendered, drills and cell lists built by
+  the script from a JSON blob of type + value-line codes only, titles read
+  back from the cards) and a plays-by-value-line table on the play sheet.
+* **`/tools/` index** listing every framework with its counts and the
+  family that carries it; the footer links there. Route table and §5.6 in
+  the architecture doc updated; plan §8.1.
+* **QA** (Chrome headless over the DevTools protocol, 1440 and 390):
+  board, focus, detail, drawer, play sheet for both; the Value Map's root
+  grid, a drill into Operating Margin, a cell pick listing 17 actions, adds
+  from the list, and the plays-by-value-line table (8 plays, 9 columns).
+  Screenshots in `artifacts/qa/`. Found and fixed by measurement: both
+  detail views overflowed at 390 (scroll width 636 and 494) because grid
+  items keep `min-width: auto` (now 0); the value map and the sheet table
+  rendered unstyled after the script rebuilt them, because Astro's scoped
+  attribute is not on script-created elements (their rules are now
+  `is:global`, fw-prefixed under `.fw`); the Chessboard's vertical axis
+  read Low at the top (a stray `column-reverse`); the axis labels now hide
+  in the stacked narrow layout. No console errors.
+* **Not wired to a family page**: which family carries the Chessboard and
+  the Value Map is an owner call. Not ported: Fusion's scoring panel, the
+  Value Map sheet's opportunity/risk marks.
+

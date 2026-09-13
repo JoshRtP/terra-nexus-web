@@ -319,3 +319,28 @@ shape (categories → types → tactics, examples optional, colours as data,
 `labels` for the nouns), add it to `records` in `index.ts`, and point a
 family's `tool.framework` at it. The route, the viewer, the tests and the
 breadcrumbs follow.
+
+### 8.1 Second and third frameworks (2026-09-13, later the same day)
+
+Owner: Deloitte provided the Value Map to Terra Nexus as a contractor, so
+its attribution is a wording question, not a permission one; and the
+Chessboard and the Value Map were asked for next.
+
+- `sustainability-chessboard.ts` (Kearney; 4 quadrants on enablement ×
+  ambition, 16 approaches, 64 levers, the "compliance climb" starter) and
+  `sustainability-enterprise-value-map.ts` (Deloitte; 4 dimensions, 9
+  improvement areas, 893 actions each tagged with its value line(s), a
+  67-node shareholder-value tree with 40 lines, the "resource productivity"
+  starter), both generated from the prototype's modules with no wording
+  changed. Neither has examples in the source.
+- The viewer gained a `matrix` layout, dense rows for large types, and a
+  value-map view with a plays-by-value-line table on the play sheet. All
+  three are record-driven; the Ten Types page is unchanged.
+- `/tools/` index page; the footer links there rather than to each tool.
+- Neither new framework is wired to a capability family page yet (a family
+  carries one `tool`); which family, if any, is an owner call. Both have
+  routes, breadcrumbs through Capabilities, and the index card.
+- Not ported: the prototype's per-lever scoring panel (Fusion only) and the
+  Value Map play sheet's opportunity/risk dot marking. The WWF 2050
+  Criteria and Sustainability Fusion remain in the zip.
+
