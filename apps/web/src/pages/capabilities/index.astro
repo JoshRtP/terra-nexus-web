@@ -1,23 +1,78 @@
 ---
+// Capabilities & Approach — one scrollable hub.
+//
+// Rebuilt 2026-09-13 (owner decision, Option C in
+// plans/capabilities-consolidation-plan.md): the hub carries the approach
+// (six lifecycle stages at real depth), the four market mechanisms, and the
+// five capability families at summary depth, each linking to its child page.
+// The children stay as the deep service taxonomies for people who want them.
+// The previous hub was a thin index whose "Our Approach" section named the
+// six stages differently from the homepage and every expertise topic.
+//
+// Everything renders from shared data: `stages` in data/lifecycle.ts (the
+// homepage Approach band and every expertise topic use the same record),
+// `stageDetails` in data/capabilities/approach.ts, `marketMechanisms`
+// (the homepage's Our Markets section renders the same four) and
+// `capabilityFamilies`. The hub cannot drift from the pages it summarises.
+//
+// COPY PROVENANCE — no new copy on this page:
+//  * Hero: unchanged from the previous hub.
+//  * Approach header: the homepage's How We Work heading and its follow-up
+//    paragraph ("As an integrated services provider…"). The previous hub's
+//    heading here was "Our Approach" under an "Our Approach" eyebrow.
+//  * Markets header: the homepage's Our Markets heading, with the Carbon &
+//    Ecosystem Services page's own two mechanism-section paragraphs as lead.
+//  * Delivery header: the previous hub's "One Engagement, Multiple
+//    Capabilities" heading and paragraph, which sat in a separate closing
+//    section under an "Integrated Support" eyebrow. Its row of five tags
+//    (Strategy, Investment, …) is dropped: the five family entries directly
+//    below are that list.
+//  * Closing band: unchanged, plus the onward-link row every expertise topic
+//    closes with.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
+import SectionRail from '../../components/SectionRail.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
-import { stages, capabilityAreas } from '../../data/lifecycle';
-import { stageDetails } from '../../data/capabilities';
+import MechanismSelector from '../../components/MechanismSelector.astro';
+import { stages } from '../../data/lifecycle';
+import { marketMechanisms } from '../../data/market-mechanisms';
+import { capabilityFamilies, CAPABILITY_SLUGS, stageDetails, capabilityHref } from '../../data/capabilities';
+
 const mode = getBuildMode();
 
-// The six stages render from data/lifecycle.ts — the same record the
-// homepage Approach band and every expertise topic use — with this page's
-// per-stage bullet lists from data/capabilities/approach.ts. Until
-// 2026-09-13 this page carried its own six-item array whose titles
-// disagreed with that record on four of six stages.
 const approach = stages.map((stage) => ({ ...stage, items: stageDetails[stage.id] }));
+const families = CAPABILITY_SLUGS.map((slug) => capabilityFamilies[slug]);
+
+// Rail labels only: the full family names are far too long for the rail.
+const railLabel: Record<string, string> = {
+  'strategy-and-innovation': 'Strategy',
+  'financial-investments-and-new-venture-development': 'Investment',
+  'sustainable-supply-chain-and-operations': 'Supply Chain',
+  'corporate-sustainability': 'Sustainability',
+  'carbon-and-ecosystem-services': 'Carbon & Ecosystems',
+};
+const railSections = [
+  { id: 'approach', label: 'Approach' },
+  { id: 'markets', label: 'Markets' },
+  ...families.map((f) => ({ id: f.slug, label: railLabel[f.slug] ?? f.name })),
+].map((entry, i) => ({ ...entry, n: String(i + 1).padStart(2, '0') }));
+
+// Each family entry carries the same numeral the rail gives it.
+const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
+
+const ctaLinks = [
+  { label: 'Areas of Expertise', href: '/expertise/' },
+  { label: 'Who We Work With', href: '/who-we-work-with/' },
+  { label: 'Digital Solutions', href: '/digital-solutions/' },
+  { label: 'Glossary', href: '/glossary/' },
+];
 ---
 
 <SiteLayout
   title="Capabilities | Terra Nexus"
   description="Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
+  canonical="/capabilities/"
   preview={mode === 'preview'}
 >
   <PageHero
@@ -28,57 +83,96 @@ const approach = stages.map((stage) => ({ ...stage, items: stageDetails[stage.id
     secondaryCta={{ label: 'Explore Our Expertise', href: '/expertise/' }}
   />
 
-  <section class="section" aria-labelledby="approach-heading">
+  <SectionRail
+    sections={railSections}
+    revealAfter="[data-page-hero]"
+    ariaLabel="Capabilities, by section"
+  />
+
+  {/* ── Approach: the six stages ─────────────────────────────────────── */}
+  <section class="section" id="approach" aria-labelledby="approach-heading">
     <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Our Approach</span>
-        <h2 id="approach-heading">Our Approach</h2>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Our Approach</span>
+        <div class="split-header-title">
+          <h2 id="approach-heading">Terra Nexus Manages the Full Development Lifecycle</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">As an integrated services provider we create long-term continuity and interoperability between partners. We proactively manage audit and marketplace risks throughout the full commercialization lifecycle. That means high-quality, commercially viable, and audit-ready assets from the start.</p>
+        </div>
       </header>
-      <div class="workstream-grid">
+
+      <ol class="card-entries" role="list">
         {approach.map((stage) => (
-          <article class="card-plain">
-            <h3>{stage.title}</h3>
-            <ul class="bullet-list">
+          <li class="card card-static card-entry" id={`stage-${stage.id}`}>
+            <div class="card-entry-head">
+              <span class="numbered-index card-entry-index" aria-hidden="true">{stage.n}</span>
+              <h3>{stage.title}</h3>
+              <p class="hub-stage-desc">{stage.description}</p>
+            </div>
+            <ul class="dot-list" role="list">
               {stage.items.map((item) => <li>{item}</li>)}
             </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {/* ── Markets: the four mechanisms ─────────────────────────────────── */}
+  <section class="section section-alt" id="markets" aria-labelledby="markets-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Our Markets</span>
+        <div class="split-header-title">
+          <h2 id="markets-heading">We turn environmental performance into value the market will recognize</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">Environmental performance can reach the market by more than one route. Which route fits depends on what actually changed, where it happened, who holds the right to claim it, how it was quantified, how the attribute moves, and what the buyer at the end needs to purchase, report, or say in public.</p>
+          <p class="section-lead">Most programs come apart at the joints between those answers rather than on the science. Connecting them is the work.</p>
+        </div>
+      </header>
+
+      <MechanismSelector mechanisms={marketMechanisms} variant="overview" />
+
+      <div class="section-cta">
+        <a href={`${capabilityHref('carbon-and-ecosystem-services')}#mechanisms`} class="btn btn-secondary">Explore the market mechanisms in depth</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Delivery: the five families ──────────────────────────────────── */}
+  <section class="section" id="families" aria-labelledby="delivery-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Our Delivery</span>
+        <div class="split-header-title">
+          <h2 id="delivery-heading">One Engagement, Multiple Capabilities</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">A single engagement may require strategy, finance, operations, sustainability, and environmental-market capabilities working together. Terra Nexus organizes the work around the client functions that own each decision while integrating the complete path to value.</p>
+        </div>
+      </header>
+
+      <div class="card-entries">
+        {families.map((family) => (
+          <article class="card card-static card-entry" id={family.slug}>
+            <div class="card-entry-head">
+              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(family.slug)}</span>
+              <h3><a href={capabilityHref(family.slug)} class="hub-family-link">{family.name}</a></h3>
+              <p class="hub-family-summary">{family.summary}</p>
+            </div>
+            <div>
+              <span class="field-label hub-field">Offerings</span>
+              <ul class="dot-list" role="list">
+                {family.offerings.map((offering) => <li>{offering.name}</li>)}
+              </ul>
+              <p class="hub-family-cta">
+                <a href={capabilityHref(family.slug)} class="btn btn-secondary">Explore {family.name}</a>
+              </p>
+            </div>
           </article>
         ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" aria-labelledby="delivery-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Our Delivery</span>
-        <h2 id="delivery-heading">Our Delivery</h2>
-      </header>
-      <div class="card-grid">
-        {capabilityAreas.map((cap) => (
-          <a href={`/capabilities/${cap.slug}/`} class="card-link">
-            <article class="card">
-              <h3>{cap.title}</h3>
-              <p>{cap.description}</p>
-            </article>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow">Integrated Support</span>
-        <h2>One Engagement, Multiple Capabilities</h2>
-        <p class="section-lead">A single engagement may require strategy, finance, operations, sustainability, and environmental-market capabilities working together. Terra Nexus organizes the work around the client functions that own each decision while integrating the complete path to value.</p>
-      </header>
-      <div class="pathway-tags">
-        <span class="tag">Strategy</span>
-        <span class="tag">Investment</span>
-        <span class="tag">Operations</span>
-        <span class="tag">Sustainability</span>
-        <span class="tag">Environmental Markets</span>
       </div>
     </div>
   </section>
@@ -87,40 +181,27 @@ const approach = stages.map((stage) => ({ ...stage, items: stageDetails[stage.id
     heading="Discuss Your Challenge"
     description="Tell us what you are evaluating, building, or trying to improve."
     primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    links={ctaLinks}
   />
 </SiteLayout>
 
 <style>
-  .pathway-tags { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 var(--space-4); }
-  /* ── Our Approach ── */
-  .workstream-grid {
-    display: grid;
-    gap: var(--space-6);
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 40rem) { .workstream-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 64rem) { .workstream-grid { grid-template-columns: repeat(3, 1fr); } }
-  .bullet-list {
-    list-style: none;
-    padding: 0;
+  /* .card p sets the small size; the stage description and family summary
+     are each entry's lead and read at body size. */
+  .hub-stage-desc,
+  .hub-family-summary {
     margin: 0;
+    font-size: var(--text-base);
   }
-  .bullet-list li {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    padding-left: var(--space-4);
-    position: relative;
-    margin-bottom: var(--space-2);
-    line-height: var(--line-normal);
+  .hub-family-link {
+    color: inherit;
+    text-decoration: none;
   }
-  .bullet-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.6em;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--c-sky-600);
+  .hub-family-link:hover { color: var(--c-sky-700); }
+  .hub-family-link:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
   }
+  .hub-field { margin-bottom: var(--space-4); }
+  .hub-family-cta { margin: var(--space-6) 0 0; }
 </style>
