@@ -273,32 +273,6 @@ ul, ol { margin: 0; padding: 0; }
   padding-inline: var(--space-6);
 }
 .text-container { max-width: var(--max-width-text); }
-
-/* .split-header — section header that fills the column: the eyebrow spans, then
-   the heading sits left against the lead on the right. Promoted out of
-   index.astro (M7 vocabulary, 2026-09-13) once /who-we-work-with/ became its
-   third consumer; a stacked header leaves ~45% of the row empty at 1440. */
-.split-header {
-  display: grid;
-  grid-template-columns: minmax(16rem, 25rem) 1fr;
-  grid-template-areas: "eyebrow eyebrow" "title lead";
-  column-gap: var(--space-10);
-  row-gap: var(--space-4);
-  align-items: start;
-}
-.split-header-eyebrow { grid-area: eyebrow; margin-bottom: 0; }
-.split-header-title { grid-area: title; }
-.split-header-lead { grid-area: lead; }
-.split-header-title h2 { margin-top: 0; }
-.split-header-lead .section-lead { max-width: none; margin-top: 0; }
-.split-header-lead .section-lead + .section-lead { margin-top: var(--space-3); }
-@media (max-width: 56rem) {
-  .split-header {
-    grid-template-columns: 1fr;
-    grid-template-areas: "eyebrow" "title" "lead";
-    row-gap: var(--space-3);
-  }
-}
 .narrow-container { max-width: var(--max-width-narrow); }
 
 /* Accessibility */
@@ -348,6 +322,38 @@ ul, ol { margin: 0; padding: 0; }
   color: var(--color-text-secondary);
   max-width: var(--max-width-text);
   line-height: var(--line-relaxed);
+}
+
+/* NOTE ON ORDER: .split-header-lead .section-lead and .section-header
+   .section-lead have identical specificity, so this block MUST stay after the
+   rule above or the lead re-inherits its top margin and 44rem cap. Inside
+   index.astro the Astro scope attribute gave it the extra specificity to win
+   anywhere; as a global rule it only wins on source order. Regression found in
+   owner review the same day it was promoted (2026-09-13). */
+/* .split-header — section header that fills the column: the eyebrow spans, then
+   the heading sits left against the lead on the right. Promoted out of
+   index.astro (M7 vocabulary, 2026-09-13) once /who-we-work-with/ became its
+   third consumer; a stacked header leaves ~45% of the row empty at 1440. */
+.split-header {
+  display: grid;
+  grid-template-columns: minmax(16rem, 25rem) 1fr;
+  grid-template-areas: "eyebrow eyebrow" "title lead";
+  column-gap: var(--space-10);
+  row-gap: var(--space-4);
+  align-items: start;
+}
+.split-header-eyebrow { grid-area: eyebrow; margin-bottom: 0; }
+.split-header-title { grid-area: title; }
+.split-header-lead { grid-area: lead; }
+.split-header-title h2 { margin-top: 0; }
+.split-header-lead .section-lead { max-width: none; margin-top: 0; }
+.split-header-lead .section-lead + .section-lead { margin-top: var(--space-3); }
+@media (max-width: 56rem) {
+  .split-header {
+    grid-template-columns: 1fr;
+    grid-template-areas: "eyebrow" "title" "lead";
+    row-gap: var(--space-3);
+  }
 }
 
 /* Eyebrow label */

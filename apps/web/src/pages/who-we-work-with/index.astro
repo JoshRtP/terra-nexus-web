@@ -69,6 +69,11 @@ const railSections = railEntries.map((e, i) => ({
   ...e,
   n: String(i + 1).padStart(2, '0'),
 }));
+
+// Each entry carries the same numeral the rail gives it, so the two read as one
+// system and a 16,000px scroll has a sense of position rather than being
+// fourteen interchangeable cards.
+const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
 ---
 
 <SiteLayout
@@ -208,6 +213,7 @@ const railSections = railEntries.map((e, i) => ({
         {segments.map((seg) => (
           <article class="card card-static wwt-entry" id={seg.slug}>
             <div class="wwt-entry-head">
+              <span class="numbered-index wwt-index" aria-hidden="true">{indexFor(seg.slug)}</span>
               <h3>{seg.name}</h3>
               <p class="wwt-node">{seg.node}</p>
               {seg.examples.length > 0 && (
@@ -217,6 +223,14 @@ const railSections = railEntries.map((e, i) => ({
                   <p class="wwt-examples-note">{EXAMPLES_DISCLAIMER}</p>
                 </div>
               )}
+              <div class="wwt-links">
+                <span class="wwt-link-label">Related Expertise</span>
+                <div class="wwt-tags">
+                  {seg.expertise.map((e) => (
+                    <a href={expertiseLinks[e]} class="tag">{e}</a>
+                  ))}
+                </div>
+              </div>
             </div>
             <div class="wwt-entry-body">
               <div class="wwt-opportunity">
@@ -242,14 +256,6 @@ const railSections = railEntries.map((e, i) => ({
                 {seg.decisions.map((d) => <li>{d}</li>)}
               </ul>
 
-              <div class="wwt-links">
-                <span class="wwt-link-label">Related Expertise</span>
-                <div class="wwt-tags">
-                  {seg.expertise.map((e) => (
-                    <a href={expertiseLinks[e]} class="tag">{e}</a>
-                  ))}
-                </div>
-              </div>
             </div>
           </article>
         ))}
@@ -278,6 +284,7 @@ const railSections = railEntries.map((e, i) => ({
         {enablers.map((en) => (
           <article class="card card-static wwt-entry" id={en.slug}>
             <div class="wwt-entry-head">
+              <span class="numbered-index wwt-index" aria-hidden="true">{indexFor(en.slug)}</span>
               <h3>{en.name}</h3>
               <p class="wwt-node">{en.node}</p>
               {en.examples.length > 0 && (
@@ -378,14 +385,20 @@ const railSections = railEntries.map((e, i) => ({
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
       gap: var(--space-10);
     }
-    /* The identity column follows the reader down a long detail column. */
-    .wwt-entry-head {
-      position: sticky;
-      top: var(--space-24);
-      align-self: start;
-    }
+    /* Top-aligned with the detail column, not sticky. Sticky with a 6rem
+       offset detached the name from the card whenever the card's top was near
+       the viewport top, leaving an obvious gap above it (owner review,
+       2026-09-13). Alignment beats the small convenience of a following label. */
+    .wwt-entry-head { align-self: start; }
   }
 
+  .wwt-index {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-2xl);
+    color: var(--c-sky-500);
+    letter-spacing: 0.02em;
+  }
   .wwt-entry-head h3 {
     font-size: var(--text-2xl);
     margin: 0 0 var(--space-2);
@@ -583,8 +596,8 @@ const railSections = railEntries.map((e, i) => ({
   }
 
   .wwt-links {
-    margin-top: var(--space-8);
-    padding-top: var(--space-6);
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
     border-top: 1px solid var(--color-border);
   }
   .wwt-link-label { margin-bottom: var(--space-3); }
