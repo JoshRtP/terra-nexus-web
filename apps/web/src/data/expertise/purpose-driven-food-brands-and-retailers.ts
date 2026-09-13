@@ -363,9 +363,6 @@ export const purposeDrivenFoodBrandsAndRetailers: ExpertiseTopic = {
       {
         id: 'm03',
         n: '01',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the benefit is relevant enough to the customer to influence choice, and the evidence can carry a public claim.',
         detail: 'The dominant route here, and the most exposed. The claim is read by shoppers, retail buyers and regulators simultaneously, and marketing rules in several major markets are being tightened specifically around environmental language. Precision in the claim is what makes the premium durable.',
         examples: [
@@ -379,9 +376,6 @@ export const purposeDrivenFoodBrandsAndRetailers: ExpertiseTopic = {
       {
         id: 'm02',
         n: '02',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when the upstream reduction is needed in the company’s own inventory, or a retail customer requires it in theirs.',
         detail: 'Most food companies hold the great majority of their emissions upstream, which makes supplier investment the only route to a real reduction. The accounting question is whether the same intervention is also supporting an on-pack claim, because it cannot do both without disclosure.',
         examples: [
@@ -394,9 +388,6 @@ export const purposeDrivenFoodBrandsAndRetailers: ExpertiseTopic = {
       {
         id: 'm04',
         n: '03',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when the qualifying ingredient cannot be physically segregated to the finished product but the attribute still needs to transfer.',
         detail: 'Standard practice for commodities that commingle in processing — the certificate does the work the physical flow cannot. It also sets a limit on what the pack can say: a book-and-claim attribute supports a sourcing claim, not a statement about the ingredient in that jar.',
         examples: [
@@ -408,9 +399,6 @@ export const purposeDrivenFoodBrandsAndRetailers: ExpertiseTopic = {
       {
         id: 'm01',
         n: '04',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use where a funder outside the product’s own supply chain is paying for the outcome, and the product claim does not depend on it.',
         detail: 'The weakest fit of the four for this topic. Credits bought outside the value chain no longer support most product-level neutrality claims, and the marketing rules moving through several jurisdictions restrict the language further. Treat them as a separate corporate decision rather than part of the proposition.',
         examples: [

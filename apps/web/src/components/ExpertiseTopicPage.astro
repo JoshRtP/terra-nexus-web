@@ -62,6 +62,7 @@ import {
   ALL_INDICATORS_LABEL,
   validationRows,
   validationQuestions,
+  pathwayMechanism,
   validationLead,
   categoryToRegion,
   toolAsset,
@@ -111,11 +112,8 @@ const initialIntervention = interventions[0]?.id ?? '';
 const mechanisms: MarketMechanism[] = topic.pathways.items
   .filter((p) => p.applicable !== false)
   .map((p) => ({
-    id: p.id,
+    ...pathwayMechanism(p),
     num: p.n,
-    title: p.name,
-    carrier: p.carrier,
-    headline: p.tagline,
     summary: '',
     body: [p.detail],
     examples: '',

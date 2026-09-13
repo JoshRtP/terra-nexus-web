@@ -386,9 +386,6 @@ export const lowCarbonEnergyAndBiofuels: ExpertiseTopic = {
       {
         id: 'm03',
         n: '01',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use whenever the fuel qualifies under a regulated program, which is the central case for this topic and the reason the sector exists commercially.',
         detail: 'Carbon intensity here is a specification the fuel is bought and credited on, not a claim made about it afterwards. That makes the evidence bar higher than anywhere else in the food system: the number supports a tax position or a compliance obligation, and it is examined accordingly.',
         examples: [
@@ -402,9 +399,6 @@ export const lowCarbonEnergyAndBiofuels: ExpertiseTopic = {
       {
         id: 'm04',
         n: '02',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when qualifying feedstock cannot be physically segregated to the facility but the attribute still has to transfer with integrity.',
         detail: 'Grain systems commingle, so mass balance and book-and-claim structures do most of the work of keeping eligible volume eligible. The architecture is the control: issuance, custody, transfer and retirement have to reconcile, or the same low-CI bushel supports two claims.',
         examples: [
@@ -417,9 +411,6 @@ export const lowCarbonEnergyAndBiofuels: ExpertiseTopic = {
       {
         id: 'm02',
         n: '03',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when a corporate buyer downstream of the fuel needs the reduction in its own inventory, typically for transport or logistics emissions.',
         detail: 'The same field reduction can be claimed by the fuel program or by a corporate inventory, and it cannot be both. Deciding which, before the volume is contracted, is the practical work; the accounting is straightforward once the allocation is settled.',
         examples: [
@@ -432,9 +423,6 @@ export const lowCarbonEnergyAndBiofuels: ExpertiseTopic = {
       {
         id: 'm01',
         n: '04',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use where the field outcome is not being claimed through a fuel pathway, and a separate funder wants a transferable unit.',
         detail: 'Structurally the alternative to the fuel route rather than a complement to it: an acre’s reduction cannot support a credit and a fuel carbon-intensity score at the same time. Worth modelling as a comparison when acreage exceeds what the facility can qualify.',
         examples: [

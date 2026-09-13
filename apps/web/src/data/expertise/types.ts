@@ -101,13 +101,11 @@ export interface EvidenceLayer {
 }
 
 export interface Pathway {
-  /** Matches a market-mechanisms.ts id (m01–m04) so names, taglines and
-   * carriers stay tied to that canonical source. */
+  /** A market-mechanisms.ts id (m01–m04). Name, carrier and tagline come
+   * from that record via `pathwayMechanism` in ./shared.ts; the topic
+   * authors only what differs by topic. */
   id: string;
   n: string;
-  name: string;
-  carrier: string;
-  tagline: string;
   whenToUse: string;
   detail: string;
   /** Named protocols/programs. Owner tracks these; confirm currency before

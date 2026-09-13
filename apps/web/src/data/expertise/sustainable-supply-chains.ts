@@ -373,9 +373,6 @@ export const sustainableSupplyChains: ExpertiseTopic = {
       {
         id: 'm02',
         n: '01',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when the buyer sources from the supply shed where the change happens, which for a supply-chain program is the usual case.',
         detail: 'This is the native route for the topic. Most of a food company’s footprint is bought, so the reduction has to stay attached to the chain that produced it rather than being purchased separately. The difficulty is allocation across a chain where several parties contributed and each would like to report it.',
         examples: [
@@ -388,9 +385,6 @@ export const sustainableSupplyChains: ExpertiseTopic = {
       {
         id: 'm03',
         n: '02',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the characteristic can travel with the physical product to a customer who will pay for it, or where a regulation requires it.',
         detail: 'Certification and origin claims are the established route, and increasingly a condition of access rather than a premium. What decides feasibility is the chain-of-custody model: a claim that requires identity preservation through a commingled system will not survive.',
         examples: [
@@ -403,9 +397,6 @@ export const sustainableSupplyChains: ExpertiseTopic = {
       {
         id: 'm04',
         n: '03',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when segregation is impractical across a large supply base but the buyer still needs to procure differentiated production.',
         detail: 'Commodity systems commingle by design, which is exactly the problem book-and-claim exists to solve. The architecture carries all the risk: issuance, custody, transfer, retirement and exclusivity have to agree, and the claim language has to be honest about what was bought.',
         examples: [
@@ -418,9 +409,6 @@ export const sustainableSupplyChains: ExpertiseTopic = {
       {
         id: 'm01',
         n: '04',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use where the upstream outcome is better funded as a transferable unit than carried through the chain, typically outside the buyer’s own supply shed.',
         detail: 'Least aligned with the topic, because a credit deliberately detaches the outcome from the chain that produced it. It is the right structure when the funder is not the buyer, and the wrong one when the point of the program was the buyer’s own inventory.',
         examples: [

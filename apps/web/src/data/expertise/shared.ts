@@ -7,7 +7,8 @@
 //  * `validationRows` and `validationQuestions` are lifted per topic from each
 //    topic's previous index.astro (`validationRows` / `decisionGroups`), not
 //    retyped — except the one row marked AUTHORED below.
-//  * Pathway names, taglines and carriers follow src/data/market-mechanisms.ts.
+//  * Pathway names, taglines and carriers are READ from src/data/market-mechanisms.ts
+//    (`pathwayMechanism`), not copied.
 //  * `lifecycle` is re-exported from src/data/lifecycle.ts so stage copy has a
 //    single source shared with the homepage Approach band. Do not copy it here.
 //
@@ -17,7 +18,18 @@
 //  * each topic's `overview.stats` and `pathways[].examples` (see the topic
 //    record files).
 import { stages, type Stage } from '../lifecycle';
-import type { Indicator, ExpertiseTopic } from './types';
+import { marketMechanisms, type MarketMechanism } from '../market-mechanisms';
+import type { Indicator, ExpertiseTopic, Pathway } from './types';
+
+/** The canonical mechanism record a topic pathway refers to by id. Name,
+ * carrier and tagline are read from market-mechanisms.ts rather than retyped
+ * per topic: on 2026-09-13 all 36 per-topic copies matched it exactly, so the
+ * copies were removed and this is now the one place they live. */
+export function pathwayMechanism(p: Pick<Pathway, 'id'>): MarketMechanism {
+  const mechanism = marketMechanisms.find((m) => m.id === p.id);
+  if (!mechanism) throw new Error(`Pathway id '${p.id}' has no record in market-mechanisms.ts`);
+  return mechanism;
+}
 
 /** The six development lifecycle stages, section 09. Single source of truth
  * lives in ../lifecycle.ts and is shared with the homepage Approach band —

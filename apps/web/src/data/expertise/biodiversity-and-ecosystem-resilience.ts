@@ -386,9 +386,6 @@ export const biodiversityAndEcosystemResilience: ExpertiseTopic = {
       {
         id: 'm01',
         n: '01',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use when the outcome happens in a defined place with clear rights, and needs a funder who is not already sourcing from that landscape.',
         detail: 'A discrete, located outcome is the easiest thing to fund, which is why habitat and watershed work reaches market this way first. Biodiversity units are considerably less mature than carbon: the methods, the demand and the pricing are all still forming, and a program should be built so it stands up without that revenue.',
         examples: [
@@ -401,9 +398,6 @@ export const biodiversityAndEcosystemResilience: ExpertiseTopic = {
       {
         id: 'm02',
         n: '02',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when the priority landscape is also a sourcing region, so the outcome can be tied to the chain that depends on it.',
         detail: 'The strongest version of this topic commercially: the company funding the landscape is the one exposed to its decline. Nature reporting is converging on the same value-chain boundary climate uses, which makes a sourcing-region program legible to both.',
         examples: [
@@ -416,9 +410,6 @@ export const biodiversityAndEcosystemResilience: ExpertiseTopic = {
       {
         id: 'm03',
         n: '03',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the outcome can be tied to a specific product and a buyer will pay for verified origin or place-based sourcing.',
         detail: 'Nature claims on product are the hardest of the four to substantiate, because the outcome is landscape-scale and the claim is unit-scale. Certification and place-based sourcing programs are the practical route; a direct biodiversity claim on a package rarely survives scrutiny.',
         examples: [
@@ -431,9 +422,6 @@ export const biodiversityAndEcosystemResilience: ExpertiseTopic = {
       {
         id: 'm04',
         n: '04',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when the outcome cannot be tied to physical supply at all, but a buyer still needs to fund and account for it.',
         detail: 'Least developed for nature, and the one where double counting is most likely. A landscape outcome with several contributors and a certificate that transfers to one of them has to reconcile those two facts explicitly, or the same hectare is claimed more than once.',
         examples: [
