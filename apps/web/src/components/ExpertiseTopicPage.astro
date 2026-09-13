@@ -55,6 +55,7 @@ import { getBuildMode } from '../lib/build-mode.js';
 import type { MarketMechanism } from '../data/market-mechanisms';
 import type { ExpertiseTopic } from '../data/expertise/types';
 import { expertiseTools } from '../data/expertise/tools';
+import { segmentsForExpertise } from '../data/who-we-work-with';
 import {
   lifecycle,
   sectionRail,
@@ -145,6 +146,10 @@ const tools = topic.enablers.tools.map((ref) => {
 // The rail lists only sections that actually render. Section 10 is omitted for
 // a topic with no tools assigned yet, and a rail entry pointing at a missing
 // #enablers is a dead link.
+// Audiences this topic serves, inverted from the value-chain segments' own
+// expertise lists so the two halves of the site link both ways.
+const audiences = segmentsForExpertise[topic.slug] ?? [];
+
 const renderedSections = sectionRail.filter((s) => s.id !== 'enablers' || tools.length > 0);
 
 const ctaLinks = [
@@ -153,6 +158,8 @@ const ctaLinks = [
   topic.links.capabilities,
   topic.links.digital,
   topic.links.caseStudies,
+  // Not per-topic data: the glossary is one page and the same for all nine.
+  { label: 'Glossary', href: '/glossary/' },
 ];
 ---
 
@@ -642,6 +649,21 @@ const ctaLinks = [
       label on hover or keyboard focus, so it never permanently overlaps the
       text it is meant to navigate. */}
   <SectionRail sections={renderedSections} revealAfter=".expertise-hero" />
+
+  {/* Deliberately not a `.section` with an id: the rail and the template tests
+      both key off that shape, and this is a connector rather than a chapter. */}
+  {audiences.length > 0 && (
+    <aside class="xp-audiences" aria-labelledby="xp-audiences-heading">
+      <div class="container">
+        <h2 id="xp-audiences-heading" class="xp-audiences-label">Who This Matters To</h2>
+        <div class="xp-audiences-row">
+          {audiences.map((a) => (
+            <a href={`/who-we-work-with/#${a.slug}`} class="tag">{a.name}</a>
+          ))}
+        </div>
+      </div>
+    </aside>
+  )}
 
   <ClosingCta
     headingId="cta-h"
@@ -1190,6 +1212,28 @@ const ctaLinks = [
   .xp-tool-img { aspect-ratio: 16 / 9; }
   .xp-tool-name { font-size: var(--text-base); font-weight: var(--font-semibold); margin: 0 0 var(--space-2); text-wrap: pretty; }
   .xp-tool-text { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
+
+  /* Connector band between the last section and the closing CTA. */
+  .xp-audiences {
+    padding-block: var(--space-10);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+  .xp-audiences-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-eyebrow);
+    margin: 0 0 var(--space-4);
+  }
+  .xp-audiences-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .xp-audiences-row a { text-decoration: none; }
+  .xp-audiences-row a:hover { border-color: var(--c-sky-600); color: var(--c-sky-700); }
+  .xp-audiences-row a:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .xp-chevron { transition: none; }

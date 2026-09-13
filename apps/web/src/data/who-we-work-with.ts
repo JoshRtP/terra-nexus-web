@@ -475,6 +475,12 @@ const segmentDetail: Record<
       "Regenerative Agriculture",
       "Regenerative Rangeland",
       "Aquaculture",
+      // Added 2026-09-13 — OWNER REVIEW PLEASE. Inverting these lists to build
+      // the expertise -> audience links showed Agroforestry named by no segment
+      // at all, so that topic alone had no route back from any audience.
+      // Agricultural production is the least contestable home for it, but the
+      // editorial call is the owner's.
+      "Agroforestry",
     ],
     capabilities: [
       "Sustainable Supply Chain & Operations",
@@ -945,3 +951,32 @@ export const enablers: Enabler[] = [
     note: "Terra Nexus provides diligence and decision support, not regulated investment advice.",
   },
 ];
+
+// ─────────────────────────────────────────────────────────────────────────
+// Expertise → audience, inverted from the segments' own `expertise` lists.
+//
+// The forward mapping (which topics matter to a segment) is authored on the
+// segment. This inverts it so an expertise topic page can point back at the
+// audiences it serves without a second hand-maintained list that could quietly
+// disagree with the first. Added 2026-09-13: the two halves of the site linked
+// one way only, so a reader on Regenerative Agriculture had no route to "what
+// does this mean if I'm a commodity trader".
+// ─────────────────────────────────────────────────────────────────────────
+export const segmentsForExpertise: Record<string, Array<{ slug: string; name: string }>> = (() => {
+  const out: Record<string, Array<{ slug: string; name: string }>> = {};
+  for (const seg of segments) {
+    for (const name of seg.expertise) {
+      const href = expertiseLinks[name];
+      if (!href) continue;
+      const topicSlug = href.replace('/expertise/', '').replace(/\/$/, '');
+      (out[topicSlug] ||= []).push({ slug: seg.slug, name: seg.name });
+    }
+  }
+  // Two expertiseLinks keys alias the same Food Waste topic, so a segment can
+  // reach the same topic twice.
+  for (const key of Object.keys(out)) {
+    const seen = new Set<string>();
+    out[key] = out[key].filter((s) => (seen.has(s.slug) ? false : (seen.add(s.slug), true)));
+  }
+  return out;
+})();
