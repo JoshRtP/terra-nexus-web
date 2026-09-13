@@ -30,9 +30,37 @@ export interface StageNote {
   body: string;
 }
 
+/** The market-mechanism section (Carbon & Ecosystem Services only). The four
+ * mechanisms themselves render from ../market-mechanisms.ts; the family
+ * authors only the section header. */
+export interface MechanismsSection {
+  eyebrow: string;
+  heading: string;
+  lead: string[];
+}
+
+/** The lifecycle section (Carbon & Ecosystem Services only): the six stages
+ * from ../lifecycle.ts, each with this family's note under it. */
+export interface LifecycleSection {
+  eyebrow: string;
+  heading: string;
+  lead: string[];
+  /** Keyed by stage id (`evaluate` through `commercialize`). */
+  notes: Record<string, StageNote>;
+}
+
 export interface ComparisonCell {
   label: string;
   body: string;
+}
+
+/** The "same performance, different market architecture" band (Carbon &
+ * Ecosystem Services only). */
+export interface ComparisonSection {
+  heading: string;
+  lead: string;
+  cells: ComparisonCell[];
+  quote: string;
 }
 
 /** What each family module authors. Name, slug and one-line summary are
@@ -47,6 +75,8 @@ export interface CapabilityFamilyRecord {
   secondaryCta?: Cta;
   metaTitle: string;
   metaDescription: string;
+  /** Overview paragraphs. Empty on Carbon & Ecosystem Services, whose
+   * mechanism section carries the framing instead. */
   orientation: string[];
   offerings: Offering[];
   callout?: string;
@@ -55,12 +85,9 @@ export interface CapabilityFamilyRecord {
   ctaHeading: string;
   ctaBody: string;
   ctaButton: Cta;
-  /** Keyed by stage id from ../lifecycle.ts (`evaluate` through
-   * `commercialize`). Only Carbon & Ecosystem Services carries these today. */
-  stageNotes?: Record<string, StageNote>;
-  /** Carbon & Ecosystem Services only: the "same performance, different
-   * market architecture" comparison band. */
-  comparison?: ComparisonCell[];
+  mechanisms?: MechanismsSection;
+  lifecycle?: LifecycleSection;
+  comparison?: ComparisonSection;
 }
 
 export type CapabilityFamily = CapabilityFamilyRecord & {

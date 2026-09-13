@@ -56,11 +56,13 @@ export const capabilityHref = (slug: string) => `/capabilities/${slug}/`;
 //
 // This replaces the four templated pages' previous `relatedExpertise`
 // lists, which named all nine topics on every page and so distinguished
-// nothing. Result at time of writing: Strategy & Innovation and Sustainable
-// Supply Chain & Operations on eight topics each, Carbon & Ecosystem
-// Services on seven, Corporate Sustainability on six, Financial Investments
-// & New Venture Development on three. Agroforestry has no
-// `validationQuestions` entry, so it appears on none — owner input.
+// nothing. Result at time of writing (measured on the built pages): Strategy
+// & Innovation and Sustainable Supply Chain & Operations still name all nine
+// (their teams appear in every topic's question groups), Carbon & Ecosystem
+// Services eight, Corporate Sustainability seven, Financial Investments & New
+// Venture Development three. The two all-nine families are what the data
+// says, not a fallback; if the owner wants them narrower, the place to do it
+// is the topics' own `decisionGroups`, not a list here.
 // ─────────────────────────────────────────────────────────────────────────
 export interface RelatedTopic {
   slug: string;
