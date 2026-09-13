@@ -6,6 +6,8 @@
 // (six lifecycle stages at real depth), the four market mechanisms, and the
 // five capability families at summary depth, each linking to its child page.
 // The children stay as the deep service taxonomies for people who want them.
+// Entry numerals were removed 2026-09-13 (owner review): they did not help the
+// flow of the page. The rail keeps its numbering.
 // The previous hub was a thin index whose "Our Approach" section named the
 // six stages differently from the homepage and every expertise topic.
 //
@@ -58,9 +60,6 @@ const railSections = [
   ...families.map((f) => ({ id: f.slug, label: railLabel[f.slug] ?? f.name })),
 ].map((entry, i) => ({ ...entry, n: String(i + 1).padStart(2, '0') }));
 
-// Each family entry carries the same numeral the rail gives it.
-const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
-
 const ctaLinks = [
   { label: 'Areas of Expertise', href: '/expertise/' },
   { label: 'Who We Work With', href: '/who-we-work-with/' },
@@ -106,7 +105,6 @@ const ctaLinks = [
         {approach.map((stage) => (
           <li class="card card-static card-entry" id={`stage-${stage.id}`}>
             <div class="card-entry-head">
-              <span class="numbered-index card-entry-index" aria-hidden="true">{stage.n}</span>
               <h3>{stage.title}</h3>
               <p class="hub-stage-desc">{stage.description}</p>
             </div>
@@ -158,7 +156,6 @@ const ctaLinks = [
         {families.map((family) => (
           <article class="card card-static card-entry" id={family.slug}>
             <div class="card-entry-head">
-              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(family.slug)}</span>
               <h3><a href={capabilityHref(family.slug)} class="hub-family-link">{family.name}</a></h3>
               <p class="hub-family-summary">{family.summary}</p>
             </div>
