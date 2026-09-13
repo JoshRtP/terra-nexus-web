@@ -397,8 +397,14 @@ const segmentBase = [
 // /who-we-work-with/ renders all of it. Merged on by slug rather than
 // retyped so the approved copy above stays the single source.
 //
-// `decisions`, `expertise` and `capabilities` are lifted verbatim from the
-// retired /who-we-work-with/food-and-agribusiness-value-chain/ page.
+// `expertise` and `capabilities` are lifted verbatim from the retired
+// /who-we-work-with/food-and-agribusiness-value-chain/ page. `decisions` came
+// from there too but were reworded on 2026-09-13 at the owner's request: they
+// were first-person-plural questions ("Where should we play"), and on a page
+// addressed to eight different audiences the reader cannot tell whether "we"
+// means Terra Nexus or their own organization. They are now impersonal decision
+// statements. Terra Nexus's own voice elsewhere on the page is unambiguous and
+// was left alone.
 // `examples` come from the owner-verified records in knowledge/audiences/,
 // which carry `examples_are_illustrative: true` — see EXAMPLES_DISCLAIMER.
 // ─────────────────────────────────────────────────────────────────────────
@@ -439,9 +445,9 @@ const segmentDetail: Record<
 > = {
   "inputs-companies": {
     decisions: [
-      "Where should we play, and how do we win at the intersection of food and climate?",
-      "Which products, services, and programs create differentiated growth?",
-      "How do we translate sustainability ambition into commercial action?",
+      "Where to play, and how to win, at the intersection of food and climate",
+      "Which products, services and programs create differentiated growth",
+      "How to translate sustainability ambition into commercial action",
     ],
     expertise: ["Regenerative Agriculture", "Regenerative Rangeland"],
     capabilities: [
@@ -461,9 +467,9 @@ const segmentDetail: Record<
   },
   "agricultural-producers": {
     decisions: [
-      "Which programs and practices fit our land, operations, and markets?",
-      "How do producer economics and incentives align with buyer requirements?",
-      "How do we measure, verify, and commercialize environmental performance?",
+      "Which programs and practices fit the land, the operation and its markets",
+      "How producer economics and incentives align with buyer requirements",
+      "How to measure, verify and commercialize environmental performance",
     ],
     expertise: [
       "Regenerative Agriculture",
@@ -489,9 +495,9 @@ const segmentDetail: Record<
   },
   "commodity-traders": {
     decisions: [
-      "How do we build traceable, credibly claimed supply without fragmenting liquidity?",
-      "How do we engage producers and manage data across fragmented supply chains?",
-      "How do we commercialize environmental attributes while controlling claims risk?",
+      "How to build traceable, credibly claimed supply without fragmenting liquidity",
+      "How to engage producers and manage data across fragmented supply chains",
+      "How to commercialize environmental attributes while controlling claims risk",
     ],
     expertise: [
       "Regenerative Agriculture",
@@ -516,9 +522,9 @@ const segmentDetail: Record<
   },
   "ingredient-feed-processors": {
     decisions: [
-      "How do we source, process, and verify lower-impact ingredients and feed?",
-      "How do we turn process improvements and byproducts into commercial value?",
-      "How do we build traceability and claims that buyers and regulators accept?",
+      "How to source, process and verify lower-impact ingredients and feed",
+      "How to turn process improvements and byproducts into commercial value",
+      "How to build traceability and claims that buyers and regulators accept",
     ],
     expertise: ["Sustainable Supply Chains", "Aquaculture"],
     capabilities: [
@@ -540,9 +546,9 @@ const segmentDetail: Record<
   },
   "food-beverage-companies": {
     decisions: [
-      "How do we connect sustainability priorities to products, customers, and growth?",
-      "How do we build supplier programs that deliver Scope 3 and insetting outcomes?",
-      "How do we manage claims, certification, and commercialization across a portfolio?",
+      "How to connect sustainability priorities to products, customers and growth",
+      "How to build supplier programs that deliver Scope 3 and insetting outcomes",
+      "How to manage claims, certification and commercialization across a portfolio",
     ],
     expertise: [
       "Sustainable Supply Chains",
@@ -571,9 +577,9 @@ const segmentDetail: Record<
   },
   "food-retail-distribution": {
     decisions: [
-      "How do we build responsible sourcing into category and private-label strategy?",
-      "How do we reduce food waste and logistics impact while maintaining service?",
-      "How do we collaborate with suppliers on traceability and credible claims?",
+      "How to build responsible sourcing into category and private-label strategy",
+      "How to reduce food waste and logistics impact while maintaining service",
+      "How to collaborate with suppliers on traceability and credible claims",
     ],
     expertise: [
       "Purpose-Driven Food Brands & Retailers",
@@ -602,9 +608,9 @@ const segmentDetail: Record<
   },
   "energy-biofuels-refiners": {
     decisions: [
-      "How do we source and verify low-carbon-intensity feedstock at scale?",
-      "How do we build chain of custody and audit-ready program operations?",
-      "How do we commercialize CI outcomes and select the right partners?",
+      "How to source and verify low-carbon-intensity feedstock at scale",
+      "How to build chain of custody and audit-ready program operations",
+      "How to commercialize carbon-intensity outcomes and select the right partners",
     ],
     expertise: ["Low Carbon Energy & Biofuels", "Sustainable Supply Chains"],
     capabilities: [
@@ -624,9 +630,9 @@ const segmentDetail: Record<
   },
   "food-waste-prevention-diversion-recovery": {
     decisions: [
-      "Where are the highest-value opportunities to prevent, divert, or recover waste?",
-      "Which technologies, partners, and secondary markets are credible and scalable?",
-      "How do we measure outcomes and build claims that stand up to scrutiny?",
+      "Where the highest-value opportunities to prevent, divert or recover waste sit",
+      "Which technologies, partners and secondary markets are credible and scalable",
+      "How to measure outcomes and build claims that stand up to scrutiny",
     ],
     expertise: [
       "Food Waste Prevention, Diversion & Recovery",
