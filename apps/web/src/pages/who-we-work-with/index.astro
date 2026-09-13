@@ -220,7 +220,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
                 <div class="wwt-examples">
                   <span class="wwt-examples-label">Organizations Like</span>
                   <p class="wwt-examples-list">{seg.examples.join(' · ')}</p>
-                  <p class="wwt-examples-note">{EXAMPLES_DISCLAIMER}</p>
                 </div>
               )}
               <div class="wwt-links">
@@ -260,6 +259,8 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
           </article>
         ))}
       </div>
+
+      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
     </div>
   </section>
 
@@ -291,7 +292,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
                 <div class="wwt-examples">
                   <span class="wwt-examples-label">Organizations Like</span>
                   <p class="wwt-examples-list">{en.examples.join(' · ')}</p>
-                  <p class="wwt-examples-note">{EXAMPLES_DISCLAIMER}</p>
                 </div>
               )}
             </div>
@@ -314,14 +314,16 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
                 ))}
               </div>
 
-              <div class="wwt-scope">
+              <p class="wwt-scope">
                 <span class="wwt-scope-label">Scope</span>
-                <p>{en.note}</p>
-              </div>
+                {en.note}
+              </p>
             </div>
           </article>
         ))}
       </div>
+
+      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
     </div>
   </section>
 
@@ -416,15 +418,14 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     line-height: var(--line-relaxed);
   }
 
-  /* Examples are governed content: the disclaimer travels inside the same box
-     rather than floating under the section header, where it read as pasted
-     compliance text rather than part of the design. */
+  /* Examples sit in the identity column, which is already visually distinct, so
+     they need a label and a rule rather than a box. Four different box
+     treatments in one card (three radii, two border styles) was the reason it
+     did not read as one system — owner review, 2026-09-13. */
   .wwt-examples {
     margin-top: var(--space-5);
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
   }
   .wwt-examples-label,
   .wwt-link-label,
@@ -447,24 +448,29 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     /* 4.76:1 — not --color-text-muted, which fails AA at 2.56:1. */
     color: var(--c-secondary-500);
   }
-  .wwt-examples-note {
-    margin: var(--space-3) 0 0;
-    padding-top: var(--space-3);
+  /* Said once per section rather than once per entry. Eleven repetitions of the
+     same sentence is what made it read as boilerplate pasted in. */
+  .wwt-footnote {
+    margin: var(--space-8) 0 0;
+    padding-top: var(--space-5);
     border-top: 1px solid var(--color-border);
-    font-size: var(--text-xs);
-    line-height: var(--line-normal);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
     color: var(--c-secondary-500);
+    max-width: var(--max-width-text);
   }
 
   /* The homepage puts this same paragraph in a gold-tinted inset card with a
      gold label. On a light surface the equivalent is the cream accent step with
      a maroon label — same idea, same hierarchy, legible ground. */
+  /* The one tinted panel in the card, so it reads as the lead statement. Same
+     radius as the activity rows beneath it so the card has a single geometry. */
   .wwt-opportunity {
     margin: 0 0 var(--space-8);
     padding: var(--space-5);
     background: var(--c-accent-50);
     border: 1px solid var(--c-accent-200);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
   }
   .wwt-opportunity p {
     margin: var(--space-2) 0 0;
@@ -579,20 +585,17 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     background: var(--c-sky-600);
   }
 
-  /* A stated scope limit, presented as part of the block rather than as a
-     trailing italic afterthought. */
+  /* A one-line scope limit, not a panel. Boxing it gave a legal caveat the same
+     visual weight as the opportunity statement. */
   .wwt-scope {
-    margin-top: var(--space-8);
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border-inline-start: 3px solid var(--c-secondary-300);
-    border-radius: var(--radius-sm);
-  }
-  .wwt-scope p {
-    margin: var(--space-2) 0 0;
+    margin: var(--space-6) 0 0;
     font-size: var(--text-sm);
-    color: var(--color-text-secondary);
+    color: var(--c-secondary-500);
     line-height: var(--line-relaxed);
+  }
+  .wwt-scope-label {
+    display: inline;
+    margin-inline-end: var(--space-2);
   }
 
   .wwt-links {
