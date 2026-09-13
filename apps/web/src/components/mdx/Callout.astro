@@ -18,29 +18,41 @@ const defaultTitle = { info: 'Info', insight: 'Insight', warning: 'Warning' }[va
 </aside>
 
 <style>
+  /* Three visually distinct variants, not two that share a palette. `insight`
+     and `warning` both used --color-accent-bg, so an editorial aside rendered
+     in the same alarm-pink as a warning. Insight now uses the site's sky
+     supporting colour; the maroon accent is reserved for warning, where the
+     urgency it carries is actually wanted. */
   .mdx-callout {
     margin-block: var(--space-8);
     padding: var(--space-5) var(--space-6);
     border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     border-inline-start: 3px solid var(--color-border-strong);
     background: var(--color-surface);
   }
   .mdx-callout-insight {
-    border-inline-start-color: var(--color-accent);
-    background: var(--color-accent-bg);
+    border-color: var(--c-sky-200);
+    border-inline-start-color: var(--c-sky-600);
+    background: var(--c-sky-50);
   }
   .mdx-callout-warning {
-    border-inline-start-color: var(--color-eyebrow);
+    border-color: var(--color-accent-border);
+    border-inline-start-color: var(--color-accent);
     background: var(--color-accent-bg);
   }
   .mdx-callout-title {
     margin: 0 0 var(--space-2);
     font-weight: var(--font-semibold);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     color: var(--color-text-secondary);
   }
+  /* The label carries the variant's colour so the box reads at a glance
+     without needing an icon. Both pass AA on their own background. */
+  .mdx-callout-insight .mdx-callout-title { color: var(--c-sky-700); }
+  .mdx-callout-warning .mdx-callout-title { color: var(--color-eyebrow); }
   .mdx-callout-body :global(p) {
     margin: 0;
     color: var(--color-text);

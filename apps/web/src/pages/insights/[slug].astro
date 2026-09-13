@@ -70,7 +70,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
 >
   <article class="insight-article">
     <header class="insight-header">
-      <div class="container">
+      <div class="container text-container">
         {topics.length > 0 && (
           <p class="insight-topics">
             {topics.map((topic) => topic.data.name).join(' · ')}
@@ -110,7 +110,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
 
 <style>
   .insight-header {
-    padding-block: var(--space-16) var(--space-8);
+    padding-block: var(--space-16) var(--space-10);
   }
   .insight-topics {
     text-transform: uppercase;
@@ -120,20 +120,37 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
     color: var(--color-eyebrow);
     margin: 0 0 var(--space-3);
   }
+  /* The header shares the body's centred text column (.text-container on the
+     wrapper), so the title, the standfirst and the prose all start on the same
+     left edge. They used to sit in the full 75rem container while the body was
+     a 44rem centred column, which put the title and the article on visibly
+     different spines. */
   .insight-header h1 {
-    max-width: var(--max-width-text);
+    margin-bottom: var(--space-5);
+    /* Long titles were breaking into a very short orphan line; balance keeps
+       the two lines close to even. */
+    text-wrap: balance;
   }
   .insight-excerpt {
-    max-width: var(--max-width-text);
-    font-size: 1.125rem;
+    font-size: var(--text-xl);
+    line-height: var(--line-snug);
     color: var(--color-text-secondary);
+    margin: 0 0 var(--space-6);
+    text-wrap: pretty;
   }
   .insight-meta {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-3);
     flex-wrap: wrap;
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    /* Not --color-text-muted (#94a3b8): 2.56:1 on white, below the 4.5:1 AA
+       floor. --c-secondary-500 is 4.76:1 and reads as the same quiet grey. */
+    color: var(--c-secondary-500);
+  }
+  .insight-meta span + span::before {
+    content: '·';
+    margin-inline-end: var(--space-3);
+    color: var(--c-secondary-400);
   }
   .insight-hero {
     width: 100%;
@@ -145,7 +162,13 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
     max-width: var(--max-width-text);
     padding-block: var(--space-10);
   }
-  .insight-body :global(p:not(.mdx-cta-heading):not(.mdx-cta-body)) {
+  /* Every MDX component that sets its own colour on a <p> must be excluded
+     here: this blanket prose rule outranks the component's own scoped rule,
+     so anything missing from the list silently renders in body-navy.
+     .mdx-callout-title was missing and had been rendering navy instead of
+     its intended quiet label colour since the component was written. */
+  .insight-body
+    :global(p:not(.mdx-cta-heading):not(.mdx-cta-body):not(.mdx-callout-title)) {
     color: var(--color-text);
     line-height: var(--line-relaxed);
   }
@@ -155,10 +178,12 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', time
   .insight-body :global(h2) {
     margin-top: var(--space-12);
     margin-bottom: var(--space-4);
+    text-wrap: balance;
   }
   .insight-body :global(h3) {
     margin-top: var(--space-10);
     margin-bottom: var(--space-3);
+    text-wrap: balance;
   }
   .insight-body :global(ul),
   .insight-body :global(ol) {
