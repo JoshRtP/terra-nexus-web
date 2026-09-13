@@ -21,11 +21,18 @@
 //    RED III, ISO 14064, ISO 22095 and the GHG Protocol. That is the one topic
 //    where the instrument list is owner-approved rather than researched.
 //
-// PUBLICATION GATE — the brief blocks the public page until authoritative
-// source citations are packaged, time-sensitive regulatory claims are
-// rechecked, and the final public copy is approved. Everything here ships
-// behind the preview build's sitewide noindex, so building is safe; publishing
-// is the gated step. This is the only topic with that constraint.
+// PUBLICATION GATE — LIFTED by the owner, 2026-09-12. The brief had blocked
+// the public page until authoritative source citations were packaged,
+// time-sensitive regulatory claims rechecked, and the final public copy
+// approved. The owner has waived that gate, so this topic now publishes on the
+// same terms as the other eight — which today means it is still waiting on the
+// tool-to-topic assignment that all nine share, not on anything specific to
+// biofuels.
+//
+// The regulatory-currency concern behind the gate is NOT waived and is not a
+// gate — it is recurring maintenance. This page's regulatory content dates
+// faster than any other topic's, so the items in the review list below should
+// be rechecked before publish and on a standing basis afterwards.
 //
 // NEEDS OWNER REVIEW BEFORE PUBLISH
 //  * `overview.stats` — corn farming's ~50% share of corn ethanol's total GHG

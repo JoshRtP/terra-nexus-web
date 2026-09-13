@@ -688,13 +688,25 @@ production at all:
 - **Biofuels had no Desirability row upstream**, the third topic to hit that
   gap. One is authored in `shared.ts` and marked. The Wave 2 test now catches
   this at build rather than in review, which is how it was found.
-- **Biofuels carries a publication gate.** Its brief blocks the public page
-  until citations are packaged and the regulatory claims are rechecked — 45Z's
-  2030 sunset, the June 2026 45ZCF-GREET revision removing indirect land-use
-  change, and the North America feedstock restriction all move faster than the
-  page will. It ships behind the preview build's sitewide noindex, so building
-  it is safe; publishing is the gated step. The constraint is recorded in the
-  module header.
+- **Biofuels' publication gate was lifted by the owner on 2026-09-12.** Its
+  brief had blocked the public page until citations were packaged and the
+  regulatory claims rechecked; that is waived, and the topic now publishes on
+  the same terms as the other eight. The underlying concern is not waived and
+  is not a gate — 45Z's 2030 sunset, the June 2026 45ZCF-GREET revision
+  removing indirect land-use change, and the North America feedstock
+  restriction all date faster than the page will, so this page needs recurring
+  regulatory maintenance rather than a one-time check. Recorded in the module
+  header.
+- **Food Waste names Verra VM0046** at the owner's direction — a protocol Terra
+  Nexus has direct expertise in, and the only owner-approved rather than
+  researched instrument in the four Wave 3 records. It also corrected the
+  page: the Carbon & Ecosystem Credits pathway had said prevention was hard to
+  credit because the counterfactual is a business decision, which VM0046
+  specifically disproves by crediting food kept in the human supply chain at
+  farm, processing, retail, foodservice and residential level. The detail now
+  says so, while noting the route is early — active since 2023, first project
+  registered May 2026 — so it is modelled alongside the avoided-cost case
+  rather than instead of it.
 
 The parameterised template test now covers nine topics (212 assertions, up from
 the five-topic run) and all four Wave 3 topics pass unchanged — no template

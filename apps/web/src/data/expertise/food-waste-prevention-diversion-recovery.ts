@@ -17,7 +17,10 @@
 //    own "Common Reasons Food-Waste Programs Struggle" list.
 //  * The page copy's frameworks section names categories rather than
 //    instruments and requires verification against current official and local
-//    sources, so `pathways[].examples` are researched and flagged below.
+//    sources, so `pathways[].examples` are researched and flagged below. The
+//    exception is Verra VM0046, named at the owner's direction (2026-09-12) as
+//    a protocol Terra Nexus has direct expertise in — owner-approved, not
+//    researched.
 //
 // NEEDS OWNER REVIEW BEFORE PUBLISH
 //  * `overview.stats` — 1.05 billion tonnes wasted in 2022, households at 60%
@@ -28,6 +31,12 @@
 //  * Organics and landfill-diversion rules are state and municipal in the US
 //    and national in the EU, so `pathways[].examples` is deliberately generic
 //    about them. Recheck before publish if any specific mandate is named.
+//  * The Carbon & Ecosystem Credits detail states that VM0046 has been active
+//    since 2023 and that the first project registered in May 2026. Both are
+//    registry facts rather than claims about Terra Nexus, but the second dates
+//    quickly — by publish there may be several registered projects, which
+//    would make "the first project registered in May 2026" read as stale.
+//    Recheck the registry before publish.
 //  * `positioning` — authored for the influence/incentive/mechanism band.
 //  * `enablers.tools` — empty pending owner assignment. The Food Waste
 //    Platform render exists and is the obvious candidate for this topic, but
@@ -397,9 +406,10 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
         name: 'Carbon & Ecosystem Credits',
         carrier: 'As a quantified environmental asset',
         tagline: 'Turn verified environmental outcomes into market-ready assets.',
-        whenToUse: 'Use where an external funder pays for a diversion or recovery outcome the business would not otherwise finance.',
-        detail: 'A narrow fit. Avoided methane from diverted organics and biogas from digestion are the established cases; prevention is much harder to credit because the counterfactual is a business decision rather than a physical baseline. Most programs are better served by the avoided-cost case.',
+        whenToUse: 'Use where an external funder pays for a prevention, rescue or diversion outcome the business would not otherwise finance.',
+        detail: 'Until recently this route reached only the bottom of the hierarchy — avoided methane and biogas from material already lost. Verra’s VM0046 changed that by crediting food kept in the human supply chain at farm, processing, retail, foodservice and residential level, which makes prevention and rescue creditable rather than only treatment. It is still early: the methodology has been active since 2023 and the first project registered in May 2026, so pricing and buyer depth are unproven. Model it alongside the avoided-cost case, not instead of it.',
         examples: [
+          'Verra VM0046 Methodology for Reducing Food Loss and Waste',
           'Avoided methane and organic-waste diversion methodologies',
           'Anaerobic digestion and biogas project methodologies',
           'Registry issuance, transfer and retirement infrastructure',
