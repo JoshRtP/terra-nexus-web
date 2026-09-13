@@ -3,17 +3,16 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
-import { capabilityAreas } from '../../data/lifecycle';
+import { stages, capabilityAreas } from '../../data/lifecycle';
+import { stageDetails } from '../../data/capabilities';
 const mode = getBuildMode();
 
-const workstreams = [
-  { title: 'Evaluate the Opportunity', items: ['Market, customer, competitor, and landscape analysis', 'Business cases, economics, scenarios, and value allocation', 'Technology, methodology, partner, project, and transaction diligence', 'Build-buy-partner and investment decisions', 'Risk, feasibility, and strategic-fit assessment'] },
-  { title: 'Design the Program', items: ['Objectives, boundaries, outcomes, and participation criteria', 'Commercial model, incentives, contracts, and risk allocation', 'Practice-based, outcome-based, or hybrid architecture', 'Governance, roles, controls, and assurance strategy', 'Routes to market and stakeholder alignment'] },
-  { title: 'Build the Operating Infrastructure', items: ['Workflows, roles, and process design', 'Data requirements and system architecture', 'Measurement, calculation, and quality-control processes', 'Traceability, chain of custody, and attribute controls', 'Ledgers, documentation, reporting, and exception management'] },
-  { title: 'Launch and Scale', items: ['Pilot design and success criteria', 'Partner and technology selection', 'Implementation planning and change management', 'Coordination across producers, partners, and customers', 'Expansion across geographies, products, and customers'] },
-  { title: 'Manage Client-Owned Programs', items: ['Recurring operational and evidence workflows', 'Data review and calculation processes', 'Program and attribute ledgers', 'Vendor and partner coordination', 'Exception resolution and management reporting', 'Audit and verification preparation', 'Continuous program improvement'] },
-  { title: 'Connect Performance to Claims and Market Value', items: ['Corporate inventory and target alignment', 'Certification and sourcing claims', 'Product, customer, and commercial propositions', 'Scope 3 and inset pathways', 'Carbon and ecosystem-service market assessment', 'Low-carbon and regulatory opportunities', 'Claims governance and communication boundaries'] },
-];
+// The six stages render from data/lifecycle.ts — the same record the
+// homepage Approach band and every expertise topic use — with this page's
+// per-stage bullet lists from data/capabilities/approach.ts. Until
+// 2026-09-13 this page carried its own six-item array whose titles
+// disagreed with that record on four of six stages.
+const approach = stages.map((stage) => ({ ...stage, items: stageDetails[stage.id] }));
 ---
 
 <SiteLayout
@@ -36,11 +35,11 @@ const workstreams = [
         <h2 id="approach-heading">Our Approach</h2>
       </header>
       <div class="workstream-grid">
-        {workstreams.map((ws) => (
+        {approach.map((stage) => (
           <article class="card-plain">
-            <h3>{ws.title}</h3>
+            <h3>{stage.title}</h3>
             <ul class="bullet-list">
-              {ws.items.map((item) => <li>{item}</li>)}
+              {stage.items.map((item) => <li>{item}</li>)}
             </ul>
           </article>
         ))}
