@@ -314,10 +314,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
                 ))}
               </div>
 
-              <p class="wwt-scope">
-                <span class="wwt-scope-label">Scope</span>
-                {en.note}
-              </p>
             </div>
           </article>
         ))}
@@ -430,7 +426,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
   }
   .wwt-examples-label,
   .wwt-link-label,
-  .wwt-scope-label,
   .wwt-opportunity-label,
   .wwt-sub {
     display: block;
@@ -584,19 +579,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     height: 0.375rem;
     border-radius: var(--radius-full);
     background: var(--c-sky-600);
-  }
-
-  /* A one-line scope limit, not a panel. Boxing it gave a legal caveat the same
-     visual weight as the opportunity statement. */
-  .wwt-scope {
-    margin: var(--space-6) 0 0;
-    font-size: var(--text-sm);
-    color: var(--c-secondary-500);
-    line-height: var(--line-relaxed);
-  }
-  .wwt-scope-label {
-    display: inline;
-    margin-inline-end: var(--space-2);
   }
 
   .wwt-links {

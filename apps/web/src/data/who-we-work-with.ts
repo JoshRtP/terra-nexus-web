@@ -64,7 +64,12 @@ export interface Enabler {
   activities: Activity[];
   capabilities: string[];
   examples: string[];
-  /** Scope limit that must appear wherever this group is described. */
+  /** Scope limit carried over from the retired enabling-markets page.
+   * NOT RENDERED on /who-we-work-with/ since 2026-09-13 (owner: the scope
+   * lines read as disclaimer labels). Kept so nothing is lost and so a
+   * decision to surface it again is one line. The validator/verifier limit
+   * is still stated on the Carbon & Ecosystem Services capability page; the
+   * investment-advice one is currently stated nowhere on the site. */
   note: string;
 }
 
