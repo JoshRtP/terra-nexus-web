@@ -196,10 +196,7 @@ const uid = `fw-${fw.slug}`;
     </div>
 
     {compact && (
-      <p class="fw-compact-foot">
-        <span>{total} {L.tacticPlural} across {types.length} {L.typePlural}.</span>
-        <a href={toolHref}>Open the full {fw.name} tool</a>
-      </p>
+      <p class="fw-compact-foot">{total} {L.tacticPlural} across {types.length} {L.typePlural}. Each {L.type} opens in the full tool.</p>
     )}
   </section>
 
@@ -681,10 +678,6 @@ const uid = `fw-${fw.slug}`;
     color: var(--color-text-secondary);
   }
   .fw-compact-foot {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--space-2) var(--space-6);
     margin: var(--space-4) 0 0;
     font-size: var(--text-sm);
     color: var(--color-text-secondary);

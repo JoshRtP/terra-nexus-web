@@ -116,7 +116,8 @@ export const strategyAndInnovation: CapabilityFamilyRecord = {
     },
   ],
   // Added 2026-09-13 (plans/framework-viewer-plan.md): the Ten Types of
-  // Innovation tool, compact on this page and in full at
+  // Innovation tool, compact on this page (directly under the core
+  // question, owner placement) and in full at
   // /tools/ten-types-of-innovation/. Section copy below is new and NEEDS
   // OWNER REVIEW; the framework content itself is in data/frameworks/.
   tool: {

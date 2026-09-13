@@ -67,8 +67,9 @@ const lifecycle = family.lifecycle
   : [];
 
 // The interactive framework a family carries (Strategy & Innovation: the
-// Ten Types of Innovation), rendered compact under the offerings and linking
-// into its own /tools/ page. An unknown slug fails the build here.
+// Ten Types of Innovation), rendered compact directly under the core
+// question (owner placement, 2026-09-13) and linking into its own /tools/
+// page. An unknown slug fails the build here.
 const tool = family.tool ? frameworks[family.tool.framework] : undefined;
 if (family.tool && !tool) throw new Error(`${family.name} names unknown framework '${family.tool.framework}'`);
 
@@ -76,10 +77,10 @@ if (family.tool && !tool) throw new Error(`${family.name} names unknown framewor
 const sectionOrder = [
   ...(family.orientation.length > 0 ? ['overview'] : []),
   'decisions',
+  ...(tool ? ['tool'] : []),
   ...(family.mechanisms ? ['mechanisms'] : []),
   ...(lifecycle.length > 0 ? ['lifecycle'] : []),
   'offerings',
-  ...(tool ? ['tool'] : []),
   ...(relatedExpertise.length > 0 || audiences.length > 0 ? ['expertise'] : []),
   ...(family.proofNote ? ['proof'] : []),
 ];
@@ -162,6 +163,29 @@ const serviceSchema = service(Astro.site, {
       </header>
     </div>
   </section>
+
+  {/* ── Interactive framework tool ────────────────────────────────────── */}
+  {family.tool && tool && (
+    <section class={tone('tool')} id="tool" aria-labelledby="tool-h">
+      <div class="container">
+        <header class="section-header split-header">
+          <span class="eyebrow split-header-eyebrow">{family.tool.eyebrow}</span>
+          <div class="split-header-title">
+            <h2 id="tool-h">{family.tool.heading}</h2>
+          </div>
+          <div class="split-header-lead">
+            {family.tool.lead.map((para) => <p class="section-lead">{para}</p>)}
+          </div>
+        </header>
+
+        <FrameworkViewer framework={tool} variant="compact" />
+
+        <div class="section-cta">
+          <a href={frameworkHref(tool.slug)} class="btn btn-secondary">Open the full {tool.name} tool</a>
+        </div>
+      </div>
+    </section>
+  )}
 
   {/* ── Market mechanisms (C&ES) ─────────────────────────────────────── */}
   {family.mechanisms && (
@@ -281,29 +305,6 @@ const serviceSchema = service(Astro.site, {
       )}
     </div>
   </section>
-
-  {/* ── Interactive framework tool ────────────────────────────────────── */}
-  {family.tool && tool && (
-    <section class={tone('tool')} id="tool" aria-labelledby="tool-h">
-      <div class="container">
-        <header class="section-header split-header">
-          <span class="eyebrow split-header-eyebrow">{family.tool.eyebrow}</span>
-          <div class="split-header-title">
-            <h2 id="tool-h">{family.tool.heading}</h2>
-          </div>
-          <div class="split-header-lead">
-            {family.tool.lead.map((para) => <p class="section-lead">{para}</p>)}
-          </div>
-        </header>
-
-        <FrameworkViewer framework={tool} variant="compact" />
-
-        <div class="section-cta">
-          <a href={frameworkHref(tool.slug)} class="btn btn-secondary">Open the full {tool.name} tool</a>
-        </div>
-      </div>
-    </section>
-  )}
 
   {/* ── Related expertise and audiences ──────────────────────────────── */}
   {(relatedExpertise.length > 0 || audiences.length > 0) && (

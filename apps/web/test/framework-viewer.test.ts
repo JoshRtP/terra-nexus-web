@@ -174,7 +174,7 @@ describe('built pages', () => {
     });
   });
 
-  it('Strategy & Innovation carries the compact board, each type linking into the tool, and the tool section in order', () => {
+  it('Strategy & Innovation carries the compact board under the core question, each type linking into the tool', () => {
     const fw = frameworks[capabilityFamilies['strategy-and-innovation'].tool!.framework];
     const href = frameworkHref(fw.slug);
     expect(html.strategy).toContain('data-fw-variant="compact"');
@@ -185,9 +185,10 @@ describe('built pages', () => {
     expect(html.strategy).not.toContain('data-fw-view="detail"');
     expect(html.strategy).not.toContain('data-fw-data');
     expect(count(html.strategy, /\sstyle="/g)).toBe(0);
-    // Section order: the tool sits directly after the offerings.
+    // Section order: the tool sits directly after the core question, before the offerings.
     const ids = Array.from(html.strategy.matchAll(/<section[^>]*\sid="([a-z-]+)"/g)).map((m) => m[1]);
-    expect(ids.indexOf('tool')).toBe(ids.indexOf('offerings') + 1);
+    expect(ids.indexOf('tool')).toBe(ids.indexOf('decisions') + 1);
+    expect(ids.indexOf('offerings')).toBeGreaterThan(ids.indexOf('tool'));
   });
 
   it('the hub and the footer link to the tool', () => {
