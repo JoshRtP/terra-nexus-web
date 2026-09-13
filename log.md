@@ -1024,3 +1024,56 @@ against the `terra-nexus-design-system` skill.
   decisions to make first.
 * **Validation**: full gate green after each commit (286 tests at the
   end); a11y re-audited after the contrast fixes.
+
+## 2026-09-13 — Framework viewer: Ten Types of Innovation tool
+
+Branch `feature/framework-viewer`, off `main`, in its own worktree so the
+uncommitted pre-launch batch stayed untouched. From the handover package in
+`plans/Innovation framework viewer mockups.zip`; assessment and plan in
+`plans/framework-viewer-plan.md`.
+
+* **Owner decisions**: publish (the framework is public knowledge and the
+  tool is Terra Nexus's own); Ten Types only for now; no new top-level nav
+  item; the compact board on the Strategy & Innovation page; and make the
+  viewer reusable so supply-chain, operations and corporate-sustainability
+  frameworks can follow as data.
+* **Two departures from the handover brief**, both deliberate: no iframe
+  (same codebase, so the component renders inline and the whole
+  `?chrome=0` / `postMessage` height contract disappears), and Astro plus a
+  vanilla script rather than a React island (no public page uses React;
+  pre-rendering every state makes the 112 tactics crawlable).
+* **Data**: `src/data/frameworks/` with the generic shape, the registry and
+  a validator that throws at build; the Ten Types record generated from
+  the prototype's modules (10 types, 112 tactics, 38 tactic example sets,
+  the Method starter). The four other frameworks in the package (Fusion,
+  Chessboard, EVM, WWF 2050) are not brought across.
+* **Component**: `FrameworkViewer.astro`, `full` and `compact`. Real
+  buttons everywhere (the prototype's `div` + keyboard shim is gone), a
+  `<dialog>` drawer, play sheet in `localStorage` under
+  `tnx:framework:<slug>:play`, a real share link (`?play=` ids, copied to
+  the clipboard, imported on load), print rules for the play sheet, and a
+  designed phone layout (the prototype's three columns did not stack at
+  390px).
+* **Route and links**: `/tools/[framework]/`, breadcrumbed through the
+  family that carries it; `tool` section on `CapabilityPage`; hub family
+  entry and footer link.
+* **Attribution**: the tool page's About block renders the record's
+  `attribution` paragraphs (Doblin / Deloitte, the 2013 book; descriptions
+  and public examples compiled by Terra Nexus). Wording is new and for
+  owner review, as is the new section copy on the Strategy & Innovation
+  record.
+* **QA**: Chrome headless driven over the DevTools protocol at 1440 / 1024
+  / 768 / 390 through board, focus, detail, drawer, play sheet, shared
+  link, print and the compact section; screenshots in `artifacts/qa/`.
+  Found and fixed by measurement: the board's `overflow: hidden` pinned the
+  sticky column headers inside the board over the first type (now
+  `overflow: clip`); the tool page's scoped print rules could not reach the
+  hero, header, footer or closing band (now `is:global`). No console
+  errors; no `role="button"`; clipboard falls back to showing the link.
+* **Tests**: `test/framework-viewer.test.ts` (record shape, id rules, the
+  validator's rejections, and the built pages: every tactic as HTML with
+  a stable id, examples on the page, real controls, attribution, canonical,
+  breadcrumb, no inline styles, the compact board and its links, the hub
+  and footer links). `capability-pages.test.ts` learned the `tool`
+  section.
+
