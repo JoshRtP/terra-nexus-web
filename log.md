@@ -905,7 +905,7 @@ against the `terra-nexus-design-system` skill.
 ## 2026-09-13 — Capabilities & Approach: consolidation, depth, navigation
 
 * **Branch**: `feature/who-we-work-with-consolidation`, continuing the Who We
-  Work With work; 52 commits ahead of `main` at the end of the session,
+  Work With work; 51 commits ahead of `main` at the end of the session,
   working tree clean, not merged. Plan in
   `plans/capabilities-consolidation-plan.md` (Phases 0–3 done); assessment
   and forward plan in `plans/capabilities-depth-seo-ux-plan.md`.
