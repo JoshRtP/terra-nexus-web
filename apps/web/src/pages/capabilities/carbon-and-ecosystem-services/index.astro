@@ -36,43 +36,30 @@ import ClosingCta from '../../../components/ClosingCta.astro';
 import MechanismSelector from '../../../components/MechanismSelector.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
 import { marketMechanisms as mechanisms } from '../../../data/market-mechanisms';
+import { stages } from '../../../data/lifecycle';
+import { capabilityFamilies } from '../../../data/capabilities';
 
 const mode = getBuildMode();
 
-const comparison = [
-  { label: 'Carbon or Ecosystem Credit', body: 'The quantified outcome becomes an independently issued environmental asset.' },
-  { label: 'Scope 3 Reduction or Inset', body: "The outcome stays inside a company's value chain and counts toward its performance there." },
-  { label: 'Product or Commodity Claim', body: 'The characteristic remains attributable to the physical product being bought or sold.' },
-  { label: 'Environmental Attribute Certificate', body: 'The characteristic is conveyed by certificate and can be transacted apart from the product.' },
-];
-
-// Same "Our Offerings" content the CapabilityPage.astro-based version of
-// this page rendered — restored per owner feedback, 2026-08-19, unchanged.
-const offerings = [
-  { name: 'VCM & Scope 3 Markets', description: 'Evaluate how organizations can access, buy, sell, develop, use, or participate in voluntary carbon, Scope 3, inset, and related markets.' },
-  { name: 'Commercialization Pathways', description: 'Compare product claims, insets, credits, certifications, regulatory pathways, customer programs, and other market mechanisms using route-to-market, value, utilization, ownership, stacking, and risk analysis.' },
-  { name: 'Asset & Portfolio Valuation', description: 'Assess the quality, risk, value, strategic fit, and portfolio role of environmental assets, projects, programs, and claims.' },
-  { name: 'Pilot Development & Partner Selection', description: 'Design pilots that test critical technical, operational, commercial, and market assumptions before scale and select the partners and technologies required.' },
-  { name: 'Program Design & Operations', description: 'Build and manage program governance, workflows, data, contracts, controls, ledgers, chain of custody, partners, exceptions, and reporting.' },
-  { name: 'Impact Verification & Claims Translation', description: 'Prepare evidence and programs for independent scrutiny and translate supportable outcomes into claims that match the intended user and market. Terra Nexus does not represent itself as an accredited validator or verifier.' },
-  { name: 'Full-Service GHG Accounting', description: 'Connect inventory, product, project, program, and disclosure accounting so performance is calculated, allocated, reported, and claimed consistently.' },
-];
-// offeringsCallout ("The highest nominal price is not always...") removed
-// per owner feedback, 2026-08-19.
-
-const lifecycle = [
-  { label: '01 — Evaluate', title: 'Find where the opportunity actually is.', body: 'Test outcomes, mechanisms, standards, eligibility, claims, economics, buyers, incentives, and risk before committing to a route.' },
-  { label: '02 — Design', title: 'Decide how the mechanism will work.', body: 'Set the program structure, the asset or claim, the methodology, chain of custody, ownership model, incentives, and commercial approach.' },
-  { label: '03 — Build', title: 'Stand up what it takes to operate.', body: 'MRV, data, workflows, contracts, registries, controls, traceability, accounting, and assurance — built to run, not to demonstrate.' },
-  { label: '04 — Launch & Scale', title: 'Move from design into the market.', body: 'Onboard suppliers, buyers, and partners, run the first transactions, integrate operations, and widen participation.' },
-  { label: '05 — Manage & Verify', title: 'Hold performance and credibility over time.', body: 'Data, counterparties, verification, audits, registries, accounting, claims, reporting, and the obligations that never stop arriving.' },
-  { label: '06 — Unlock Shared Value', title: 'Convert verified performance into return.', body: 'Monetize assets, capture incentives, improve procurement economics, differentiate product, meet targets, and move value back down the supply chain.' },
-];
+// Copy moved to data/capabilities/carbon-and-ecosystem-services.ts on
+// 2026-09-13 (see that module's PROVENANCE header). The lifecycle grid now
+// takes its six stage numbers and titles from data/lifecycle.ts, the same
+// record the homepage and every expertise topic render, with this family's
+// one-liner and body under each.
+const family = capabilityFamilies['carbon-and-ecosystem-services'];
+const { offerings } = family;
+const comparison = family.comparison ?? [];
+if (comparison.length === 0) throw new Error('Carbon & Ecosystem Services has no comparison band content');
+const lifecycle = stages.map((stage) => {
+  const note = family.stageNotes?.[stage.id];
+  if (!note) throw new Error(`Carbon & Ecosystem Services has no stage note for '${stage.id}'`);
+  return { ...stage, note };
+});
 ---
 
 <SiteLayout
-  title="Carbon & Ecosystem Services | Terra Nexus"
-  description="Terra Nexus works with carbon, trade, finance, program, and sustainability teams to build environmental outcomes into assets and claims that can be measured, verified, accounted for, transacted, and defended."
+  title={family.metaTitle}
+  description={family.metaDescription}
   preview={mode === 'preview'}
 >
   <!-- 1. Hero -->
@@ -80,8 +67,8 @@ const lifecycle = [
     <div class="container cs-hero-grid">
       <div>
         <span class="eyebrow">Carbon &amp; Ecosystem Services</span>
-        <h1 class="cs-hero-title">Turn environmental performance into value the market will recognize.</h1>
-        <p class="cs-hero-lead">Terra Nexus works with carbon, trade, finance, program, and sustainability teams to build environmental outcomes into assets and claims that can be measured, verified, accounted for, transacted, and defended.</p>
+        <h1 class="cs-hero-title">{family.title}</h1>
+        <p class="cs-hero-lead">{family.lead}</p>
         <div class="cs-hero-actions">
           <a href="#mechanisms" class="btn btn-primary">Explore the market mechanisms &rarr;</a>
           <span class="cs-mini-label">Four Routes to Market</span>
@@ -127,9 +114,9 @@ const lifecycle = [
       <div class="cs-lifecycle-grid">
         {lifecycle.map((stage) => (
           <article class="card-plain cs-lifecycle-cell">
-            <span class="cs-lifecycle-label">{stage.label}</span>
-            <h3>{stage.title}</h3>
-            <p>{stage.body}</p>
+            <span class="cs-lifecycle-label">{stage.n} — {stage.title}</span>
+            <h3>{stage.note.title}</h3>
+            <p>{stage.note.body}</p>
           </article>
         ))}
       </div>
@@ -187,9 +174,9 @@ const lifecycle = [
   <!-- 8. Closing CTA -->
   <ClosingCta
     headingId="final-cta-heading"
-    heading="Choose the right mechanism. Build it to last."
-    description="Environmental markets get difficult where science, standards, supply chains, accounting, claims, and commercial objectives all have to agree at once. Terra Nexus helps clients pick the mechanism, build what sits behind it, keep it standing through verification and market change, and turn credible performance into value that lasts."
-    primaryCta={{ label: 'Turn environmental performance into value →', href: '/contact/' }}
+    heading={family.ctaHeading}
+    description={family.ctaBody}
+    primaryCta={family.ctaButton}
   />
 </SiteLayout>
 

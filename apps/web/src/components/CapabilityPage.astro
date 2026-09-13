@@ -4,43 +4,19 @@ import PageHero from './PageHero.astro';
 import ClosingCta from './ClosingCta.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 
-export interface SubOffering {
-  name: string;
-  description: string;
-}
-
-export interface Offering {
-  name: string;
-  description: string;
-  subOfferings: SubOffering[];
-}
-
-export interface CapabilityPageData {
-  eyebrow: string;
-  title: string;
-  lead: string;
-  primaryCta: { label: string; href: string };
-  secondaryCta?: { label: string; href: string };
-  metaTitle: string;
-  metaDescription: string;
-  decisionOwners?: string[];
-
-  orientation: string[];
-  offerings: Offering[];
-  relatedExpertise: { label: string; href: string }[];
-  proofNote?: string;
-  proofLink?: { label: string; href: string };
-  callout?: string;
-  ctaHeading: string;
-  ctaBody: string;
-  ctaButton: { label: string; href: string };
-}
+import { expertiseForCapability, type CapabilityFamily } from '../data/capabilities';
 
 interface Props {
-  data: CapabilityPageData;
+  /** One of the five records in src/data/capabilities/. Field names are the
+   * ones this component has always used; the shape moved out of the pages
+   * on 2026-09-13. */
+  family: CapabilityFamily;
 }
 
-const { data } = Astro.props;
+const { family: data } = Astro.props;
+// Derived from the expertise topics' own team-to-capability mapping rather
+// than a per-page list (see expertiseForCapability in data/capabilities).
+const relatedExpertise = expertiseForCapability[data.slug] ?? [];
 const mode = getBuildMode();
 ---
 
@@ -111,8 +87,8 @@ const mode = getBuildMode();
         <h2 id="related-heading">Related Areas of Expertise</h2>
       </header>
       <div class="tag-row">
-        {data.relatedExpertise.map((tag) => (
-          <a href={tag.href} class="tag">{tag.label}</a>
+        {relatedExpertise.map((topic) => (
+          <a href={topic.href} class="tag">{topic.name}</a>
         ))}
       </div>
     </div>
