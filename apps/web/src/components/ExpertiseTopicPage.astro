@@ -166,6 +166,7 @@ const ctaLinks = [
   description={topic.meta.description}
   canonical={topic.meta.canonical}
   ogImage={topic.meta.ogImage}
+  breadcrumbs={[{ name: 'Areas of Expertise', path: '/expertise/' }, { name: topic.name, path: `/expertise/${topic.slug}/` }]}
   preview={mode === 'preview'}
 >
   <PageHero

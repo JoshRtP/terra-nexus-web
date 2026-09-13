@@ -39,7 +39,7 @@ import ClosingCta from '../../components/ClosingCta.astro';
 import MechanismSelector from '../../components/MechanismSelector.astro';
 import { stages } from '../../data/lifecycle';
 import { marketMechanisms } from '../../data/market-mechanisms';
-import { capabilityFamilies, CAPABILITY_SLUGS, stageDetails, capabilityHref } from '../../data/capabilities';
+import { capabilityFamilies, CAPABILITY_SLUGS, stageDetails, capabilityHref, offeringAnchor } from '../../data/capabilities';
 
 const mode = getBuildMode();
 
@@ -70,7 +70,8 @@ const ctaLinks = [
 
 <SiteLayout
   title="Capabilities | Terra Nexus"
-  description="Terra Nexus combines five capability families to help clients make the right decision, build the right operating model, bring together the right partners, and capture the largest supportable sources of value."
+  description="Five capability families, one approach: Terra Nexus helps clients make the right decision, build the right operating model, and capture supportable value."
+  breadcrumbs={[{ name: 'Capabilities', path: '/capabilities/' }]}
   canonical="/capabilities/"
   preview={mode === 'preview'}
 >
@@ -162,7 +163,9 @@ const ctaLinks = [
             <div>
               <span class="field-label hub-field">Offerings</span>
               <ul class="dot-list" role="list">
-                {family.offerings.map((offering) => <li>{offering.name}</li>)}
+                {family.offerings.map((offering) => (
+                  <li><a href={`${capabilityHref(family.slug)}#${offeringAnchor(offering.name)}`} class="hub-offering-link">{offering.name}</a></li>
+                ))}
               </ul>
               <p class="hub-family-cta">
                 <a href={capabilityHref(family.slug)} class="btn btn-secondary">Explore {family.name}</a>
@@ -200,5 +203,12 @@ const ctaLinks = [
     outline-offset: var(--focus-offset);
   }
   .hub-field { margin-bottom: var(--space-4); }
+  .hub-offering-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-sky-300);
+  }
+  .hub-offering-link:hover { color: var(--c-sky-700); border-bottom-color: var(--c-sky-600); }
+  .hub-offering-link:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
   .hub-family-cta { margin: var(--space-6) 0 0; }
 </style>

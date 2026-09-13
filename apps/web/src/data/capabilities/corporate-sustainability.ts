@@ -29,7 +29,7 @@ export const corporateSustainability: CapabilityFamilyRecord = {
   primaryCta: { label: 'Discuss Your Sustainability Priorities', href: '/contact/' },
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Corporate Sustainability | Terra Nexus',
-  metaDescription: 'Terra Nexus helps sustainability, climate, and reporting leaders set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance — connecting sustainability strategy with operational reality.',
+  metaDescription: 'Terra Nexus helps sustainability, climate, and reporting leaders set ambition, prioritize action, account for progress, govern claims, and report credibly.',
 
   // From knowledge/services/corporate-sustainability/overview.md (status: stable,
   // owner-sourced). Rendered since 2026-09-13; the pages had never shown

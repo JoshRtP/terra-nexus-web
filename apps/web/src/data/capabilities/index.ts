@@ -43,6 +43,19 @@ for (const slug of Object.keys(records)) {
 
 export const capabilityHref = (slug: string) => `/capabilities/${slug}/`;
 
+/** A stable in-page anchor for an offering, from its name: "VCM & Scope 3
+ * Markets" → `vcm-and-scope-3-markets`, which also happens to be the slug of
+ * its record in knowledge/services/. Until 2026-09-13 offerings were
+ * anchored by position (`#offering-3`), which meant nothing off the page and
+ * moved whenever the list was reordered. Names are unique within a family
+ * (asserted in test/capability-pages.test.ts). */
+export const offeringAnchor = (name: string): string =>
+  name
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 // ─────────────────────────────────────────────────────────────────────────
 // Capability → expertise, inverted from the expertise topics' own section-06
 // mapping.

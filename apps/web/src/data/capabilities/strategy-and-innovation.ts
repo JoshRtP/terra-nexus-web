@@ -29,7 +29,7 @@ export const strategyAndInnovation: CapabilityFamilyRecord = {
   primaryCta: { label: 'Discuss Your Strategy', href: '/contact/' },
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Strategy & Innovation | Terra Nexus',
-  metaDescription: 'Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.',
+  metaDescription: 'Terra Nexus helps food and agribusiness leaders turn food-and-climate change into strategy, differentiated growth, customer value, and execution.',
 
   // From knowledge/services/strategy-and-innovation/overview.md (status: stable,
   // owner-sourced). Rendered since 2026-09-13; the pages had never shown

@@ -65,7 +65,7 @@ export const carbonAndEcosystemServices: CapabilityFamilyRecord = {
   primaryCta: { label: 'Explore the market mechanisms', href: '#mechanisms' },
   secondaryCta: { label: 'Discuss Your Challenge', href: '/contact/' },
   metaTitle: 'Carbon & Ecosystem Services | Terra Nexus',
-  metaDescription: 'Terra Nexus works with carbon, trade, finance, program, and sustainability teams to build environmental outcomes into assets and claims that can be measured, verified, accounted for, transacted, and defended.',
+  metaDescription: 'Terra Nexus helps carbon, trade, finance, and sustainability teams turn environmental outcomes into verified, transactable, defensible assets and claims.',
 
   // The bespoke page had no overview block; the mechanism section's own
   // header carries the framing instead.

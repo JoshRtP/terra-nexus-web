@@ -15,6 +15,7 @@ import ClosingCta from '../components/ClosingCta.astro';
 import MechanismSelector from '../components/MechanismSelector.astro';
 import { marketMechanisms } from '../data/market-mechanisms';
 import { stages, capabilityAreas } from '../data/lifecycle';
+import { SITE_DESCRIPTION, organization, webSite } from '../lib/structured-data';
 import { focusObjects, focusViews } from '../data/how-we-work';
 import { marketRoles, segments } from '../data/who-we-work-with';
 
@@ -69,7 +70,8 @@ const approachSteps = stages.map((stage) => ({
 
 <SiteLayout
   title="Terra Nexus — Impact at the Intersection of Food & Climate"
-  description="Terra Nexus provides the insights, tools, and supporting capabilities food and agribusiness companies need to achieve commercial success while building a more resilient, sustainable, and prosperous food system."
+  description={SITE_DESCRIPTION}
+  jsonLd={[organization(Astro.site), webSite(Astro.site)]}
   preview={mode === 'preview'}
 >
   <!-- Photo Hero -->

@@ -12,6 +12,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { getBuildMode } from '../lib/build-mode.js';
+import { breadcrumbList, toJsonLd, type Crumb } from '../lib/structured-data';
 
 interface Props {
   title: string;
@@ -25,9 +26,14 @@ interface Props {
   canonical?: string;
   /** Overrides the default /brand/og-image.png for og:image. */
   ogImage?: string;
+  /** Trail after Home, e.g. [{ name: 'Capabilities', path: '/capabilities/' }].
+   * Emits a BreadcrumbList in the page's JSON-LD graph. Added 2026-09-13. */
+  breadcrumbs?: Crumb[];
+  /** Extra schema.org objects for the JSON-LD graph (see lib/structured-data). */
+  jsonLd?: object[];
 }
 
-const { title, description, preview = false, canonical, ogImage } = Astro.props;
+const { title, description, preview = false, canonical, ogImage, breadcrumbs, jsonLd = [] } = Astro.props;
 const mode = getBuildMode();
 // Astro.site comes from astro.config.ts. Falling back to the raw path rather
 // than throwing keeps a `site`-less build working, which is what every
@@ -37,6 +43,7 @@ const resolvedOgImage = ogImage ?? '/brand/og-image.png';
 const ogImageUrl = Astro.site ? new URL(resolvedOgImage, Astro.site).href : resolvedOgImage;
 const isPreview = preview || mode === 'preview';
 const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexus`;
+const graph = [...(breadcrumbs ? [breadcrumbList(Astro.site, breadcrumbs)] : []), ...jsonLd];
 ---
 
 <!doctype html>
@@ -64,6 +71,7 @@ const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexu
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta name="twitter:card" content="summary_large_image" />
     <title>{fullTitle}</title>
+    {graph.length > 0 && <script type="application/ld+json" is:inline set:html={toJsonLd(graph)} />}
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

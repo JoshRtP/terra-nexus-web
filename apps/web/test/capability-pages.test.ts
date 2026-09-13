@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { stages } from '../src/data/lifecycle';
 import { marketMechanisms } from '../src/data/market-mechanisms';
-import { capabilityFamilies, CAPABILITY_SLUGS, expertiseForCapability, stageDetails } from '../src/data/capabilities';
+import { capabilityFamilies, CAPABILITY_SLUGS, expertiseForCapability, stageDetails, offeringAnchor } from '../src/data/capabilities';
 import { approachMenu, claimsMenu, capabilitiesMenu } from '../src/data/nav-data';
 import { segmentsForCapability } from '../src/data/who-we-work-with';
 
@@ -215,6 +215,102 @@ describe('capability page: carbon-and-ecosystem-services', () => {
     expect(comparisonAt).toBeGreaterThan(0);
     expect(closingAt).toBeGreaterThan(comparisonAt);
     for (const cell of capabilityFamilies[slug].comparison!.cells) expect(html[slug]).toContain(cell.label);
+  });
+});
+
+// ── Structured data, meta lengths, stable anchors (2026-09-13, Tier 1 of
+// plans/capabilities-depth-seo-ux-plan.md) ────────────────────────────────
+const jsonLd = (source: string): any[] => {
+  const m = source.match(/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s);
+  expect(m, 'ld+json script present').toBeTruthy();
+  const parsed = JSON.parse(m![1]);
+  expect(parsed['@context']).toBe('https://schema.org');
+  return parsed['@graph'];
+};
+const ofType = (graph: any[], type: string) => graph.filter((n) => n['@type'] === type);
+
+describe('structured data', () => {
+  it('homepage carries Organization and WebSite', async () => {
+    const graph = jsonLd(await readFile(pageFor('/'), 'utf8'));
+    const org = ofType(graph, 'Organization')[0];
+    expect(org?.url).toBe(`${SITE}/`);
+    expect(org?.logo?.url).toMatch(/^https:\/\/terra\.nexus\/brand\//);
+    expect(ofType(graph, 'WebSite')[0]?.publisher?.['@id']).toBe(org['@id']);
+  });
+
+  it('hub carries a two-item breadcrumb', () => {
+    const bc = ofType(jsonLd(html.hub), 'BreadcrumbList')[0];
+    expect(bc.itemListElement.map((i: any) => i.name)).toEqual(['Home', 'Capabilities']);
+    expect(bc.itemListElement.at(-1).item).toBe(`${SITE}/capabilities/`);
+  });
+
+  it.each(CAPABILITY_SLUGS)('%s carries breadcrumbs and a Service with one Offer per offering', (slug) => {
+    const family = capabilityFamilies[slug];
+    const graph = jsonLd(html[slug]);
+    const bc = ofType(graph, 'BreadcrumbList')[0];
+    expect(bc.itemListElement.map((i: any) => i.name)).toEqual(['Home', 'Capabilities', family.name]);
+    const svc = ofType(graph, 'Service')[0];
+    expect(svc.name).toBe(family.name);
+    expect(svc.provider['@id']).toBe(`${SITE}/#organization`);
+    const offers = svc.hasOfferCatalog.itemListElement;
+    expect(offers.map((o: any) => o.itemOffered.name)).toEqual(family.offerings.map((o) => o.name));
+    // Every offer url is an anchor that exists on the page.
+    for (const o of offers) {
+      const [, hash] = o.itemOffered.url.split('#');
+      expect(html[slug], hash).toContain(`id="${hash}"`);
+    }
+  });
+});
+
+describe('meta lengths, every built page', () => {
+  const walk = async (dir: string): Promise<string[]> => {
+    const { readdir } = await import('node:fs/promises');
+    const out: string[] = [];
+    for (const e of await readdir(dir, { withFileTypes: true })) {
+      const p = resolve(dir, e.name);
+      if (e.isDirectory()) out.push(...(await walk(p)));
+      else if (e.name === 'index.html') out.push(p);
+    }
+    return out;
+  };
+
+  it('keeps every description at 155 characters or fewer and every title at 70 or fewer', async () => {
+    const pages = await walk(DIST);
+    expect(pages.length).toBeGreaterThan(20);
+    const over: string[] = [];
+    for (const p of pages) {
+      const source = await readFile(p, 'utf8');
+      const desc = source.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '';
+      const title = source.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+      // The one case-study route builds its title and description from the
+      // owner-approved OKF proof record (title 90, description 208 on
+      // 2026-09-13). Trimming it means editing an approved record, so it is
+      // flagged for the owner and excluded here; everything else is
+      // site-authored and held to the limit.
+      if (p.includes('case-studies')) continue;
+      if (desc.length > 155 || title.length > 70) over.push(`${p} title=${title.length} desc=${desc.length}`);
+    }
+    expect(over).toEqual([]);
+  });
+});
+
+describe('stable offering anchors', () => {
+  it.each(CAPABILITY_SLUGS)('%s: anchors are unique slugs of the offering names', (slug) => {
+    const anchors = capabilityFamilies[slug].offerings.map((o) => offeringAnchor(o.name));
+    expect(new Set(anchors).size).toBe(anchors.length);
+    for (const a of anchors) {
+      expect(a).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(html[slug]).toContain(`id="${a}"`);
+    }
+    expect(html[slug]).not.toContain('id="offering-1"');
+  });
+
+  it('the hub links every offering name to its anchor on the family page', () => {
+    for (const slug of CAPABILITY_SLUGS) {
+      for (const o of capabilityFamilies[slug].offerings) {
+        expect(html.hub).toContain(`href="/capabilities/${slug}/#${offeringAnchor(o.name)}"`);
+      }
+    }
   });
 });
 

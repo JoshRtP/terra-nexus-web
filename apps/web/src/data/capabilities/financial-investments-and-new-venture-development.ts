@@ -28,8 +28,10 @@ export const financialInvestmentsAndNewVentureDevelopment: CapabilityFamilyRecor
   lead: 'Terra Nexus helps finance, venture, and corporate development leaders evaluate, structure, fund, and scale food, agriculture, climate, nature, and circularity investments — connecting commercial diligence with deep domain knowledge.',
   primaryCta: { label: 'Discuss Your Investment', href: '/contact/' },
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
-  metaTitle: 'Financial Investments & New Venture Development | Terra Nexus',
-  metaDescription: 'Terra Nexus helps finance, venture, and corporate development leaders evaluate, structure, fund, and scale food, agriculture, climate, nature, and circularity investments — connecting commercial diligence with deep domain knowledge.',
+  // 65 characters with the full family name; trimmed to 52 for the tab and
+  // the result snippet. The h1 and every in-page use keep the full name.
+  metaTitle: 'Investments & New Venture Development | Terra Nexus',
+  metaDescription: 'Terra Nexus helps finance, venture, and corporate development leaders evaluate, structure, fund, and scale food, agriculture, climate, and nature deals.',
 
   // From knowledge/services/financial-investments-and-new-venture-development/overview.md (status: stable,
   // owner-sourced). Rendered since 2026-09-13; the pages had never shown

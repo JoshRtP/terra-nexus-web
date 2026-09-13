@@ -38,7 +38,8 @@ import { getBuildMode } from '../lib/build-mode.js';
 import { stages } from '../data/lifecycle';
 import { marketMechanisms } from '../data/market-mechanisms';
 import { segmentsForCapability } from '../data/who-we-work-with';
-import { expertiseForCapability, type CapabilityFamily } from '../data/capabilities';
+import { expertiseForCapability, offeringAnchor, type CapabilityFamily } from '../data/capabilities';
+import { service } from '../lib/structured-data';
 
 interface Props {
   /** One of the five records in src/data/capabilities/. */
@@ -84,12 +85,28 @@ const ctaLinks = [
 ];
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
+const pagePath = `/capabilities/${family.slug}/`;
+const breadcrumbs = [
+  { name: 'Capabilities', path: '/capabilities/' },
+  { name: family.name, path: pagePath },
+];
+// The family as a schema.org Service with its offerings as an OfferCatalog;
+// each offer's url is the offering's stable anchor on this page.
+const serviceSchema = service(Astro.site, {
+  name: family.name,
+  description: family.metaDescription,
+  path: pagePath,
+  offerings: family.offerings.map((o) => ({ name: o.name, description: o.description, path: `${pagePath}#${offeringAnchor(o.name)}` })),
+});
 ---
 
 <SiteLayout
   title={family.metaTitle}
   description={family.metaDescription}
-  canonical={`/capabilities/${family.slug}/`}
+  canonical={pagePath}
+  breadcrumbs={breadcrumbs}
+  jsonLd={[serviceSchema]}
   preview={mode === 'preview'}
 >
   <PageHero
@@ -204,7 +221,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <li
             class="card card-static card-entry"
             class:list={{ 'cap-entry-single': offering.subOfferings.length === 0 && !offering.detail }}
-            id={`offering-${i + 1}`}
+            id={offeringAnchor(offering.name)}
           >
             <div class="card-entry-head">
               <span class="numbered-index card-entry-index" aria-hidden="true">{pad(i + 1)}</span>

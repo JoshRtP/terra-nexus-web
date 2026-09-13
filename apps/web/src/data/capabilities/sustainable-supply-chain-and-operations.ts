@@ -29,7 +29,7 @@ export const sustainableSupplyChainAndOperations: CapabilityFamilyRecord = {
   primaryCta: { label: 'Discuss Your Supply Chain Challenge', href: '/contact/' },
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Sustainable Supply Chain & Operations | Terra Nexus',
-  metaDescription: 'Terra Nexus helps sourcing, supply chain, and operations leaders redesign what they buy, who they buy from, and how products are produced, moved, processed, used, and recovered — connecting operational change with measurable sustainability outcomes.',
+  metaDescription: 'Terra Nexus helps sourcing, supply chain, and operations leaders change what they buy, who they buy from, and how products move, with measurable outcomes.',
 
   // From knowledge/services/sustainable-supply-chain-and-operations/overview.md (status: stable,
   // owner-sourced). Rendered since 2026-09-13; the pages had never shown
