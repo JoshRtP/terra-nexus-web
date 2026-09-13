@@ -975,3 +975,52 @@ against the `terra-nexus-design-system` skill.
   1440/1024/768/390 for the hub, C&ES and Strategy & Innovation, plus Who
   We Work With at 1440/390 as a regression check; screenshots in
   `artifacts/qa/2026-09-13-*`. Zero console errors.
+
+## 2026-09-13 — Capabilities: Tier 1 SEO, Lighthouse baseline, worksheets
+
+* **Meta descriptions**: fifteen of 25 pages ran 168–252 characters; all are
+  now 143–155, each the page's own sentence condensed. The FI&NVD title is
+  trimmed to 52 characters for the tab only. The case-study route (title
+  90, description 208) comes from the approved OKF proof record and is
+  flagged, not edited. A test now holds every site-authored page to the
+  limits.
+* **Structured data** (`src/lib/structured-data.ts`, wired through
+  `SiteLayout`'s new `breadcrumbs` and `jsonLd` props): Organization and
+  WebSite on the homepage; BreadcrumbList on capabilities, expertise topics
+  and the main section pages; a Service with an OfferCatalog of its
+  offerings on each capability page. Only facts the site already states.
+* **Stable offering anchors**: `#vcm-and-scope-3-markets` rather than
+  `#offering-1`; the hub's offering lists link to them, as do the
+  OfferCatalog urls. Landing measured at 96px below the header.
+* **Lighthouse baseline** (local preview, Chrome headless, mobile / desktop):
+
+  | Page | Perf | A11y | Best practices | SEO | Mobile LCP |
+  |---|---|---|---|---|---|
+  | `/capabilities/` | 85 / 100 | 96 → 100 | 100 | 100 | 3.4 s |
+  | C&ES | 94 / 100 | 96 → 100 | 100 | 100 | 2.6 s |
+  | Strategy & Innovation | 95 / 100 | 96 | 100 | 100 | 2.4 s |
+  | Who We Work With | 93 / 98 | 96 → 100 | 100 | 100 | 2.9 s |
+  | Regenerative Agriculture | 69 / 96 | 97 | 79 | 100 | 5.7 s |
+  | Homepage | 59 / 93 | 95 | 79 | 100 | 8.4 s |
+
+  Fixed from the findings: the mechanism selector's small labels and
+  numerals failed colour contrast on every page carrying it
+  (`--color-text-muted` at 2.56:1, and `--c-secondary-500` is only 4.45:1
+  on the tinted cells, so the handover's "use secondary-500" rule of thumb
+  is not enough on `--color-surface`); the entry-card numerals at sky-500
+  measured 2.9:1 against the 3:1 large-text floor; the footer tagline and
+  copyright at secondary-500 on navy measured 3.3:1. Hub and C&ES now audit
+  at 100 for accessibility.
+  Not fixed, recorded for the plan: Google Fonts CSS is render-blocking on
+  every page (1.1–2.7 s of estimated savings; the hub's mobile LCP is its
+  hero paragraph waiting on the font); the header wordmark PNG is
+  unoptimised on every page (~115 KB); the homepage's mobile score is
+  carried by a 3.5 MB payload, an unhinted photo hero (LCP 8.4 s), CLS of
+  0.158 from unsized images, an h4 heading-order fault in the approach
+  band, and Pexels cookies (also on the expertise heroes). Text compression
+  is a preview-server artefact; Cloudflare compresses in production.
+* **Owner worksheets**: `plans/content/capabilities-2026-09/` holds one
+  per classic family, prefilled from the records, with the pruning
+  decisions to make first.
+* **Validation**: full gate green after each commit (286 tests at the
+  end); a11y re-audited after the contrast fixes.

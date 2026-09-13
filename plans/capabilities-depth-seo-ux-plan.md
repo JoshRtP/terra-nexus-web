@@ -138,9 +138,11 @@ sentence; no named people; no insights; related expertise tags.
 Ranked by value divided by effort. "Owner" marks items that cannot proceed
 without owner input or approval.
 
-**Status 2026-09-13, later the same day.** Tier 1 items 1 and 4 and Tier 2 item 7
-are done (the owner approved all seven C&ES drafts in session). Items 2, 3, 5
-and 6 of Tier 1 are the next work; item 8 waits on the owner worksheets.
+**Status 2026-09-13, end of session.** Tier 1 items 1–5 are done (meta trims,
+structured data, Phase 3 navigation, stable offering anchors); item 6, the
+Lighthouse baseline, is recorded in `log.md`. Tier 2 item 7 is done (the
+owner approved all seven C&ES drafts in session) and item 8 has its four
+worksheets in `plans/content/capabilities-2026-09/`, waiting on the owner.
 
 ### Tier 1 — days, no new copy, do next
 
@@ -193,6 +195,22 @@ and 6 of Tier 1 are the next work; item 8 waits on the owner worksheets.
 10. **Insights → services.** Once Insights has more than three real posts,
     surface related posts on family and expertise pages via the existing
     `RelatedContent` component.
+
+### Tier 1b — from the Lighthouse baseline (2026-09-13), still open
+
+- **Fonts render-block every page.** The Google Fonts stylesheet costs 1.1–2.7 s
+  of estimated savings per page on mobile, and the hub's LCP element is its
+  hero paragraph waiting on it. Self-host Inter and Lora with `font-display:
+  swap` and a preload, or load the stylesheet asynchronously. Site-wide, one
+  change in `design-system.css`.
+- **Header wordmark PNG** is unoptimised on every page (~115 KB of savings);
+  the footer logo similar (~87 KB). Serve WebP at the rendered size.
+- **Homepage on mobile scores 59**: 3.5 MB payload, photo hero without
+  `fetchpriority`, CLS 0.158 from unsized images, an `h4` heading-order
+  fault in the approach band, Pexels cookies on the hero. M9 territory, but
+  the unsized images and the heading level are quick wins now.
+- **Expertise topics on mobile score 69** for the same hero-image reasons;
+  the DVF panel's description text fails contrast.
 
 ### Tier 3 — at or after cutover
 

@@ -771,6 +771,13 @@ publish is listed in each data module's header comment.
 - **Tests**: `test/capability-pages.test.ts` asserts against built HTML,
   parameterised over the five slugs, including that every Capabilities
   mega-menu fragment resolves to an id on its page.
+- **Structured data** (`src/lib/structured-data.ts`, later 2026-09-13):
+  `SiteLayout` takes `breadcrumbs` and `jsonLd` and emits one
+  `application/ld+json` graph per page. Organization and WebSite on the
+  homepage, BreadcrumbList on section pages and topics, a Service with an
+  OfferCatalog per capability page. Offerings are anchored by slug of their
+  name (`offeringAnchor`), so the catalog urls, the hub and future insights
+  can address a specific service.
 
 ## 6. Cloudflare direction
 
