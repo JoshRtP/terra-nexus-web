@@ -246,6 +246,10 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
     flex-direction: column;
     gap: var(--space-3);
   }
+  /* Each card's <li> carries the mechanism id (m01-m04) so the Markets &
+     Claims menu can deep-link to it. Without this the anchor lands the card
+     under the 70px sticky header (measured at top: 0 on 2026-09-13). */
+  .mech-selector-stack > li { scroll-margin-top: var(--space-24); }
   .mech-selector-card {
     display: flex;
     flex-direction: column;
@@ -457,9 +461,17 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
     // mechanism id, pre-select that one instead of defaulting to the
     // first. Falls back to the server-rendered `initialId` default when
     // the hash doesn't match.
-    const hashId = location.hash.slice(1);
-    if (hashId && cards.some((c) => c.dataset.mechSelect === hashId)) {
-      selectMechanism(hashId);
-    }
+    const selectFromHash = () => {
+      const hashId = location.hash.slice(1);
+      if (hashId && cards.some((c) => c.dataset.mechSelect === hashId)) {
+        selectMechanism(hashId);
+      }
+    };
+    selectFromHash();
+    // The Markets & Claims mega-menu deep-links to #m01-#m04. Used from this
+    // very page that is a same-document navigation: no load event, only a
+    // hashchange, so without this the previous mechanism stayed selected
+    // (found by measurement 2026-09-13).
+    window.addEventListener('hashchange', selectFromHash);
   });
 </script>

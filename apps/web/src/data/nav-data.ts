@@ -11,6 +11,8 @@
 // Industries (Producers/Buyers/Enablers) and the Insights grouping are new
 // for this prototype — see CLAUDE.md's Industries/Insights IA brief.
 
+import { marketMechanisms } from './market-mechanisms';
+
 export interface MenuItem {
   title: string;
   href: string;
@@ -104,23 +106,26 @@ export const valueChainMenu: MenuItem[] = [
 // Approach — the Capabilities mega menu's first column. Owner feedback
 // (2026-08-18): the six individual stages read as too much for a menu
 // column; collapsed to the one-line framing already used to describe the
-// approach as a whole. Points at the Our Approach section on the
-// standalone Capabilities page (no per-stage anchor exists).
+// approach as a whole. Points at the hub's approach section, which since
+// the 2026-09-13 rebuild carries all six stages at depth (each stage also
+// has its own `#stage-<id>` anchor should the menu ever want them back).
 export const approachMenu: MenuItem[] = [
-  { title: 'Full Development Lifecycle', href: '/capabilities/#approach-heading' },
+  { title: 'Full Development Lifecycle', href: '/capabilities/#approach' },
 ];
 
 // Markets & Claims — the Capabilities mega menu's second column (renamed
-// from "Claims", 2026-08-18). Mirrors the 4 market mechanisms on the
-// Carbon & Ecosystem Services page's mechanism selector 1:1 (titles MUST
-// match the `mechanisms` array in
-// pages/capabilities/carbon-and-ecosystem-services/index.astro, in the
-// same order), plus a 5th "Other Markets" catch-all. All five point at
-// that capability page — no dedicated sub-pages exist yet.
-export const claimsMenu: MenuItem[] = [
-  { title: 'Carbon & Ecosystem Credits', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
-  { title: 'Scope 3 & Insets', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
-  { title: 'Product & Commodity Claims', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
-  { title: 'Environmental Attribute Certificates', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
-  { title: 'Other Markets', href: '/capabilities/carbon-and-ecosystem-services/#mechanisms' },
-];
+// from "Claims", 2026-08-18). One entry per market mechanism, deep-linking
+// to that mechanism's own id on the Carbon & Ecosystem Services page:
+// MechanismSelector reads the URL hash on load and selects the matching
+// card, so each link lands with its mechanism open rather than on the
+// section top. Until 2026-09-13 all five entries pointed at the one
+// `#mechanisms` anchor (finding F4, a launch blocker), and the fifth,
+// "Other Markets", was dropped then: it had no content anywhere on the
+// site to land on (owner decision, 2026-09-13).
+//
+// Derived from data/market-mechanisms.ts rather than retyped so the menu
+// cannot disagree with the selector on names, order or ids.
+export const claimsMenu: MenuItem[] = marketMechanisms.map((m) => ({
+  title: m.title,
+  href: `/capabilities/carbon-and-ecosystem-services/#${m.id}`,
+}));
