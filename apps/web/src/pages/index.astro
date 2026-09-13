@@ -1089,31 +1089,8 @@ const approachSteps = stages.map((stage) => ({
      own row, then title and lead sit side by side on the row below,
      sharing the same top edge — and the lead column fills the remaining
      width so the header's right edge lines up with the full-width content
-     beneath it. */
-  .split-header {
-    display: grid;
-    grid-template-columns: minmax(16rem, 25rem) 1fr;
-    grid-template-areas: "eyebrow eyebrow" "title lead";
-    column-gap: var(--space-10);
-    row-gap: var(--space-4);
-    align-items: start;
-  }
-  .split-header-eyebrow { grid-area: eyebrow; margin-bottom: 0; }
-  .split-header-title { grid-area: title; }
-  .split-header-lead { grid-area: lead; }
-  .split-header-title h2 { margin-top: 0; }
-  .split-header-lead .section-lead {
-    max-width: none;
-    margin-top: 0;
-  }
-  .split-header-lead .section-lead + .section-lead { margin-top: var(--space-3); }
-  @media (max-width: 56rem) {
-    .split-header {
-      grid-template-columns: 1fr;
-      grid-template-areas: "eyebrow" "title" "lead";
-      row-gap: var(--space-3);
-    }
-  }
+     beneath it. Moved to design-system.css on 2026-09-13 when
+     /who-we-work-with/ became its third consumer. */
 
   /* ── Integration & Operating Partner (value-chain diagram) ── */
   .integration-grid {

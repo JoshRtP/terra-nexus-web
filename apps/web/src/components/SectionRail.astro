@@ -17,6 +17,11 @@ interface Props {
   ariaLabel?: string;
 }
 
+// An `alwaysShowLabels` option was tried on 2026-09-13 and removed the same
+// day: a labelled rail measures 201px, and beside a 75rem container there is
+// only 144px of margin at 1440px, so it overlapped the content by 81px. The
+// permanent-label threshold below (100rem) is the measured point where the
+// margin can actually hold it. Below that, hover and focus reveal them.
 const { sections, revealAfter, ariaLabel = 'Sections on this page' } = Astro.props;
 ---
 
