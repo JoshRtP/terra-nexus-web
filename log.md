@@ -736,3 +736,78 @@ merged.
   horizontal overflow at 1440/1024/768/390 where checked. Full
   `npm run web:build` / `web:typecheck` / `web:test` / `check` re-run not
   yet done this session — recommended before merge.
+
+## 2026-09-12 — Expertise topic template: all nine topics migrated (Waves 1–3)
+
+* **Branch**: `feature/expertise-topics-wave1`, cut from `main` and carrying
+  the earlier Digital Solutions rebuild commits as well. 23 commits ahead of
+  `main`, 0 behind, at merge time.
+* **What landed**: a single `components/ExpertiseTopicPage.astro` driven by
+  per-topic data records in `src/data/expertise/`, replacing the nine pages
+  that previously each hand-rolled their own layout via
+  `components/ExpertisePage.astro`. That component now has **no callers**.
+  Ten sections (overview, potential, correcting, investments, adoption, fit,
+  verifying, pathways, approach, enablers) plus `PageHero` and `ClosingCta`.
+  Full architecture write-up in `docs/architecture/web-platform-architecture.md`
+  §5.4, including the per-wave notes this entry summarizes.
+* **Source of the content**: assembly, not authoring. Every topic already had
+  an owner-verified brief (`knowledge/expertise/briefs/`), a 2,200–2,800 word
+  page-copy draft and a research memo (`plans/content/`), plus approved copy
+  live on its existing page. Only the section 01 stat band, the indicator
+  issue lists, the adoption constraints, the influence/incentive/mechanism
+  triplet and the named instruments in section 08 are written fresh — roughly
+  400–600 words per topic. Each data module carries a PROVENANCE header
+  naming where every field came from and a NEEDS OWNER REVIEW list.
+* **Three code gaps the first two topics hid**, all fixed before content work
+  (§5.4): the indicator taxonomy was still a global five-value union while
+  section 03's indicators were per-record (now one per-topic list); tools were
+  retyped per topic (now a catalogue in `data/expertise/tools.ts` referenced by
+  id); and `sectionRail` was a fixed ten entries, so a topic with no tools
+  correctly omitted section 10 but still rendered a dead `#enablers` link (the
+  rail now derives from the sections that actually render).
+* **Wave 3 (the four value-chain topics) is where the per-record design paid
+  off**: twenty indicators across the four, none biophysical and none drawing
+  on the shared `indicatorDefinitions` map; `investments.frame` becomes
+  load-bearing rather than decorative; and pathway ordering diverges furthest
+  (Food Waste leads with Scope 3 & Insets because most of its value never goes
+  to market at all — it stays inside the business as avoided cost). No
+  template changes were needed for any of the four.
+* **Owner decisions recorded this session**: stats researched, uncited and
+  flagged, matching the two pages reviewed earlier; section 08 instruments
+  named and flagged for verification; the Biofuels publication gate from its
+  brief **lifted** (its regulatory-currency concern reclassified as recurring
+  maintenance, not a gate); and Verra VM0046 named on Food Waste as a protocol
+  Terra Nexus has direct expertise in — the only owner-approved rather than
+  researched instrument in the four Wave 3 records. VM0046 also corrected the
+  page: that pathway had said prevention is hard to credit, which VM0046
+  specifically disproves.
+* **Testing**: `test/expertise-topic-template.test.ts` is parameterised over
+  `TOPIC_SLUGS`, so each migrated topic inherits the full assertion set —
+  212 tests at nine topics. Three invariants added during the migration:
+  every `Intervention.impacts` key exists in its topic's indicator list; every
+  topic's `validationRows` cover all four DVF regions (this caught Biofuels'
+  missing Desirability row at build rather than in review — the third topic to
+  hit that gap); and the rail's entries match the sections actually rendered.
+* **QA**: independent `visual-qa` browser pass at 1440/1024/768/390 across the
+  four Wave 3 pages, screenshots in `artifacts/qa/`. Zero console errors. One
+  defect found and fixed — a stat figure reading `11.2% vs 6.8%` wrapped and
+  broke the stat band's baseline alignment in a ~960–1090px band; fixed at the
+  content level by moving the comparison into the label.
+* **Hero srcset** (`PageHero.astro`, `shared.ts`): an owner report of a
+  non-full-bleed hero turned out to be a stale dev-server scoped-CSS cache
+  serving `object-fit:fill` at a fixed 1600px width — the same failure seen
+  once before on this component; the production build measured correct at
+  2341px throughout. But measuring it exposed a real defect alongside: the
+  full-bleed hero requested a single 1600w file and was upscaling 1.50x on a
+  2341px display. Now serves a width-descriptor srcset with `sizes="100vw"` —
+  measured 1.02x at 2341px, and a fresh load at 390px picks the 1200w
+  candidate, so narrow viewports get smaller files rather than larger.
+* **Still open, tracked**: tool-to-topic assignment is owner input, so
+  `enablers.tools` is empty on all nine topics and section 10 renders nowhere
+  (the owner-input block at the top of `tools.ts` explains the format);
+  structured data (BreadcrumbList/Service/FAQPage) remains deferred to a later
+  pass, now unblocked by the `site` config; and each module's NEEDS OWNER
+  REVIEW list stands.
+* **Validation before merge**: `npm run web:build`, `npm run web:typecheck`
+  (0 errors, 0 warnings), `npm run web:test` (212 passing), `npm run check`
+  (exit 0) — all green.
