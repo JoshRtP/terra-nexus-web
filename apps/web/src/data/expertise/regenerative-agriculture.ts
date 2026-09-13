@@ -351,9 +351,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
       {
         id: 'm01',
         n: '01',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use when acreage can be aggregated, a methodology fits the practice and geography, and the buyer wants a transferable unit rather than supply.',
         detail: 'Once a quantified outcome has been issued as a credit it can be owned, transferred, priced, retired and reported under defined market rules. For cropland the binding constraint is usually measurement and permanence: whether those requirements can be met at a cost the outcome supports, rather than whether anyone wants to buy.',
         examples: [
@@ -366,9 +363,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
       {
         id: 'm02',
         n: '02',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when the buyer sources from the same supply shed and needs the reduction inside its own inventory rather than as an offset.',
         detail: 'A reduction at the farm can count toward a corporate target if it stays attached to the chain that produced it. Generating the outcome is the straightforward half. Settling who may claim it, how it is allocated and how it enters the inventory is the work.',
         examples: [
@@ -381,9 +375,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
       {
         id: 'm03',
         n: '03',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the performance can travel with the physical load and a specific customer pays a premium, or a regulated incentive applies.',
         detail: 'The useful claim is narrow: which characteristic can be demonstrated, how it was quantified, how it is tied to this product, and what the producer or buyer may say about it. For grain and oilseed this is where carbon intensity becomes price.',
         examples: [
@@ -397,9 +388,6 @@ export const regenerativeAgriculture: ExpertiseTopic = {
       {
         id: 'm04',
         n: '04',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when segregation is impractical across a large supply base but the buyer still needs to procure differentiated production.',
         detail: 'An EAC carries a verified characteristic of how a commodity was produced, and in some markets transfers separately from the physical product. Separating the attribute from the molecule puts all the weight on the architecture: ownership, issuance, custody, transfer, retirement, exclusivity and claim language all have to agree.',
         examples: [

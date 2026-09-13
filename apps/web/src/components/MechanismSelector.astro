@@ -215,7 +215,11 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
     text-transform: uppercase;
     color: var(--color-text);
   }
-  .mech-flow-label-muted { color: var(--color-text-muted); }
+  /* Contrast (Lighthouse, 2026-09-13): --color-text-muted is 2.56:1 on white
+     and --c-secondary-500 only 4.45:1 on the tinted overview cells, so the
+     small labels use the secondary text token (7:1 on the tint) and the
+     numerals sky-700 (6.6:1) rather than sky-600 (4.3:1). */
+  .mech-flow-label-muted { color: var(--color-text-secondary); }
   .mech-flow-rule {
     height: 1.75rem;
     width: 1px;
@@ -246,6 +250,10 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
     flex-direction: column;
     gap: var(--space-3);
   }
+  /* Each card's <li> carries the mechanism id (m01-m04) so the Markets &
+     Claims menu can deep-link to it. Without this the anchor lands the card
+     under the 70px sticky header (measured at top: 0 on 2026-09-13). */
+  .mech-selector-stack > li { scroll-margin-top: var(--space-24); }
   .mech-selector-card {
     display: flex;
     flex-direction: column;
@@ -260,9 +268,9 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
   }
   .mech-selector-card:hover { border-color: var(--c-sky-300); }
   .mech-selector-card:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
-  .mech-selector-num { font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--c-sky-600); }
+  .mech-selector-num { font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--c-sky-700); }
   .mech-selector-title { font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.25; }
-  .mech-selector-carrier { font-size: var(--text-xs); line-height: 1.4; color: var(--color-text-muted); }
+  .mech-selector-carrier { font-size: var(--text-xs); line-height: 1.4; color: var(--color-text-secondary); }
   /* .mech-selector-card-active — variant="overview"'s pre-click "all
      mechanisms active" default. Same look interactive mode gives its
      [aria-pressed="true"] card; JS removes this class from every card the
@@ -317,7 +325,7 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
   }
   .mech-detail-deck { font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--color-text); line-height: 1.35; }
   .mech-examples { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
-  .mech-examples-label { display: block; font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-2); }
+  .mech-examples-label { display: block; font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: var(--space-2); }
   .mech-examples-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); }
   /* detailBlocks list form — same type scale as the text form. */
   .mech-examples-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
@@ -457,9 +465,17 @@ const blocksFor = (id: string, position: 'before' | 'after') =>
     // mechanism id, pre-select that one instead of defaulting to the
     // first. Falls back to the server-rendered `initialId` default when
     // the hash doesn't match.
-    const hashId = location.hash.slice(1);
-    if (hashId && cards.some((c) => c.dataset.mechSelect === hashId)) {
-      selectMechanism(hashId);
-    }
+    const selectFromHash = () => {
+      const hashId = location.hash.slice(1);
+      if (hashId && cards.some((c) => c.dataset.mechSelect === hashId)) {
+        selectMechanism(hashId);
+      }
+    };
+    selectFromHash();
+    // The Markets & Claims mega-menu deep-links to #m01-#m04. Used from this
+    // very page that is a same-document navigation: no load event, only a
+    // hashchange, so without this the previous mechanism stayed selected
+    // (found by measurement 2026-09-13).
+    window.addEventListener('hashchange', selectFromHash);
   });
 </script>

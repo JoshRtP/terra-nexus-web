@@ -397,9 +397,6 @@ export const agroforestry: ExpertiseTopic = {
       {
         id: 'm01',
         n: '01',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use when the planting genuinely changes land cover against a defensible baseline, and the buyer wants a durable removal rather than supply.',
         detail: 'Trees are the production change most readily issued as a credit, because the carbon accumulates in a stock that can be measured directly. That also makes the baseline and the permanence commitment the whole argument: a removal claimed over decades has to survive mortality, harvest and a change of landowner.',
         examples: [
@@ -413,9 +410,6 @@ export const agroforestry: ExpertiseTopic = {
       {
         id: 'm03',
         n: '02',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the system produces a differentiated tree crop and the buyer already pays for verified origin, as in coffee, cocoa and specialty ingredients.',
         detail: 'For tree crops this is usually the nearest-term route, because the certification and traceability infrastructure already exists and buyers already ask. Deforestation-free requirements have made plot-level origin data a condition of market access rather than a premium.',
         examples: [
@@ -429,9 +423,6 @@ export const agroforestry: ExpertiseTopic = {
       {
         id: 'm02',
         n: '03',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when a buyer sources the crop the trees sit alongside and needs the removal inside its own land-sector inventory.',
         detail: 'Land-sector accounting now has a removals pathway, which is what makes a planting inside a supply shed countable rather than merely good. The work is allocation: deciding whose inventory a multi-decade removal enters, and in which year.',
         examples: [
@@ -444,9 +435,6 @@ export const agroforestry: ExpertiseTopic = {
       {
         id: 'm04',
         n: '04',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when the tree crop cannot be segregated to the buyer but the environmental attribute still needs to transfer.',
         detail: 'Least developed of the four for agroforestry, and the one where the architecture matters most. A removal that lasts decades and a certificate that transfers in a season have to be reconciled explicitly, or the same tree is claimed more than once.',
         examples: [

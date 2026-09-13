@@ -370,9 +370,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
       {
         id: 'm01',
         n: '01',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use when a methodology fits the site, the outcome can be measured against local variability, and avoided conversion or soil carbon is the primary outcome.',
         detail: 'On rangeland the credit case is site-specific. Soil carbon response varies widely, which makes local evidence and methodology rules more important than any universal per-acre factor. Avoided conversion is often the more defensible outcome.',
         examples: [
@@ -386,9 +383,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
       {
         id: 'm02',
         n: '02',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when a beef or dairy buyer sources from the same region and needs the reduction inside its own inventory.',
         detail: 'This is the main route for beef and dairy. Enteric methane and land conversion sit at the center of buyer targets, and the data lives on operations that never had to report it. Allocation across a long animal path is the hard part.',
         examples: [
@@ -401,9 +395,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
       {
         id: 'm03',
         n: '03',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when the claim follows the animal and a retailer, brand or foodservice buyer pays for the difference.',
         detail: 'A differentiated beef claim needs product connection, not only a land outcome. That raises the traceability requirement through feeding, processing and packing, and it is where most rangeland programs underestimate the work.',
         examples: [
@@ -417,9 +408,6 @@ export const regenerativeRangeland: ExpertiseTopic = {
       {
         id: 'm04',
         n: '04',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when herd and processing paths cannot be segregated but the buyer still needs to procure the outcome.',
         detail: 'Where the animal cannot be traced to the buyer, the attribute can still transfer on its own. The architecture carries all the risk: exclusivity, allocation and retirement have to be airtight or the same reduction gets claimed twice.',
         examples: [

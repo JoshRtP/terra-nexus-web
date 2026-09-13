@@ -91,6 +91,18 @@ export default defineConfig({
   // duplicate-content risk the way leaving a second live page would.
   redirects: {
     '/homepage-alt': '/',
+    // Who We Work With consolidated onto one page, 2026-09-13. The three
+    // /industries/<role>/ routes were explicitly prototype-only, and the two
+    // group pages held less than the homepage teaser that linked to them.
+    // Anchors survive these redirects: a fragment is client-side, so the
+    // browser reapplies it to the destination — and every segment slug is
+    // unchanged, so the Industries mega-menu's deep links still land.
+    '/industries': '/who-we-work-with/',
+    '/industries/producers': '/who-we-work-with/#producers',
+    '/industries/buyers': '/who-we-work-with/#buyers',
+    '/industries/enablers': '/who-we-work-with/#enablers',
+    '/who-we-work-with/food-and-agribusiness-value-chain': '/who-we-work-with/',
+    '/who-we-work-with/enabling-markets-technology-and-capital': '/who-we-work-with/',
   },
   server: {
     host: true,

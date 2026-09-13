@@ -1,0 +1,247 @@
+---
+// Fixed right-margin section rail — the in-page navigation the expertise topic
+// pages introduced (2026-09-12) and /who-we-work-with/ now shares.
+//
+// Extracted from components/ExpertiseTopicPage.astro on 2026-09-13 rather than
+// copied: it is ~135 lines of measured CSS plus a scroll listener, and a second
+// hand-rolled copy is exactly what the M7 design-system audit spent a session
+// undoing. Behaviour is unchanged for the expertise pages.
+//
+// position: fixed, so it lives in the page margin and costs the content column
+// nothing. Hidden below 85rem, where that margin is narrower than the rail.
+interface Props {
+  sections: Array<{ id: string; n: string; label: string }>;
+  /** Rail reveals once this element has scrolled past — usually the hero, so it
+   * never sits over a photo with nothing yet to navigate. Omit to show at once. */
+  revealAfter?: string;
+  ariaLabel?: string;
+}
+
+// An `alwaysShowLabels` option was tried on 2026-09-13 and removed the same
+// day: a labelled rail measures 201px, and beside a 75rem container there is
+// only 144px of margin at 1440px, so it overlapped the content by 81px. The
+// permanent-label threshold below (100rem) is the measured point where the
+// margin can actually hold it. Below that, hover and focus reveal them.
+const { sections, revealAfter, ariaLabel = 'Sections on this page' } = Astro.props;
+---
+
+<nav
+  class="journey-rail"
+  data-section-rail
+  data-reveal-after={revealAfter}
+  aria-label={ariaLabel}
+>
+  <ol class="journey-rail-list" role="list">
+    {sections.map((s, i) => (
+      <li>
+        <a
+          class="journey-rail-item"
+          href={`#${s.id}`}
+          data-rail-item={s.id}
+          aria-current={i === 0 ? 'true' : 'false'}
+        >
+          <span class="journey-rail-num" aria-hidden="true">{s.n}</span>
+          <span class="journey-rail-label">{s.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  /* ── Section rail ──
+     position: fixed, so it lives in the page margin and costs the content
+     column nothing. Hidden below 85rem, where the margin beside the 75rem
+     container is narrower than the rail itself — measured: the collapsed rail
+     is 70px and needs (viewport - 1152px content) / 2 to exceed 86px, which
+     happens at 1324px. 85rem/1360px is the first comfortable step past that. */
+  .journey-rail { display: none; }
+
+  @media (min-width: 85rem) {
+    .journey-rail {
+      display: block;
+      position: fixed;
+      right: var(--space-4);
+      /* Top-aligned with the section title rather than centred in the
+         viewport (owner, 2026-09-12). Measured, not guessed: with a section
+         anchored at the top of the viewport, the 70px sticky header plus the
+         section's scroll-margin and padding put the h2 at 182px, so the rail
+         starts on the same line as the heading it belongs to. */
+      top: 11.5rem;
+      z-index: 40;
+    }
+    /* Ten labelled rows are ~470px; on a short window that would run past the
+       bottom, so the list scrolls inside itself rather than off the screen. */
+    .journey-rail-list {
+      max-height: calc(100vh - 14rem);
+      overflow-y: auto;
+    }
+  }
+  /* The rail belongs to the body of the page, not the hero — over a full-bleed
+     photo it reads as a stray panel floating on the image, and there is nothing
+     to navigate yet. It arrives when the reader reaches the first section, the
+     same move the homepage header makes when it solidifies past its photo hero
+     (body.past-hero in pages/index.astro). `visibility` rather than opacity
+     alone so it is not a tab stop while it is invisible. */
+  .journey-rail {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(0.75rem);
+    transition: opacity 240ms ease, transform 240ms ease, visibility 240ms;
+  }
+  .journey-rail.is-revealed {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  /* The rail floats over sections that alternate white and full-bleed navy, so
+     it carries its own surface rather than borrowing the page's — otherwise
+     the labels are unreadable every time it crosses a dark band. */
+  .journey-rail-list {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: var(--space-3) var(--space-2);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+  /* Unselected rows sit back: --c-secondary-500 rather than the body's
+     --color-text-secondary, which is a visible step lighter and still clears
+     the 4.5:1 floor that applies at 12px/500 (4.76:1 on white).
+     --color-text-muted would read better still but measures 2.56:1 and fails. */
+  .journey-rail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-left: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    color: var(--c-secondary-500);
+    text-decoration: none;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .journey-rail-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--c-secondary-200);
+    background: var(--color-bg);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    flex-shrink: 0;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  }
+  /* The label inherits the item's colour rather than taking a lighter one of
+     its own: at 12px/500 the 4.5:1 contrast floor applies, --color-text-muted
+     measures 2.56:1 on white and inheriting gives 7.58:1. */
+  .journey-rail-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width var(--transition-fast), opacity var(--transition-fast);
+  }
+  /* 85–100rem: numbers only at rest, every label on hover or keyboard focus.
+     Even the current label alone is enough to widen the rail past the page
+     margin at 1440 and cover the text it is meant to navigate, so the resting
+     state stays inside the margin and the expansion is transient. */
+  .journey-rail:hover .journey-rail-label,
+  .journey-rail:focus-within .journey-rail-label {
+    max-width: 10rem;
+    opacity: 1;
+  }
+  /* ≥100rem the margin is wide enough to hold all ten labels permanently with
+     real clearance, which is how the reader sees what is ahead without
+     hovering. Measured, not guessed: the labelled rail is ~176px wide and the
+     page margin is (viewport - 75rem container) / 2, so 1536px leaves it
+     grazing the content edge and 1600px clears it. */
+  @media (min-width: 100rem) {
+    .journey-rail-label { max-width: 10rem; opacity: 1; }
+  }
+  /* Active state differs on colour, weight and border, so it still reads under
+     forced-colors and for colourblind visitors. */
+  .journey-rail-item[aria-current='true'] {
+    color: var(--color-text);
+    border-left-color: var(--color-dark);
+    background: var(--color-surface);
+  }
+  .journey-rail-item[aria-current='true'] .journey-rail-num {
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    color: #fff;
+  }
+  .journey-rail-item[aria-current='true'] .journey-rail-label { font-weight: var(--font-semibold); }
+  .journey-rail-item:hover { color: var(--color-text); }
+  .journey-rail-item:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+  @media (prefers-reduced-motion: reduce) {
+    /* Still appears and disappears, just without the slide or the fade. */
+    .journey-rail,
+    .journey-rail-item,
+    .journey-rail-num,
+    .journey-rail-label,
+    .journey-rail-list { transition: none; }
+  }
+</style>
+
+<script>
+  // A rAF-throttled scroll read takes the last section whose top has passed the
+  // viewport midpoint. A thin IntersectionObserver band batches unreliably when
+  // sections are several viewports tall, which these are. The listener is
+  // capture-phase on document so it works whether the window or a container is
+  // the thing that scrolls.
+  const rail = document.querySelector<HTMLElement>('[data-section-rail]');
+  if (rail) {
+    const items = Array.from(rail.querySelectorAll<HTMLElement>('[data-rail-item]'));
+    const sections = items
+      .map((item) => document.getElementById(item.dataset.railItem ?? ''))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const revealSelector = rail.dataset.revealAfter;
+    const anchor = revealSelector
+      ? document.querySelector<HTMLElement>(revealSelector)
+      : null;
+    const header = document.querySelector<HTMLElement>('header');
+    const syncReveal = () => {
+      if (!anchor) {
+        rail.classList.add('is-revealed');
+        return;
+      }
+      const anchorBottom = anchor.getBoundingClientRect().bottom + window.scrollY;
+      const revealAt = anchorBottom - (header ? header.offsetHeight : 0);
+      rail.classList.toggle('is-revealed', window.scrollY >= revealAt);
+    };
+
+    let frame = 0;
+    const pick = () => {
+      frame = 0;
+      syncReveal();
+      if (!sections.length) return;
+      const mid = window.innerHeight / 2;
+      let active = sections[0];
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= mid) active = section;
+        else break;
+      }
+      items.forEach((item) => {
+        item.setAttribute('aria-current', item.dataset.railItem === active.id ? 'true' : 'false');
+      });
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(pick);
+    };
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    pick();
+  }
+</script>

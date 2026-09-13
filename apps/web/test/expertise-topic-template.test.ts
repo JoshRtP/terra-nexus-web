@@ -20,6 +20,7 @@ import {
   topicHeroPhotoIds,
   validationRows,
   categoryToRegion,
+  pathwayMechanism,
 } from '../src/data/expertise';
 import { expertiseTools } from '../src/data/expertise/tools';
 
@@ -170,7 +171,7 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     const expected = [
       ...topic().correcting.indicators.map((i) => i.name),
       ...topic().verifying.layers.map((l) => l.name),
-      ...topic().pathways.items.filter((p) => p.applicable !== false).map((p) => p.name),
+      ...topic().pathways.items.filter((p) => p.applicable !== false).map((p) => pathwayMechanism(p).title),
     ];
     // Fourteen on a five-indicator topic, fifteen on Agroforestry's six. The
     // count follows the topic's own indicator set rather than a fixed number.

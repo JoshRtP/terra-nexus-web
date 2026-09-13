@@ -23,6 +23,8 @@ const currentYear = new Date().getFullYear();
             <li><a href="/capabilities/">Capabilities</a></li>
             <li><a href="/who-we-work-with/">Who We Work With</a></li>
             <li><a href="/case-studies/">Case Studies</a></li>
+            <li><a href="/insights/">Insights</a></li>
+            <li><a href="/glossary/">Glossary</a></li>
           </ul>
         </div>
         <div class="footer-nav-group">
@@ -68,7 +70,7 @@ const currentYear = new Date().getFullYear();
     line-height: var(--line-relaxed); margin-bottom: var(--space-4);
   }
   .footer-tagline {
-    font-size: var(--text-sm); color: var(--c-secondary-500);
+    font-size: var(--text-sm); color: var(--c-secondary-400);
     font-style: italic; margin: 0;
   }
 
@@ -88,7 +90,9 @@ const currentYear = new Date().getFullYear();
   .footer-bottom {
     padding-top: var(--space-6); border-top: 1px solid var(--color-dark-border);
   }
-  .footer-bottom small { font-size: var(--text-xs); color: var(--c-secondary-500); }
+  /* secondary-400, the footer's body colour (6.1:1 on navy); secondary-500
+     measured 3.3:1 there and failed AA (Lighthouse, 2026-09-13). */
+  .footer-bottom small { font-size: var(--text-xs); color: var(--c-secondary-400); }
 
   @media (min-width: 48rem) {
     .footer-top { grid-template-columns: 1fr auto; }

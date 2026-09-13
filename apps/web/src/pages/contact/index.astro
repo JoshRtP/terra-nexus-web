@@ -19,7 +19,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
 
 <SiteLayout
   title="Contact | Terra Nexus"
-  description="Tell us what you are evaluating, building, operating, investing in, or trying to improve. Terra Nexus will help determine the expertise, capabilities, participants, and next step that fit the challenge."
+  description="Tell Terra Nexus what you are evaluating, building, operating, or trying to improve, and get the expertise, capabilities, and next step that fit."
+  breadcrumbs={[{ name: 'Contact', path: '/contact/' }]}
   preview={mode === 'preview'}
 >
   <PageHero

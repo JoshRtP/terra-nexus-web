@@ -6,7 +6,7 @@ tags:
 - service-offering
 - carbon-and-ecosystem-services
 - content-gap
-status: draft
+status: stable
 generated:
   by: openai/gpt-5.6-thinking
   at: '2026-08-01T20:48:00Z'
@@ -18,11 +18,11 @@ sources:
 service_family: services/carbon-and-ecosystem-services
 offering_number: '6'
 publication:
-  audience: internal
-  state: blocked
+  audience: public
+  state: approved
   attribution: none
-  approved_by: null
-  approved_at: null
+  approved_by: human:josh-mellinger
+  approved_at: "2026-09-13T20:05:31Z"
 confidentiality: unconfirmed
 ---
 
@@ -30,10 +30,11 @@ confidentiality: unconfirmed
 
 Impact Verification & Claims Translation
 
-# Draft Description [agent-draft]
+# Draft Description
 
-> **Status: draft â€” do not publish without owner review.**
-> All content below is agent synthesis. Nothing constitutes an approved capability claim.
+> **Approved by the owner on 2026-09-13** (Capabilities review session), as drafted
+> on 2026-08-01. The "Information Requiring Owner Approval" items below were not
+> answered by that approval and remain open; nothing published depends on them.
 
 This offering supports organizations in preparing for, executing, and
 communicating third-party verification of environmental performance â€” and in
@@ -41,7 +42,7 @@ translating verified outcomes into defensible, audience-appropriate claims
 for customers, investors, regulators, and other stakeholders. It addresses the
 final step between operational environmental performance and credible public claims.
 
-## Primary Decision Owners [agent-draft]
+## Primary Decision Owners
 
 * Program owners managing verification and claims processes
 * Environmental markets teams responsible for claims communication
@@ -49,13 +50,13 @@ final step between operational environmental performance and credible public cla
 * Legal and compliance teams reviewing claim defensibility
 * Communications and marketing teams translating technical outcomes
 
-## Core Client Question [agent-draft]
+## Core Client Question
 
 How do we prepare for verification, ensure our environmental performance is
 credibly audited, and then translate verified outcomes into claims that meet
 stakeholder expectations, legal standards, and market requirements?
 
-## Scope [agent-draft]
+## Scope
 
 * Verification readiness assessment and pre-audit preparation
 * Verification body coordination and audit management
@@ -65,20 +66,20 @@ stakeholder expectations, legal standards, and market requirements?
 * Documentation and substantiation package development
 * Ongoing claims maintenance and re-verification planning
 
-## Boundary with Other Service Families [agent-draft]
+## Boundary with Other Service Families
 
 * **Program Design & Operations** provides the operational foundation and data that verification draws on. This offering takes over at the verification preparation and claims communication phase.
 * **Corporate Sustainability / Measurement, Impact & Disclosure** owns enterprise-level disclosure and reporting. This offering focuses on program-level verification and product or supply chain claims.
 * **VCM & Scope 3 Markets** covers the market access strategy. This offering covers the verification and claims step that makes those market positions credible.
 
-## Representative Client Problems [agent-draft]
+## Representative Client Problems
 
 * Our verification body identified non-conformances â€” how do we address them before our next audit?
 * We have a verified Scope 3 reduction from our supply chain program â€” how do we communicate it to customers without creating legal exposure?
 * We want to make a climate claim on our packaging â€” what verification, substantiation, and legal review do we need?
 * We need to respond to a CDP questionnaire about our supply chain program outcomes â€” how do we structure the response?
 
-## Proposed Capabilities [agent-draft]
+## Proposed Capabilities
 
 * Verification readiness and pre-audit preparation
 * Verification body coordination and audit facilitation
@@ -88,7 +89,7 @@ stakeholder expectations, legal standards, and market requirements?
 * Substantiation documentation package
 * Re-verification planning and continuous claims maintenance
 
-## Proposed Deliverables [agent-draft]
+## Proposed Deliverables
 
 * Verification readiness assessment and gap report
 * Pre-audit documentation package
@@ -97,14 +98,14 @@ stakeholder expectations, legal standards, and market requirements?
 * Greenwashing risk review memo
 * Substantiation file
 
-## Related Areas of Expertise [agent-draft]
+## Related Areas of Expertise
 
 * Regenerative Agriculture
 * Sustainable Supply Chains
 * Biodiversity & Ecosystem Resilience
 * Low Carbon Energy & Biofuels
 
-## Related Audiences [agent-draft]
+## Related Audiences
 
 * Environmental Markets & Ecosystem Services
 * Food & Beverage Companies
@@ -112,7 +113,7 @@ stakeholder expectations, legal standards, and market requirements?
 * Agricultural Producers & Integrated Protein Companies
 * Food Retail & Distribution
 
-## Information Requiring Owner Approval [agent-draft]
+## Information Requiring Owner Approval
 
 * Which verification bodies Terra Nexus has experience coordinating with
 * Whether Terra Nexus provides legal review or only strategic and communication advisory

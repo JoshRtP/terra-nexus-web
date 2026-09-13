@@ -6,7 +6,7 @@ tags:
 - service-offering
 - carbon-and-ecosystem-services
 - content-gap
-status: draft
+status: stable
 generated:
   by: openai/gpt-5.6-thinking
   at: '2026-08-01T20:48:00Z'
@@ -18,11 +18,11 @@ sources:
 service_family: services/carbon-and-ecosystem-services
 offering_number: '3'
 publication:
-  audience: internal
-  state: blocked
+  audience: public
+  state: approved
   attribution: none
-  approved_by: null
-  approved_at: null
+  approved_by: human:josh-mellinger
+  approved_at: "2026-09-13T20:05:31Z"
 confidentiality: unconfirmed
 ---
 
@@ -30,10 +30,11 @@ confidentiality: unconfirmed
 
 Asset & Portfolio Valuation
 
-# Draft Description [agent-draft]
+# Draft Description
 
-> **Status: draft â€” do not publish without owner review.**
-> All content below is agent synthesis. Nothing constitutes an approved capability claim.
+> **Approved by the owner on 2026-09-13** (Capabilities review session), as drafted
+> on 2026-08-01. The "Information Requiring Owner Approval" items below were not
+> answered by that approval and remain open; nothing published depends on them.
 
 This offering supports organizations in valuing individual environmental assets,
 credit positions, or entire programs and portfolios of environmental attributes.
@@ -41,20 +42,20 @@ It addresses the financial, risk, and strategic questions that portfolio manager
 finance functions, investment committees, and environmental markets teams need to
 answer before making capital allocation, trading, or reporting decisions.
 
-## Primary Decision Owners [agent-draft]
+## Primary Decision Owners
 
 * Portfolio managers and environmental asset managers
 * Finance functions and investment committees
 * Environmental markets teams and carbon desks
 * Corporate development evaluating acquisitions or investments in carbon programs
 
-## Core Client Question [agent-draft]
+## Core Client Question
 
 What are our environmental assets, credit positions, or program outcomes worth â€”
 and how do we assess, manage, and report a portfolio of environmental value across
 different program types, registries, vintages, and markets?
 
-## Scope [agent-draft]
+## Scope
 
 * Valuation frameworks for carbon credits, ecosystem service credits, insets, and offsets
 * Portfolio-level risk and return analysis for environmental asset positions
@@ -62,20 +63,20 @@ different program types, registries, vintages, and markets?
 * Comparative valuation across program types, geographies, and standard frameworks
 * Support for investment committee materials, board reporting, or financial disclosure
 
-## Boundary with Other Service Families [agent-draft]
+## Boundary with Other Service Families
 
 * **Financial Investments & New Venture Development** owns diligence on food-and-climate investments. This offering focuses on the environmental asset and program valuation layer specifically.
 * **Corporate Sustainability / Measurement, Impact & Disclosure** owns reporting of carbon positions in disclosure frameworks. This offering focuses on the commercial and financial valuation of those positions.
 * **Program Design & Operations** owns operational program performance. This offering uses that performance data to produce valuations.
 
-## Representative Client Problems [agent-draft]
+## Representative Client Problems
 
 * We have a portfolio of carbon credits across multiple registries and vintages â€” how do we value and manage it?
 * We are acquiring a company with environmental program assets â€” what are they worth and what are the risks?
 * We need to present our carbon asset position to our investment committee â€” what valuation framework should we use?
 * We are evaluating which programs to prioritize for new investment based on risk-adjusted returns.
 
-## Proposed Capabilities [agent-draft]
+## Proposed Capabilities
 
 * Environmental asset and credit valuation frameworks
 * Portfolio-level scenario and sensitivity analysis
@@ -83,7 +84,7 @@ different program types, registries, vintages, and markets?
 * Comparative analysis across program types, standard frameworks, and geographies
 * Investment committee and board-level reporting support
 
-## Proposed Deliverables [agent-draft]
+## Proposed Deliverables
 
 * Asset valuation report and methodology
 * Portfolio dashboard or tracking model
@@ -91,20 +92,20 @@ different program types, registries, vintages, and markets?
 * Investment committee memo or presentation
 * Due diligence framework for environmental asset acquisitions
 
-## Related Areas of Expertise [agent-draft]
+## Related Areas of Expertise
 
 * Regenerative Agriculture
 * Biodiversity & Ecosystem Resilience
 * Sustainable Supply Chains
 
-## Related Audiences [agent-draft]
+## Related Audiences
 
 * Environmental Markets & Ecosystem Services
 * Private Equity, Venture Capital & Impact Investors
 * Commodity Traders
 * Agricultural Producers & Integrated Protein Companies
 
-## Information Requiring Owner Approval [agent-draft]
+## Information Requiring Owner Approval
 
 * Which valuation methodologies Terra Nexus has applied in practice
 * Whether Terra Nexus provides certified valuations or advisory opinions only

@@ -380,9 +380,6 @@ export const aquaculture: ExpertiseTopic = {
       {
         id: 'm03',
         n: '01',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when a retailer or foodservice buyer requires a recognised standard before the product is listed at all, which in most seafood categories they now do.',
         detail: 'Certification in seafood functions as market access rather than a premium. The practical consequence is that the standard, the feed it accepts and the chain of custody through processing all have to be chosen together, because a farm-level certificate that cannot survive the processor is worth nothing at the shelf.',
         examples: [
@@ -396,9 +393,6 @@ export const aquaculture: ExpertiseTopic = {
       {
         id: 'm02',
         n: '02',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use when a buyer sources from the farm or the feed mill and needs the reduction inside its own inventory rather than as a separate unit.',
         detail: 'Because most of the footprint sits in feed, the highest-leverage intervention is usually one supplier removed from the farm. That makes allocation the central question: whose inventory a feed reformulation lands in, and how far down the chain it can still be claimed.',
         examples: [
@@ -411,9 +405,6 @@ export const aquaculture: ExpertiseTopic = {
       {
         id: 'm04',
         n: '03',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when a lower-impact feed ingredient cannot be segregated through the mill but the buyer still needs to procure the attribute.',
         detail: 'Feed mills blend, which is exactly the condition book-and-claim exists for. The architecture has to be explicit about what is being conveyed, because an ingredient attribute and a finished product claim are not the same thing and conflating them is the common failure.',
         examples: [
@@ -425,9 +416,6 @@ export const aquaculture: ExpertiseTopic = {
       {
         id: 'm01',
         n: '04',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use where the activity genuinely creates a measurable environmental asset, such as restorative or extractive systems, rather than where it reduces an existing footprint.',
         detail: 'The least developed of the four routes for aquaculture. Most farm improvements lower impact per kilogram rather than creating a transferable unit, and the methodologies that do apply sit around habitat and extractive species instead of fed production.',
         examples: [

@@ -58,7 +58,7 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
   meta: {
     title: 'Food Waste: Prevention, Diversion & Recovery | Terra Nexus',
     description:
-      'Terra Nexus helps food businesses prevent loss, redesign operations, create markets for surplus and byproducts, select recovery pathways, and build circular programs that improve economics and environmental performance.',
+      'Terra Nexus helps food businesses prevent loss, create markets for surplus and byproducts, choose recovery pathways, and build circular programs.',
     canonical: '/expertise/food-waste-prevention-diversion-recovery/',
   },
 
@@ -373,9 +373,6 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
       {
         id: 'm02',
         n: '01',
-        name: 'Scope 3 & Insets',
-        carrier: 'As an outcome connected to the value chain',
-        tagline: 'Create and account for environmental value inside the value chain.',
         whenToUse: 'Use for almost every prevention and diversion program, because the reduction belongs to the company’s own inventory.',
         detail: 'The dominant route here and the least complicated, since the material, the loss and the reduction all sit inside operations the company already reports on. The discipline is in the boundary: waste prevented upstream at a supplier is a different line from waste prevented in your own plant, and the two are often merged.',
         examples: [
@@ -388,9 +385,6 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
       {
         id: 'm03',
         n: '02',
-        name: 'Product & Commodity Claims',
-        carrier: 'As an attribute of the physical product',
-        tagline: 'Make environmental performance part of what is bought and sold.',
         whenToUse: 'Use when a side stream becomes a product in its own right, or when circularity is part of what a customer is buying.',
         detail: 'Upcycled ingredients and recovered materials are sold on a claim about their origin, which puts them under the same environmental-marketing rules as any other product claim. The boundary question is sharper than usual: what counts as upcycled, and against what baseline.',
         examples: [
@@ -403,9 +397,6 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
       {
         id: 'm01',
         n: '03',
-        name: 'Carbon & Ecosystem Credits',
-        carrier: 'As a quantified environmental asset',
-        tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use where an external funder pays for a prevention, rescue or diversion outcome the business would not otherwise finance.',
         detail: 'Until recently this route reached only the bottom of the hierarchy — avoided methane and biogas from material already lost. Verra’s VM0046 changed that by crediting food kept in the human supply chain at farm, processing, retail, foodservice and residential level, which makes prevention and rescue creditable rather than only treatment. It is still early: the methodology has been active since 2023 and the first project registered in May 2026, so pricing and buyer depth are unproven. Model it alongside the avoided-cost case, not instead of it.',
         examples: [
@@ -418,9 +409,6 @@ export const foodWastePreventionDiversionRecovery: ExpertiseTopic = {
       {
         id: 'm04',
         n: '04',
-        name: 'Environmental Attribute Certificates',
-        carrier: 'As a certificate conveying the attribute',
-        tagline: 'Convey environmental value when physical supply alone cannot.',
         whenToUse: 'Use when recovered energy or material is delivered into a pooled system and the attribute has to travel separately.',
         detail: 'Relevant mainly at the recovery end of the hierarchy, where biogas or recovered material enters a shared network and cannot be physically traced to a buyer. The certificate carries the attribute; the chain-of-custody rules decide what may then be said about it.',
         examples: [

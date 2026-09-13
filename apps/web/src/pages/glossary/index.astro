@@ -1,0 +1,147 @@
+---
+// Glossary — the terms the rest of the site uses without stopping to define
+// them. Added 2026-09-13 as the low-cost half of the "make the site readable"
+// work: the Expertise and Who We Work With sections both assume fluency in
+// genuinely specialist vocabulary, which silently narrows the audience.
+//
+// Content lives in src/data/glossary.ts. Grouped by category rather than one
+// long A-Z, because the groups are how a reader arriving from a topic page
+// actually thinks about what they did not understand.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+import { glossary, glossaryCategories } from '../../data/glossary';
+
+const mode = getBuildMode();
+
+const grouped = glossaryCategories.map((category) => ({
+  category,
+  slug: category.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, ''),
+  terms: glossary
+    .filter((t) => t.category === category)
+    .sort((a, b) => a.term.localeCompare(b.term)),
+}));
+---
+
+<SiteLayout
+  title="Glossary | Terra Nexus"
+  description="Plain definitions of the environmental market, evidence, accounting, and production terms Terra Nexus uses, from carbon intensity to book-and-claim."
+  breadcrumbs={[{ name: 'Glossary', path: '/glossary/' }]}
+  canonical="/glossary/"
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Glossary"
+    title="The Vocabulary This Work Runs On"
+    lead="Environmental markets have a language of their own, and a good deal of it is used loosely. These are the terms that appear across our expertise topics and audience pages, defined the way we use them — and, where a term is genuinely contested in the market, said to be contested rather than settled."
+    primaryCta={{ label: 'Discuss Your Opportunity', href: '/contact/' }}
+  />
+
+  <section class="section" aria-labelledby="jump-heading">
+    <div class="container">
+      <h2 id="jump-heading" class="sr-only">Jump to a category</h2>
+      <nav class="gl-jump" aria-label="Glossary categories">
+        {grouped.map((g) => (
+          <a href={`#${g.slug}`} class="tag">{g.category} <span aria-hidden="true">({g.terms.length})</span></a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {grouped.map((g, i) => (
+    <section
+      class:list={['section', { 'section-alt': i % 2 === 1 }]}
+      id={g.slug}
+      aria-labelledby={`${g.slug}-heading`}
+    >
+      <div class="container">
+        <header class="section-header split-header">
+          <span class="eyebrow split-header-eyebrow">Glossary</span>
+          <div class="split-header-title">
+            <h2 id={`${g.slug}-heading`}>{g.category}</h2>
+          </div>
+          <div class="split-header-lead">
+            <p class="section-lead">
+              {g.terms.length} terms used across the Expertise topics and Who We Work With.
+            </p>
+          </div>
+        </header>
+
+        <dl class="gl-list">
+          {g.terms.map((t) => (
+            <div class="gl-item" id={t.slug}>
+              <dt class="gl-term">
+                {t.term}
+                {t.also && t.also.length > 0 && (
+                  <span class="gl-also">{t.also.join(' · ')}</span>
+                )}
+              </dt>
+              <dd class="gl-def">{t.definition}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  ))}
+
+  <ClosingCta
+    heading="Still Not Sure Which Applies to You?"
+    description="The right instrument depends on where you sit and what you are trying to claim. That is usually the first conversation."
+    primaryCta={{ label: 'Start the Conversation', href: '/contact/' }}
+    secondaryCta={{ label: 'See Who We Work With', href: '/who-we-work-with/' }}
+    links={[
+      { label: 'Areas of expertise', href: '/expertise/' },
+      { label: 'Our approach & capabilities', href: '/capabilities/' },
+      { label: 'Case studies', href: '/case-studies/' },
+    ]}
+  />
+</SiteLayout>
+
+<style>
+  .gl-jump { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .gl-jump a { text-decoration: none; }
+  .gl-jump a:hover { border-color: var(--c-sky-600); color: var(--c-sky-700); }
+  .gl-jump a:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+  .gl-list { margin: 0; display: flex; flex-direction: column; gap: var(--space-6); }
+  .gl-item {
+    display: grid;
+    gap: var(--space-2);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    /* Clears the 70px sticky header when linked to directly. */
+    scroll-margin-top: var(--space-24);
+  }
+  .gl-item:first-child { padding-top: 0; border-top: 0; }
+
+  @media (min-width: 64rem) {
+    .gl-item {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      gap: var(--space-10);
+      align-items: start;
+    }
+  }
+
+  .gl-term {
+    margin: 0;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+  .gl-also {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: var(--font-normal);
+    /* 4.76:1 — not --color-text-muted, which fails AA at 2.56:1. */
+    color: var(--c-secondary-500);
+  }
+  .gl-def {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+    max-width: var(--max-width-text);
+  }
+</style>

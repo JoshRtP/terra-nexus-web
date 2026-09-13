@@ -1,30 +1,91 @@
 ---
+// Who We Work With — one scrollable page.
+//
+// Replaces the old three-page structure (this hub + a Food & Agribusiness
+// Value Chain page + an Enabling Markets page) and absorbs the three
+// /industries/<role>/ prototype routes, all of which now redirect here
+// (astro.config.ts). Owner decision, 2026-09-13: bring the depth up one level
+// rather than making people click twice for content that was thinner than the
+// homepage teaser pointing at it.
+//
+// Everything renders from src/data/who-we-work-with.ts, which is also what the
+// homepage's two-tab teaser reads — so the teaser and the deep page can no
+// longer drift. The homepage shows name/node/opportunity/activities; this page
+// shows all of it.
+//
+// Design pass, 2026-09-13 (owner review): the first build rendered this content
+// as dark-text-on-white prose while the homepage renders the *same* content in
+// a navy panel with gold labels and inset cards, so the page read as a
+// different site. It now borrows that vocabulary translated to a light surface
+// — .split-header section headers, maroon .eyebrow labels, a tinted labelled
+// card for the opportunity, and the homepage's own <details> accordion for the
+// activity rows, which also halves a page that ran to ~18,000px.
+//
+// Deliberately stacked rather than tabbed. Tabs are right on the homepage,
+// where space is tight and the job is to tease. Here the job is depth and
+// crawlability: every block is a real heading with a stable anchor, the
+// Industries mega-menu deep-links straight into them, and accordion bodies stay
+// in the DOM.
+//
+// 2026-09-13, later the same day: the entry-card layout, field labels, the
+// <details> rows and the dot list were promoted into design-system.css
+// (.card-entry, .field-label, .disclosure, .dot-list) once the /capabilities/
+// hub needed all four. Values unchanged; only the class names moved.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import PageHero from '../../components/PageHero.astro';
+import SectionRail from '../../components/SectionRail.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+import {
+  marketRoles,
+  segments,
+  enablers,
+  expertiseLinks,
+  EXAMPLES_DISCLAIMER,
+} from '../../data/who-we-work-with';
+
 const mode = getBuildMode();
 
-const valueChainSegments = [
-  'Inputs Companies',
-  'Agricultural Producers & Integrated Protein Companies',
-  'Commodity Traders',
-  'Ingredient & Feed Processors',
-  'Food & Beverage Companies',
-  'Food Retail & Distribution',
-  'Energy & Biofuels Refiners',
-  'Food Waste Prevention, Diversion & Recovery',
-];
+// Capability links are deliberately not rendered (owner, 2026-09-13): every
+// block would carry nearly the same four, so they added noise rather than
+// navigation. Related expertise stays because it genuinely differs by segment.
 
-const enablerSegments = [
-  'Environmental Markets & Ecosystem Services',
-  'Enabling Tech & Solution Providers',
-  'Private Equity, Venture Capital & Impact Investors',
+// Rail labels only — the full names are far too long for a 10rem rail column.
+const shortLabel: Record<string, string> = {
+  'inputs-companies': 'Inputs',
+  'agricultural-producers': 'Producers',
+  'commodity-traders': 'Traders',
+  'ingredient-feed-processors': 'Processors',
+  'food-beverage-companies': 'Food & Beverage',
+  'food-retail-distribution': 'Retail',
+  'energy-biofuels-refiners': 'Energy & Biofuels',
+  'food-waste-prevention-diversion-recovery': 'Food Waste',
+  'environmental-markets': 'Environmental Markets',
+  'enabling-tech': 'Enabling Tech',
+  'capital-providers': 'Capital',
+};
+
+const railEntries = [
+  { id: 'market-roles', label: 'Market roles' },
+  ...segments.map((s) => ({ id: s.slug, label: shortLabel[s.slug] ?? s.name })),
+  ...enablers.map((e) => ({ id: e.slug, label: shortLabel[e.slug] ?? e.name })),
 ];
+const railSections = railEntries.map((e, i) => ({
+  ...e,
+  n: String(i + 1).padStart(2, '0'),
+}));
+
+// Each entry carries the same numeral the rail gives it, so the two read as one
+// system and a 16,000px scroll has a sense of position rather than being
+// fourteen interchangeable cards.
+const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
 ---
 
 <SiteLayout
   title="Who We Work With | Terra Nexus"
-  description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology providers, assurance organizations, and capital partners that enable it."
+  description="Terra Nexus works across the food and agribusiness value chain and with the markets, technology, assurance, and capital partners that enable it."
+  breadcrumbs={[{ name: 'Who We Work With', path: '/who-we-work-with/' }]}
+  canonical="/who-we-work-with/"
   preview={mode === 'preview'}
 >
   <PageHero
@@ -34,77 +95,398 @@ const enablerSegments = [
     primaryCta={{ label: 'Discuss Your Value-Chain Challenge', href: '/contact/' }}
   />
 
-  <section class="section">
+  <SectionRail
+    sections={railSections}
+    revealAfter="[data-page-hero]"
+    ariaLabel="Who we work with, by section"
+  />
+
+  {/* ── The chain, as a picture ────────────────────────────────────────── */}
+  <section class="section" aria-labelledby="chain-heading">
     <div class="container">
-      <header class="section-header">
-        <h2>The Food &amp; Agribusiness Value Chain</h2>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">The Whole Chain</span>
+        <div class="split-header-title">
+          <h2 id="chain-heading">The Food &amp; Agribusiness Value Chain</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">
+            Eight segments move food and agricultural material from input to end use, supported by
+            three groups that make environmental performance measurable, tradable and financeable.
+            The flow is not strictly linear: Energy &amp; Biofuels and Food Waste connect to
+            several nodes at once.
+          </p>
+        </div>
       </header>
 
-      <div class="diagram-container" role="figure" aria-label="Food and agribusiness value chain diagram showing eight value-chain segments and three enabling groups.">
+      <div
+        class="diagram-container"
+        role="figure"
+        aria-label="Food and agribusiness value chain diagram showing eight value-chain segments and three enabling groups."
+      >
         <img
           src="/diagrams/value-chain-with-associated-enablers.png"
           alt="Food and agribusiness value chain with associated enablers. Value-chain segments: Inputs, Agricultural Production, Commodity Trading, Ingredient and Feed Processing, Food and Beverage, Food Retail and Distribution, Energy and Biofuels, and Food Waste Prevention Diversion and Recovery. Enabling groups: Environmental Markets and Ecosystem Services, Enabling Tech and Solution Providers, and Private Equity Venture Capital and Impact Investors."
+          width="1795"
+          height="744"
           loading="lazy"
+          decoding="async"
           class="diagram-img"
         />
       </div>
-
-      <details class="text-alt">
-        <summary>Text description of the value chain</summary>
-        <div class="text-alt-content">
-          <h3>Food &amp; Agribusiness Value Chain Segments</h3>
-          <ul>
-            {valueChainSegments.map((seg) => <li>{seg}</li>)}
-          </ul>
-          <h3>Enabling Markets, Technology &amp; Capital</h3>
-          <ul>
-            {enablerSegments.map((seg) => <li>{seg}</li>)}
-          </ul>
-          <p>The value chain is not always a single strictly linear flow. Energy &amp; Biofuels and Food Waste Prevention, Diversion &amp; Recovery are value-chain segments that may connect to multiple nodes.</p>
-        </div>
-      </details>
     </div>
   </section>
 
-  <section class="section section-alt">
+  {/* ── By market role ─────────────────────────────────────────────────── */}
+  <section class="section section-alt" id="market-roles" aria-labelledby="roles-heading">
     <div class="container">
-      <header class="section-header">
-        <h2>Explore by Group</h2>
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">By Market Role</span>
+        <div class="split-header-title">
+          <h2 id="roles-heading">A Role, Not Just an Industry</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">
+            The same company can hold more than one of these positions at once — a trader
+            originating a program is a producer of environmental value and a buyer of it in the
+            same quarter. The role describes what you are doing in a given transaction, not what
+            industry you are in.
+          </p>
+        </div>
       </header>
 
-      <div class="card-grid">
-        <a href="/who-we-work-with/food-and-agribusiness-value-chain/" class="card-link">
-          <article class="card">
-            <h3>Food &amp; Agribusiness Value Chain</h3>
-            <p>Organizations that produce, move, transform, sell, distribute, and recover food and agricultural materials.</p>
-          </article>
-        </a>
-        <a href="/who-we-work-with/enabling-markets-technology-and-capital/" class="card-link">
-          <article class="card">
-            <h3>Enabling Markets, Technology &amp; Capital</h3>
-            <p>Organizations that provide environmental markets, data, technology, assurance, partnerships, and investment.</p>
-          </article>
-        </a>
-      </div>
+      <div class="card-entries">
+        {marketRoles.map((role) => (
+          <article class="card card-static card-entry" id={role.slug}>
+            <div class="card-entry-head">
+              <h3>{role.name}</h3>
+              <p class="wwt-headline">{role.headline}</p>
+              <p class="wwt-node">{role.node}</p>
+            </div>
+            <div class="wwt-entry-body">
+              <div class="wwt-opportunity">
+                <span class="field-label">The Opportunity</span>
+                <p>{role.opportunity}</p>
+              </div>
 
-      <div class="section-cta">
-        <a href="/contact/" class="btn btn-primary">Discuss Your Value-Chain Challenge</a>
+              <h4 class="field-label wwt-sub">What This Role Brings to Market</h4>
+              <div class="wwt-categories">
+                {role.categories.map((cat) => (
+                  <div class="wwt-category">
+                    <p class="wwt-category-title">{cat.title}</p>
+                    <p class="wwt-category-desc">{cat.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              <h4 class="field-label wwt-sub">Example Activities (Build, Buy, Comply, or Commercialize)</h4>
+              <div class="disclosure-list">
+                {role.activities.map((act) => (
+                  <details class="disclosure">
+                    <summary>
+                      <span class="disclosure-name">{act.name}</span>
+                      <span class="disclosure-mark" aria-hidden="true"></span>
+                    </summary>
+                    <p class="disclosure-body">{act.desc}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
+
+  {/* ── By value-chain segment ─────────────────────────────────────────── */}
+  <section class="section" aria-labelledby="segments-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">By Value-Chain Segment</span>
+        <div class="split-header-title">
+          <h2 id="segments-heading">Where You Sit Changes the Work</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">
+            Each segment faces a different version of the same problem: environmental performance
+            is created in one place, paid for in another, and claimed in a third. What follows is
+            what that looks like from each position, and what Terra Nexus does about it.
+          </p>
+        </div>
+      </header>
+
+      <div class="card-entries">
+        {segments.map((seg) => (
+          <article class="card card-static card-entry" id={seg.slug}>
+            <div class="card-entry-head">
+              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(seg.slug)}</span>
+              <h3>{seg.name}</h3>
+              <p class="wwt-node">{seg.node}</p>
+              {seg.examples.length > 0 && (
+                <div class="wwt-examples">
+                  <span class="field-label">Organizations Like</span>
+                  <p class="wwt-examples-list">{seg.examples.join(' · ')}</p>
+                </div>
+              )}
+              <div class="wwt-links">
+                <span class="field-label wwt-link-label">Related Expertise</span>
+                <div class="wwt-tags">
+                  {seg.expertise.map((e) => (
+                    <a href={expertiseLinks[e]} class="tag">{e}</a>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div class="wwt-entry-body">
+              <div class="wwt-opportunity">
+                <span class="field-label">The Opportunity</span>
+                <p>{seg.opportunity}</p>
+              </div>
+
+              <h4 class="field-label wwt-sub">Example Activities (Build, Buy, Comply, or Commercialize)</h4>
+              <div class="disclosure-list">
+                {seg.activities.map((act) => (
+                  <details class="disclosure">
+                    <summary>
+                      <span class="disclosure-name">{act.name}</span>
+                      <span class="disclosure-mark" aria-hidden="true"></span>
+                    </summary>
+                    <p class="disclosure-body">{act.desc}</p>
+                  </details>
+                ))}
+              </div>
+
+              <h4 class="field-label wwt-sub">Decisions We Help Resolve</h4>
+              <ul class="dot-list" role="list">
+                {seg.decisions.map((d) => <li>{d}</li>)}
+              </ul>
+
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
+    </div>
+  </section>
+
+  {/* ── Enabling groups ────────────────────────────────────────────────── */}
+  <section class="section section-alt" aria-labelledby="enablers-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Enabling Markets, Technology &amp; Capital</span>
+        <div class="split-header-title">
+          <h2 id="enablers-heading">The Infrastructure the Chain Runs On</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">
+            These groups do not move physical product. They decide what can be measured, what can
+            be claimed, and what gets funded — which makes them the constraint on how fast anything
+            else in the chain can move.
+          </p>
+        </div>
+      </header>
+
+      <div class="card-entries">
+        {enablers.map((en) => (
+          <article class="card card-static card-entry" id={en.slug}>
+            <div class="card-entry-head">
+              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(en.slug)}</span>
+              <h3>{en.name}</h3>
+              <p class="wwt-node">{en.node}</p>
+              {en.examples.length > 0 && (
+                <div class="wwt-examples">
+                  <span class="field-label">Organizations Like</span>
+                  <p class="wwt-examples-list">{en.examples.join(' · ')}</p>
+                </div>
+              )}
+            </div>
+            <div class="wwt-entry-body">
+              <div class="wwt-opportunity">
+                <span class="field-label">The Opportunity</span>
+                <p>{en.opportunity}</p>
+              </div>
+
+              <h4 class="field-label wwt-sub">Example Activities</h4>
+              <div class="disclosure-list">
+                {en.activities.map((act) => (
+                  <details class="disclosure">
+                    <summary>
+                      <span class="disclosure-name">{act.name}</span>
+                      <span class="disclosure-mark" aria-hidden="true"></span>
+                    </summary>
+                    <p class="disclosure-body">{act.desc}</p>
+                  </details>
+                ))}
+              </div>
+
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
+    </div>
+  </section>
+
+  {/* ── The principle ──────────────────────────────────────────────────── */}
+  <section class="wwt-statement" aria-labelledby="principle-heading">
+    <div class="container">
+      <h2 id="principle-heading" class="wwt-statement-label">The Principle Behind the Work</h2>
+      <p class="wwt-statement-text">
+        The objective is not to maximize value for one node by shifting cost or risk to another. It
+        is to build a workable path that rewards the participants whose actions make the outcome
+        possible.
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Where Do You Sit in the Chain?"
+    description="Tell us what you are trying to change, and which participants have to move for it to work."
+    primaryCta={{ label: 'Start the Conversation', href: '/contact/' }}
+    secondaryCta={{ label: 'Explore Our Capabilities', href: '/capabilities/' }}
+    links={[
+      { label: 'Areas of expertise', href: '/expertise/' },
+      { label: 'Our approach & capabilities', href: '/capabilities/' },
+      { label: 'Digital solutions', href: '/digital-solutions/' },
+      { label: 'Case studies', href: '/case-studies/' },
+      { label: 'Glossary', href: '/glossary/' },
+    ]}
+  />
 </SiteLayout>
 
 <style>
-  .diagram-container { border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-bg); }
-  .diagram-img { width: 100%; height: auto; }
-  .text-alt { margin-top: var(--space-6); padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-  .text-alt summary { font-weight: 600; font-size: var(--text-sm); cursor: pointer; color: var(--color-text-secondary); }
-  .text-alt summary:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
-  .text-alt-content { margin-top: var(--space-4); }
-  .text-alt-content h3 { font-size: var(--text-base); margin-bottom: var(--space-2); margin-top: var(--space-4); }
-  .text-alt-content h3:first-child { margin-top: 0; }
-  .text-alt-content ul { padding-left: var(--space-5); color: var(--color-text-secondary); font-size: var(--text-sm); }
-  .text-alt-content li { margin-bottom: var(--space-1); }
-  .text-alt-content p { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-text-muted); }
-  .section-cta { margin-top: var(--space-8); display: flex; justify-content: center; }
+  .diagram-container {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+  /* Intrinsic width/height on the <img> reserve the box before the file
+     loads. Without them the diagram popped in at 477px tall after an anchor
+     jump had already been calculated, landing every deep link ~570px short. */
+  .diagram-img { width: 100%; height: auto; display: block; aspect-ratio: 1795 / 744; }
+
+  .wwt-headline {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--c-sky-700);
+  }
+  .wwt-node {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+
+  /* Examples sit in the identity column, which is already visually distinct, so
+     they need a label and a rule rather than a box. Four different box
+     treatments in one card (three radii, two border styles) was the reason it
+     did not read as one system — owner review, 2026-09-13. */
+  .wwt-examples {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .wwt-examples-list {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    /* 4.76:1 — not --color-text-muted, which fails AA at 2.56:1. */
+    color: var(--c-secondary-500);
+  }
+  /* Said once per section rather than once per entry. Eleven repetitions of the
+     same sentence is what made it read as boilerplate pasted in. */
+  .wwt-footnote {
+    margin: var(--space-8) 0 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    /* text-secondary, not secondary-500: the footnote sits on the tinted
+       section, where secondary-500 measures 4.45:1 (Lighthouse, 2026-09-13). */
+    color: var(--color-text-secondary);
+    max-width: var(--max-width-text);
+  }
+
+  /* The homepage puts this same paragraph in a gold-tinted inset card with a
+     gold label. On a light surface the equivalent is the cream accent step with
+     a maroon label — same idea, same hierarchy, legible ground. */
+  /* The one tinted panel in the card, so it reads as the lead statement. Same
+     radius as the activity rows beneath it so the card has a single geometry. */
+  .wwt-opportunity {
+    margin: 0 0 var(--space-8);
+    padding: var(--space-5);
+    background: var(--c-accent-50);
+    border: 1px solid var(--c-accent-200);
+    border-radius: var(--radius-md);
+  }
+  .wwt-opportunity p {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-lg);
+    line-height: var(--line-relaxed);
+    color: var(--color-text);
+  }
+
+  .wwt-sub { margin: 0 0 var(--space-4); }
+  .wwt-sub:not(:first-of-type) { margin-top: var(--space-8); }
+
+  .wwt-categories { display: grid; gap: var(--space-3); }
+  @media (min-width: 48rem) {
+    .wwt-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .wwt-category {
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  .wwt-category-title {
+    margin: 0 0 var(--space-1);
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+  }
+  .wwt-category-desc {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+
+  .wwt-links {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .wwt-link-label { margin-bottom: var(--space-3); }
+  .wwt-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .wwt-tags a { text-decoration: none; }
+  .wwt-tags a:hover { border-color: var(--c-sky-600); color: var(--c-sky-700); }
+  .wwt-tags a:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+  /* The page's one dark moment, immediately before the light-blue CTA band —
+     the sharpest line on the page was previously a lone paragraph in a white
+     section and read as unfinished. */
+  .wwt-statement {
+    background: var(--gradient-dark);
+    padding-block: var(--space-20);
+  }
+  .wwt-statement-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--c-accent-400);
+    margin: 0 0 var(--space-5);
+  }
+  .wwt-statement-text {
+    margin: 0;
+    max-width: 52rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 2.5vw, var(--text-3xl));
+    line-height: var(--line-snug);
+    color: #fff;
+    text-wrap: pretty;
+  }
 </style>
