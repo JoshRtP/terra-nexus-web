@@ -117,6 +117,7 @@ describe.each(CAPABILITY_SLUGS)('capability page: %s', (slug) => {
       ...(f.mechanisms ? ['mechanisms'] : []),
       ...(f.lifecycle ? ['lifecycle'] : []),
       'offerings',
+      ...(f.tool ? ['tool'] : []),
       ...((expertiseForCapability[slug]?.length ?? 0) > 0 || (segmentsForCapability[slug]?.length ?? 0) > 0 ? ['expertise'] : []),
       ...(f.proofNote ? ['proof'] : []),
     ];
