@@ -124,14 +124,15 @@ npm run check            # OKF/python validators + pytest + inventory freshness
 For UI-affecting changes, also run Playwright browser QA at the four
 required viewports and inspect console output before reporting completion.
 
-## Known pre-existing issues (not introduced by this migration, not yet fixed)
+## Known pre-existing issues
 
-- `apps/web/public/images/terranexus-colorway-palette-sheet.png` is a 16MB
-  design-reference file sitting in the static `public/` output path — it
-  ships to production as-is today. Worth moving to R2 or `docs/` once media
-  strategy work starts (§9 of the architecture doc).
-- `apps/web/public/images/image.png` and `image copy.png` have generic,
-  undescriptive filenames — worth renaming/removing when touched.
+Both issues previously listed here (the 16MB colourway palette sheet
+shipping from `public/`, and the generically named `image.png` files) were
+resolved on 2026-09-13: the palette sheet now lives in
+`brand/design-reference/`, the stray images are deleted, and
+`apps/web/test/site-links.test.ts` fails any served image over 1.5MB so the
+class of problem cannot recur unnoticed. The current open list is
+`plans/pre-launch-plan.md`.
 
 ## Milestone-scoped work (do not skip ahead)
 
