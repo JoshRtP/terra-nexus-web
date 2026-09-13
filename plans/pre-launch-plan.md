@@ -35,7 +35,7 @@ Related: `capabilities-depth-seo-ux-plan.md` (Tier 1b findings),
 | B4 | **C&ES open approvals** | owner | Each of the seven approved records still lists "Information Requiring Owner Approval": advise-only versus manage/operate, registries and MRV platforms worked with, named engagements. Nothing rendered depends on them, but the Advise/Manage/Operate answer is also template section 9 on every family page. |
 | B5 | **Proof** | owner + agent | One approved case study, reached by a sentence on each family page. Migrate Case Studies off OKF to Keystatic (M8, open) and start intake on two more (`knowledge/case-studies/intake-templates/`). Peers carry three to nine per service page. |
 | B6 | **Insights** | owner + agent | One real post (`climate-week-2026.mdx`). The Insights mega-menu advertises Blog and Research. Either three or more posts exist at launch or the menu is pared to what is real. |
-| B7 | **About page tiles** | agent verifies | A comment at `about/index.astro:690` still says "three placeholder tiles". Confirm they are finished copy or finish them. `_original-backup.astro` in `pages/about/` is a routable file and should not ship. |
+| B7 | **About page tiles** | agent verified | The "three placeholder tiles" comment at `about/index.astro:690` is stale wording from the 2026-08-18 design pass; the tiles carry finished copy. `_original-backup.astro` is not routable (Astro ignores `_`-prefixed files). No action. |
 
 ## C. The Digital Solutions page — assessment for the joint session
 
@@ -109,6 +109,10 @@ after B2 so the connectors are real on day one.
 - Redirect tests for every reviewed legacy URL (A1).
 - A production-mode build served by Wrangler locally, checked for
   `robots.txt`, sitemap, canonicals and the absence of the preview banner.
+
+**Status 2026-09-13, evening.** Step 1 is done on `feature/pre-launch-batch`
+(A3, A6, D1, D4, the D3 quick wins, B7 verified, and the §E link test); see
+`log.md`. Steps 2–5 stand.
 
 ## F. Suggested order
 
