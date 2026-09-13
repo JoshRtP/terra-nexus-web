@@ -1036,6 +1036,17 @@ export function topicHeroImage(slug: string, width: number): string {
   if (!id) throw new Error(`No hero photo registered for expertise topic '${slug}'`);
   return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${width}`;
 }
+
+// The hero is full-bleed, so its rendered width is the viewport width — on a
+// 2560px display the 1600w file was being upscaled to ~2400px and going soft.
+// These are the widths the hero actually gets asked for in practice: a laptop,
+// a 1440 window, a 1080p monitor, and the wide desktops above that. `sizes` is
+// simply `100vw`, since the image always spans the viewport.
+export const HERO_WIDTHS = [1200, 1600, 2000, 2560] as const;
+
+export function topicHeroSrcSet(slug: string): string {
+  return HERO_WIDTHS.map((w) => `${topicHeroImage(slug, w)} ${w}w`).join(', ');
+}
 // ── Product screenshots ──
 // The brand kit's unframed 16:9 hero renders, copied from
 // brand/product-ui/09-web-export/04-hero-16x9 into public/images/product-ui/.

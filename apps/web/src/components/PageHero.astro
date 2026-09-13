@@ -11,10 +11,24 @@ interface Props {
    * hand-roll locally (M7 session 2 consolidation). */
   variant?: 'standard' | 'media';
   heroImage?: string;
+  /** Optional width-descriptor srcset for the media variant. The hero is
+   * full-bleed, so `sizes` is always 100vw and the browser picks by viewport
+   * width — without this a single 1600w file upscales on wide displays. */
+  heroImageSrcSet?: string;
   heroImageAlt?: string;
 }
 
-const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', heroImage, heroImageAlt } = Astro.props;
+const {
+  eyebrow,
+  title,
+  lead,
+  primaryCta,
+  secondaryCta,
+  variant = 'standard',
+  heroImage,
+  heroImageSrcSet,
+  heroImageAlt,
+} = Astro.props;
 ---
 
 {/*
@@ -80,6 +94,8 @@ const { eyebrow, title, lead, primaryCta, secondaryCta, variant = 'standard', he
     <img
       class="hero-bg"
       src={heroImage}
+      srcset={heroImageSrcSet}
+      sizes={heroImageSrcSet ? '100vw' : undefined}
       alt={heroImageAlt ?? ''}
       fetchpriority="high"
       loading="eager"

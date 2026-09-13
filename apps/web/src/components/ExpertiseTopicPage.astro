@@ -63,6 +63,7 @@ import {
   validationLead,
   categoryToRegion,
   toolAsset,
+  topicHeroSrcSet,
 } from '../data/expertise/shared';
 
 interface Props {
@@ -164,6 +165,7 @@ const ctaLinks = [
   <PageHero
     variant="media"
     heroImage={topic.heroImage}
+    heroImageSrcSet={topicHeroSrcSet(topic.slug)}
     heroImageAlt={topic.heroImageAlt}
     eyebrow={topic.eyebrow}
     title={topic.hero}
