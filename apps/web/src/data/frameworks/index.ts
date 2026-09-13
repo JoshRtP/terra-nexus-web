@@ -3,14 +3,18 @@
 // data/capabilities/index.ts: records are validated once at import so a
 // bad record fails the build, not a reader's click.
 //
-// Added 2026-09-13 with the Ten Types of Innovation. To add a framework:
-// write ./<slug>.ts in the ./types.ts shape, add it to `records`, and give
-// it a home (a `tool` section on a capability family record, a footer
-// link). The route /tools/<slug>/ and the viewer come for free.
-import type { Framework, FrameworkTactic, FrameworkType } from './types';
+// Added 2026-09-13 with the Ten Types of Innovation; the Sustainability
+// Chessboard (matrix layout) and the Sustainability Enterprise Value Map
+// (value map) followed the same day. To add a framework: write ./<slug>.ts
+// in the ./types.ts shape, add it to `records`, and give it a home (a
+// `tool` section on a capability family record; the /tools/ index and the
+// footer pick it up on their own). The route and the viewer come for free.
+import type { Framework, FrameworkTactic, FrameworkType, ValueNode } from './types';
 import { tenTypesOfInnovation } from './ten-types-of-innovation';
+import { sustainabilityChessboard } from './sustainability-chessboard';
+import { sustainabilityEnterpriseValueMap } from './sustainability-enterprise-value-map';
 
-const records: Framework[] = [tenTypesOfInnovation];
+const records: Framework[] = [tenTypesOfInnovation, sustainabilityChessboard, sustainabilityEnterpriseValueMap];
 
 /** Same rule as data/capabilities' `offeringAnchor`, so ids read the same
  * across the site: "Extensions/Plug-ins" → `extensions-plug-ins`. */
@@ -29,12 +33,29 @@ export const tacticId = (type: FrameworkType | string, tactic: FrameworkTactic |
   `${typeof type === 'string' ? type : type.id}--${slugify(typeof tactic === 'string' ? tactic : tactic.title)}`;
 
 export const frameworkHref = (slug: string) => `/tools/${slug}/`;
+export const TOOLS_INDEX_PATH = '/tools/';
 
 /** Every tactic in a framework with its type, in board order. */
 export const flatTactics = (fw: Framework) =>
   fw.types.flatMap((type) => type.tactics.map((tactic) => ({ id: tacticId(type, tactic), type, tactic })));
 
 export const tacticCount = (fw: Framework) => fw.types.reduce((n, t) => n + t.tactics.length, 0);
+
+/** Every node of a value tree, depth-first, with its depth. */
+export const flatValueTree = (tree: ValueNode[]): Array<{ node: ValueNode; depth: number }> => {
+  const out: Array<{ node: ValueNode; depth: number }> = [];
+  const walk = (nodes: ValueNode[], depth: number) => {
+    for (const node of nodes) {
+      out.push({ node, depth });
+      if (node.children) walk(node.children, depth + 1);
+    }
+  };
+  walk(tree, 0);
+  return out;
+};
+
+/** Whether a tactic's value-line code sits at or under a tree node's code. */
+export const codeUnder = (code: string, ancestor: string) => code === ancestor || code.startsWith(`${ancestor}.`);
 
 /** Throws with a precise message on the first inconsistency. Called for
  * every record below; exported so the test can assert the rules directly. */
@@ -46,12 +67,29 @@ export function validateFramework(fw: Framework): void {
   if (fw.attribution.length === 0) throw new Error(`${where}: needs at least one attribution paragraph`);
 
   const categoryNames = new Set<string>();
+  const cells = new Set<string>();
   for (const c of fw.categories) {
     if (categoryNames.has(c.name)) throw new Error(`${where}: duplicate category '${c.name}'`);
     categoryNames.add(c.name);
     if (!/^#[0-9a-f]{6}$/i.test(c.color)) throw new Error(`${where}: category '${c.name}' colour '${c.color}' is not a six-digit hex`);
+    if (fw.layout === 'matrix') {
+      if (!c.cell) throw new Error(`${where}: layout is matrix but category '${c.name}' has no cell`);
+      const key = c.cell.join(',');
+      if (cells.has(key)) throw new Error(`${where}: two categories share matrix cell [${key}]`);
+      cells.add(key);
+    }
   }
+  if (fw.layout === 'matrix' && !fw.matrix) throw new Error(`${where}: layout is matrix but no matrix axis labels are given`);
   const typesPerCategory = new Map<string, number>();
+
+  const codes = new Set<string>();
+  if (fw.valueMap) {
+    for (const { node } of flatValueTree(fw.valueMap.tree)) {
+      if (codes.has(node.code)) throw new Error(`${where}: value tree code '${node.code}' appears twice`);
+      codes.add(node.code);
+    }
+    if (codes.size === 0) throw new Error(`${where}: value map has an empty tree`);
+  }
 
   const typeIds = new Set<string>();
   const ids = new Set<string>();
@@ -68,6 +106,12 @@ export function validateFramework(fw: Framework): void {
       if (ids.has(id)) throw new Error(`${where}: type '${type.id}' has two ${fw.labels.tacticPlural} that slug to '${id}'`);
       ids.add(id);
       if (!tactic.title.trim() || !tactic.description.trim()) throw new Error(`${where}: ${id} is missing a title or description`);
+      if (fw.valueMap) {
+        if (!tactic.at || tactic.at.length === 0) throw new Error(`${where}: ${id} sits on no value line (framework has a value map)`);
+        for (const code of tactic.at) {
+          if (!codes.has(code)) throw new Error(`${where}: ${id} names unknown value line '${code}'`);
+        }
+      }
     }
   }
   for (const c of fw.categories) {
@@ -87,5 +131,5 @@ export const frameworks: Record<string, Framework> = Object.fromEntries(records.
 export const FRAMEWORK_SLUGS: string[] = records.map((fw) => fw.slug);
 if (new Set(FRAMEWORK_SLUGS).size !== FRAMEWORK_SLUGS.length) throw new Error('Two framework records share a slug');
 
-export { tenTypesOfInnovation };
+export { tenTypesOfInnovation, sustainabilityChessboard, sustainabilityEnterpriseValueMap };
 export * from './types';
