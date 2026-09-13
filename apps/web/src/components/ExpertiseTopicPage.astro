@@ -569,10 +569,6 @@ const ctaLinks = [
           <div class="card-grid card-grid-3">
             {tools.map((tool) => (
               <article class="card card-static card-media xp-tool">
-                {/* TODO (P3 11): alt text is "<tool name> interface" by
-                    decision. brand/product-ui/09-web-export/alt-text.md now
-                    carries a real description of each render, so replacing
-                    this is a copy decision rather than a writing job. */}
                 <img
                   class="xp-tool-img"
                   src={tool.src}
@@ -580,7 +576,7 @@ const ctaLinks = [
                   sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 45vw, 22rem"
                   width={tool.width}
                   height={tool.height}
-                  alt={`${tool.name} interface`}
+                  alt={tool.alt}
                   loading="lazy"
                   decoding="async"
                 />

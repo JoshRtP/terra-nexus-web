@@ -54,7 +54,7 @@ export const indicatorDefinitions: Record<string, string> = {
   Water:
     'The quantity and quality of water moving through the system, from infiltration and storage on site to what leaves it and what that does downstream.',
   'Land & biodiversity':
-    'The extent and condition of habitat, the diversity of species it supports, and whether land is being converted or held in production. Conversion is the one loss that cannot be reversed.',
+    'The extent and condition of habitat, the diversity of species it supports, and whether land is being converted or held in production. Converted land does not return to habitat on any useful timescale.',
   'Resilience & productivity':
     'The capacity of the operation to absorb a shock, keep producing through it and recover afterward, and the output it achieves relative to the land, inputs and labor required. Productivity is a function of resilience: an operation that cannot withstand the shifting climate cannot produce reliably through it.',
 };

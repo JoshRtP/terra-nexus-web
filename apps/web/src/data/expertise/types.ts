@@ -116,6 +116,12 @@ export interface Tool {
    * page rather than a section of a topic page (owner, 2026-09-12). Widths come
    * from TOOL_WIDTHS in shared.ts. */
   asset: string;
+  /** What the screen actually shows. Adapted from the brand kit's own
+   * descriptions (brand/product-ui/09-web-export/alt-text.md), with its
+   * "as a product hero" framing dropped — that describes the asset's role in
+   * the kit, not what a reader would see. Replaces the placeholder
+   * "<tool name> interface" the handover shipped with. */
+  alt: string;
 }
 
 /** Section 00 band. Scales to nine: what actually varies across the topics is

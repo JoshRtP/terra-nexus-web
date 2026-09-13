@@ -18,8 +18,10 @@ interface Props {
   description?: string;
   preview?: boolean;
   /** Site-root-relative canonical path, e.g. '/expertise/regenerative-rangeland/'.
-   * Emitted as <link rel="canonical"> and og:url. Optional — pages that don't
-   * pass one behave exactly as before. */
+   * Resolved against astro.config.ts's `site` and emitted as an absolute
+   * <link rel="canonical"> and og:url — a relative canonical is legal but
+   * absolute is the recommendation, and og:url has to be absolute to work at
+   * all. Optional: pages that don't pass one behave exactly as before. */
   canonical?: string;
   /** Overrides the default /brand/og-image.png for og:image. */
   ogImage?: string;
@@ -27,6 +29,12 @@ interface Props {
 
 const { title, description, preview = false, canonical, ogImage } = Astro.props;
 const mode = getBuildMode();
+// Astro.site comes from astro.config.ts. Falling back to the raw path rather
+// than throwing keeps a `site`-less build working, which is what every
+// consumer got before 2026-09-12.
+const canonicalUrl = canonical && Astro.site ? new URL(canonical, Astro.site).href : canonical;
+const resolvedOgImage = ogImage ?? '/brand/og-image.png';
+const ogImageUrl = Astro.site ? new URL(resolvedOgImage, Astro.site).href : resolvedOgImage;
 const isPreview = preview || mode === 'preview';
 const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexus`;
 ---
@@ -39,7 +47,7 @@ const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexu
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     {description && <meta name="description" content={description} />}
-    {canonical && <link rel="canonical" href={canonical} />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {isPreview && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#131f48" />
 
@@ -52,8 +60,8 @@ const fullTitle = title.includes('Terra Nexus') ? title : `${title} | Terra Nexu
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     {description && <meta property="og:description" content={description} />}
-    <meta property="og:image" content={ogImage ?? '/brand/og-image.png'} />
-    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImageUrl} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta name="twitter:card" content="summary_large_image" />
     <title>{fullTitle}</title>
   </head>

@@ -36,7 +36,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
   meta: {
     title: 'Regenerative Agriculture | Terra Nexus',
     description:
-      'Terra Nexus helps traders and food-system companies design, launch and manage regenerative agriculture programs that connect producer economics to credible claims.',
+      'Terra Nexus designs and runs regenerative agriculture programs that connect producer economics to credible claims, field to market.',
     canonical: '/expertise/regenerative-agriculture/',
   },
 
@@ -129,7 +129,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         ],
       },
     ],
-    kicker: 'The deeper change is not agronomic. It is that performance becomes measurable, and measurable performance can be priced.',
+    kicker: 'Once field performance is measured it can be priced, and that reaches further than any single practice change.',
   },
 
   correcting: {
@@ -328,7 +328,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
   verifying: {
     label: 'Verifying What Matters Most',
     heading: 'Measure Twice Credit Once',
-    lead: 'Evidence is a cost, so the question is never how much can we measure. It is how much does this specific claim require. Five layers, and the claim decides how far up you have to go.',
+    lead: 'Evidence costs money, so the useful question is how much this particular claim requires. Five layers build on each other, and the claim decides how far up you need to go.',
     layers: [
       { n: '01', name: 'Practice', question: 'What changed?', examples: 'Nutrient plan, tillage, cover, rotation, timing, placement' },
       { n: '02', name: 'Outcome', question: 'What happened?', examples: 'Emissions, soil carbon, water quality, yield, input intensity' },
@@ -350,7 +350,7 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         carrier: 'As a quantified environmental asset',
         tagline: 'Turn verified environmental outcomes into market-ready assets.',
         whenToUse: 'Use when acreage can be aggregated, a methodology fits the practice and geography, and the buyer wants a transferable unit rather than supply.',
-        detail: 'A credit is a unit. Once a quantified outcome has been issued as one it can be owned, transferred, priced, retired and reported under defined market rules. For cropland the constraint is rarely demand; it is whether measurement and permanence requirements can be met at a cost the outcome supports.',
+        detail: 'Once a quantified outcome has been issued as a credit it can be owned, transferred, priced, retired and reported under defined market rules. For cropland the binding constraint is usually measurement and permanence: whether those requirements can be met at a cost the outcome supports, rather than whether anyone wants to buy.',
         examples: [
           'Verra VM0042, Improved Agricultural Land Management',
           'Climate Action Reserve Soil Enrichment Protocol',
@@ -423,26 +423,36 @@ export const regenerativeAgriculture: ExpertiseTopic = {
         name: 'Soil Carbon Prediction',
         text: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a practice change before it is implemented.',
         asset: 'terranexus-soil-carbon-prediction-16x9-dark',
+        alt:
+          'Soil Carbon Prediction dashboard showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories, and benefit and economic-value distributions.',
       },
       {
         name: 'Biofuels Origination Economics',
         text: 'Low-carbon-intensity feedstock evaluation that maps supply against processing capacity, so sourcing decisions start from where the qualifying material actually is.',
         asset: 'terranexus-biofuels-origination-16x9-dark',
+        alt:
+          'Biofuels Origination Economics dashboard showing a US county choropleth of carbon-intensity impact for corn under cover crop and no till, with the county results table.',
       },
       {
         name: 'Crop Carbon Intensity',
         text: 'Field-level greenhouse gas breakdowns and volume-weighted carbon intensity, benchmarked against GREET defaults.',
         asset: 'terranexus-crop-carbon-intensity-16x9-dark',
+        alt:
+          'Crop Carbon Intensity dashboard showing GREET volume-weighted carbon intensity for corn with a seven-line greenhouse gas breakdown.',
       },
       {
         name: 'Practice Detection, Audit & Due Diligence',
         text: 'Independent remote-sensing verification of practices and soil health indicators, with an audit-ready export a third-party reviewer can act on directly.',
         asset: 'terranexus-dmrv-audit-verification-16x9-dark',
+        alt:
+          'Audit and diligence verification dashboard showing cover-crop and tillage classification over a Sentinel-2 field polygon, with a 24-frame MODIS NDVI season curve.',
       },
       {
         name: 'Environmental Asset Pricing & Stranded Claims Optimization',
         text: 'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
         asset: 'terranexus-asset-pricing-optimization-16x9-dark',
+        alt:
+          "Environmental Asset Pricing and Stranded Claims Optimization dashboard showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
       },
     ],
   },

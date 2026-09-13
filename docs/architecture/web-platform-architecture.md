@@ -528,9 +528,57 @@ real file). The six lifecycle stage titles and every intervention name were
 paragraphs and are now `h3`s, so the two largest pre-rendered content blocks are
 in the document outline.
 
+**SEO and copy pass (2026-09-12, P3/P4 of the owner review).** Several of these
+are site-wide, not template-scoped:
+
+- **`site: 'https://terra.nexus'` in `astro.config.ts`** (owner decision). The
+  production origin, set while terra.nexus still serves WordPress: this is where
+  the Astro site is going, so nothing changes at cutover, and preview builds are
+  noindex sitewide so no canonical pointing there is crawled early. Everything
+  below depends on it.
+- **`@astrojs/sitemap`**, a new top-level integration. Production builds only —
+  a preview build is noindex and shipping it a sitemap would invite exactly the
+  crawl the noindex prevents. Keystatic/API routes are filtered out. 31 URLs;
+  `robots.txt` advertises it in production and stays a blanket `Disallow: /`
+  with no Sitemap line in preview. Both halves are asserted in
+  `astro-foundation.test.ts`.
+- **`SiteLayout` canonical and og:image are now absolute**, resolved against
+  `Astro.site`. A relative canonical is legal; absolute is the recommendation,
+  and og:url does not work relative at all.
+- **`PageHero`'s `media` variant renders a real `<img>`**, not a CSS background.
+  The hero is the largest paint on all nine expertise topic pages (the only
+  consumers of that variant) and a background image is invisible to the preload
+  scanner — the browser cannot start fetching it until CSS has loaded and the
+  box is laid out, and it cannot be prioritised. Now discovered in the initial
+  parse with `fetchpriority="high"`. `object-fit`/`object-position` replace
+  `background-size`/`-position`; the render is otherwise unchanged, verified on
+  both the old `ExpertisePage` and the new template.
+- **Tool `alt` text** is now a real description per screen, adapted from
+  `brand/product-ui/09-web-export/alt-text.md`, replacing the placeholder
+  "<tool name> interface".
+- **Meta descriptions** trimmed to 131–135 characters, under the ~155 truncation
+  point. The seven topics still on `ExpertisePage` run 262–279 and were left
+  alone; worth a pass when they migrate.
+- **Author comments no longer ship to the browser.** `StrategyFrameworkDVF`'s
+  seven HTML comments (1.9 KB on every page that renders it) became `{/* */}`
+  comments, which Astro strips at build. They were implementation notes for
+  whoever next edits the component, not anything a visitor needs. Nothing
+  actionable was buried in them: the one TODO they carried (tool alt text) is
+  resolved above, and the rest record owner decisions already captured here.
+- **Four rhetorical constructions rewritten** (owner: fine to remove entirely).
+  All were of the same "X is not Y. It is Z." shape, which recurred four times
+  across two pages and would have recurred nine times once every topic uses the
+  template. Meaning preserved, inversion dropped. The same construction in one
+  authored indicator definition was rewritten with them.
+
+Accepted as-is, not fixed: ~870 words repeat on every topic page (588 shared
+between the two topics plus 282 words of lifecycle copy that also appears on the
+homepage). At 77% unique per page the owner accepted the duplication rather than
+varying approved copy.
+
 Deferred by owner decision, not omissions: structured data (BreadcrumbList /
-Service / FAQPage, to be added once on the template so all nine topics
-inherit it), the four unsourced statistics in section 01, proof content such as
+Service / FAQPage, to be added once on the template so all nine topics inherit
+it — deferred to M6+ / P6, and now unblocked by the `site` config above), the four unsourced statistics in section 01, proof content such as
 case studies, and the selector count. Content still needing owner review before
 publish is listed in each data module's header comment.
 

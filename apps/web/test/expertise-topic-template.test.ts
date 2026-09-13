@@ -21,6 +21,8 @@ const APP_ROOT = resolve(TEST_DIRECTORY, '..');
 const DIST = resolve(APP_ROOT, 'dist/client');
 
 const TOPIC_SLUGS = ['regenerative-rangeland', 'regenerative-agriculture'] as const;
+/** astro.config.ts's `site`. Canonical, og:url and og:image all resolve against it. */
+const SITE = 'https://terra.nexus';
 const html: Record<string, string> = {};
 
 /** Builds production output. Deliberately not reusing whatever dist/ happens
@@ -167,15 +169,19 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     }
   });
 
-  it('emits the per-topic canonical, and an og:image that actually exists', async () => {
-    expect(html[slug]).toContain(`<link rel="canonical" href="${topic().meta.canonical}">`);
+  it('emits an absolute per-topic canonical, and an og:image that exists', async () => {
+    // Absolute, not the root-relative path the record stores: a relative
+    // canonical is legal but absolute is the recommendation, and og:url has to
+    // be absolute to work at all. SITE comes from astro.config.ts.
+    expect(html[slug]).toContain(`<link rel="canonical" href="${SITE}${topic().meta.canonical}">`);
+    expect(html[slug]).toContain(`<meta property="og:url" content="${SITE}${topic().meta.canonical}">`);
     // The handover specified /images/live-site/og-<slug>.jpg for both topics
     // and neither file was ever created, so the pages shipped a 404 social
-    // preview. Whatever og:image the page emits — the per-topic one or
-    // SiteLayout's default — has to resolve to a real file.
+    // preview. Whatever og:image the page emits has to resolve to a real file.
     const og = html[slug].match(/property="og:image" content="([^"]+)"/)?.[1];
     expect(og, 'og:image missing').toBeTruthy();
-    await expect(readFile(resolve(DIST, og!.replace(/^\//, '')))).resolves.toBeDefined();
+    expect(og!.startsWith(SITE), 'og:image must be absolute').toBe(true);
+    await expect(readFile(resolve(DIST, og!.slice(SITE.length + 1)))).resolves.toBeDefined();
   });
 
   it('points every tool screenshot at an unframed render that exists', async () => {

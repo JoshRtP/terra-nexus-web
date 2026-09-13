@@ -37,7 +37,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
   meta: {
     title: 'Regenerative Rangeland | Terra Nexus',
     description:
-      'Terra Nexus helps producers, protein companies and buyers design and manage rangeland programs connecting grazing management to supply-chain value and credible claims.',
+      'Terra Nexus designs and runs regenerative rangeland programs that connect grazing management to supply-chain value and credible claims.',
     canonical: '/expertise/regenerative-rangeland/',
   },
 
@@ -133,7 +133,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
         ],
       },
     ],
-    kicker: 'Keeping working land in production is the outcome underneath all three. Conversion is the loss that cannot be reversed.',
+    kicker: 'Keeping working land in production sits underneath all three, because converted grassland does not come back.',
   },
 
   correcting: {
@@ -343,7 +343,7 @@ export const regenerativeRangeland: ExpertiseTopic = {
   verifying: {
     label: 'Verifying What Matters Most',
     heading: 'Measure Twice Credit Once',
-    lead: 'Evidence is a cost, so the question is never how much can we measure. It is how much does this specific claim require. Five layers, and the claim decides how far up you have to go.',
+    lead: 'Evidence costs money, so the useful question is how much this particular claim requires. Five layers build on each other, and the claim decides how far up you need to go.',
     layers: [
       { n: '01', name: 'Practice', question: 'What changed?', examples: 'Grazing plan, stocking, infrastructure, feed, management' },
       { n: '02', name: 'Outcome', question: 'What happened?', examples: 'Soil, methane, water, habitat, productivity' },
@@ -442,21 +442,29 @@ export const regenerativeRangeland: ExpertiseTopic = {
         name: 'Soil Carbon Prediction',
         text: 'Digital soil mapping and biogeochemical modeling that forecasts soil organic carbon trajectories and quantifies the carbon benefit of a management change before it is implemented.',
         asset: 'terranexus-soil-carbon-prediction-16x9-dark',
+        alt:
+          'Soil Carbon Prediction dashboard showing a 50-year six-model ensemble with 1,000 Monte Carlo iterations, SOC trajectories, and benefit and economic-value distributions.',
       },
       {
         name: 'Enteric Emissions',
         text: 'Herd-level methane accounting built around composition, feed and management, so the largest part of the footprint is measured where it is produced.',
         asset: 'terranexus-enteric-emissions-16x9-dark',
+        alt:
+          'Enteric Emissions dashboard showing VM0042 herd methane for 350 head across two cohorts, with the emission-factor adjustment.',
       },
       {
         name: 'Grazing Practice Detection',
         text: 'Remote-sensing detection of grazing events, rest periods and biomass response, so a rotational grazing claim carries evidence a reviewer can test.',
         asset: 'terranexus-grazing-detection-16x9-dark',
+        alt:
+          'Grazing Detection dashboard showing a rotational grazing event on an NDVI paddock map with a 10-week biomass recovery curve.',
       },
       {
         name: 'Environmental Asset Pricing & Stranded Claims Optimization',
         text: 'Optimizes bid allocation and development economics across a program, and surfaces the value left on the table when eligible supply goes undeveloped.',
         asset: 'terranexus-asset-pricing-optimization-16x9-dark',
+        alt:
+          "Environmental Asset Pricing and Stranded Claims Optimization dashboard showing a supply-to-demand insetting allocation with the unenrolled farm's stranded claim broken out.",
       },
     ],
   },
