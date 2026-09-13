@@ -59,21 +59,21 @@ export const industriesMenu: IndustryRole[] = [
   {
     key: 'producers',
     title: 'Developers & Producers',
-    href: '/industries/producers/',
+    href: '/who-we-work-with/#producers',
     shortDescription: 'Organizations that create, originate, quantify, certify, or supply environmentally differentiated products, verified outcomes, environmental attributes, and credible claims.',
     menuDescription: 'Organizations creating and supplying differentiated products, environmental outcomes, attributes, certifications, and claims.',
   },
   {
     key: 'buyers',
     title: 'Buyers',
-    href: '/industries/buyers/',
+    href: '/who-we-work-with/#buyers',
     shortDescription: 'Organizations procuring and using differentiated products, verified environmental outcomes, attributes, certifications, and claims to achieve commercial, sustainability, and decarbonization objectives.',
     menuDescription: 'Organizations procuring and using those products and outcomes to meet commercial, sustainability, and decarbonization objectives.',
   },
   {
     key: 'enablers',
     title: 'Enabling Infrastructure',
-    href: '/industries/enablers/',
+    href: '/who-we-work-with/#enablers',
     shortDescription: 'Technology, capital, markets, assurance, and specialized services that make environmental value creation and procurement possible at scale.',
     menuDescription: 'Technology, capital, markets, assurance, and services enabling the system.',
   },
@@ -91,14 +91,14 @@ export const insightsMenu: MenuItem[] = [
 // pages/who-we-work-with/food-and-agribusiness-value-chain/index.astro,
 // where each segment card carries id={slug}.
 export const valueChainMenu: MenuItem[] = [
-  { title: 'Inputs Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#inputs-companies' },
-  { title: 'Agricultural Producers & Integrated Protein Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#agricultural-producers' },
-  { title: 'Commodity Traders', href: '/who-we-work-with/food-and-agribusiness-value-chain/#commodity-traders' },
-  { title: 'Ingredient & Feed Processors', href: '/who-we-work-with/food-and-agribusiness-value-chain/#ingredient-feed-processors' },
-  { title: 'Food & Beverage Companies', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-beverage-companies' },
-  { title: 'Food Retail & Distribution', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-retail-distribution' },
-  { title: 'Energy & Biofuels Refiners', href: '/who-we-work-with/food-and-agribusiness-value-chain/#energy-biofuels-refiners' },
-  { title: 'Food Waste Prevention, Diversion & Recovery', href: '/who-we-work-with/food-and-agribusiness-value-chain/#food-waste-prevention-diversion-recovery' },
+  { title: 'Inputs Companies', href: '/who-we-work-with/#inputs-companies' },
+  { title: 'Agricultural Producers & Integrated Protein Companies', href: '/who-we-work-with/#agricultural-producers' },
+  { title: 'Commodity Traders', href: '/who-we-work-with/#commodity-traders' },
+  { title: 'Ingredient & Feed Processors', href: '/who-we-work-with/#ingredient-feed-processors' },
+  { title: 'Food & Beverage Companies', href: '/who-we-work-with/#food-beverage-companies' },
+  { title: 'Food Retail & Distribution', href: '/who-we-work-with/#food-retail-distribution' },
+  { title: 'Energy & Biofuels Refiners', href: '/who-we-work-with/#energy-biofuels-refiners' },
+  { title: 'Food Waste Prevention, Diversion & Recovery', href: '/who-we-work-with/#food-waste-prevention-diversion-recovery' },
 ];
 
 // Approach — the Capabilities mega menu's first column. Owner feedback
