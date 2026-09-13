@@ -6,7 +6,7 @@ tags:
 - service-offering
 - carbon-and-ecosystem-services
 - content-gap
-status: draft
+status: stable
 generated:
   by: openai/gpt-5.6-thinking
   at: '2026-08-01T20:48:00Z'
@@ -18,11 +18,11 @@ sources:
 service_family: services/carbon-and-ecosystem-services
 offering_number: '4'
 publication:
-  audience: internal
-  state: blocked
+  audience: public
+  state: approved
   attribution: none
-  approved_by: null
-  approved_at: null
+  approved_by: human:josh-mellinger
+  approved_at: "2026-09-13T20:05:31Z"
 confidentiality: unconfirmed
 ---
 
@@ -30,10 +30,11 @@ confidentiality: unconfirmed
 
 Pilot Development & Partner Selection
 
-# Draft Description [agent-draft]
+# Draft Description
 
-> **Status: draft â€” do not publish without owner review.**
-> All content below is agent synthesis. Nothing constitutes an approved capability claim.
+> **Approved by the owner on 2026-09-13** (Capabilities review session), as drafted
+> on 2026-08-01. The "Information Requiring Owner Approval" items below were not
+> answered by that approval and remain open; nothing published depends on them.
 
 This offering supports organizations designing and launching pilots for
 environmental programs â€” including supply chain sustainability programs,
@@ -41,20 +42,20 @@ carbon and ecosystem service programs, and inset or credit generation initiative
 It addresses the design, feasibility, and partner selection decisions that program
 owners face before committing to full-scale implementation.
 
-## Primary Decision Owners [agent-draft]
+## Primary Decision Owners
 
 * Program owners responsible for new environmental or sustainability program development
 * P&L owners and corporate development evaluating new initiatives
 * Supply chain and procurement leaders sponsoring supplier-facing programs
 * Project developers evaluating site, crop, geography, or technology selection
 
-## Core Client Question [agent-draft]
+## Core Client Question
 
 How do we design a viable pilot for an environmental program, select the right
 technology, methodology, and operating partners, and structure the program to
 scale â€” while managing risk and proving concept before full investment?
 
-## Scope [agent-draft]
+## Scope
 
 * Pilot program design and scope definition
 * Program feasibility and baseline assessment
@@ -64,20 +65,20 @@ scale â€” while managing risk and proving concept before full investment?
 * Pilot economics and scale-up pathway modeling
 * Risk and learning framework design
 
-## Boundary with Other Service Families [agent-draft]
+## Boundary with Other Service Families
 
 * **Program Design & Operations** covers the full operational management of a program once the pilot is proven and the design is confirmed. This offering covers the pre-launch design and selection phase.
 * **VCM & Scope 3 Markets** covers the market-access and claim strategy. This offering covers the program and partner architecture that will generate the assets.
 * **Financial Investments & New Venture Development** covers investment diligence for external program investments. This offering covers the design and launch of internally operated programs.
 
-## Representative Client Problems [agent-draft]
+## Representative Client Problems
 
 * We want to test a regenerative agriculture program with a subset of our supplier base â€” how do we design it and who are the right technology and verification partners?
 * We need to choose between MRV platforms for our soil carbon program â€” what are the tradeoffs in data requirements, costs, and credit eligibility?
 * We are evaluating three potential program geographies â€” how do we assess feasibility, baseline potential, and partnership ecosystem in each?
 * We want to launch a pilot quickly but are uncertain about which standard or registry will best serve our long-term strategy.
 
-## Proposed Capabilities [agent-draft]
+## Proposed Capabilities
 
 * Program design and scoping workshops
 * Feasibility and baseline assessment framework
@@ -87,7 +88,7 @@ scale â€” while managing risk and proving concept before full investment?
 * Pilot economics and scale-up modeling
 * Learning and risk framework for pilot programs
 
-## Proposed Deliverables [agent-draft]
+## Proposed Deliverables
 
 * Pilot program design document
 * Feasibility and baseline assessment
@@ -96,7 +97,7 @@ scale â€” while managing risk and proving concept before full investment?
 * Pilot economics model
 * Scale-up pathway and decision criteria
 
-## Related Areas of Expertise [agent-draft]
+## Related Areas of Expertise
 
 * Regenerative Agriculture
 * Regenerative Rangeland
@@ -105,7 +106,7 @@ scale â€” while managing risk and proving concept before full investment?
 * Biodiversity & Ecosystem Resilience
 * Sustainable Supply Chains
 
-## Related Audiences [agent-draft]
+## Related Audiences
 
 * Environmental Markets & Ecosystem Services
 * Agricultural Producers & Integrated Protein Companies
@@ -113,7 +114,7 @@ scale â€” while managing risk and proving concept before full investment?
 * Enabling Tech & Solution Providers
 * Private Equity, Venture Capital & Impact Investors
 
-## Information Requiring Owner Approval [agent-draft]
+## Information Requiring Owner Approval
 
 * Which program types, geographies, and technologies Terra Nexus has direct pilot design experience with
 * Whether Terra Nexus manages technology or partner procurement or only advises

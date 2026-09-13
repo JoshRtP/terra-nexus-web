@@ -6,7 +6,7 @@ tags:
 - service-offering
 - carbon-and-ecosystem-services
 - content-gap
-status: draft
+status: stable
 generated:
   by: openai/gpt-5.6-thinking
   at: '2026-08-01T20:48:00Z'
@@ -18,11 +18,11 @@ sources:
 service_family: services/carbon-and-ecosystem-services
 offering_number: '1'
 publication:
-  audience: internal
-  state: blocked
+  audience: public
+  state: approved
   attribution: none
-  approved_by: null
-  approved_at: null
+  approved_by: human:josh-mellinger
+  approved_at: "2026-09-13T20:05:31Z"
 confidentiality: unconfirmed
 ---
 
@@ -30,12 +30,11 @@ confidentiality: unconfirmed
 
 VCM & Scope 3 Markets
 
-# Draft Description [agent-draft]
+# Draft Description
 
-> **Status: draft â€” do not publish without owner review.**
-> All content below is agent synthesis derived from the approved source direction,
-> the confirmed decision-owner architecture, and Terra Nexus business logic.
-> Nothing below constitutes an approved capability claim.
+> **Approved by the owner on 2026-09-13** (Capabilities review session), as drafted
+> on 2026-08-01. The "Information Requiring Owner Approval" items below were not
+> answered by that approval and remain open; nothing published depends on them.
 
 This offering supports organizations seeking to participate in, benefit from, or
 structure positions in voluntary carbon markets (VCMs) and Scope 3 supply chain
@@ -43,20 +42,20 @@ claims programs. It addresses the access and strategy decisions that environment
 markets teams, carbon desks, and trade desks face before committing capital,
 contracts, or claims to a market mechanism.
 
-## Primary Decision Owners [agent-draft]
+## Primary Decision Owners
 
 * Environmental markets teams
 * Carbon desks and trade desks
 * P&L owners assessing market participation
 * Corporate development evaluating portfolio positions
 
-## Core Client Question [agent-draft]
+## Core Client Question
 
 How do we access, evaluate, structure, and benefit from voluntary carbon markets
 and Scope 3 supply chain claim programs â€” and what commitments, risks, and
 accounting implications come with each pathway?
 
-## Scope [agent-draft]
+## Scope
 
 * Market landscape assessment for VCM credit types, registries, and buyer segments
 * Scope 3 supply chain claim program design and access strategies
@@ -64,20 +63,20 @@ accounting implications come with each pathway?
 * Inset versus offset decision frameworks
 * Claim structure options and associated accounting, verification, and communication requirements
 
-## Boundary with Other Service Families [agent-draft]
+## Boundary with Other Service Families
 
 * **Corporate Sustainability** owns Scope 3 accounting, target-setting, and disclosure reporting. This offering focuses on the market access and transaction decisions, not the enterprise accounting framework.
 * **Carbon & Ecosystem Services / Program Design & Operations** covers program implementation once a pathway is selected. VCM & Scope 3 Markets covers upstream evaluation and strategy.
 * **Strategy & Innovation** may own the commercial strategy for a new sustainability product or offering. This offering focuses on the environmental market mechanism layer.
 
-## Representative Client Problems [agent-draft]
+## Representative Client Problems
 
 * We need to understand which VCM credit types meet our buyer requirements and sustainability claims.
 * We are a commodity trader evaluating inset programs â€” how do supply chain claims work, and what are the verification and contract requirements?
 * We have a corporate net-zero commitment â€” what role should voluntary carbon credits play, and which registry and standard requirements apply?
 * We want to establish a position in Scope 3 supply chain outcomes â€” what are the available program models and what do they require of us?
 
-## Proposed Capabilities [agent-draft]
+## Proposed Capabilities
 
 * VCM market landscape and credit-type assessment
 * Registry and standard comparison for buyer or developer use cases
@@ -86,7 +85,7 @@ accounting implications come with each pathway?
 * Credit sourcing strategy and counterparty due diligence framework
 * Scenario modeling for market access timing and pricing
 
-## Proposed Deliverables [agent-draft]
+## Proposed Deliverables
 
 * Market access strategy memo
 * Credit-type and registry comparison matrix
@@ -94,7 +93,7 @@ accounting implications come with each pathway?
 * Inset vs. offset decision framework
 * Counterparty and contract review checklist
 
-## Related Areas of Expertise [agent-draft]
+## Related Areas of Expertise
 
 * Regenerative Agriculture
 * Regenerative Rangeland
@@ -104,7 +103,7 @@ accounting implications come with each pathway?
 * Low Carbon Energy & Biofuels
 * Sustainable Supply Chains
 
-## Related Audiences [agent-draft]
+## Related Audiences
 
 * Environmental Markets & Ecosystem Services
 * Commodity Traders
@@ -112,7 +111,7 @@ accounting implications come with each pathway?
 * Food & Beverage Companies
 * Private Equity, Venture Capital & Impact Investors
 
-## Information Requiring Owner Approval [agent-draft]
+## Information Requiring Owner Approval
 
 * Which specific credit types, registries, or market mechanisms Terra Nexus has direct advisory experience with
 * Whether Terra Nexus advises, manages, or operates VCM transactions directly or only supports client decisions

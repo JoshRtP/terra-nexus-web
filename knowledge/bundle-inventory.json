@@ -1,6 +1,6 @@
 {
   "okf_version": "0.2",
-  "generated_at": "2026-08-12T07:05:19Z",
+  "generated_at": "2026-09-13T20:12:29Z",
   "concept_count": 105,
   "by_type": {
     "Agent Instructions": 1,
@@ -29,18 +29,18 @@
     "Website Brief": 14
   },
   "by_status": {
-    "draft": 37,
-    "stable": 68
+    "draft": 30,
+    "stable": 75
   },
   "by_publication_audience": {
     "None": 82,
-    "internal": 22,
-    "public": 1
+    "internal": 15,
+    "public": 8
   },
   "by_publication_state": {
     "None": 82,
-    "approved": 1,
-    "blocked": 22
+    "approved": 8,
+    "blocked": 15
   },
   "by_confidentiality": {
     "anonymized": 1,
@@ -509,36 +509,36 @@
       "path": "services/carbon-and-ecosystem-services/asset-and-portfolio-valuation.md",
       "type": "Service Offering",
       "title": "Asset & Portfolio Valuation",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
       "path": "services/carbon-and-ecosystem-services/commercialization-pathways.md",
       "type": "Service Offering",
       "title": "Commercialization Pathways",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
       "path": "services/carbon-and-ecosystem-services/full-service-ghg-accounting.md",
       "type": "Service Offering",
       "title": "Full Service GHG Accounting",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
       "path": "services/carbon-and-ecosystem-services/impact-verification-and-claims-translation.md",
       "type": "Service Offering",
       "title": "Impact Verification & Claims Translation",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
@@ -553,27 +553,27 @@
       "path": "services/carbon-and-ecosystem-services/pilot-development-and-partner-selection.md",
       "type": "Service Offering",
       "title": "Pilot Development & Partner Selection",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
       "path": "services/carbon-and-ecosystem-services/program-design-and-operations.md",
       "type": "Service Offering",
       "title": "Program Design & Operations",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {
       "path": "services/carbon-and-ecosystem-services/vcm-and-scope-3-markets.md",
       "type": "Service Offering",
       "title": "VCM & Scope 3 Markets",
-      "status": "draft",
-      "pub_audience": "internal",
-      "pub_state": "blocked",
+      "status": "stable",
+      "pub_audience": "public",
+      "pub_state": "approved",
       "confidentiality": "unconfirmed"
     },
     {

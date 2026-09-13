@@ -6,7 +6,7 @@ tags:
 - service-offering
 - carbon-and-ecosystem-services
 - content-gap
-status: draft
+status: stable
 generated:
   by: openai/gpt-5.6-thinking
   at: '2026-08-01T20:48:00Z'
@@ -18,11 +18,11 @@ sources:
 service_family: services/carbon-and-ecosystem-services
 offering_number: '5'
 publication:
-  audience: internal
-  state: blocked
+  audience: public
+  state: approved
   attribution: none
-  approved_by: null
-  approved_at: null
+  approved_by: human:josh-mellinger
+  approved_at: "2026-09-13T20:05:31Z"
 confidentiality: unconfirmed
 ---
 
@@ -30,10 +30,11 @@ confidentiality: unconfirmed
 
 Program Design & Operations
 
-# Draft Description [agent-draft]
+# Draft Description
 
-> **Status: draft â€” do not publish without owner review.**
-> All content below is agent synthesis. Nothing constitutes an approved capability claim.
+> **Approved by the owner on 2026-09-13** (Capabilities review session), as drafted
+> on 2026-08-01. The "Information Requiring Owner Approval" items below were not
+> answered by that approval and remain open; nothing published depends on them.
 
 This offering covers the end-to-end design and operational management of
 environmental programs â€” including supply chain sustainability programs, carbon
@@ -41,20 +42,20 @@ and ecosystem service credit programs, insetting programs, and ecosystem service
 payment schemes. It supports program owners and operators who need to build,
 run, and continuously improve programs at scale.
 
-## Primary Decision Owners [agent-draft]
+## Primary Decision Owners
 
 * Program owners responsible for environmental program operations
 * P&L owners managing program economics and performance
 * Supply chain and procurement leaders running supplier engagement programs
 * Operations teams responsible for program delivery
 
-## Core Client Question [agent-draft]
+## Core Client Question
 
 How do we design a program that meets technical, commercial, stakeholder, and
 verification requirements â€” and how do we operate it efficiently, improve it
 over time, and scale it without losing integrity?
 
-## Scope [agent-draft]
+## Scope
 
 * Full program design: eligibility criteria, enrollment, data collection, measurement protocols, and reporting
 * Grower, supplier, or project participant recruitment and engagement
@@ -65,20 +66,20 @@ over time, and scale it without losing integrity?
 * Ongoing program governance, continuous improvement, and stakeholder reporting
 * Scale-up strategy and operational capacity planning
 
-## Boundary with Other Service Families [agent-draft]
+## Boundary with Other Service Families
 
 * **Pilot Development & Partner Selection** covers the design and partner selection phase before full program launch. Program Design & Operations covers the operational phase.
 * **Impact Verification & Claims Translation** covers the final verification and claims step. This offering covers the upstream data collection and program management that makes verification possible.
 * **Corporate Sustainability** owns enterprise-level program reporting and disclosure. This offering covers the operational management of the program that generates the data for that reporting.
 
-## Representative Client Problems [agent-draft]
+## Representative Client Problems
 
 * We are operating a supply chain carbon program across hundreds of growers â€” how do we improve data quality, reduce operational costs, and increase credit issuance rates?
 * We need to scale from 50 to 500 enrolled suppliers â€” how do we do it without losing program integrity?
 * Our program has failed two consecutive verification audits â€” what needs to change in our data management and measurement protocols?
 * We want to add a biodiversity or water metric to our existing soil carbon program â€” how do we integrate it without disrupting existing operations?
 
-## Proposed Capabilities [agent-draft]
+## Proposed Capabilities
 
 * Program design and protocol development
 * Enrollment and participant engagement systems
@@ -89,7 +90,7 @@ over time, and scale it without losing integrity?
 * Continuous improvement and performance optimization
 * Scale-up planning and operational capacity building
 
-## Proposed Deliverables [agent-draft]
+## Proposed Deliverables
 
 * Program design document and protocol
 * Enrollment materials and participant onboarding framework
@@ -98,7 +99,7 @@ over time, and scale it without losing integrity?
 * Program performance dashboard
 * Scale-up operational plan
 
-## Related Areas of Expertise [agent-draft]
+## Related Areas of Expertise
 
 * Regenerative Agriculture
 * Regenerative Rangeland
@@ -107,7 +108,7 @@ over time, and scale it without losing integrity?
 * Biodiversity & Ecosystem Resilience
 * Sustainable Supply Chains
 
-## Related Audiences [agent-draft]
+## Related Audiences
 
 * Environmental Markets & Ecosystem Services
 * Agricultural Producers & Integrated Protein Companies
@@ -115,7 +116,7 @@ over time, and scale it without losing integrity?
 * Ingredient & Feed Processors
 * Enabling Tech & Solution Providers
 
-## Information Requiring Owner Approval [agent-draft]
+## Information Requiring Owner Approval
 
 * Whether Terra Nexus operates programs directly (Operate line of business) or provides advisory only
 * Which specific program types and geographies Terra Nexus has operational experience with
