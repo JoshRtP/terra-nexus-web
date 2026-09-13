@@ -1,0 +1,79 @@
+---
+// /tools/ — the framework tools, one card per record in src/data/frameworks/.
+// Added 2026-09-13 once there were three; the footer links here rather than
+// to each tool. Cards carry the counts the record implies, not new copy.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+import { getBuildMode } from '../../lib/build-mode.js';
+import { frameworks, FRAMEWORK_SLUGS, frameworkHref, tacticCount, TOOLS_INDEX_PATH } from '../../data/frameworks';
+import { capabilityFamilies, CAPABILITY_SLUGS, capabilityHref } from '../../data/capabilities';
+
+const mode = getBuildMode();
+const tools = FRAMEWORK_SLUGS.map((slug) => {
+  const fw = frameworks[slug];
+  const family = CAPABILITY_SLUGS.map((s) => capabilityFamilies[s]).find((f) => f.tool?.framework === slug);
+  return { fw, family, count: tacticCount(fw) };
+});
+---
+
+<SiteLayout
+  title="Framework Tools | Terra Nexus"
+  description="Interactive frameworks Terra Nexus uses in sessions: the Ten Types of Innovation, the Sustainability Chessboard and the Enterprise Value Map."
+  canonical={TOOLS_INDEX_PATH}
+  breadcrumbs={[{ name: 'Capabilities', path: '/capabilities/' }, { name: 'Framework Tools', path: TOOLS_INDEX_PATH }]}
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="Framework Tools"
+    title="Working references for the session"
+    lead="Each tool is a framework you can read on its own, drill into, and turn into a play sheet to print or share. They are used live in Terra Nexus sessions and linked from the capability they support."
+    primaryCta={{ label: 'Our Approach & Capabilities', href: '/capabilities/' }}
+  />
+
+  <section class="section" id="tools" aria-labelledby="tools-h">
+    <div class="container">
+      <h2 id="tools-h" class="sr-only">All framework tools</h2>
+      <div class="card-grid card-grid-3">
+        {tools.map(({ fw, family, count }) => (
+          <a href={frameworkHref(fw.slug)} class="card-link">
+            <article class="card">
+              <span class="eyebrow eyebrow-sky">{fw.eyebrow}</span>
+              <h3>{fw.name}</h3>
+              <p>{fw.lead}</p>
+              <p class="tools-meta">
+                {fw.categories.length} {fw.labels.groupPlural} · {fw.types.length} {fw.labels.typePlural} · {count} {fw.labels.tacticPlural}
+                {family && <span class="tools-family">Used in {family.name}</span>}
+              </p>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Bring a framework into a session"
+    description="Tell us what you are trying to build, change, or take to market."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    links={[
+      { label: 'Our Approach & Capabilities', href: '/capabilities/' },
+      { label: 'Areas of Expertise', href: '/expertise/' },
+      { label: 'Glossary', href: '/glossary/' },
+    ]}
+  />
+</SiteLayout>
+
+<style>
+  .tools-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .tools-family { color: var(--c-sky-700); }
+</style>
