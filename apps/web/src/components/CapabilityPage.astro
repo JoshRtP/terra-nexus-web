@@ -6,21 +6,30 @@
 // Rebuilt 2026-09-13 (Phase 2 of plans/capabilities-consolidation-plan.md)
 // onto the site's current vocabulary: .split-header section headers,
 // .card-entry rows, .disclosure accordions for the sub-offering taxonomy
-// (three families carry 33–40 named sub-offerings; the previous always-open
+// (three families carry 28–34 named sub-offerings; the previous always-open
 // three-column grid was the largest single block on the site), and
 // ClosingCta with the onward links every expertise topic closes with.
 //
+// Extended the same day with the sections the site's own service-page
+// template (knowledge/website/page-templates/service-page.md) requires and
+// the pages had never rendered: the family's core question, decision owners
+// and scope boundary (all five families, from their stable overview
+// records), and per-offering detail where an approved offering record
+// exists (Carbon & Ecosystem Services' seven, owner-approved 2026-09-13).
+// Audiences the work matters to are inverted from /who-we-work-with/'s own
+// capability lists, so all three families of pages now link both ways.
+//
 // Carbon & Ecosystem Services, previously a bespoke page with 57 local `cs-`
-// classes, now renders through this template too. Its extra sections
+// classes, renders through this template too. Its extra sections
 // (mechanism selector, lifecycle notes, comparison band) render only when
 // the record carries them, in the order the owner settled on 2026-08-19:
-// hero → mechanisms → lifecycle → offerings → comparison → CTA, with the
-// related-expertise section (which that page had dropped) restored between
-// offerings and the comparison band.
+// hero → mechanisms → lifecycle → offerings → comparison → CTA.
 //
-// Section ids are stable (`overview`, `mechanisms`, `lifecycle`,
-// `offerings`, `expertise`, `proof`); the mega-menu deep-links to
-// `#mechanisms` and to the selector's own `#m01`–`#m04`.
+// Section ids are stable (`overview`, `decisions`, `mechanisms`,
+// `lifecycle`, `offerings`, `expertise`, `proof`); the mega-menu deep-links
+// to `#mechanisms` and to the selector's own `#m01`–`#m04`. Sections
+// alternate white and tinted by their rendered position, so the rhythm
+// holds whichever optional sections a family carries.
 import SiteLayout from '../layouts/SiteLayout.astro';
 import PageHero from './PageHero.astro';
 import ClosingCta from './ClosingCta.astro';
@@ -28,6 +37,7 @@ import MechanismSelector from './MechanismSelector.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import { stages } from '../data/lifecycle';
 import { marketMechanisms } from '../data/market-mechanisms';
+import { segmentsForCapability } from '../data/who-we-work-with';
 import { expertiseForCapability, type CapabilityFamily } from '../data/capabilities';
 
 interface Props {
@@ -38,9 +48,10 @@ interface Props {
 const { family } = Astro.props;
 const mode = getBuildMode();
 
-// Derived from the expertise topics' own team-to-capability mapping rather
-// than a per-page list (see expertiseForCapability in data/capabilities).
+// Derived from the expertise topics' own team-to-capability mapping and the
+// audience segments' own capability lists, not from per-page lists.
 const relatedExpertise = expertiseForCapability[family.slug] ?? [];
+const audiences = segmentsForCapability[family.slug] ?? [];
 
 // The six stages from lifecycle.ts, each with this family's note under it.
 // Empty unless the record carries a lifecycle section.
@@ -51,6 +62,18 @@ const lifecycle = family.lifecycle
       return { ...stage, note };
     })
   : [];
+
+// Rendered sections in order, so surfaces can alternate by position.
+const sectionOrder = [
+  ...(family.orientation.length > 0 ? ['overview'] : []),
+  'decisions',
+  ...(family.mechanisms ? ['mechanisms'] : []),
+  ...(lifecycle.length > 0 ? ['lifecycle'] : []),
+  'offerings',
+  ...(relatedExpertise.length > 0 || audiences.length > 0 ? ['expertise'] : []),
+  ...(family.proofNote ? ['proof'] : []),
+];
+const tone = (id: string) => (sectionOrder.indexOf(id) % 2 === 1 ? 'section section-alt' : 'section');
 
 const ctaLinks = [
   { label: 'Our Approach & Capabilities', href: '/capabilities/' },
@@ -79,9 +102,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* ── Overview ─────────────────────────────────────────────────────── */}
   {family.orientation.length > 0 && (
-    <section class="section" id="overview" aria-labelledby="overview-h">
+    <section class={tone('overview')} id="overview" aria-labelledby="overview-h">
       <div class="container">
-        <header class="section-header split-header cap-overview">
+        <header class="section-header split-header cap-header-only">
           <span class="eyebrow split-header-eyebrow">Overview</span>
           <div class="split-header-title">
             <h2 id="overview-h">{family.name}</h2>
@@ -94,9 +117,29 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </section>
   )}
 
+  {/* ── The core question, its owners, its scope ─────────────────────── */}
+  <section class={tone('decisions')} id="decisions" aria-labelledby="decisions-h">
+    <div class="container">
+      <header class="section-header split-header cap-header-only">
+        <span class="eyebrow split-header-eyebrow">The Core Question</span>
+        <div class="split-header-title">
+          <h2 id="decisions-h" class="cap-question">“{family.coreQuestion}”</h2>
+        </div>
+        <div class="split-header-lead">
+          <span class="field-label cap-field">Scope</span>
+          <p class="section-lead">{family.scopeBoundary}</p>
+          <span class="field-label cap-field cap-field-gap">Primary Decision Owners</span>
+          <ul class="cap-tags" role="list">
+            {family.decisionOwners.map((owner) => <li class="tag">{owner}</li>)}
+          </ul>
+        </div>
+      </header>
+    </div>
+  </section>
+
   {/* ── Market mechanisms (C&ES) ─────────────────────────────────────── */}
   {family.mechanisms && (
-    <section class="section section-alt" id="mechanisms" aria-labelledby="mechanisms-h">
+    <section class={tone('mechanisms')} id="mechanisms" aria-labelledby="mechanisms-h">
       <div class="container">
         <header class="section-header split-header">
           <span class="eyebrow split-header-eyebrow">{family.mechanisms.eyebrow}</span>
@@ -115,7 +158,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* ── Lifecycle (C&ES) ─────────────────────────────────────────────── */}
   {family.lifecycle && (
-    <section class="section" id="lifecycle" aria-labelledby="lifecycle-h">
+    <section class={tone('lifecycle')} id="lifecycle" aria-labelledby="lifecycle-h">
       <div class="container">
         <header class="section-header split-header">
           <span class="eyebrow split-header-eyebrow">{family.lifecycle.eyebrow}</span>
@@ -144,7 +187,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   )}
 
   {/* ── Offerings ────────────────────────────────────────────────────── */}
-  <section class="section section-alt" id="offerings" aria-labelledby="offerings-h">
+  <section class={tone('offerings')} id="offerings" aria-labelledby="offerings-h">
     <div class="container">
       <header class="section-header split-header">
         <span class="eyebrow split-header-eyebrow">Our Offerings</span>
@@ -160,14 +203,36 @@ const pad = (n: number) => String(n).padStart(2, '0');
         {family.offerings.map((offering, i) => (
           <li
             class="card card-static card-entry"
-            class:list={{ 'cap-entry-single': offering.subOfferings.length === 0 }}
+            class:list={{ 'cap-entry-single': offering.subOfferings.length === 0 && !offering.detail }}
             id={`offering-${i + 1}`}
           >
             <div class="card-entry-head">
               <span class="numbered-index card-entry-index" aria-hidden="true">{pad(i + 1)}</span>
               <h3>{offering.name}</h3>
               <p class="cap-offering-desc">{offering.description}</p>
+              {offering.detail && (
+                <div class="cap-owners">
+                  <span class="field-label cap-field">Who Decides</span>
+                  <ul class="dot-list" role="list">
+                    {offering.detail.decisionOwners.map((owner) => <li>{owner}</li>)}
+                  </ul>
+                </div>
+              )}
             </div>
+            {offering.detail && (
+              <div class="cap-detail">
+                <p class="cap-detail-body">{offering.detail.description}</p>
+                <p class="cap-detail-question">“{offering.detail.coreQuestion}”</p>
+                <span class="field-label cap-field">Questions This Answers</span>
+                <ul class="dot-list" role="list">
+                  {offering.detail.problems.map((problem) => <li>{problem}</li>)}
+                </ul>
+                <span class="field-label cap-field cap-field-gap">What You Receive</span>
+                <ul class="dot-list cap-deliverables" role="list">
+                  {offering.detail.deliverables.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            )}
             {offering.subOfferings.length > 0 && (
               <div class="disclosure-list">
                 {offering.subOfferings.map((sub) => (
@@ -191,18 +256,35 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
   </section>
 
-  {/* ── Related expertise ────────────────────────────────────────────── */}
-  {relatedExpertise.length > 0 && (
-    <section class="section" id="expertise" aria-labelledby="expertise-h">
+  {/* ── Related expertise and audiences ──────────────────────────────── */}
+  {(relatedExpertise.length > 0 || audiences.length > 0) && (
+    <section class={tone('expertise')} id="expertise" aria-labelledby="expertise-h">
       <div class="container">
         <header class="section-header">
-          <span class="eyebrow">Connected Expertise</span>
-          <h2 id="expertise-h">Related Areas of Expertise</h2>
+          <span class="eyebrow">Connected</span>
+          <h2 id="expertise-h">Where This Work Applies</h2>
         </header>
-        <div class="cap-tags">
-          {relatedExpertise.map((topic) => (
-            <a href={topic.href} class="tag">{topic.name}</a>
-          ))}
+        <div class="cap-connections">
+          {relatedExpertise.length > 0 && (
+            <div>
+              <span class="field-label cap-field">Related Areas of Expertise</span>
+              <div class="cap-tags">
+                {relatedExpertise.map((topic) => (
+                  <a href={topic.href} class="tag">{topic.name}</a>
+                ))}
+              </div>
+            </div>
+          )}
+          {audiences.length > 0 && (
+            <div>
+              <span class="field-label cap-field">Who This Matters To</span>
+              <div class="cap-tags">
+                {audiences.map((a) => (
+                  <a href={`/who-we-work-with/#${a.slug}`} class="tag">{a.name}</a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -210,7 +292,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   {/* ── Proof ────────────────────────────────────────────────────────── */}
   {family.proofNote && (
-    <section class="section section-alt" id="proof" aria-labelledby="proof-h">
+    <section class={tone('proof')} id="proof" aria-labelledby="proof-h">
       <div class="container">
         <header class="section-header">
           <span class="eyebrow">Evidence</span>
@@ -263,10 +345,27 @@ const pad = (n: number) => String(n).padStart(2, '0');
 </SiteLayout>
 
 <style>
-  /* The overview is header-only: the family name against its three
-     paragraphs. The header's own bottom margin would leave the section
-     ending in empty space. */
-  .cap-overview { margin-bottom: 0; }
+  /* Header-only sections (overview, core question): the header's own bottom
+     margin would leave the section ending in empty space. */
+  .cap-header-only { margin-bottom: 0; }
+
+  /* The core question is the client's, so it is set as a quotation rather
+     than a statement, and in the serif so it reads as a voice. */
+  .cap-question {
+    font-family: var(--font-serif);
+    font-weight: var(--font-medium);
+    text-wrap: balance;
+  }
+  .cap-field { margin-bottom: var(--space-3); }
+  .cap-field-gap { margin-top: var(--space-6); }
+  .cap-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
   /* Lifecycle notes. The stage's canonical number and title label the card;
      the family's one-liner is the heading. */
@@ -286,9 +385,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
   .cap-stage h3 { font-size: var(--text-lg); }
 
-  /* Offerings. A family with no sub-offerings (Carbon & Ecosystem Services)
-     collapses each row to one column rather than leaving the detail column
-     empty. Scoped, so it outranks .card-entry's media rule. */
+  /* Offerings. An offering with neither sub-offerings nor detail collapses
+     to one column rather than leaving the detail column empty. Scoped, so
+     it outranks .card-entry's media rule. */
   .cap-entry-single { grid-template-columns: 1fr; }
   /* .card p sets the small size; the offering description is the row's
      lead and reads at body size, as it did before the rebuild. */
@@ -296,6 +395,40 @@ const pad = (n: number) => String(n).padStart(2, '0');
     margin: 0;
     font-size: var(--text-base);
   }
+  .cap-owners {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .cap-owners .dot-list { gap: var(--space-2); }
+  .cap-owners .dot-list li { font-size: var(--text-sm); }
+
+  /* Offering detail, from the approved offering record. The description is
+     the body; the client's question sits beneath it as a quotation, the
+     same treatment as the family-level question above. */
+  .cap-detail-body {
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+    color: var(--color-text);
+  }
+  .cap-detail-question {
+    margin: 0 0 var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    border-inline-start: 3px solid var(--c-sky-300);
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    line-height: var(--line-relaxed);
+    color: var(--c-sky-700);
+  }
+  .cap-deliverables {
+    display: grid;
+    gap: var(--space-2) var(--space-6);
+  }
+  @media (min-width: 48rem) {
+    .cap-deliverables { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .cap-deliverables li { font-size: var(--text-sm); }
 
   /* Said once under the list, as the Who We Work With footnotes are. */
   .cap-callout {
@@ -309,7 +442,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
     max-width: var(--max-width-text);
   }
 
-  .cap-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .cap-connections {
+    display: grid;
+    gap: var(--space-8);
+  }
+  @media (min-width: 64rem) {
+    .cap-connections { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-10); }
+  }
 
   .cap-proof {
     color: var(--color-text-secondary);

@@ -12,6 +12,8 @@
 //    derived per family in ./index.ts from the expertise topics' own
 //    section-06 team-to-capability mapping (`validationQuestions` in
 //    data/expertise/shared.ts).
+//  * `decisionOwners`, `coreQuestion` and `scopeBoundary` are from the
+//    family's overview.md in knowledge/services/ (status: stable).
 //  * Name, slug and the one-line summary come from `capabilityAreas` in
 //    ../lifecycle.ts, merged in by ./index.ts.
 //
@@ -28,6 +30,14 @@ export const sustainableSupplyChainAndOperations: CapabilityFamilyRecord = {
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Sustainable Supply Chain & Operations | Terra Nexus',
   metaDescription: 'Terra Nexus helps sourcing, supply chain, and operations leaders redesign what they buy, who they buy from, and how products are produced, moved, processed, used, and recovered — connecting operational change with measurable sustainability outcomes.',
+
+  // From knowledge/services/sustainable-supply-chain-and-operations/overview.md (status: stable,
+  // owner-sourced). Rendered since 2026-09-13; the pages had never shown
+  // them although the service-page template requires them. Decision owners
+  // are sentence-cased; the record lists them in lower case.
+  decisionOwners: ['Procurement', 'Sourcing', 'Supply chain', 'Operations', 'Category management', 'Logistics', 'Manufacturing'],
+  coreQuestion: 'How can impacts, risk, cost, and volatility be reduced by changing what is bought, who it is bought from, how it is produced, moved, processed, used, or recovered?',
+  scopeBoundary: 'Improvements inside company operations or upstream supply chains.',
 
   orientation: [
     'Sustainable Supply Chain & Operations addresses the decisions inside company operations and upstream supply chains that determine environmental impact, cost, risk, resilience, and value. This capability connects sourcing strategy, supplier engagement, operational efficiency, logistics, traceability, and circularity with the commercial and sustainability goals of the enterprise.',

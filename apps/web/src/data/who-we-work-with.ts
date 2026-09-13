@@ -985,3 +985,24 @@ export const segmentsForExpertise: Record<string, Array<{ slug: string; name: st
   }
   return out;
 })();
+
+// ─────────────────────────────────────────────────────────────────────────
+// Capability → audience, inverted from the segments' and enablers' own
+// `capabilities` lists, the way segmentsForExpertise above inverts their
+// `expertise` lists. Added 2026-09-13 so a capability page can say who the
+// work matters to without a second hand-maintained list. (The forward
+// direction, capability links on /who-we-work-with/, is deliberately not
+// rendered: owner, 2026-09-13.)
+// ─────────────────────────────────────────────────────────────────────────
+export const segmentsForCapability: Record<string, Array<{ slug: string; name: string }>> = (() => {
+  const out: Record<string, Array<{ slug: string; name: string }>> = {};
+  for (const entry of [...segments, ...enablers]) {
+    for (const capName of entry.capabilities) {
+      const href = capabilityLinks[capName];
+      if (!href) throw new Error(`Unknown capability '${capName}' on ${entry.slug}`);
+      const capSlug = href.replace('/capabilities/', '').replace(/\/$/, '');
+      (out[capSlug] ||= []).push({ slug: entry.slug, name: entry.name });
+    }
+  }
+  return out;
+})();

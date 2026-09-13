@@ -12,6 +12,8 @@
 //    derived per family in ./index.ts from the expertise topics' own
 //    section-06 team-to-capability mapping (`validationQuestions` in
 //    data/expertise/shared.ts).
+//  * `decisionOwners`, `coreQuestion` and `scopeBoundary` are from the
+//    family's overview.md in knowledge/services/ (status: stable).
 //  * Name, slug and the one-line summary come from `capabilityAreas` in
 //    ../lifecycle.ts, merged in by ./index.ts.
 //
@@ -28,6 +30,14 @@ export const strategyAndInnovation: CapabilityFamilyRecord = {
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Strategy & Innovation | Terra Nexus',
   metaDescription: 'Terra Nexus helps food and agribusiness leaders translate food-and-climate change into business strategy, differentiated growth, customer value, and commercial execution.',
+
+  // From knowledge/services/strategy-and-innovation/overview.md (status: stable,
+  // owner-sourced). Rendered since 2026-09-13; the pages had never shown
+  // them although the service-page template requires them. Decision owners
+  // are sentence-cased; the record lists them in lower case.
+  decisionOwners: ['P&L owners', 'Business unit leaders', 'Corporate strategy', 'Innovation and R&D leaders', 'Commercial and growth leaders'],
+  coreQuestion: 'Where should we play and how do we win at the intersection of food and climate?',
+  scopeBoundary: 'Food-and-climate growth, innovation, product, customer, and market decisions; not generic strategy outside this intersection.',
 
   orientation: [
     'Strategy & Innovation addresses the growth, market, product, and customer decisions that arise when food and agribusiness companies face climate-driven change. This is not generic corporate strategy — it is strategy at the specific intersection of food systems and climate, where new products, sourcing models, claims, technologies, and value propositions are reshaping competitive positions.',

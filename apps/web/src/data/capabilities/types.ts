@@ -4,6 +4,12 @@
 // objects and the Carbon & Ecosystem Services page's local arrays were moved
 // into one module per family, mirroring data/expertise/. The field names are
 // CapabilityPage.astro's own so the move changed no copy.
+//
+// Extended later the same day with the fields the site's own service-page
+// template (knowledge/website/page-templates/service-page.md) requires and
+// the pages had never rendered: decision owners, core question and scope
+// boundary at family level, and per-offering detail where an approved
+// offering record exists.
 import type { CapabilityArea } from '../lifecycle';
 
 export interface Cta {
@@ -16,10 +22,23 @@ export interface SubOffering {
   description: string;
 }
 
+/** Offering-level narrative, in the shape of the approved offering records
+ * in knowledge/services/<family>/<offering>.md: who decides, what they are
+ * asking, what problems bring them, what they receive. Only Carbon &
+ * Ecosystem Services carries these today (owner-approved 2026-09-13). */
+export interface OfferingDetail {
+  description: string;
+  decisionOwners: string[];
+  coreQuestion: string;
+  problems: string[];
+  deliverables: string[];
+}
+
 export interface Offering {
   name: string;
   description: string;
   subOfferings: SubOffering[];
+  detail?: OfferingDetail;
 }
 
 /** A family's gloss on one of the six lifecycle stages. The stage's number
@@ -78,6 +97,14 @@ export interface CapabilityFamilyRecord {
   /** Overview paragraphs. Empty on Carbon & Ecosystem Services, whose
    * mechanism section carries the framing instead. */
   orientation: string[];
+  /** From the family's overview.md (status: stable, owner-sourced): who in
+   * the client organisation owns the decisions this family serves. */
+  decisionOwners: string[];
+  /** From overview.md `core_question`: the question, in the client's voice,
+   * that this family exists to answer. */
+  coreQuestion: string;
+  /** From overview.md `scope_boundary`. */
+  scopeBoundary: string;
   offerings: Offering[];
   callout?: string;
   proofNote?: string;

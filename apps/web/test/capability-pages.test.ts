@@ -16,6 +16,7 @@ import { stages } from '../src/data/lifecycle';
 import { marketMechanisms } from '../src/data/market-mechanisms';
 import { capabilityFamilies, CAPABILITY_SLUGS, expertiseForCapability, stageDetails } from '../src/data/capabilities';
 import { approachMenu, claimsMenu, capabilitiesMenu } from '../src/data/nav-data';
+import { segmentsForCapability } from '../src/data/who-we-work-with';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -112,10 +113,11 @@ describe.each(CAPABILITY_SLUGS)('capability page: %s', (slug) => {
     const f = family();
     const expected = [
       ...(f.orientation.length > 0 ? ['overview'] : []),
+      'decisions',
       ...(f.mechanisms ? ['mechanisms'] : []),
       ...(f.lifecycle ? ['lifecycle'] : []),
       'offerings',
-      ...((expertiseForCapability[slug]?.length ?? 0) > 0 ? ['expertise'] : []),
+      ...((expertiseForCapability[slug]?.length ?? 0) > 0 || (segmentsForCapability[slug]?.length ?? 0) > 0 ? ['expertise'] : []),
       ...(f.proofNote ? ['proof'] : []),
     ];
     expect(sectionIds(html[slug])).toEqual(expected);
@@ -138,6 +140,32 @@ describe.each(CAPABILITY_SLUGS)('capability page: %s', (slug) => {
     expect(links).toEqual(related.map((t) => t.href));
   });
 
+  it('renders the core question, scope boundary and decision owners from the stable record', () => {
+    const f = family();
+    expect(html[slug]).toContain(`id="decisions-h"`);
+    expect(html[slug]).toContain(encode(f.coreQuestion));
+    expect(html[slug]).toContain(encode(f.scopeBoundary));
+    for (const owner of f.decisionOwners) expect(html[slug]).toContain(encode(owner));
+  });
+
+  it('links to the audiences derived from the segments’ own capability lists', () => {
+    const expected = (segmentsForCapability[slug] ?? []).map((a) => `/who-we-work-with/#${a.slug}`);
+    const links = Array.from(html[slug].matchAll(/<a href="(\/who-we-work-with\/#[a-z-]+)" class="tag"[^>]*>/g)).map((m) => m[1]);
+    expect(links).toEqual(expected);
+    expect(expected.length).toBeGreaterThan(0);
+  });
+
+  it('renders every approved offering detail: description, question, problems, deliverables', () => {
+    for (const offering of family().offerings) {
+      if (!offering.detail) continue;
+      expect(html[slug]).toContain(encode(offering.detail.description));
+      expect(html[slug]).toContain(encode(offering.detail.coreQuestion));
+      for (const item of [...offering.detail.decisionOwners, ...offering.detail.problems, ...offering.detail.deliverables]) {
+        expect(html[slug]).toContain(encode(item));
+      }
+    }
+  });
+
   it('closes with the onward links, including the glossary', () => {
     for (const href of ['/capabilities/', '/expertise/', '/who-we-work-with/', '/digital-solutions/', '/glossary/']) {
       expect(html[slug]).toContain(`href="${href}"`);
@@ -154,6 +182,12 @@ describe.each(CAPABILITY_SLUGS)('capability page: %s', (slug) => {
 
 describe('capability page: carbon-and-ecosystem-services', () => {
   const slug = 'carbon-and-ecosystem-services';
+
+  it('carries an approved detail block on every one of its seven offerings', () => {
+    const offerings = capabilityFamilies[slug].offerings;
+    expect(offerings.length).toBe(7);
+    for (const o of offerings) expect(o.detail, o.name).toBeDefined();
+  });
 
   it('renders the interactive mechanism selector with a deep-linkable id per mechanism', () => {
     expect(html[slug]).toContain('id="mechanisms"');
@@ -195,5 +229,11 @@ describe('capabilities mega-menu', () => {
     const [path, hash] = href.split('#');
     const page = await readFile(pageFor(path), 'utf8');
     if (hash) expect(page, `#${hash} on ${path}`).toContain(`id="${hash}"`);
+  });
+
+  it('gives the Markets & Claims column one distinct destination per mechanism, in selector order', () => {
+    expect(claimsMenu.map((e) => e.title)).toEqual(marketMechanisms.map((m) => m.title));
+    expect(new Set(claimsMenu.map((e) => e.href)).size).toBe(claimsMenu.length);
+    for (const e of claimsMenu) expect(e.href).toMatch(/#m0\d$/);
   });
 });

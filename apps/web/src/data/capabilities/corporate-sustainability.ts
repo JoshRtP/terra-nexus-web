@@ -12,6 +12,8 @@
 //    derived per family in ./index.ts from the expertise topics' own
 //    section-06 team-to-capability mapping (`validationQuestions` in
 //    data/expertise/shared.ts).
+//  * `decisionOwners`, `coreQuestion` and `scopeBoundary` are from the
+//    family's overview.md in knowledge/services/ (status: stable).
 //  * Name, slug and the one-line summary come from `capabilityAreas` in
 //    ../lifecycle.ts, merged in by ./index.ts.
 //
@@ -28,6 +30,14 @@ export const corporateSustainability: CapabilityFamilyRecord = {
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Corporate Sustainability | Terra Nexus',
   metaDescription: 'Terra Nexus helps sustainability, climate, and reporting leaders set enterprise ambition, prioritize action, account for progress, govern claims, engage stakeholders, and report performance — connecting sustainability strategy with operational reality.',
+
+  // From knowledge/services/corporate-sustainability/overview.md (status: stable,
+  // owner-sourced). Rendered since 2026-09-13; the pages had never shown
+  // them although the service-page template requires them. Decision owners
+  // are sentence-cased; the record lists them in lower case.
+  decisionOwners: ['Chief sustainability officers', 'ESG teams', 'Climate teams', 'Compliance leaders', 'Reporting and disclosure teams'],
+  coreQuestion: 'How should the enterprise set targets and policies, prioritize action, account for progress, manage claims, and report performance?',
+  scopeBoundary: 'Enterprise sustainability strategy, Scope 1/2/3 decarbonization, accounting, reporting, disclosure, governance, and stakeholder engagement.',
 
   orientation: [
     'Corporate Sustainability addresses the enterprise-level decisions that determine how a company sets environmental and social goals, prioritizes action, measures progress, manages claims, engages stakeholders, and reports performance. This capability connects high-level ambition with the operational, accounting, and governance systems that make commitments credible.',

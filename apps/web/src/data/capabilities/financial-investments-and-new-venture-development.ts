@@ -12,6 +12,8 @@
 //    derived per family in ./index.ts from the expertise topics' own
 //    section-06 team-to-capability mapping (`validationQuestions` in
 //    data/expertise/shared.ts).
+//  * `decisionOwners`, `coreQuestion` and `scopeBoundary` are from the
+//    family's overview.md in knowledge/services/ (status: stable).
 //  * Name, slug and the one-line summary come from `capabilityAreas` in
 //    ../lifecycle.ts, merged in by ./index.ts.
 //
@@ -28,6 +30,14 @@ export const financialInvestmentsAndNewVentureDevelopment: CapabilityFamilyRecor
   secondaryCta: { label: 'Explore Our Expertise', href: '/expertise/' },
   metaTitle: 'Financial Investments & New Venture Development | Terra Nexus',
   metaDescription: 'Terra Nexus helps finance, venture, and corporate development leaders evaluate, structure, fund, and scale food, agriculture, climate, nature, and circularity investments — connecting commercial diligence with deep domain knowledge.',
+
+  // From knowledge/services/financial-investments-and-new-venture-development/overview.md (status: stable,
+  // owner-sourced). Rendered since 2026-09-13; the pages had never shown
+  // them although the service-page template requires them. Decision owners
+  // are sentence-cased; the record lists them in lower case.
+  decisionOwners: ['Finance', 'Corporate venture', 'Corporate development', 'Strategy', 'Investment committees', 'Private equity, venture, and impact investors'],
+  coreQuestion: 'Which food-and-climate ideas, ventures, investments, assets, partnerships, or facilities should be screened, funded, incubated, acquired, or scaled?',
+  scopeBoundary: 'Capital allocation, venture development, and diligence for food, agriculture, climate, nature, and circularity opportunities.',
 
   orientation: [
     'Financial Investments & New Venture Development addresses the capital allocation, venture development, and diligence decisions that food and agribusiness companies face when evaluating food-and-climate opportunities. This capability connects strategic direction with financial discipline — ensuring that ideas, ventures, assets, and partnerships are evaluated against both commercial returns and domain-specific risk.',
