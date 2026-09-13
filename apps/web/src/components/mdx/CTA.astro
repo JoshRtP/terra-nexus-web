@@ -9,7 +9,7 @@ interface Props {
 const { heading, body, buttonLabel, buttonHref } = Astro.props;
 ---
 
-<div class="mdx-cta">
+<div class="mdx-cta section-dark">
   <div class="mdx-cta-copy">
     <p class="mdx-cta-heading">{heading}</p>
     {body && <p class="mdx-cta-body">{body}</p>}
@@ -18,27 +18,38 @@ const { heading, body, buttonLabel, buttonHref } = Astro.props;
 </div>
 
 <style>
+  /* Carries the global .section-dark class (the brand's light-blue CTA band,
+     despite the name) rather than re-declaring its gradient and wash here, so
+     an in-article CTA matches the closing band every other page ends with —
+     and stays matching if that band is ever retoned. This component only owns
+     the things a contained, in-flow box needs that a full-bleed section does
+     not: its own padding, radius and flex layout. */
   .mdx-cta {
     margin-block: var(--space-10);
     padding: var(--space-8);
     border-radius: var(--radius-lg);
-    background: var(--color-dark);
-    color: var(--color-text-inverse);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-6);
   }
+  /* .section-dark's ::before wash is absolutely positioned, so it paints over
+     unpositioned children. Lifting the copy and the button into the same
+     positioned context keeps them above it. */
+  .mdx-cta-copy,
+  .mdx-cta :global(.btn) {
+    position: relative;
+  }
   .mdx-cta-heading {
     margin: 0;
     font-family: var(--font-serif);
     font-size: 1.375rem;
-    color: var(--color-text-inverse);
+    color: var(--color-dark);
   }
   .mdx-cta-body {
     margin: var(--space-2) 0 0;
-    color: var(--color-text-inverse);
+    color: var(--color-dark);
     opacity: 0.85;
   }
   .mdx-cta :global(.btn) {
