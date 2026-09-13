@@ -137,6 +137,58 @@ export interface QuestionGroup {
  * existed per topic in the previous pages and are lifted from them verbatim,
  * except the one row marked AUTHORED. */
 export const validationRows: Record<string, ValidationRow[]> = {
+  agroforestry: [
+    {
+      category: 'Desirability',
+      pitfall: 'A compelling land concept lacks a reliable product market.',
+      validation: 'Validate end-market demand and pricing for the land concept before establishing it.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Establishment costs and delayed cash flows are underestimated.',
+      validation: 'Model establishment costs and cash-flow timing under realistic assumptions before committing.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Tree, crop, or livestock interactions are not evaluated locally.',
+      validation: 'Test tree, crop, and livestock interactions under local conditions before scaling.',
+    },
+    {
+      category: 'Viability',
+      pitfall: 'Producers carry long-term risk without durable commercial support.',
+      validation: 'Structure durable commercial support so producers do not carry long-term risk alone.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Land tenure and rights to future products or attributes are unclear.',
+      validation: 'Clarify land tenure and rights to future products and attributes before planting.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Processing, aggregation, and logistics are addressed after planting.',
+      validation: 'Plan processing, aggregation, and logistics alongside the planting timeline.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Monitoring systems are not designed for long-duration assets.',
+      validation: 'Design monitoring systems for the full life of long-duration assets from the start.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'Mortality, replacement, harvesting, and reversals lack clear treatment.',
+      validation: 'Define how mortality, replacement, harvesting, and reversals will be handled before launch.',
+    },
+    {
+      category: 'Strategic Fit',
+      pitfall: 'Environmental claims are planned without contractual ownership or assurance.',
+      validation: 'Secure contractual ownership and assurance before making environmental claims.',
+    },
+    {
+      category: 'Feasibility',
+      pitfall: 'The program lacks recurring management over its full time horizon.',
+      validation: 'Commit to recurring management across the program’s full time horizon.',
+    },
+  ],
   'regenerative-agriculture': [
     {
       category: 'Desirability',
@@ -252,6 +304,53 @@ export const validationRows: Record<string, ValidationRow[]> = {
  * Ecosystem Services. Questions are each topic's approved `decisionGroups`,
  * lifted verbatim from its previous index.astro. */
 export const validationQuestions: Record<string, QuestionGroup[]> = {
+  agroforestry: [
+    {
+      team: 'System Design & Business Fit',
+      questions: [
+        'Which agroforestry system fits the land, production system, and business objective?',
+        'Which product and environmental outcomes are realistic within the time horizon?',
+      ],
+      capHref: '/capabilities/strategy-and-innovation/',
+      capName: 'Strategy & Innovation',
+    },
+    {
+      team: 'Finance, Risk & Producer Support',
+      questions: [
+        'How will establishment costs and delayed returns be financed?',
+        'Which participants carry mortality, production, price, and market risk?',
+        'What interim revenue supports the producer during establishment?',
+      ],
+      capHref: '/capabilities/financial-investments-and-new-venture-development/',
+      capName: 'Financial Investments & New Venture Development',
+    },
+    {
+      team: 'Markets & Routes to Value',
+      questions: [
+        'Which products and co-products have a reliable route to market?',
+      ],
+      capHref: '/capabilities/sustainable-supply-chain-and-operations/',
+      capName: 'Sustainable Supply Chain & Operations',
+    },
+    {
+      team: 'Governance, Rights & Long-Term Viability',
+      questions: [
+        'How will land tenure, succession, harvesting rights, and permanence be governed?',
+        'Who owns the physical products and environmental attributes?',
+        'How will the program remain viable when ownership, markets, or ecological conditions change?',
+      ],
+      capHref: '/capabilities/corporate-sustainability/',
+      capName: 'Corporate Sustainability',
+    },
+    {
+      team: 'Evidence & Assurance',
+      questions: [
+        'Which data, models, measurements, and assurance are needed?',
+      ],
+      capHref: '/capabilities/carbon-and-ecosystem-services/',
+      capName: 'Carbon & Ecosystem Services',
+    },
+  ],
   'regenerative-agriculture': [
     {
       team: 'Strategy & Commercial Leaders',

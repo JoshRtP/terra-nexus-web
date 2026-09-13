@@ -622,6 +622,39 @@ Not started: migrating the seven topics still on `ExpertisePage` to this
 template. Paused at the owner's request — the Expertise family is visibly split
 until it happens.
 
+**Third topic, and the data-shape work the first two hid (2026-09-12).**
+Agroforestry is the first topic assembled from the repo's own sources rather
+than the handover bundle, and it surfaced three gaps that were invisible while
+only Regen Ag and Rangeland used the template:
+
+- **The indicator taxonomy was still global.** `ImpactKey` was a fixed
+  five-value union and shared `impactLabels`/`impactOrder` drove the section 04
+  chips, while section 03's indicators were per-record — two structures that
+  happened to agree because both shipped topics use the same five production
+  indicators. They are now one per-topic list (`Indicator` gains a `key`), so
+  Agroforestry's six work, Aquaculture can drop Soil, and biofuels can run an
+  entirely different five. `indicatorDefinitions` remains the default for the
+  recurring production names; an indicator can override inline.
+- **Tools moved to a catalogue** (`data/expertise/tools.ts`). Topics reference a
+  tool by id and may override `text`; asset paths and alt text are written once.
+- **The section rail listed a fixed ten entries.** A topic with no tools omits
+  section 10 correctly, but the rail still linked to a missing `#enablers`. It
+  now derives from the sections that actually render — Agroforestry ships nine.
+
+Content sourcing for the remaining topics is an assembly job, not a writing one.
+Every topic has an owner-verified brief (`knowledge/expertise/briefs/`), a
+2,200–2,800 word page-copy draft and a research memo (`plans/content/`), plus
+approved copy already in its current page. Only the stat band, indicator issue
+lists, adoption constraints, the positioning triplet and the named instruments
+in section 08 are written fresh. Owner decisions, 2026-09-12: stats match the
+two live pages (researched, uncited, flagged); section 08 instruments are named
+and flagged for verification; sequencing is the three production topics first,
+then the four value-chain topics.
+
+Agroforestry's `enablers.tools` is deliberately empty pending the owner's
+tool-to-topic assignment — which tools honestly serve which topic is a
+product-truth call. See the owner-input block at the top of `tools.ts`.
+
 Deferred by owner decision, not omissions: structured data (BreadcrumbList /
 Service / FAQPage, to be added once on the template so all nine topics inherit
 it — deferred to M6+ / P6, and now unblocked by the `site` config above), the four unsourced statistics in section 01, proof content such as

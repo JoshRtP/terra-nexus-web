@@ -27,7 +27,7 @@ const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
 const DIST = resolve(APP_ROOT, 'dist/client');
 
-const TOPIC_SLUGS = ['regenerative-rangeland', 'regenerative-agriculture'] as const;
+const TOPIC_SLUGS = ['regenerative-rangeland', 'regenerative-agriculture', 'agroforestry'] as const;
 /** astro.config.ts's `site`. Canonical, og:url and og:image all resolve against it. */
 const SITE = 'https://terra.nexus';
 const html: Record<string, string> = {};
@@ -60,7 +60,7 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
 
   it('renders the ten sections in the fixed order, each labelled by its own h2', () => {
     const ids = Array.from(html[slug].matchAll(/<section[^>]*\sid="([a-z]+)"[^>]*aria-labelledby="([a-z-]+)"/g));
-    expect(ids.map((m) => m[1])).toEqual([
+    const order = [
       'overview',
       'potential',
       'correcting',
@@ -71,7 +71,10 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
       'pathways',
       'approach',
       'enablers',
-    ]);
+    ];
+    expect(ids.map((m) => m[1])).toEqual(
+      topic().enablers.tools.length > 0 ? order : order.filter((id) => id !== 'enablers'),
+    );
     // Each section points at its own heading, and that id exists.
     for (const [, id, labelledBy] of ids) {
       expect(labelledBy).toBe(`${id}-h`);
@@ -111,8 +114,11 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
   it('uses the site section rhythm and shared primitives, not a parallel set', () => {
     // Full-bleed .section / .section-alt with .container inside, as on every
     // other page — the prototype banded everything inside one container.
-    expect(count(html[slug], /<section class="section[^"]*" id="/g)).toBe(10);
-    expect(count(html[slug], /<div class="container"/g)).toBeGreaterThanOrEqual(10);
+    // Ten sections, or nine for a topic whose tools are not assigned yet —
+    // section 10 is omitted rather than rendered empty.
+    const expectedSections = topic().enablers.tools.length > 0 ? 10 : 9;
+    expect(count(html[slug], /<section class="section[^"]*" id="/g)).toBe(expectedSections);
+    expect(count(html[slug], /<div class="container"/g)).toBeGreaterThanOrEqual(expectedSections);
     // The M7 primitives rather than local near-misses.
     for (const primitive of ['class="eyebrow', 'class="section-lead', 'class="section-header', 'class="card-grid', 'class="stat-value']) {
       expect(html[slug], primitive).toContain(primitive);
@@ -120,14 +126,17 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
     // Section numbers belong to the rail, not the section headings (owner,
     // 2026-09-12): ahead of a heading they read as an ordinal to track.
     expect(html[slug]).not.toContain('class="numbered-index');
-    expect(count(html[slug], /class="journey-rail-num"/g)).toBe(10);
+    // One rail entry per rendered section — nine where section 10 is omitted.
+    expect(count(html[slug], /class="journey-rail-num"/g)).toBe(expectedSections);
   });
 
   it('exposes the indicator filter as a radio group with one tab stop', () => {
     // Exactly one indicator is ever active, which is what aria-checked on a
     // radio says and what aria-pressed on six independent toggles does not.
     expect(html[slug]).toContain('role="radiogroup"');
-    expect(count(html[slug], /role="radio"/g)).toBe(6);
+    // One chip per indicator this topic defines, plus All. Five indicators on
+    // the production topics, six on Agroforestry.
+    expect(count(html[slug], /role="radio"/g)).toBe(topic().correcting.indicators.length + 1);
     expect(count(html[slug], /aria-checked="true"/g)).toBe(1);
     expect(count(html[slug], /data-impact="[a-z]+"[^>]*tabindex="0"|tabindex="0"[^>]*data-impact="[a-z]+"/g)).toBe(1);
     // The visible count must not be a live region — it changes when the reader
@@ -153,7 +162,9 @@ describe.each(TOPIC_SLUGS)('expertise topic template: %s', (slug) => {
       ...topic().verifying.layers.map((l) => l.name),
       ...topic().pathways.items.filter((p) => p.applicable !== false).map((p) => p.name),
     ];
-    expect(expected).toHaveLength(14);
+    // Fourteen on a five-indicator topic, fifteen on Agroforestry's six. The
+    // count follows the topic's own indicator set rather than a fixed number.
+    expect(expected.length).toBe(topic().correcting.indicators.length + 9);
     for (const phrase of expected) expect(h3s).toContain(phrase);
   });
 
