@@ -595,6 +595,22 @@ varying approved copy.
   nothing keeping them in step; the width is now applied per use.
 - The trailing section border above the closing CTA went away with the
   full-bleed rewrite — `.section` carries no border.
+- **The rail is revealed on scroll, not present over the hero** (owner,
+  2026-09-12). Over a full-bleed photo it read as a stray panel floating on the
+  image, with nothing to navigate yet. It now arrives once the hero has
+  scrolled past, the same move the homepage header makes past its own photo
+  hero (`body.past-hero` in `pages/index.astro`). `visibility: hidden` rather
+  than opacity alone, so it is not a tab stop while invisible; it rides the
+  rail's existing rAF scroll read rather than adding a second listener.
+- **Top-aligned with the section title**, not centred in the viewport: with a
+  section anchored at the top, the sticky header plus the section's
+  scroll-margin and padding put the h2 at 182px, so `top: 11.5rem` puts the
+  rail on the same line as the heading it belongs to. The list caps its height
+  and scrolls internally on a short window.
+- **Unselected rows sit back** at `--c-secondary-500` rather than the body's
+  `--color-text-secondary`. A visible step lighter, and it still clears the
+  4.5:1 floor that applies at 12px/500 (4.76:1 on white). `--color-text-muted`
+  would read better still but measures 2.56:1 and fails.
 
 Kept deliberately: **`StrategyFrameworkDVF`'s controls stay visually hidden
 until focused** (owner, 2026-09-12). Clicking the diagram is the intended

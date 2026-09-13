@@ -662,10 +662,37 @@ const ctaLinks = [
       display: block;
       position: fixed;
       right: var(--space-4);
-      top: 50%;
-      transform: translateY(-50%);
+      /* Top-aligned with the section title rather than centred in the
+         viewport (owner, 2026-09-12). Measured, not guessed: with a section
+         anchored at the top of the viewport, the 70px sticky header plus the
+         section's scroll-margin and padding put the h2 at 182px, so the rail
+         starts on the same line as the heading it belongs to. */
+      top: 11.5rem;
       z-index: 40;
     }
+    /* Ten labelled rows are ~470px; on a short window that would run past the
+       bottom, so the list scrolls inside itself rather than off the screen. */
+    .journey-rail-list {
+      max-height: calc(100vh - 14rem);
+      overflow-y: auto;
+    }
+  }
+  /* The rail belongs to the body of the page, not the hero — over a full-bleed
+     photo it reads as a stray panel floating on the image, and there is nothing
+     to navigate yet. It arrives when the reader reaches the first section, the
+     same move the homepage header makes when it solidifies past its photo hero
+     (body.past-hero in pages/index.astro). `visibility` rather than opacity
+     alone so it is not a tab stop while it is invisible. */
+  .journey-rail {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(0.75rem);
+    transition: opacity 240ms ease, transform 240ms ease, visibility 240ms;
+  }
+  .journey-rail.is-revealed {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
   }
 
   /* The rail floats over sections that alternate white and full-bleed navy, so
@@ -682,6 +709,10 @@ const ctaLinks = [
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }
+  /* Unselected rows sit back: --c-secondary-500 rather than the body's
+     --color-text-secondary, which is a visible step lighter and still clears
+     the 4.5:1 floor that applies at 12px/500 (4.76:1 on white).
+     --color-text-muted would read better still but measures 2.56:1 and fails. */
   .journey-rail-item {
     display: flex;
     align-items: center;
@@ -690,7 +721,7 @@ const ctaLinks = [
     border-left: 2px solid transparent;
     border-radius: var(--radius-sm);
     font-family: var(--font-sans);
-    color: var(--color-text-secondary);
+    color: var(--c-secondary-500);
     text-decoration: none;
     transition: color var(--transition-fast), border-color var(--transition-fast);
   }
@@ -701,7 +732,7 @@ const ctaLinks = [
     width: 1.6rem;
     height: 1.6rem;
     border-radius: var(--radius-full);
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--c-secondary-200);
     background: var(--color-bg);
     font-size: var(--text-xs);
     font-weight: var(--font-semibold);
@@ -1290,6 +1321,8 @@ const ctaLinks = [
   .xp-tool-text { margin: 0; font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
 
   @media (prefers-reduced-motion: reduce) {
+    /* Still appears and disappears, just without the slide or the fade. */
+    .journey-rail { transition: none; }
     .journey-rail-item,
     .journey-rail-num,
     .journey-rail-label,
@@ -1448,9 +1481,25 @@ const ctaLinks = [
       .map((item) => document.getElementById(item.dataset.railItem ?? ''))
       .filter((el): el is HTMLElement => el !== null);
 
+    // Revealed once the hero has scrolled past, so the rail never sits over the
+    // hero photo with nothing yet to navigate. No second scroll listener: this
+    // rides the same rAF-throttled read that picks the active section.
+    const hero = document.querySelector<HTMLElement>('.expertise-hero');
+    const header = document.querySelector<HTMLElement>('header');
+    const syncReveal = () => {
+      if (!hero) {
+        rail.classList.add('is-revealed');
+        return;
+      }
+      const heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
+      const revealAt = heroBottom - (header ? header.offsetHeight : 0);
+      rail.classList.toggle('is-revealed', window.scrollY >= revealAt);
+    };
+
     let frame = 0;
     const pick = () => {
       frame = 0;
+      syncReveal();
       if (!sections.length) return;
       const mid = window.innerHeight / 2;
       let active = sections[0];
