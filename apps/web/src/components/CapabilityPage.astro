@@ -454,8 +454,9 @@ const serviceSchema = service(Astro.site, {
     border-top: 1px solid var(--color-border);
     font-size: var(--text-sm);
     line-height: var(--line-relaxed);
-    /* 4.76:1, not --color-text-muted, which fails AA at 2.56:1. */
-    color: var(--c-secondary-500);
+    /* text-secondary: secondary-500 is 4.77:1 on white but 4.45:1 on the
+       tinted section this can land on, and --color-text-muted is 2.56:1. */
+    color: var(--color-text-secondary);
     max-width: var(--max-width-text);
   }
 
