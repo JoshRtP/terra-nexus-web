@@ -138,6 +138,10 @@ sentence; no named people; no insights; related expertise tags.
 Ranked by value divided by effort. "Owner" marks items that cannot proceed
 without owner input or approval.
 
+**Status 2026-09-13, later the same day.** Tier 1 items 1 and 4 and Tier 2 item 7
+are done (the owner approved all seven C&ES drafts in session). Items 2, 3, 5
+and 6 of Tier 1 are the next work; item 8 waits on the owner worksheets.
+
 ### Tier 1 — days, no new copy, do next
 
 1. **Render the three stable fields on every family page.** Decision owners,

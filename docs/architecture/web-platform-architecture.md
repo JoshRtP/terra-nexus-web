@@ -739,6 +739,39 @@ it — deferred to M6+ / P6, and now unblocked by the `site` config above), the 
 case studies, and the selector count. Content still needing owner review before
 publish is listed in each data module's header comment.
 
+### 5.5 Capability pages: one template, one hub, one data source (2026-09-13)
+
+- **`src/data/capabilities/`** holds one record per family plus an index
+  that merges each with its `capabilityAreas` entry in `lifecycle.ts`, so
+  name, slug and summary have one source. `stageDetails` in `approach.ts`
+  carries the hub's per-stage coverage lists keyed by lifecycle stage id.
+  `expertiseForCapability` inverts the expertise topics' section-06
+  `validationQuestions`; `segmentsForCapability` (in `who-we-work-with.ts`)
+  inverts the audience segments' capability lists. Neither is a
+  hand-maintained list.
+- **`components/CapabilityPage.astro`** renders all five families, Carbon &
+  Ecosystem Services included. Optional sections (mechanism selector,
+  lifecycle notes, comparison band) render only when the record carries
+  them, and surfaces alternate by rendered position rather than by fixed
+  class. Section ids are stable: `overview`, `decisions`, `mechanisms`,
+  `lifecycle`, `offerings`, `expertise`, `proof`. Every family renders its
+  core question, decision owners and scope boundary from the stable
+  `overview.md` records; C&ES renders per-offering detail from its seven
+  owner-approved offering records (2026-09-13).
+- **`/capabilities/`** is one scrolling hub (owner Option C): six stages
+  from `lifecycle.ts` at depth, the four mechanisms in the overview
+  selector, five family summaries, a `SectionRail`.
+- **Promoted primitives**: `.card-entry`, `.field-label`, `.disclosure`,
+  `.dot-list` moved from `/who-we-work-with/` into `design-system.css` at
+  their second consumer, inserted before the Stats block, well after the
+  `.split-header` ordering constraint.
+- **Navigation**: `claimsMenu` derives from `marketMechanisms` and
+  deep-links `#m01`–`#m04`; `MechanismSelector` re-selects on `hashchange`
+  and its cards carry `scroll-margin-top`. `.btn` wraps below 30rem.
+- **Tests**: `test/capability-pages.test.ts` asserts against built HTML,
+  parameterised over the five slugs, including that every Capabilities
+  mega-menu fragment resolves to an id on its page.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler

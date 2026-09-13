@@ -901,3 +901,77 @@ against the `terra-nexus-design-system` skill.
   a `<p>` must be added to the `.insight-body` exclusion list, or it silently
   renders in body-navy. That list is now three entries and is the third time
   this trap has bitten.
+
+## 2026-09-13 — Capabilities & Approach: consolidation, depth, navigation
+
+* **Branch**: `feature/who-we-work-with-consolidation`, continuing the Who We
+  Work With work; 52 commits ahead of `main` at the end of the session,
+  working tree clean, not merged. Plan in
+  `plans/capabilities-consolidation-plan.md` (Phases 0–3 done); assessment
+  and forward plan in `plans/capabilities-depth-seo-ux-plan.md`.
+* **Owner decisions (Phase 0)**: Option C, one scrolling `/capabilities/` hub
+  carrying approach, markets and family summaries with the five children
+  kept as deep taxonomies; remove the C&ES hero photo placeholder and
+  restructure without a photo; real per-mechanism deep links in the
+  Markets & Claims menu, "Other Markets" dropped. Later the same day: the
+  seven Carbon & Ecosystem Services offering drafts in `knowledge/services/`
+  approved for publication; entry numerals dropped from the hub.
+* **What landed**: `src/data/capabilities/` (one record per family, an
+  index, `stageDetails`), mirroring `data/expertise/`; one
+  `CapabilityPage.astro` template for all five families, C&ES included (its
+  bespoke page and 57 `cs-` classes retired); the hub rebuilt with a
+  `SectionRail`; four primitives promoted into `design-system.css`
+  (`.card-entry`, `.field-label`, `.disclosure`, `.dot-list`) with Who We
+  Work With migrated onto them, values measured unchanged; every family page
+  now renders its core question, decision owners and scope boundary from the
+  stable overview records; C&ES renders per-offering description, decision
+  owners, question, representative problems and deliverables from the seven
+  approved records (page grew from 1,365 to 3,078 words); capability pages
+  link to audiences via `segmentsForCapability`, inverted from the
+  segments' own capability lists, so expertise, audiences and capabilities
+  now all link both ways; `claimsMenu` derives from `marketMechanisms`
+  and deep-links `#m01`–`#m04`; `test/capability-pages.test.ts` (60 tests,
+  built-HTML assertions including every mega-menu fragment resolving).
+* **Launch blockers closed**: F1 (six stages named one way everywhere now:
+  the hub's local array and the C&ES lifecycle labels both replaced by
+  `lifecycle.ts`), F3 (placeholder gone), F4 (one destination per menu
+  entry, asserted).
+* **Three plan findings corrected**: F6 said `relatedExpertise` was empty on
+  the templated pages; it named all nine topics on each, so it was
+  undifferentiated, not missing (now derived by inverting the expertise
+  topics' `validationQuestions`). F5 recommended the expertise pathways
+  become the mechanism-copy source; nine per-topic records cannot be a
+  single source, and all 36 copies matched `market-mechanisms.ts`, so that
+  file is the source and the copies were removed. The "website briefs" the
+  plan cited as content sources are stubs for four of five families.
+* **Found by measurement, not screenshot**: mega-menu deep links landed the
+  mechanism card under the 70px sticky header (now `scroll-margin-top` on the
+  selector's `<li>`s); a same-document hash change did not switch the
+  selected mechanism, so a deep link used from the C&ES page itself did
+  nothing (now a `hashchange` listener); the closing CTA label overflowed a
+  390px viewport by 18px under `.btn { white-space: nowrap }` (predates this
+  work; buttons now wrap below 30rem). A stale `astro preview` from before
+  the session held `dist` and produced one false test failure, the trap the
+  handover warned about.
+* **Depth assessment** (`plans/capabilities-depth-seo-ux-plan.md`): the four
+  classic family pages hold 110 sub-offering rows averaging eleven words;
+  the governed records contain the same one-liners, so research cannot
+  deepen them and owner input can. Peers (Anthesis, South Pole, BCG) define
+  four to six services per page at a paragraph each and earn credibility
+  from proof. Next: meta-description trims, structured data, stable offering
+  anchors, a Lighthouse baseline; then owner worksheets for the other four
+  families' offering narratives. The WordPress redirect map remains the
+  largest launch risk.
+* **Still open**: each C&ES record's "Information Requiring Owner Approval"
+  list (advise vs manage/operate, registries and MRV platforms worked with,
+  named engagements) was not answered by the approval; nothing rendered
+  depends on it. Strategy & Innovation and Supply Chain still link to all
+  nine expertise topics because their teams appear in every topic's question
+  groups. Agroforestry appears on capability pages via the `agroforestry`
+  key in `validationQuestions`.
+* **Validation**: `npm run web:build`, `npm run web:typecheck` (0 errors, 0
+  warnings), `npm run web:test` (272 passing), `npm run check` (exit 0,
+  inventory regenerated for the seven approved records). Browser QA at
+  1440/1024/768/390 for the hub, C&ES and Strategy & Innovation, plus Who
+  We Work With at 1440/390 as a regression check; screenshots in
+  `artifacts/qa/2026-09-13-*`. Zero console errors.

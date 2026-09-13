@@ -1,7 +1,10 @@
 # Capabilities & Approach — pre-launch assessment and plan
 
 **Written** 2026-09-13, at the end of the Who We Work With consolidation session.
-**Status** Assessment complete, plan proposed, **not started**.
+**Status** Phases 0–3 complete (2026-09-13, same day). Phase 4 verification
+ran with each phase. See `capabilities-depth-seo-ux-plan.md` for what came
+next: the C&ES offering drafts were approved and rendered, and the stable
+decision-owner / core-question / scope fields now render on every family page.
 **Branch at time of writing** `feature/who-we-work-with-consolidation`, 36 commits
 ahead of `main`, working tree clean, full gate green.
 
