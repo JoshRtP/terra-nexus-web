@@ -8,9 +8,10 @@
 // patterns below reuse existing site mechanisms rather than inventing new
 // ones — the scroll-progress bar and scroll-reveal fade are copied 1:1
 // from expertise/regenerative-agriculture/index.astro's established
-// implementation; the Track Record stat grid reuses index.astro's
-// .stat-strip pattern and its exact, already-approved figures, extended
-// here with a scroll-triggered count-up matching the design reference.
+// implementation; the Track Record stat grid renders the shared figures
+// in data/track-record.ts (the homepage's components/TrackRecord.astro
+// renders the same record) in the page's own strip layout, with a
+// scroll-triggered count-up matching the design reference.
 // The pinned sticker moment and its scroll-driven scale/rotate math are
 // also matched to the design reference 1:1 (see the script block below) —
 // climate-sticker-03-sunfaded-vintage.webp lives in apps/web/public/images/
@@ -36,25 +37,18 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
 import ClosingCta from '../../components/ClosingCta.astro';
 import ProfileRoster from '../../components/ProfileRoster.astro';
+import { trackRecordHeadline, trackRecordStats as trackRecordPortfolio } from '../../data/track-record';
 
 const mode = getBuildMode();
 
-// Same six figures as the homepage's "Our Track Record" section
-// (index.astro's `portfolioStats`, approved 2026-08-10) — kept identical
-// rather than re-deriving slightly different label wording from the design
-// doc, since these are the one already-approved source of truth.
-// count/prefix/suffix drive the scroll-triggered count-up (data-count
-// script below); `value` is the plain-text fallback rendered for no-JS/
+// The same figures as the homepage's "Our Track Record" section, from the
+// one shared record (data/track-record.ts, owner copy 2026-09-14): the
+// headline value first, then the seven portfolio figures. count/prefix/
+// suffix/decimals drive the scroll-triggered count-up (data-count script
+// below); `value` is the plain-text fallback rendered for no-JS/
 // reduced-motion visitors (same progressive-enhancement approach as
 // ProfileRoster and the scroll-reveal system elsewhere on this page).
-const trackRecordStats = [
-  { value: '$3B+', count: 3, prefix: '$', suffix: 'B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
-  { value: '25+', count: 25, suffix: '+', label: 'Global Projects Across 25+ Countries' },
-  { value: '15+', count: 15, suffix: '+', label: 'Commodities worked with' },
-  { value: '20+', count: 20, suffix: '+', label: '20+ Sustainable Food Systems Certifications' },
-  { value: '10+', count: 10, suffix: '+', label: '10+ Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
-  { value: '5M+', count: 5, suffix: 'M+', label: 'Acres of regenerative ecosystems' },
-];
+const trackRecordStats = [trackRecordHeadline, ...trackRecordPortfolio];
 
 // Origin Story — sticky-rail chapters. Copy carried over verbatim from the
 // design doc (draft narrative, not confirmed history — see the header
@@ -432,6 +426,7 @@ const rosterGroups: Array<{
               data-count={stat.count}
               data-prefix={stat.prefix}
               data-suffix={stat.suffix}
+              data-decimals={stat.decimals}
             >{stat.value}</p>
             <p class="stat-label">{stat.label}</p>
           </div>
@@ -714,14 +709,16 @@ const rosterGroups: Array<{
     .origin-rail-list { flex-direction: row; flex-wrap: wrap; margin-top: 0; padding-left: var(--space-4); }
   }
 
-  /* ── Our Track Record — same grid recipe as index.astro's .stat-strip. ── */
+  /* ── Our Track Record — the strip the homepage used until 2026-09-14,
+     kept here in the page's own reveal rhythm. Four columns: the shared
+     record is eight figures with short labels, so two rows of four. ── */
   .stat-strip {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--space-10);
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: var(--space-8);
     row-gap: var(--space-10);
   }
-  @media (max-width: 56rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 64rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
   .stat-item { padding-top: var(--space-4); border-top: 3px solid var(--color-eyebrow); }
   .stat-item .stat-value { margin-top: var(--space-3); }
@@ -883,20 +880,26 @@ const rosterGroups: Array<{
   // renders in the markup and is left untouched in that case.
   const counters = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
   let countedIn = false;
+  // Decimals ($2.65B) and thousands separators (2,000+) as in
+  // components/TrackRecord.astro; duration capped so 2,000 does not run
+  // for twenty seconds.
+  const fmt = (n: number, decimals: number) =>
+    n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   function runCounts() {
     counters.forEach((el) => {
       const target = Number(el.dataset.count || 0);
+      const decimals = Number(el.dataset.decimals || 0);
       const pre = el.dataset.prefix || '';
       const suf = el.dataset.suffix || '';
-      const duration = 1100 + target * 8;
+      const duration = Math.min(1800, 1200 + target * 10);
       const start = performance.now();
       const step = (now: number) => {
         const k = Math.min(1, (now - start) / duration);
         const eased = 1 - Math.pow(1 - k, 3);
-        el.textContent = pre + Math.round(target * eased) + suf;
+        el.textContent = pre + fmt(target * eased, decimals) + suf;
         if (k < 1) requestAnimationFrame(step);
       };
-      el.textContent = pre + '0' + suf;
+      el.textContent = pre + fmt(0, decimals) + suf;
       requestAnimationFrame(step);
     });
   }
