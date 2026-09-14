@@ -316,7 +316,7 @@ Terra Nexus works with organizations across the physical value chain and underst
 - **Energy & Biofuels Refiners:** Feedstock assessment, low-CI sourcing, origination, chain of custody, CI analysis, program design, partner selection, audit readiness, operating workflows, and commercialization.
 - **Food Waste Prevention, Diversion & Recovery:** Material flows, business cases, technology and partner diligence, secondary markets, byproduct commercialization, program design, measurement, claims, and implementation.
 
-The objective is not to maximize value for one node by shifting cost or risk to another. It is to build a workable path that rewards the participants whose actions make the outcome possible.
+The objective is to incentivize investments that reward the actions that make the entire system stronger.
 
 **CTA:** Discuss Your Food or Agribusiness Opportunity
 
