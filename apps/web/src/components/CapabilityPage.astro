@@ -94,8 +94,6 @@ const ctaLinks = [
   { label: 'Glossary', href: '/glossary/' },
 ];
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
 const pagePath = `/capabilities/${family.slug}/`;
 const breadcrumbs = [
   { name: 'Capabilities', path: '/capabilities/' },
@@ -250,14 +248,13 @@ const serviceSchema = service(Astro.site, {
       </header>
 
       <ol class="card-entries" role="list">
-        {family.offerings.map((offering, i) => (
+        {family.offerings.map((offering) => (
           <li
             class="card card-static card-entry"
             class:list={{ 'cap-entry-single': offering.subOfferings.length === 0 && !offering.detail }}
             id={offeringAnchor(offering.name)}
           >
             <div class="card-entry-head">
-              <span class="numbered-index card-entry-index" aria-hidden="true">{pad(i + 1)}</span>
               <h3>{offering.name}</h3>
               <p class="cap-offering-desc">{offering.description}</p>
               {offering.detail && (
