@@ -1025,6 +1025,38 @@ against the `terra-nexus-design-system` skill.
 * **Validation**: full gate green after each commit (286 tests at the
   end); a11y re-audited after the contrast fixes.
 
+## 2026-09-13 — Pre-launch batch (agent-only items from `plans/pre-launch-plan.md`)
+
+* **404 page** (`src/pages/404.astro`): the site had none, so a stale URL got
+  the Worker's bare default. Now a map of the six sections plus direct
+  links to every topic and family; served with a real 404 status.
+* **Assets**: the 16 MB colourway palette sheet moved from `public/` to
+  `brand/design-reference/`; 18 unreferenced images deleted from `public/`
+  (two generically named, sixteen pre-rebuild product renders superseded by
+  `product-ui/`); the About sticker (3.3 MB PNG) and the homepage mockup
+  (1 MB PNG) replaced by WebP at rendered size (144 KB, 69 KB). `public/
+  images` went from 46 MB to 16 MB. A size-budget test now fails any served
+  image over 1.5 MB.
+* **Fonts self-hosted**: the render-blocking Google Fonts stylesheet
+  replaced by the same eight latin woff2 faces served from `public/fonts/`
+  with `font-display: swap`; Inter 400 and 700 preloaded. Chrome logs a
+  "preloaded but not used" warning for the two preloads that the network
+  log contradicts (each fetched once, via the preload, never re-fetched);
+  a known Chrome false positive, recorded here so nobody chases it.
+* **Wordmark**: header and footer logos served as 507×84 WebP (18 KB)
+  instead of the 1449×240 PNG (118 KB), on every page.
+* **Homepage**: hero image sized and `fetchpriority="high"`, wordmark and
+  star sized, diagram and mockup sized and lazy; the approach band's `h4`
+  under an `h2` became `h3`.
+* **Site-wide link test** (`test/site-links.test.ts`): every internal href
+  on every built page resolves to a page, a served file, an on-demand route
+  or a redirect, and every fragment resolves to an id on its target.
+* **Measured** (Lighthouse mobile, before → after): hub 85 → 95 (LCP 3.4 →
+  2.6 s); homepage 59 → 74 (LCP 8.4 → 5.8 s, CLS 0.158 → 0.035,
+  accessibility 95 → 100); Regenerative Agriculture 69 → 74. What remains
+  on the homepage is the 2.4 MB of Pexels tiles and the hero itself (plan
+  D2, D3).
+* **Validation**: build, typecheck (0/0), 290 tests, `npm run check` exit 0.
 ## 2026-09-13 — Framework viewer: Ten Types of Innovation tool
 
 Branch `feature/framework-viewer`, off `main`, in its own worktree so the
@@ -1098,7 +1130,7 @@ neutral provenance comment plus an editable `attribution` paragraph).
   the script from a JSON blob of type + value-line codes only, titles read
   back from the cards) and a plays-by-value-line table on the play sheet.
 * **`/tools/` index** listing every framework with its counts and the
-  family that carries it; the footer links there. Route table and §5.6 in
+  family that carries it; the footer links there. Route table and §5.7 in
   the architecture doc updated; plan §8.1.
 * **QA** (Chrome headless over the DevTools protocol, 1440 and 390):
   board, focus, detail, drawer, play sheet for both; the Value Map's root

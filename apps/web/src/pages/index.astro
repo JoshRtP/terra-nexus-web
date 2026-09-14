@@ -81,11 +81,15 @@ const approachSteps = stages.map((stage) => ({
       src="/images/live-site/hero-canyon.jpg"
       alt=""
       aria-hidden="true"
+      width="2000"
+      height="1112"
+      fetchpriority="high"
+      decoding="async"
     />
     <div class="photo-hero-scrim" aria-hidden="true"></div>
-    <img class="photo-hero-star" src="/brand/star-mark.png" alt="" aria-hidden="true" />
+    <img class="photo-hero-star" src="/brand/star-mark.png" alt="" aria-hidden="true" width="328" height="480" loading="lazy" decoding="async" />
     <div class="container photo-hero-content">
-      <img class="photo-hero-wordmark" src="/images/live-site/logo-stacked.png" alt="Terra Nexus" />
+      <img class="photo-hero-wordmark" src="/images/live-site/logo-stacked.png" alt="Terra Nexus" width="1084" height="502" fetchpriority="high" />
       <h1 id="hero-heading" class="photo-hero-tagline">Impact at the Intersection of <span>Food &amp; Climate</span></h1>
     </div>
     <p class="photo-hero-band">Developing a more resilient, sustainable, &amp; prosperous food system</p>
@@ -173,6 +177,10 @@ const approachSteps = stages.map((stage) => ({
       <img
         class="integration-diagram"
         src="/images/live-site/value-chain-diagram.png"
+        width="1795"
+        height="744"
+        loading="lazy"
+        decoding="async"
         alt="Diagram of the food and agribusiness value chain: inputs, agricultural production, commodity trading, ingredient and feed processing, food and beverage, and retail and distribution, connected to energy and biofuels and waste diversion, and enabled by environmental markets, technology and solution providers, private equity and impact investors."
       />
     </div>
@@ -267,7 +275,7 @@ const approachSteps = stages.map((stage) => ({
           <div class="approach-cap-grid is-filtering" id="approach-cap-grid">
             {capabilityAreas.map((cap) => (
               <a href={`/capabilities/${cap.slug}/`} class="approach-cap" data-cap={cap.slug} class:list={{ 'is-linked': approachSteps[0].caps.includes(cap.slug) }}>
-                <h4>{cap.title}</h4>
+                <h3>{cap.title}</h3>
                 <p>{cap.description}</p>
               </a>
             ))}
@@ -407,7 +415,11 @@ const approachSteps = stages.map((stage) => ({
     <div class="container digital-solutions-grid">
       <img
         class="digital-solutions-mockup"
-        src="/images/live-site/terranexus-slate-family-16x9-dark.png"
+        src="/images/live-site/terranexus-slate-family-16x9-dark-1440w.webp"
+        width="1440"
+        height="810"
+        loading="lazy"
+        decoding="async"
         alt="Three Terra Nexus mobile app screens: enteric emissions tracking with herd composition, a satellite biomass map showing a detected rotational grazing event, and crop carbon intensity with a GHG breakdown."
       />
       <div class="digital-solutions-copy">
@@ -1348,7 +1360,9 @@ const approachSteps = stages.map((stage) => ({
     transition: border-color var(--transition-slow) ease, opacity var(--transition-slow) ease,
                 box-shadow var(--transition-slow) ease, transform var(--transition-slow) ease;
   }
-  .approach-cap h4 { font-size: var(--text-sm); margin: 0 0 var(--space-2); font-weight: var(--font-semibold); color: #fff; }
+  /* h3, not h4: the band has no h3 above these, and Lighthouse flagged the
+     skipped level (2026-09-13). Same styling. */
+  .approach-cap h3 { font-size: var(--text-sm); margin: 0 0 var(--space-2); font-weight: var(--font-semibold); color: #fff; }
   .approach-cap p { font-size: var(--text-xs); color: #a9b6d6; line-height: 1.55; }
   .approach-cap-grid.is-filtering .approach-cap { opacity: 0.4; }
   .approach-cap-grid.is-filtering .approach-cap.is-linked {
