@@ -38,11 +38,11 @@ const stats: Stat[] = [
 
 // V4 levers — owner sketch, 2026-09-14: under the value, the ordinary good
 // business decisions that produced it (up: revenue, margins, operating
-// efficiencies; down: cost, risk), then the payoff line.
+// efficiencies; down: cost, risk). The payoff line the sketch had under
+// them was dropped at owner review, round 5.
 const levers = {
   up: { label: 'Increase', items: ['Revenue', 'Margins', 'Operating efficiencies'] },
   down: { label: 'Decrease', items: ['Cost', 'Risk'] },
-  result: 'Business investments with real returns',
 };
 const arrows = {
   up: '<path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/>',
@@ -50,7 +50,7 @@ const arrows = {
 };
 
 const variants = [
-  { id: 'v4', name: 'Hybrid: navy value, levers, red icons', note: 'Owner sketch. Left column is a short argument: the value in the navy panel, then the levers that produced it (increase revenue, margins, operating efficiencies; decrease cost, risk), then the payoff line. Right column is V3’s ledger with the icons in brand maroon and no disc.' },
+  { id: 'v4', name: 'Hybrid: navy value, lever cards, red icons', note: 'Owner pick, round 5. Left column is three boxes of one shape: the value in the navy panel, then the levers that produced it as two light cards (increase revenue, margins, operating efficiencies; decrease cost, risk). Right column is V3’s ledger with the icons in brand maroon and no disc.' },
   { id: 'v1', name: 'Flat ledger, new text', note: 'The round-2 flat ledger with the owner’s tightened labels. Baseline for the other three.' },
   { id: 'v2', name: 'Headline in colour: navy panel', note: 'The $2.65B side becomes the navy gradient panel the homepage already uses for How We Work and Who We Work With, with the figure in gold. The ledger stays on the light surface.' },
   { id: 'v2b', name: 'Headline in colour: maroon numeral', note: 'Not requested, added for comparison. The quietest reading of “a different colour on that side”: only the numeral changes, to the brand maroon the rule and eyebrow already use.' },
@@ -116,7 +116,7 @@ const icons: Record<string, string> = {
               {v.id === 'v4' && (
                 <div class="tr-levers">
                   {(['up', 'down'] as const).map((dir) => (
-                    <div class="tr-lever">
+                    <div class="card card-static tr-lever-card">
                       <p class="tr-lever-label">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={arrows[dir]} />
                         <span>{levers[dir].label}</span>
@@ -126,7 +126,6 @@ const icons: Record<string, string> = {
                       </ul>
                     </div>
                   ))}
-                  <p class="tr-lever-result card card-static card-accent-start">{levers.result}</p>
                 </div>
               )}
             </div>
@@ -259,40 +258,40 @@ const icons: Record<string, string> = {
   .tr-icon-bare svg { width: 28px; height: 28px; }
   .tr-v4 .tr-headline-item { gap: var(--space-5); }
 
-  /* Levers: two short lists under the panel, then the payoff line. The
-     arrow + label is the section's small uppercase mark in maroon, so it
-     reads with the icons on the right; items are plain body text. */
+  /* Levers: two cards under the panel, so the left column reads as three
+     boxes of one shape — the value in navy, the levers in light. The cards
+     are the site's static card recipe at the panel's radius; the arrow +
+     label is the section's small uppercase mark in maroon, so it reads
+     with the icons on the right; items are plain body text. */
+  /* Increase carries the longer list ("Operating efficiencies"), so it
+     takes the wider share; the split keeps that item on one line inside
+     the 25rem title column. */
   .tr-levers {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--space-6);
-    row-gap: var(--space-5);
-    margin-top: var(--space-6);
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
   }
+  .tr-lever-card {
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-xl);
+  }
+  .tr-lever-list li { white-space: nowrap; }
   .tr-lever-label {
     display: inline-flex; align-items: center; gap: var(--space-2);
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-3);
     font-size: var(--text-xs); font-weight: var(--font-semibold); letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--color-eyebrow);
   }
   .tr-lever-list { margin: 0; padding: 0; list-style: none; }
   .tr-lever-list li { font-size: var(--text-base); line-height: var(--line-relaxed); color: var(--color-text); }
-  /* Payoff line: the site's left-accent card, accent switched to maroon to
-     match the levers and icons (sky is the class default). */
-  .tr-lever-result {
-    grid-column: 1 / -1;
-    margin: 0;
-    padding: var(--space-4) var(--space-5);
-    border-inline-start-color: var(--color-eyebrow);
-    font-family: var(--font-serif);
-    font-size: var(--text-lg);
-    line-height: var(--line-tight);
-    color: var(--color-dark);
-  }
   @media (max-width: 34rem) {
     .tr-v4 .tr-headline-item { gap: var(--space-4); }
     .tr-icon-bare { width: 1.5rem; }
     .tr-icon-bare svg { width: 20px; height: 20px; }
+    /* Phones narrower than 390 cannot hold "Operating efficiencies" on one
+       line in a half-width card; wrapping beats overflow there. */
+    .tr-lever-list li { white-space: normal; }
   }
 </style>
 
