@@ -20,7 +20,7 @@ export const sustainabilityChessboard: Framework = {
   shortName: 'Chessboard',
   eyebrow: 'Sustainability Framework',
   title: 'The Sustainability Chessboard',
-  // Written 2026-09-14 in the shape of the owner-approved Value Map lead; NEEDS OWNER REVIEW.
+  // Owner-approved as the starting point, 2026-09-14.
   lead: 'Most companies can state a sustainability ambition. Fewer can say whether the organisation is built to deliver it. The Chessboard is how Terra Nexus places a company on that board in a session, so the next moves come from where it stands rather than from where it wants to be seen.',
   metaTitle: 'Sustainability Chessboard Framework Tool | Terra Nexus',
   metaDescription: 'Interactive Sustainability Chessboard: four strategies on a 2×2 of enablement against ambition, 16 approaches, 64 levers, and a printable play sheet.',

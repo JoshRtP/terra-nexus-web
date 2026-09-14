@@ -348,9 +348,10 @@ Chessboard and the Value Map were asked for next.
 
 ## 9. Where this stops (2026-09-13) and what remains
 
-**Status.** Parked by owner decision after the third framework. Everything
-is on `feature/framework-viewer`, pushed to GitHub, not merged, not deployed
-to production. Full gate green at the stop (313 tests, typecheck clean,
+**Status.** Merged to `main` 2026-09-14 (owner approval, with the three
+hero leads approved as the starting point), which deploys to the Cloudflare
+preview Worker only; nothing reaches terra.nexus without a production
+cutover. The remaining items below still apply. Full gate green at the stop (313 tests, typecheck clean,
 validators and pytest passing; browser QA at 1440 / 1024 / 768 / 390 in
 `artifacts/qa/2026-09-13-*`). The owner expects to come back for
 formatting, label and copy work before this goes live.
