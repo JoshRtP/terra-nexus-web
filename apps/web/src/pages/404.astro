@@ -1,0 +1,107 @@
+---
+// The site's 404. Added 2026-09-13 (pre-launch plan A3): until now a stale
+// or mistyped URL got the Worker's bare default response. Astro emits this
+// as dist/client/404.html, which the Cloudflare adapter serves for any
+// unmatched route with a 404 status.
+//
+// Deliberately a map, not a search box: the site is 25 routes and the
+// reader is one click from any of them. Section links are the same six the
+// header carries, in the same order, so the page does not invent a second
+// navigation.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { getBuildMode } from '../lib/build-mode.js';
+import { capabilityAreas } from '../data/lifecycle';
+import { expertiseMenu } from '../data/nav-data';
+
+const mode = getBuildMode();
+
+const sections = [
+  { name: 'Areas of Expertise', href: '/expertise/', note: 'Nine production systems, supply chains and value chains, each with the full development lifecycle.' },
+  { name: 'Capabilities', href: '/capabilities/', note: 'The six-stage approach, the four market mechanisms and the five capability families.' },
+  { name: 'Who We Work With', href: '/who-we-work-with/', note: 'The value chain by market role and by segment, and the markets, technology and capital that enable it.' },
+  { name: 'Digital Solutions', href: '/digital-solutions/', note: 'The tools Terra Nexus builds to run its own programs.' },
+  { name: 'Insights', href: '/insights/', note: 'Perspectives, research and case studies.' },
+  { name: 'Glossary', href: '/glossary/', note: 'Plain definitions of the terms this work runs on.' },
+];
+---
+
+<SiteLayout
+  title="Page Not Found | Terra Nexus"
+  description="That page is not here. Everything on the Terra Nexus site is one click away from this map."
+  preview={mode === 'preview'}
+>
+  <PageHero
+    eyebrow="404"
+    title="That page is not here"
+    lead="The address may have changed when the site moved, or it may have been mistyped. Everything on the site is one click from the list below."
+    primaryCta={{ label: 'Go to the homepage', href: '/' }}
+    secondaryCta={{ label: 'Contact Terra Nexus', href: '/contact/' }}
+  />
+
+  <section class="section" aria-labelledby="map-heading">
+    <div class="container">
+      <header class="section-header split-header">
+        <span class="eyebrow split-header-eyebrow">Where Things Are</span>
+        <div class="split-header-title">
+          <h2 id="map-heading">The Site in Six Sections</h2>
+        </div>
+        <div class="split-header-lead">
+          <p class="section-lead">If a link from another site brought you here, the page it pointed at has most likely moved into one of these sections rather than disappeared.</p>
+        </div>
+      </header>
+
+      <div class="card-grid card-grid-3">
+        {sections.map((s) => (
+          <a href={s.href} class="card-link">
+            <article class="card">
+              <h3>{s.name}</h3>
+              <p>{s.note}</p>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="deep-heading">
+    <div class="container">
+      <header class="section-header">
+        <span class="eyebrow">Direct Links</span>
+        <h2 id="deep-heading">Topics and Capability Families</h2>
+      </header>
+      <div class="nf-columns">
+        <div>
+          <span class="field-label nf-label">Areas of Expertise</span>
+          <ul class="dot-list" role="list">
+            {expertiseMenu.map((item) => <li><a href={item.href}>{item.title}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <span class="field-label nf-label">Capability Families</span>
+          <ul class="dot-list" role="list">
+            {capabilityAreas.map((cap) => <li><a href={`/capabilities/${cap.slug}/`}>{cap.title}</a></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .nf-columns {
+    display: grid;
+    gap: var(--space-8);
+  }
+  @media (min-width: 48rem) {
+    .nf-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-10); }
+  }
+  .nf-label { margin-bottom: var(--space-4); }
+  .nf-columns a {
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-sky-300);
+  }
+  .nf-columns a:hover { color: var(--c-sky-700); border-bottom-color: var(--c-sky-600); }
+  .nf-columns a:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+</style>

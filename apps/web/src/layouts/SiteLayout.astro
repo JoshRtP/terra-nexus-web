@@ -51,8 +51,10 @@ const graph = [...(breadcrumbs ? [breadcrumbList(Astro.site, breadcrumbs)] : [])
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts are self-hosted (design-system.css); the two faces the first paint
+         needs are preloaded so the hero text does not wait on CSS discovery. -->
+    <link rel="preload" href="/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-700-latin.woff2" as="font" type="font/woff2" crossorigin />
     {description && <meta name="description" content={description} />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {isPreview && <meta name="robots" content="noindex, nofollow" />}

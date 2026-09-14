@@ -779,6 +779,24 @@ publish is listed in each data module's header comment.
   name (`offeringAnchor`), so the catalog urls, the hub and future insights
   can address a specific service.
 
+### 5.6 Pre-launch hardening (2026-09-13)
+
+- **Fonts are self-hosted.** `design-system.css` carries `-face` rules for
+  the eight latin woff2 faces in `public/fonts/` (Inter 400–700, Lora
+  400/500/600 and 400 italic, SIL OFL) with the unicode-range Google assigned;
+  `SiteLayout` preloads Inter 400 and 700. The Google Fonts `` and
+  preconnects are gone. Chrome logs a "preloaded but not used" warning for the
+  two preloads that the network log contradicts (fetched once, via the
+  preload); a known false positive.
+- **`src/pages/404.astro`** is served with a real 404 status by the adapter.
+- **Wordmarks** are 507×84 WebP in header and footer; the PNGs remain for the
+  Organization schema logo.
+- **`test/site-links.test.ts`** asserts every internal href and fragment on
+  every built page resolves (pages, served files, on-demand routes derived
+  from `prerender = false`, and `astro.config.ts` redirects) and that no served
+  image exceeds 1.5 MB.
+- **Open work** is tracked in `plans/pre-launch-plan.md`, not here.
+
 ## 6. Cloudflare direction
 
 **Adapter installed and deployed (M5, 2026-08-12); repository-owned Wrangler
