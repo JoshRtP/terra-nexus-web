@@ -22,7 +22,9 @@
 // reference were removed per owner request; this file-level flag is now
 // the only record of what's still unconfirmed). Do not treat as final:
 // - Origin Story narrative (all four chapters) — directional copy, not
-//   confirmed history. Dates/specifics are invented placeholders. The
+//   confirmed history. The section eyebrow and the h2 were owner-supplied
+//   on 2026-09-14 ("The Studio Origin Story" / "We started Terra Nexus
+//   because value kept stalling at the starting line.") and are confirmed. Dates/specifics are invented placeholders. The
 //   "We invests" typo in "The change" chapter was confirmed and fixed to
 //   "We invest," 2026-09-07 — that one item is resolved; the rest of the
 //   narrative is not.
@@ -346,8 +348,8 @@ const rosterGroups: Array<{
        ⚠️ Draft narrative — see header comment. -->
   <section class="section origin-section" id="origin" aria-labelledby="origin-heading">
     <div class="container">
-      <span class="eyebrow eyebrow-light" data-reveal>The Origin Story</span>
-      <h2 id="origin-heading" class="origin-heading" data-reveal>We started Terra Nexus because the work kept stalling in the same place.</h2>
+      <span class="eyebrow eyebrow-light" data-reveal>The Studio Origin Story</span>
+      <h2 id="origin-heading" class="origin-heading" data-reveal>We started Terra Nexus because value kept stalling<br />&hellip;at the starting line.</h2>
 
       <div class="origin-layout">
         <div class="origin-rail">
@@ -574,7 +576,10 @@ const rosterGroups: Array<{
        draft-pill note (removed 2026-09-07) no longer sits here providing
        its own spacing before the rail/chapters below. */
     margin: var(--space-4) 0 var(--space-10);
-    max-width: 22ch;
+    /* No max-width: the heading runs the full content width (owner request,
+       2026-09-14) so it settles in two lines rather than stacking three or
+       four in a narrow column. The <br> fixes the break after "stalling"
+       and the second line opens with an ellipsis (owner request, same day). */
     font-size: clamp(1.75rem, 3.6vw, 2.75rem);
     line-height: 1.15;
     font-weight: var(--font-semibold);
