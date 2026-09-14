@@ -129,7 +129,7 @@ export default defineConfig({
     // present in a production build, but the filter documents the intent and
     // keeps a dev/preview build from listing them.
     ...(buildMode === 'production'
-      ? [sitemap({ filter: (page) => !page.includes('/keystatic') && !page.includes('/api/') })]
+      ? [sitemap({ filter: (page) => !page.includes('/keystatic') && !page.includes('/api/') && !page.includes('/design-lab/') })]
       : []),
     ...(includeKeystatic ? [keystaticCloudflareCompatShim(), keystatic()] : []),
   ],
