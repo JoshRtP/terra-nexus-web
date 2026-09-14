@@ -115,6 +115,20 @@ export const strategyAndInnovation: CapabilityFamilyRecord = {
       subOfferings: [],
     },
   ],
+  // Added 2026-09-13 (plans/framework-viewer-plan.md): the Ten Types of
+  // Innovation tool, compact on this page (directly under the core
+  // question, owner placement) and in full at
+  // /tools/ten-types-of-innovation/. Section copy below is new and NEEDS
+  // OWNER REVIEW; the framework content itself is in data/frameworks/.
+  tool: {
+    eyebrow: 'Interactive Tool',
+    heading: 'Ten Types of Innovation',
+    lead: [
+      'Innovation programs tend to over-invest in the product and under-invest in how the business is configured and how customers experience it. The Ten Types of Innovation is the reference Terra Nexus uses in innovation and business-model sessions to widen that view: three categories, ten types, and 112 tactics, each with public company examples.',
+      'Open a type below to read its tactics, or use the full tool to assemble and print a play sheet for a session.',
+    ],
+    framework: 'ten-types-of-innovation',
+  },
   proofNote: 'The approved lower-emissions beef case study supports commercialization strategy, market-mechanism assessment, market acceptance, and competitive benchmarking.',
   proofLink: { label: 'Read the Case Study', href: '/case-studies/' },
   ctaHeading: 'Discuss Your Strategy or Growth Opportunity',

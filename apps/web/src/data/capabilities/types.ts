@@ -68,6 +68,18 @@ export interface LifecycleSection {
   notes: Record<string, StageNote>;
 }
 
+/** An interactive framework tool from ../frameworks, rendered in its compact
+ * form on the family page (Strategy & Innovation carries the Ten Types of
+ * Innovation, 2026-09-13). The family authors the section header; the board
+ * and the /tools/<slug>/ page render from the framework record itself. */
+export interface ToolSection {
+  eyebrow: string;
+  heading: string;
+  lead: string[];
+  /** A slug in ../frameworks' FRAMEWORK_SLUGS; checked at build. */
+  framework: string;
+}
+
 export interface ComparisonCell {
   label: string;
   body: string;
@@ -115,6 +127,7 @@ export interface CapabilityFamilyRecord {
   mechanisms?: MechanismsSection;
   lifecycle?: LifecycleSection;
   comparison?: ComparisonSection;
+  tool?: ToolSection;
 }
 
 export type CapabilityFamily = CapabilityFamilyRecord & {

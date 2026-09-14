@@ -1057,3 +1057,102 @@ against the `terra-nexus-design-system` skill.
   on the homepage is the 2.4 MB of Pexels tiles and the hero itself (plan
   D2, D3).
 * **Validation**: build, typecheck (0/0), 290 tests, `npm run check` exit 0.
+## 2026-09-13 — Framework viewer: Ten Types of Innovation tool
+
+Branch `feature/framework-viewer`, off `main`, in its own worktree so the
+uncommitted pre-launch batch stayed untouched. From the handover package in
+`plans/Innovation framework viewer mockups.zip`; assessment and plan in
+`plans/framework-viewer-plan.md`.
+
+* **Owner decisions**: publish (the framework is public knowledge and the
+  tool is Terra Nexus's own); Ten Types only for now; no new top-level nav
+  item; the compact board on the Strategy & Innovation page; and make the
+  viewer reusable so supply-chain, operations and corporate-sustainability
+  frameworks can follow as data.
+* **Two departures from the handover brief**, both deliberate: no iframe
+  (same codebase, so the component renders inline and the whole
+  `?chrome=0` / `postMessage` height contract disappears), and Astro plus a
+  vanilla script rather than a React island (no public page uses React;
+  pre-rendering every state makes the 112 tactics crawlable).
+* **Data**: `src/data/frameworks/` with the generic shape, the registry and
+  a validator that throws at build; the Ten Types record generated from
+  the prototype's modules (10 types, 112 tactics, 38 tactic example sets,
+  the Method starter). The four other frameworks in the package (Fusion,
+  Chessboard, EVM, WWF 2050) are not brought across.
+* **Component**: `FrameworkViewer.astro`, `full` and `compact`. Real
+  buttons everywhere (the prototype's `div` + keyboard shim is gone), a
+  `<dialog>` drawer, play sheet in `localStorage` under
+  `tnx:framework:<slug>:play`, a real share link (`?play=` ids, copied to
+  the clipboard, imported on load), print rules for the play sheet, and a
+  designed phone layout (the prototype's three columns did not stack at
+  390px).
+* **Route and links**: `/tools/[framework]/`, breadcrumbed through the
+  family that carries it; `tool` section on `CapabilityPage`; hub family
+  entry and footer link.
+* **Attribution**: the tool page's About block renders the record's
+  `attribution` paragraphs (Doblin / Deloitte, the 2013 book; descriptions
+  and public examples compiled by Terra Nexus). Wording is new and for
+  owner review, as is the new section copy on the Strategy & Innovation
+  record.
+* **QA**: Chrome headless driven over the DevTools protocol at 1440 / 1024
+  / 768 / 390 through board, focus, detail, drawer, play sheet, shared
+  link, print and the compact section; screenshots in `artifacts/qa/`.
+  Found and fixed by measurement: the board's `overflow: hidden` pinned the
+  sticky column headers inside the board over the first type (now
+  `overflow: clip`); the tool page's scoped print rules could not reach the
+  hero, header, footer or closing band (now `is:global`). No console
+  errors; no `role="button"`; clipboard falls back to showing the link.
+* **Tests**: `test/framework-viewer.test.ts` (record shape, id rules, the
+  validator's rejections, and the built pages: every tactic as HTML with
+  a stable id, examples on the page, real controls, attribution, canonical,
+  breadcrumb, no inline styles, the compact board and its links, the hub
+  and footer links). `capability-pages.test.ts` learned the `tool`
+  section.
+
+## 2026-09-13 — Framework viewer: Sustainability Chessboard and Enterprise Value Map
+
+Same branch, same day. Owner asked for the two next frameworks from the
+handover package and confirmed Deloitte provided the Value Map for Terra
+Nexus's use as a contractor (attribution wording, not permission, is the
+open item; no copyright text exists in the repo, and the records carry a
+neutral provenance comment plus an editable `attribution` paragraph).
+
+* **Records** generated from the prototype's data modules, no wording
+  changed: the Chessboard (4 quadrants placed on a 2×2 by `cell`, 16
+  approaches, 64 levers) and the Value Map (4 dimensions, 9 improvement
+  areas, 893 actions, each with the value line(s) it sits on, a 67-node
+  tree with 40 lines). The validator learned matrix cells, tree codes and
+  `at` resolution.
+* **Viewer**, all record-driven, the Ten Types page unchanged: a `matrix`
+  board with axis labels (stacked row-major below 64rem); dense one-line
+  rows for a type with 25 or more tactics and no board chips above 30; a
+  value-map view (root grid server-rendered, drills and cell lists built by
+  the script from a JSON blob of type + value-line codes only, titles read
+  back from the cards) and a plays-by-value-line table on the play sheet.
+* **`/tools/` index** listing every framework with its counts and the
+  family that carries it; the footer links there. Route table and §5.7 in
+  the architecture doc updated; plan §8.1.
+* **QA** (Chrome headless over the DevTools protocol, 1440 and 390):
+  board, focus, detail, drawer, play sheet for both; the Value Map's root
+  grid, a drill into Operating Margin, a cell pick listing 17 actions, adds
+  from the list, and the plays-by-value-line table (8 plays, 9 columns).
+  Screenshots in `artifacts/qa/`. Found and fixed by measurement: both
+  detail views overflowed at 390 (scroll width 636 and 494) because grid
+  items keep `min-width: auto` (now 0); the value map and the sheet table
+  rendered unstyled after the script rebuilt them, because Astro's scoped
+  attribute is not on script-created elements (their rules are now
+  `is:global`, fw-prefixed under `.fw`); the Chessboard's vertical axis
+  read Low at the top (a stray `column-reverse`); the axis labels now hide
+  in the stacked narrow layout. No console errors.
+* **Not wired to a family page**: which family carries the Chessboard and
+  the Value Map is an owner call. Not ported: Fusion's scoring panel, the
+  Value Map sheet's opportunity/risk marks.
+* **Parked here** by owner decision. Where it stops, how to resume, the
+  open decisions (attribution wording per framework, which family carries
+  the Chessboard and the Value Map, Fusion/WWF, nav), the integration
+  notes (one `tool` per family today, the footer conflict with the
+  pre-launch batch, page weight of the Value Map, the site-links test) and
+  the formatting and copy pass the owner wants (count-driven leads and
+  headings, labels to remove) are in `plans/framework-viewer-plan.md` §9.
+  Branch pushed to GitHub; not merged, not deployed.
+

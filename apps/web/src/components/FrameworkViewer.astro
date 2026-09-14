@@ -1,0 +1,2174 @@
+---
+// FrameworkViewer — the interactive reference for a three-level framework
+// (categories → types → tactics) from src/data/frameworks/. First used for
+// the Ten Types of Innovation (2026-09-13); built generically so a second
+// framework is a data record, not a component change. The Sustainability
+// Chessboard (a 2×2 matrix board) and the Enterprise Value Map (893
+// actions, crossed with a shareholder-value tree) followed the same day and
+// added the three optional behaviours marked below.
+//
+// Two variants:
+//  * `full` (the /tools/<slug>/ page): the board, one detail panel per type,
+//    a tactic drawer, and a play sheet the reader assembles, persists,
+//    shares by URL and prints. With a value map: a third view that crosses
+//    the types with the value tree, and a "where these plays land" strip on
+//    the play sheet.
+//  * `compact` (a capability family page): the board only, with each type
+//    linking into the full tool. No script; a plain set of links.
+//
+// Architecture, following StrategyFrameworkDVF and MechanismSelector rather
+// than a client-side framework (CLAUDE.md rule 1):
+//  * Everything a reader can read is server-rendered: the board, every
+//    detail panel and every tactic card are in the HTML, toggled with
+//    [hidden]. The tactics are crawlable, and the board works before the
+//    script runs. The value map's root level is server-rendered too.
+//  * Client-built DOM is limited to what depends on the reader's choices:
+//    play-sheet rows, the value map after a drill or a cell pick, and the
+//    plays-by-value-line strip. Titles and descriptions are read back from
+//    the cards already in the DOM, so the JSON the script carries is only
+//    each tactic's type and value-line codes.
+//  * View state lives in the URL hash (#type-<id>, #play-sheet, #value-map,
+//    #tactic-<id>), so a type or a tactic is linkable, Back works, and the
+//    compact variant can deep-link straight into the tool. The play sheet
+//    persists to localStorage and travels in a `?play=` query for sharing.
+//  * Every control is a real <button> or <a>. The drawer is a <dialog>, so
+//    focus trapping and Escape come from the platform.
+//  * Colours are data (each type and category carries its own hex), so they
+//    are emitted once as custom properties in an inline <style> element,
+//    keyed by data attributes. No inline `style=""` attributes anywhere:
+//    the capability page tests assert there are none.
+//  * Scale: a type with 25 or more tactics renders them as dense rows rather
+//    than cards, and a type with more than 30 gets no chips on the board.
+//    The Value Map's 893 actions still ship as HTML (measured in the log).
+import type { Framework } from '../data/frameworks';
+import { tacticId, tacticCount, frameworkHref, codeUnder } from '../data/frameworks';
+
+export interface Props {
+  framework: Framework;
+  variant?: 'full' | 'compact';
+  /** Where the compact variant's types link. Defaults to the framework's own route. */
+  toolHref?: string;
+}
+
+const { framework: fw, variant = 'full', toolHref = frameworkHref(fw.slug) } = Astro.props;
+const compact = variant === 'compact';
+const L = fw.labels;
+const CHIP_MAX = 30;
+const DENSE_MIN = 25;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const firstSentence = (s: string) => {
+  const i = s.indexOf('. ');
+  return i < 0 ? s : s.slice(0, i + 1);
+};
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Relative luminance decides whether a tint takes light or dark text; the
+// palette's lightest type (sage-light, #9AA89B) needs navy text to pass.
+const luminance = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16);
+  return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+};
+const onTint = (hex: string) => (luminance(hex) > 0.5 ? '#131f48' : '#ffffff');
+// Hover colour for a category header: the tint pulled 35% toward the
+// brand's deep navy, as the prototype did.
+const deepen = (hex: string) => {
+  const v = parseInt(hex.slice(1), 16);
+  const target = [6, 25, 39];
+  const ch = [(v >> 16) & 255, (v >> 8) & 255, v & 255].map((c, i) => Math.round(c + (target[i] - c) * 0.35));
+  return '#' + ch.map((c) => c.toString(16).padStart(2, '0')).join('');
+};
+
+const types = fw.types.map((t, i) => ({ ...t, n: pad(i + 1), index: i + 1 }));
+const columns = fw.categories.map((c, i) => ({
+  ...c,
+  index: i,
+  label: c.short ?? c.name,
+  types: types.filter((t) => t.category === c.name),
+}));
+const total = tacticCount(fw);
+const hasExamples = types.some((t) => (t.examples?.length ?? 0) > 0 || t.tactics.some((k) => (k.examples?.length ?? 0) > 0));
+
+// Matrix layout: categories placed by cell, rendered row-major.
+const isMatrix = fw.layout === 'matrix' && !!fw.matrix;
+const matrixRows = isMatrix ? Math.max(...columns.map((c) => c.cell![0])) + 1 : 1;
+const matrixCols = isMatrix ? Math.max(...columns.map((c) => c.cell![1])) + 1 : columns.length;
+const boardColumns = isMatrix
+  ? [...columns].sort((a, b) => a.cell![0] - b.cell![0] || a.cell![1] - b.cell![1])
+  : columns;
+
+// Value map: root-level counts, server-rendered; the script recomputes on drill.
+const vm = compact ? undefined : fw.valueMap;
+const countIn = (t: (typeof types)[number], code: string) => t.tactics.filter((k) => (k.at ?? []).some((c) => codeUnder(c, code))).length;
+const rootCols = vm ? vm.tree : [];
+const rootCounts = vm ? types.map((t) => rootCols.map((c) => countIn(t, c.code))) : [];
+const rootMax = Math.max(1, ...rootCounts.flat());
+const heat = (n: number, max: number) => (n === 0 ? 0 : 1 + Math.min(4, Math.floor((n / max) * 4)));
+// Level-two nodes are the play sheet's value-line columns (a root with no
+// children stands for itself).
+const sheetCols = vm ? vm.tree.flatMap((r) => (r.children ?? [r]).map((c) => ({ ...c, root: r.code }))) : [];
+
+// Per-framework colour and layout rules. Emitted as a <style> element (not
+// attributes) and scoped by data-fw so two frameworks on one page cannot
+// collide.
+const scope = `[data-fw="${fw.slug}"]`;
+const wide = (rules: string) => `@media (min-width:64rem){${rules}}`;
+const colourCss = [
+  ...columns.map((c) =>
+    `${scope} [data-fw-cat="${c.index}"]{--fw-cat:${c.color};--fw-cat-hover:${deepen(c.color)};--fw-on-cat:${onTint(c.color)};--fw-cat-eyebrow:${luminance(c.color) > 0.5 ? '#131f48' : '#e7d77f'}}`,
+  ),
+  ...types.map((t) => `${scope} [data-fw-type="${t.id}"]{--fw-tint:${t.color};--fw-on-tint:${onTint(t.color)}}`),
+  isMatrix
+    ? wide(
+        `${scope} .fw-board{grid-template-columns:repeat(${matrixCols},minmax(0,1fr))}` +
+          columns
+            .map(
+              (c) =>
+                `${scope} .fw-board[data-fw-focus="${c.index}"]{grid-template-columns:${Array.from({ length: matrixCols }, (_, j) => (j === c.cell![1] ? '1.6fr' : '.8fr')).join(' ')}}`,
+            )
+            .join(''),
+      )
+    : wide(
+        `${scope} .fw-board{grid-template-columns:repeat(${columns.length},minmax(0,1fr))}` +
+          columns
+            .map(
+              (c) =>
+                `${scope} .fw-board[data-fw-focus="${c.index}"]{grid-template-columns:${columns.map((o) => (o.index === c.index ? '1.7fr' : '.65fr')).join(' ')}}`,
+            )
+            .join(''),
+      ),
+].join('\n');
+
+// What the script needs beyond the DOM: each tactic's type (and value
+// lines), type names for the drawer breadcrumb, the tree, the starter set.
+const clientData = compact
+  ? null
+  : JSON.stringify({
+      slug: fw.slug,
+      labels: L,
+      tactics: Object.fromEntries(
+        types.flatMap((t) => t.tactics.map((k) => [tacticId(t, k), k.at ? { y: t.id, a: k.at } : { y: t.id }])),
+      ),
+      types: Object.fromEntries(types.map((t) => [t.id, { t: t.title, c: t.category, s: columns.find((c) => c.name === t.category)!.label, n: t.n }])),
+      typeOrder: types.map((t) => t.id),
+      starter: fw.starter?.tactics ?? [],
+      map: vm ? { tree: vm.tree, rootCrumb: vm.rootCrumb, sheetCols: sheetCols.map((c) => ({ code: c.code, name: c.name, root: c.root })) } : null,
+    }).replace(/</g, '\\u003c');
+
+// Heading levels follow the page: the tool page has its own h1, so the board
+// starts at h2; on a capability page the board sits under the section's h2.
+const CatH = compact ? 'h3' : 'h2';
+const TypeH = compact ? 'h4' : 'h3';
+const uid = `fw-${fw.slug}`;
+---
+
+<div class={`fw ${compact ? 'fw-compact' : 'fw-full'}`} id={compact ? undefined : 'framework'} data-fw={fw.slug} data-fw-variant={variant} data-fw-total={total}>
+  <style is:inline set:html={colourCss}></style>
+
+  {!compact && (
+    <div class="fw-toolbar" data-print-hide>
+      <nav class="fw-tabs" aria-label={`${fw.name} views`}>
+        <a href="#framework" data-fw-tab="board" aria-current="page">Framework</a>
+        {vm && <a href="#value-map" data-fw-tab="map">{vm.title}</a>}
+        <a href="#play-sheet" data-fw-tab="play">Play sheet <span class="fw-tab-count" data-fw-play-count>0</span></a>
+      </nav>
+      <p class="fw-stats">
+        <span><b>{types.length}</b> {L.typePlural}</span>
+        <span><b>{total}</b> {L.tacticPlural}</span>
+        <span><b data-fw-play-count>0</b> in play</span>
+      </p>
+    </div>
+  )}
+
+  {/* ── Board ─────────────────────────────────────────────────────────── */}
+  <section class="fw-view" data-fw-view="board" aria-label={`${fw.name} board`}>
+    {!compact && <p class="fw-intro">{fw.intro}</p>}
+
+    {!compact && (
+      <p class="fw-focus-note" data-fw-focus-note hidden data-print-hide>
+        <span>Focused on <b data-fw-focus-name></b>. Other {L.groupPlural} are dimmed.</span>
+        <button type="button" class="fw-btn-sm" data-fw-focus-clear>Show all {columns.length}</button>
+      </p>
+    )}
+
+    <div class:list={['fw-matrix', { 'fw-matrix-on': isMatrix }]}>
+      {isMatrix && (
+        <div class="fw-axis fw-axis-y" aria-hidden="true">
+          <span class="fw-axis-end">{fw.matrix!.yHigh}</span>
+          <span class="fw-axis-label">{fw.matrix!.yLabel}</span>
+          <span class="fw-axis-end">{fw.matrix!.yLow}</span>
+        </div>
+      )}
+
+      <div class:list={['fw-board', { 'fw-board-matrix': isMatrix }]} data-fw-board data-fw-rows={isMatrix ? matrixRows : undefined}>
+        {boardColumns.map((col) => (
+          <section class="fw-col" data-fw-cat={col.index} aria-labelledby={`${uid}-cat-${col.index}`}>
+            {compact ? (
+              <div class="fw-col-head">
+                <span class="fw-col-label">{col.label}</span>
+                <CatH class="fw-col-focus" id={`${uid}-cat-${col.index}`}>{col.focus}</CatH>
+                <span class="fw-col-meta">{col.types.length} {L.typePlural} · {col.types.reduce((n, t) => n + t.tactics.length, 0)} {L.tacticPlural}</span>
+              </div>
+            ) : (
+              <button type="button" class="fw-col-head" data-fw-focus={col.index} aria-pressed="false">
+                <span class="fw-col-label">{col.label}</span>
+                <CatH class="fw-col-focus" id={`${uid}-cat-${col.index}`}>{col.focus}</CatH>
+                <span class="fw-col-meta">{col.types.length} {L.typePlural} · {col.types.reduce((n, t) => n + t.tactics.length, 0)} {L.tacticPlural} · <span class="fw-col-hint">focus</span></span>
+              </button>
+            )}
+
+            {col.types.map((t) => (
+              <article class="fw-type" data-fw-type={t.id} data-fw-type-row={t.id}>
+                <span class="fw-pill" aria-hidden="true">{t.n}</span>
+                <div class="fw-type-body">
+                  <TypeH class="fw-type-title">
+                    <a href={compact ? `${toolHref}#type-${t.id}` : `#type-${t.id}`} class="fw-type-link" data-fw-open={t.id}>{t.title}</a>
+                  </TypeH>
+                  <p class="fw-type-blurb">{firstSentence(t.description)}</p>
+                  {!compact && t.tactics.length <= CHIP_MAX && (
+                    <ul class="fw-chips" data-fw-chips role="list" hidden>
+                      {t.tactics.map((k) => (
+                        <li>
+                          <button type="button" class="fw-chip" data-fw-drawer={tacticId(t, k)} data-fw-on={tacticId(t, k)} aria-pressed="false">{k.title}</button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <p class="fw-type-meta">
+                    <span>{t.tactics.length} {L.tacticPlural}</span>
+                    {!compact && <span class="fw-inplay" data-fw-inplay={t.id} hidden></span>}
+                  </p>
+                </div>
+              </article>
+            ))}
+
+            {col.note && (
+              <div class="fw-col-note">
+                <span class="field-label">{col.note.label}</span>
+                <p>{col.note.text}</p>
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+
+      {isMatrix && (
+        <div class="fw-axis fw-axis-x" aria-hidden="true">
+          <span class="fw-axis-end">{fw.matrix!.xLow}</span>
+          <span class="fw-axis-label">{fw.matrix!.xLabel}</span>
+          <span class="fw-axis-end">{fw.matrix!.xHigh}</span>
+        </div>
+      )}
+    </div>
+    {isMatrix && (
+      <p class="sr-only">
+        Matrix: rows run from {fw.matrix!.yLabel.toLowerCase()} {fw.matrix!.yHigh.toLowerCase()} at the top to {fw.matrix!.yLow.toLowerCase()} at the bottom; columns run from {fw.matrix!.xLabel.toLowerCase()} {fw.matrix!.xLow.toLowerCase()} on the left to {fw.matrix!.xHigh.toLowerCase()} on the right.
+      </p>
+    )}
+
+    {compact && (
+      <p class="fw-compact-foot">{total} {L.tacticPlural} across {types.length} {L.typePlural}. Each {L.type} opens in the full tool.</p>
+    )}
+  </section>
+
+  {/* ── One detail panel per type ─────────────────────────────────────── */}
+  {!compact &&
+    types.map((t) => {
+      const col = columns.find((c) => c.name === t.category)!;
+      const siblings = col.types;
+      const dense = t.tactics.length >= DENSE_MIN;
+      return (
+        <section class="fw-view fw-detail" id={`type-${t.id}`} data-fw-view="detail" data-fw-detail={t.id} data-fw-type={t.id} aria-labelledby={`type-${t.id}-h`} hidden>
+          <aside class="fw-rail" data-print-hide data-fw-cat={col.index}>
+            <span class="fw-rail-cat">{col.name}</span>
+            <a href="#framework" class="fw-back">Back to all {types.length} {L.typePlural}</a>
+            <ul class="fw-rail-list" role="list">
+              {siblings.map((s) => (
+                <li>
+                  <a href={`#type-${s.id}`} data-fw-type={s.id} aria-current={s.id === t.id ? 'page' : undefined}>
+                    <span class="fw-rail-n">{s.n}</span>
+                    {s.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="fw-rail-blurb">{col.blurb}</p>
+          </aside>
+
+          <div class="fw-detail-main">
+            <header class="fw-detail-head">
+              <div>
+                <p class="fw-detail-crumb">
+                  <span class="fw-pill" aria-hidden="true">{t.n}</span>
+                  <span class="field-label">{col.label} · {cap(L.type)} {t.index} of {types.length}</span>
+                </p>
+                <h2 id={`type-${t.id}-h`}>{t.title}</h2>
+                <p class="fw-detail-desc">{t.description}</p>
+                {t.themes && t.themes.length > 0 && (
+                  <p class="fw-detail-themes"><span class="field-label">Themes</span> {t.themes.join(' · ')}</p>
+                )}
+              </div>
+              <p class="fw-detail-stat"><b>{t.tactics.length}</b><span>{L.tacticPlural} in this {L.type}</span></p>
+            </header>
+
+            {t.examples && t.examples.length > 0 && (
+              <div class="fw-examples">
+                <span class="field-label">How this {L.type} shows up</span>
+                <ul class="fw-example-list" role="list">
+                  {t.examples.map((e) => (
+                    <li><b>{e.who}</b><span>{e.what}</span></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div class="fw-tactics-head">
+              <span class="field-label">{L.tacticPlural}</span>
+              <span class="fw-hint" data-print-hide>{hasExamples ? 'Open one for examples. Use Add to build the play sheet.' : 'Open one for detail. Use Add to build the play sheet.'}</span>
+            </div>
+            <ul class:list={['fw-tactics', { 'fw-tactics-dense': dense }]} role="list">
+              {t.tactics.map((k) => {
+                const id = tacticId(t, k);
+                const n = k.examples?.length ?? 0;
+                return (
+                  <li class="fw-tactic" id={`tactic-${id}`} data-fw-tactic={id} data-fw-on={id}>
+                    <div class="fw-tactic-body">
+                      <h3 class="fw-tactic-title">
+                        <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>
+                      </h3>
+                      <p class="fw-tactic-desc">{k.description}</p>
+                    </div>
+                    <div class="fw-tactic-foot">
+                      {hasExamples && (
+                        <span class:list={['fw-tactic-ex', { 'fw-tactic-ex-none': n === 0 }]}>{n === 0 ? 'No examples yet' : `${n} ${n === 1 ? 'example' : 'examples'}`}</span>
+                      )}
+                      <button type="button" class="fw-add" data-fw-toggle={id} aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
+                    </div>
+                    {n > 0 && (
+                      <div class="fw-tactic-examples" data-fw-examples hidden>
+                        <ul class="fw-example-list" role="list">
+                          {k.examples!.map((e) => (
+                            <li><b>{e.who}</b><span>{e.what}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      );
+    })}
+
+  {/* ── Value map: the types crossed with the value tree ──────────────── */}
+  {vm && (
+    <section class="fw-view fw-map" id="value-map" data-fw-view="map" aria-labelledby="value-map-h" hidden>
+      <header class="fw-map-head">
+        <div>
+          <span class="eyebrow">{vm.title}</span>
+          <h2 id="value-map-h">{vm.yLabel} across {vm.xLabel.toLowerCase()}</h2>
+          <p class="fw-play-summary">Each cell counts the {L.tacticPlural} where a {L.type} meets a branch of the {vm.xLabel.toLowerCase()} tree. Drill a column to open its branch; pick a cell to list what sits there. An empty cell is a finding too: that part of the tree is not addressed by that {L.type}.</p>
+        </div>
+      </header>
+
+      <nav class="fw-map-crumbs" aria-label={`${vm.xLabel} branch`} data-print-hide>
+        <span class="field-label">{vm.xLabel}</span>
+        <span data-fw-map-crumbs><button type="button" class="fw-crumb" data-fw-map-crumb="" aria-current="page">{vm.rootCrumb}</button></span>
+        <span class="fw-map-cell-note" data-fw-map-cell-note hidden>
+          Cell: <b data-fw-map-cell-name></b>
+          <button type="button" class="fw-btn-sm" data-fw-map-cell-clear>Clear cell</button>
+        </span>
+      </nav>
+
+      <div class="fw-map-scroll">
+        <div class="fw-map-grid" data-fw-map-grid data-fw-map-cols={rootCols.length}>
+          <div class="fw-map-corner">
+            <span class="fw-map-corner-label">{vm.yLabel}</span>
+            <span class="fw-map-corner-sub">{vm.ySub}</span>
+          </div>
+          {rootCols.map((c) => (
+            <button type="button" class="fw-map-col" data-fw-map-col={c.code} data-fw-map-branch={c.children ? 'true' : 'false'}>
+              <span class="fw-map-col-hint">{c.children ? 'Drill in' : 'Filter to line'}</span>
+              <span class="fw-map-col-name">{c.name}</span>
+              <span class="fw-map-col-total">{types.reduce((n, t) => n + countIn(t, c.code), 0)} {L.tacticPlural}</span>
+            </button>
+          ))}
+          {types.map((t, ti) => (
+            <>
+              <div class="fw-map-row" data-fw-type={t.id}>
+                <button type="button" class="fw-map-row-pick" data-fw-map-row={t.id}>
+                  <span class="fw-map-row-dim">{columns.find((c) => c.name === t.category)!.label}</span>
+                  <span class="fw-map-row-title">{t.title}</span>
+                </button>
+                <a href={`#type-${t.id}`} class="fw-map-row-open">Open {L.type}</a>
+              </div>
+              {rootCols.map((c, ci) => {
+                const n = rootCounts[ti][ci];
+                return (
+                  <button type="button" class="fw-map-cell" data-fw-map-cell={`${t.id}|${c.code}`} data-fw-heat={heat(n, rootMax)} disabled={n === 0}>
+                    {n === 0 ? '—' : n}
+                  </button>
+                );
+              })}
+            </>
+          ))}
+        </div>
+      </div>
+
+      <div class="fw-map-list" data-fw-map-list hidden>
+        <div class="fw-map-list-head">
+          <div>
+            <span class="field-label" data-fw-map-list-label></span>
+            <p class="fw-hint" data-fw-map-list-sub></p>
+          </div>
+          <button type="button" class="fw-btn-sm" data-fw-map-add-all data-print-hide></button>
+        </div>
+        <ul class="fw-map-items" role="list" data-fw-map-items></ul>
+        <p class="fw-hint fw-map-truncated" data-fw-map-truncated hidden></p>
+      </div>
+      <template data-fw-map-item>
+        <li class="fw-map-item">
+          <div class="fw-map-item-body">
+            <span class="fw-map-item-area"></span>
+            <h3 class="fw-map-item-title"><button type="button" class="fw-tactic-open" data-fw-map-open aria-haspopup="dialog"></button></h3>
+            <p class="fw-map-item-path"></p>
+          </div>
+          <button type="button" class="fw-add" data-fw-map-toggle aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
+        </li>
+      </template>
+    </section>
+  )}
+
+  {/* ── Play sheet ────────────────────────────────────────────────────── */}
+  {!compact && (
+    <section class="fw-view fw-play" id="play-sheet" data-fw-view="play" aria-labelledby="play-sheet-h" hidden>
+      <header class="fw-play-head">
+        <div>
+          <span class="eyebrow">Play sheet</span>
+          <h2 id="play-sheet-h">Session play sheet</h2>
+          <p class="fw-play-summary" data-fw-play-summary>Empty. {cap(L.tacticPlural)} you add from any {L.type} land here, grouped by {L.type}, ready to print or share.</p>
+        </div>
+        <div class="fw-play-actions" data-print-hide>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-share>Copy share link</button>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-print>Print / PDF</button>
+          <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-clear>Clear sheet</button>
+        </div>
+      </header>
+      <p class="fw-status" role="status" aria-live="polite" data-fw-status></p>
+
+      {vm && (
+        <div class="fw-sheet" data-fw-sheet hidden>
+          <div class="fw-coverage-head">
+            <span class="field-label">{vm.xLabel}: where these plays land</span>
+            <span class="fw-hint">Columns are the tree's second level. A dot means the play sits on a line under that column.</span>
+          </div>
+          <div class="fw-sheet-scroll" data-fw-sheet-table></div>
+        </div>
+      )}
+
+      <div class="fw-coverage">
+        <div class="fw-coverage-head">
+          <span class="field-label">Coverage across the {types.length} {L.typePlural}</span>
+          <span class="fw-hint" data-fw-filter-note data-print-hide>Click a {L.type} to filter the list below.</span>
+          <span class="fw-hint" data-fw-filter-on data-print-hide hidden>
+            Filtered to <b data-fw-filter-name></b>
+            <button type="button" class="fw-btn-sm" data-fw-filter-clear>Show all</button>
+          </span>
+        </div>
+        <ul class="fw-cov-list" role="list">
+          {types.map((t) => (
+            <li>
+              <button type="button" class="fw-cov" data-fw-cov={t.id} data-fw-type={t.id} aria-pressed="false" disabled>
+                <span class="fw-cov-n">{t.n}</span>
+                <span class="fw-cov-title">{t.title}</span>
+                <span class="fw-cov-meta" data-fw-cov-meta>untouched</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="fw-play-empty" data-fw-play-empty>
+        <h3>Nothing on the sheet yet</h3>
+        <p>Open a {L.type} and add {L.tacticPlural}{vm ? `, or cross the two hierarchies in the ${vm.title.toLowerCase()} view` : `, or click a ${L.tactic} chip straight from a focused ${L.group} on the board`}.</p>
+        <div class="fw-play-empty-actions" data-print-hide>
+          <a href="#framework" class="btn btn-secondary fw-btn-sm">Go to the framework</a>
+          {fw.starter && <button type="button" class="btn btn-secondary fw-btn-sm" data-fw-starter>Load the {fw.starter.name} example</button>}
+        </div>
+        {fw.starter && <p class="fw-play-note">{fw.starter.note}</p>}
+      </div>
+
+      <div data-fw-play-groups>
+        {types.map((t) => (
+          <section class="fw-play-group" data-fw-play-group={t.id} data-fw-type={t.id} aria-labelledby={`play-${t.id}-h`} hidden>
+            <h3 id={`play-${t.id}-h`} class="fw-play-group-h">
+              <span class="fw-pill" aria-hidden="true">{t.n}</span>
+              <span>{t.title}</span>
+              <span class="fw-play-cat">{columns.find((c) => c.name === t.category)!.label}</span>
+            </h3>
+            <ul class="fw-play-list" role="list" data-fw-play-list></ul>
+          </section>
+        ))}
+      </div>
+      <template data-fw-row>
+        <li class="fw-play-row">
+          <div>
+            <b class="fw-play-title"></b>
+            <p class="fw-play-desc"></p>
+          </div>
+          <button type="button" class="fw-btn-sm" data-fw-remove data-print-hide>Remove</button>
+        </li>
+      </template>
+    </section>
+  )}
+
+  {/* ── Tactic drawer ─────────────────────────────────────────────────── */}
+  {!compact && (
+    <dialog class="fw-drawer" data-fw-dialog aria-labelledby="fw-drawer-h">
+      <div class="fw-drawer-inner">
+        <div class="fw-drawer-head" data-fw-drawer-head>
+          <div class="fw-drawer-top">
+            <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
+            <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
+          </div>
+          <h2 id="fw-drawer-h" data-fw-drawer-title></h2>
+        </div>
+        <div class="fw-drawer-body">
+          <p class="fw-drawer-desc" data-fw-drawer-desc></p>
+          <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
+          {hasExamples && (
+            <div class="fw-drawer-ex">
+              <span class="field-label">In the field</span>
+              <div data-fw-drawer-examples></div>
+              <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </dialog>
+  )}
+
+  {clientData && <script is:inline type="application/json" data-fw-data set:html={clientData}></script>}
+</div>
+
+<style is:global>
+  /* Rules for the parts the script builds at runtime (the value map after a
+     drill or a cell pick, its action list, the crumbs, and the play sheet's
+     plays-by-value-line table). Astro's scoped attribute is only on
+     server-rendered elements, so these are global; every selector is
+     fw-prefixed and nested under .fw. */
+  /* ── Value map ────────────────────────────────────────────────────── */
+  .fw .fw-map-head > div { max-width: var(--max-width-text); }
+  .fw .fw-map-head h2 { margin: 0; }
+  .fw .fw-map-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-6) 0 var(--space-4);
+  }
+  .fw .fw-map-crumbs .field-label { margin-inline-end: var(--space-2); }
+  .fw .fw-crumb {
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .fw .fw-crumb:hover { border-color: var(--c-sky-500); }
+  .fw .fw-crumb[aria-current="page"] {
+    color: #fff;
+    background: var(--color-dark);
+    border-color: var(--color-dark);
+    font-weight: var(--font-semibold);
+  }
+  .fw .fw-map-cell-note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-inline-start: var(--space-3);
+    padding-inline-start: var(--space-3);
+    border-inline-start: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw .fw-map-cell-note b { color: var(--color-text); }
+  .fw .fw-map-scroll { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+  .fw .fw-map-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--color-border);
+    min-width: min-content;
+  }
+  .fw .fw-map-grid[data-fw-map-cols="1"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(1, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="2"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(2, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="3"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(3, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="4"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(4, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="5"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(5, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="6"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(6, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="7"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(7, minmax(8rem, 1fr)); }
+  .fw .fw-map-grid[data-fw-map-cols="8"] { grid-template-columns: minmax(14rem, 1.4fr) repeat(8, minmax(8rem, 1fr)); }
+  .fw .fw-map-corner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--color-dark);
+    color: var(--color-text-inverse);
+  }
+  .fw .fw-map-corner-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-accent-300);
+  }
+  .fw .fw-map-corner-sub { font-size: var(--text-xs); opacity: 0.8; }
+  .fw .fw-map-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    text-align: left;
+    font: inherit;
+    color: var(--color-text-inverse);
+    background: var(--color-dark);
+    border: 0;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+  .fw .fw-map-col:hover, .fw-map-col.is-sel { background: var(--color-dark-surface); }
+  .fw .fw-map-col:focus-visible { outline-offset: -4px; }
+  .fw .fw-map-col-hint {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-accent-300);
+  }
+  .fw .fw-map-col-name { font-size: var(--text-sm); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw .fw-map-col-total { font-size: var(--text-xs); opacity: 0.8; }
+  .fw .fw-map-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg);
+    border-inline-start: 3px solid var(--fw-tint);
+  }
+  .fw .fw-map-row.is-sel { background: var(--color-surface); }
+  .fw .fw-map-row-pick {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    color: var(--color-text);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .fw .fw-map-row-pick:hover .fw-map-row-title { color: var(--c-sky-700); }
+  .fw .fw-map-row-dim {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-tint);
+  }
+  .fw .fw-map-row-title { font-size: var(--text-sm); font-weight: var(--font-medium); line-height: var(--line-snug); }
+  .fw .fw-map-row-open { font-size: var(--text-xs); color: var(--color-text-secondary); }
+  .fw .fw-map-cell {
+    display: grid;
+    place-items: center;
+    padding: var(--space-3);
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 0;
+    cursor: pointer;
+    transition: outline-color var(--transition-fast);
+  }
+  .fw .fw-map-cell:disabled { color: var(--c-secondary-400); background: var(--c-secondary-50); cursor: default; }
+  .fw .fw-map-cell[data-fw-heat="1"] { background: rgba(19, 31, 72, 0.05); }
+  .fw .fw-map-cell[data-fw-heat="2"] { background: rgba(19, 31, 72, 0.12); }
+  .fw .fw-map-cell[data-fw-heat="3"] { background: rgba(19, 31, 72, 0.2); }
+  .fw .fw-map-cell[data-fw-heat="4"] { background: rgba(19, 31, 72, 0.28); }
+  .fw .fw-map-cell[data-fw-heat="5"] { background: rgba(19, 31, 72, 0.36); }
+  .fw .fw-map-cell:not(:disabled):hover { outline: 2px solid var(--color-dark); outline-offset: -2px; }
+  .fw .fw-map-cell.is-sel { background: var(--c-accent-200); outline: 2px solid var(--c-accent-500); outline-offset: -2px; }
+  .fw .fw-map-list {
+    margin-top: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: clip;
+  }
+  .fw .fw-map-list-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw .fw-map-list-head p { margin: var(--space-1) 0 0; }
+  .fw .fw-map-items { list-style: none; margin: 0; padding: 0; }
+  .fw .fw-map-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw .fw-map-item:last-child { border-bottom: 0; }
+  .fw .fw-map-item.is-on { background: var(--c-accent-50); }
+  .fw .fw-map-item-body { position: relative; min-width: 0; }
+  .fw .fw-map-item-area {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-tint);
+  }
+  .fw .fw-map-item-title { margin: var(--space-1) 0 0; font-size: var(--text-sm); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw .fw-map-item-body:has(.fw-tactic-open:focus-visible) { outline: var(--focus-ring); outline-offset: -3px; }
+  .fw .fw-map-item-path { margin: var(--space-1) 0 0; font-size: var(--text-xs); color: var(--color-text-secondary); }
+  .fw .fw-map-truncated { margin: 0; padding: var(--space-3) var(--space-5); border-top: 1px solid var(--color-border); }
+
+  /* Plays by value line: a table built by the script from the play sheet. */
+  .fw .fw-sheet-scroll { margin-top: var(--space-4); overflow-x: auto; }
+  .fw .fw-sheet-table {
+    width: 100%;
+    min-width: min-content;
+    border-collapse: separate;
+    border-spacing: 1px;
+    background: var(--color-border);
+    font-size: var(--text-xs);
+  }
+  .fw .fw-sheet-table th,
+  .fw .fw-sheet-table td { padding: var(--space-2) var(--space-3); background: var(--color-bg); text-align: left; vertical-align: middle; }
+  .fw .fw-sheet-table thead th { background: var(--color-dark); color: var(--color-text-inverse); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw .fw-sheet-table thead th.fw-sheet-root { color: var(--c-accent-300); letter-spacing: 0.08em; text-transform: uppercase; text-align: center; }
+  .fw .fw-sheet-table thead th.fw-sheet-col { text-align: center; font-weight: var(--font-medium); min-width: 5rem; }
+  .fw .fw-sheet-table th.fw-sheet-area { font-weight: var(--font-semibold); color: var(--fw-tint); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+  .fw .fw-sheet-table td.fw-sheet-play { min-width: 14rem; color: var(--color-text); }
+  .fw .fw-sheet-table td.fw-sheet-dot { text-align: center; }
+  .fw .fw-sheet-dot span {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-dark);
+    opacity: 0.6;
+  }
+  .fw .fw-sheet-table tfoot th, .fw-sheet-table tfoot td { background: var(--color-dark); color: var(--color-text-inverse); text-align: center; font-weight: var(--font-semibold); }
+  .fw .fw-sheet-table tfoot th { text-align: left; color: var(--c-accent-300); letter-spacing: 0.08em; text-transform: uppercase; }
+  .fw .fw-sheet-table tfoot td.is-zero { color: var(--c-secondary-400); }
+
+</style>
+
+<style>
+  .fw {
+    color: var(--color-text);
+    scroll-margin-top: var(--space-24);
+  }
+
+  /* ── Small shared pieces ──────────────────────────────────────────── */
+  .fw-pill {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: var(--radius-full);
+    background: var(--fw-tint, var(--color-dark));
+    color: var(--fw-on-tint, #fff);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.02em;
+  }
+  .fw-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-btn-sm:hover { background: var(--c-sky-50); border-color: var(--c-sky-500); }
+  .fw button:focus-visible,
+  .fw a:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  .fw-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw .field-label { margin: 0; }
+  .fw-example-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+  .fw-example-list li {
+    display: grid;
+    gap: var(--space-1);
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--c-sky-300);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-example-list b { color: var(--color-text); font-weight: var(--font-semibold); }
+
+  /* ── Toolbar (full) ───────────────────────────────────────────────── */
+  .fw-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw-tabs { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+  .fw-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3);
+    margin-bottom: -1px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .fw-tabs a:hover { color: var(--color-text); }
+  .fw-tabs a[aria-current="page"] {
+    color: var(--color-text);
+    border-bottom-color: var(--color-eyebrow);
+  }
+  .fw-tab-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding-inline: var(--space-1);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-alt);
+    font-size: var(--text-xs);
+  }
+  .fw-stats {
+    display: flex;
+    gap: var(--space-6);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-stats span { display: inline-flex; align-items: baseline; gap: var(--space-2); }
+  .fw-stats b {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-dark);
+  }
+  .fw-intro {
+    max-width: var(--max-width-text);
+    margin: 0 0 var(--space-6);
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  .fw-focus-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  .fw-focus-note b { color: var(--color-text); }
+
+  /* ── Board ────────────────────────────────────────────────────────── */
+  .fw-board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    /* clip, not hidden: overflow:hidden makes the board the scrollport for
+       the sticky column headers below 64rem, which then pin inside the
+       board (pushed down over the first type) instead of to the viewport.
+       Measured 2026-09-13. */
+    overflow: clip;
+    transition: grid-template-columns var(--transition-base);
+  }
+  .fw-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--color-bg);
+  }
+  .fw-col-head {
+    display: block;
+    width: 100%;
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    text-align: left;
+    background: var(--fw-cat);
+    color: var(--fw-on-cat);
+    border: 0;
+    font: inherit;
+  }
+  button.fw-col-head { cursor: pointer; transition: background var(--transition-fast); }
+  button.fw-col-head:hover,
+  button.fw-col-head[aria-pressed="true"] { background: var(--fw-cat-hover); }
+  button.fw-col-head:focus-visible { outline-offset: -4px; }
+  .fw-col-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-cat-eyebrow);
+  }
+  .fw-col-focus {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--line-snug);
+    color: inherit;
+  }
+  .fw-col-meta {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    opacity: 0.8;
+  }
+  .fw-col-hint { text-decoration: underline; text-underline-offset: 2px; }
+  button.fw-col-head[aria-pressed="true"] .fw-col-hint::before { content: 'un'; }
+  /* Below the wide breakpoint the column headers stay put while a long
+     column scrolls, so the reader always knows which category they are in. */
+  @media (max-width: 63.99rem) {
+    .fw-full .fw-col-head { position: sticky; top: 4.375rem; z-index: 2; }
+  }
+
+  /* Matrix layout: axis labels around the board at wide widths; a plain
+     stacked list, in row-major order, below. */
+  .fw-matrix-on { display: grid; gap: var(--space-3); }
+  .fw-axis {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+  .fw-axis-label { color: var(--color-eyebrow); letter-spacing: 0.1em; }
+  .fw-axis-y { display: none; }
+  @media (min-width: 64rem) {
+    .fw-matrix-on {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      column-gap: var(--space-4);
+    }
+    .fw-axis-y {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      grid-row: 1;
+      padding-block: var(--space-4);
+    }
+    .fw-axis-y span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+    .fw-axis-x { grid-column: 2; }
+  }
+  /* Stacked below 64rem, so there is no matrix to label; the sr-only note
+     after the board carries the axis meaning. */
+  @media (max-width: 63.99rem) {
+    .fw-axis-x { display: none; }
+  }
+
+  .fw-type {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.125rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition-fast), opacity var(--transition-base);
+  }
+  .fw-type:last-of-type { border-bottom: 0; }
+  .fw-type:hover { background: var(--color-surface); }
+  .fw-board[data-fw-focus] .fw-col:not([data-fw-focused]) .fw-type { opacity: 0.45; }
+  .fw-type-body { min-width: 0; }
+  .fw-type-title {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    line-height: var(--line-snug);
+  }
+  .fw-compact .fw-type-title,
+  .fw-board-matrix .fw-type-title { font-size: var(--text-lg); }
+  .fw-type-link { color: inherit; text-decoration: none; }
+  .fw-type-link::after { content: ''; position: absolute; inset: 0; }
+  .fw-type-link:hover { color: var(--c-sky-700); }
+  .fw-type-link:focus-visible { outline: none; }
+  .fw-type:has(.fw-type-link:focus-visible) { outline: var(--focus-ring); outline-offset: -3px; }
+  .fw-type-blurb {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-chips {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+  }
+  .fw-chip {
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    text-align: left;
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-chip:hover { color: var(--c-sky-700); background: var(--c-sky-50); border-color: var(--c-sky-300); }
+  .fw-chip[aria-pressed="true"] {
+    color: var(--color-text);
+    background: var(--c-accent-200);
+    border-color: var(--c-accent-400);
+  }
+  .fw-type-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-inplay {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--c-accent-200);
+    color: var(--color-text);
+    font-weight: var(--font-semibold);
+  }
+  .fw-col-note {
+    margin-top: auto;
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+  .fw-col-note p {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-compact-foot {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Detail ───────────────────────────────────────────────────────── */
+  .fw-detail { display: grid; gap: var(--space-6); }
+  /* Grid items default to min-width:auto, so the rail's horizontal chip
+     scroller and a long action title were widening the page at 390px
+     (scroll width 636 against a 390 viewport, measured 2026-09-13). */
+  .fw-detail > * { min-width: 0; }
+  @media (min-width: 64rem) {
+    .fw-detail { grid-template-columns: 17rem minmax(0, 1fr); gap: var(--space-10); align-items: start; }
+  }
+  .fw-rail {
+    padding: var(--space-5) 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .fw-rail-cat {
+    display: block;
+    padding: 0 var(--space-5);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-cat);
+  }
+  .fw-back {
+    display: inline-block;
+    margin: var(--space-3) var(--space-5) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  .fw-rail-list { list-style: none; margin: 0; padding: 0; }
+  .fw-rail-list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-inline-start: 3px solid transparent;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+  .fw-rail-list a:hover { background: var(--color-surface-alt); color: var(--color-text); }
+  .fw-rail-list a[aria-current="page"] {
+    background: var(--color-bg);
+    border-inline-start-color: var(--fw-tint);
+    color: var(--color-text);
+    font-weight: var(--font-semibold);
+  }
+  .fw-rail-n { font-size: var(--text-xs); font-weight: var(--font-bold); color: var(--color-text-secondary); }
+  .fw-rail-blurb {
+    margin: var(--space-5) var(--space-5) 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  @media (max-width: 63.99rem) {
+    .fw-rail-list { display: flex; overflow-x: auto; gap: var(--space-2); padding: 0 var(--space-5); scrollbar-width: thin; }
+    .fw-rail-list a {
+      flex-shrink: 0;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-full);
+    }
+    .fw-rail-list a[aria-current="page"] { border-color: var(--fw-tint); background: var(--color-bg); }
+    .fw-rail-blurb { display: none; }
+  }
+  .fw-detail-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+  }
+  .fw-detail-head > div { max-width: var(--max-width-text); }
+  .fw-detail-crumb { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-4); }
+  .fw-detail-head h2 { margin: 0; }
+  .fw-detail-desc {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-lg);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-detail-themes {
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-detail-themes .field-label { margin-inline-end: var(--space-2); }
+  .fw-detail-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  .fw-detail-stat b {
+    font-family: var(--font-serif);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    color: var(--color-dark);
+  }
+  .fw-examples {
+    margin-top: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--fw-tint);
+    border-radius: var(--radius-md);
+  }
+  .fw-examples .fw-example-list {
+    margin-top: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: var(--space-5);
+  }
+  .fw-tactics-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-8) 0 var(--space-4);
+  }
+  .fw-tactics {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--space-4);
+  }
+  .fw-tactic {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--fw-tint);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .fw-tactic:hover { box-shadow: var(--shadow-sm); }
+  .fw-tactic.is-on { border-color: var(--c-accent-400); border-top-color: var(--c-accent-400); }
+  .fw-tactic-body { position: relative; flex: 1; padding: var(--space-4) var(--space-5) var(--space-3); }
+  .fw-tactic-body:hover { background: var(--color-surface); }
+  .fw-tactic-title { margin: 0; font-size: var(--text-base); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw-tactic-open {
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  .fw-tactic-open::after { content: ''; position: absolute; inset: 0; }
+  .fw-tactic-open:focus-visible { outline: none; }
+  .fw-tactic-body:has(.fw-tactic-open:focus-visible) { outline: var(--focus-ring); outline-offset: -3px; }
+  .fw-tactic-desc {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-tactic-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .fw-tactic-ex-none { color: var(--c-secondary-400); }
+  .fw-add {
+    margin-inline-start: auto;
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .fw-add:hover { background: var(--c-sky-50); border-color: var(--c-sky-500); }
+  .fw-add[aria-pressed="true"] { background: var(--c-accent-200); border-color: var(--c-accent-400); }
+
+  /* Dense rows for a type with many tactics (the Value Map's 60 to 141
+     actions per area): one line each, the add button inline. */
+  .fw-tactics-dense {
+    grid-template-columns: 1fr;
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: clip;
+  }
+  .fw-tactics-dense .fw-tactic {
+    flex-direction: row;
+    align-items: center;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-inline-start: 3px solid var(--fw-tint);
+    border-radius: 0;
+  }
+  .fw-tactics-dense .fw-tactic:last-child { border-bottom: 0; }
+  .fw-tactics-dense .fw-tactic:hover { box-shadow: none; }
+  .fw-tactics-dense .fw-tactic.is-on { border-inline-start-color: var(--c-accent-400); background: var(--c-accent-50); }
+  .fw-tactics-dense .fw-tactic-body { padding: var(--space-3) var(--space-4); }
+  .fw-tactics-dense .fw-tactic-title { font-size: var(--text-sm); }
+  .fw-tactics-dense .fw-tactic-desc { margin-top: var(--space-1); font-size: var(--text-xs); }
+  .fw-tactics-dense .fw-tactic-foot { border-top: 0; padding: var(--space-3) var(--space-4); }
+
+  /* ── Play sheet ───────────────────────────────────────────────────── */
+  .fw-play-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+  }
+  .fw-play-head > div { max-width: var(--max-width-text); }
+  .fw-play-head h2 { margin: 0; }
+  .fw-play-summary {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-relaxed);
+  }
+  .fw-play-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .fw-status {
+    min-height: 1.5em;
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--c-sky-700);
+    overflow-wrap: anywhere;
+  }
+  .fw-status:empty { margin: 0; min-height: 0; }
+  .fw-coverage,
+  .fw-sheet {
+    margin-top: var(--space-6);
+    padding: var(--space-5) var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .fw-coverage-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+  }
+  .fw-coverage-head [data-fw-filter-on] { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .fw-coverage-head [data-fw-filter-on][hidden] { display: none; }
+  .fw-cov-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+    gap: var(--space-2);
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+  }
+  .fw-cov {
+    display: grid;
+    gap: var(--space-1);
+    width: 100%;
+    padding: var(--space-3);
+    text-align: left;
+    font: inherit;
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: default;
+  }
+  .fw-cov:not(:disabled) { cursor: pointer; }
+  .fw-cov:not(:disabled):hover { border-color: var(--fw-tint); }
+  .fw-cov.is-on { background: var(--fw-tint); color: var(--fw-on-tint); border-color: var(--fw-tint); }
+  .fw-cov[aria-pressed="true"] { border-top-color: var(--c-accent-400); }
+  .fw-cov-n { font-size: var(--text-xs); font-weight: var(--font-bold); opacity: 0.75; }
+  .fw-cov-title { font-size: var(--text-sm); font-weight: var(--font-semibold); line-height: var(--line-snug); }
+  .fw-cov.is-on .fw-cov-title { color: inherit; }
+  .fw-cov-meta { font-size: var(--text-xs); opacity: 0.8; }
+
+  .fw-play-empty {
+    margin-top: var(--space-8);
+    padding: var(--space-12) var(--space-6);
+    text-align: center;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
+  .fw-play-empty h3 { margin: 0; }
+  .fw-play-empty p {
+    max-width: 28rem;
+    margin: var(--space-3) auto 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-play-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+  }
+  .fw-play-note { font-size: var(--text-xs); }
+  .fw-play-group { margin-top: var(--space-8); }
+  .fw-play-group-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--text-xl);
+  }
+  .fw-play-cat {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fw-tint);
+  }
+  .fw-play-list { list-style: none; margin: 0; padding: 0; }
+  .fw-play-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .fw-play-title { font-weight: var(--font-semibold); }
+  .fw-play-desc {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Drawer ───────────────────────────────────────────────────────── */
+  .fw-drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(28rem, 100vw);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-start: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: var(--shadow-xl);
+  }
+  .fw-drawer::backdrop { background: rgba(19, 31, 72, 0.4); }
+  .fw-drawer-inner { display: flex; flex-direction: column; height: 100%; }
+  .fw-drawer-head {
+    padding: var(--space-5) var(--space-6);
+    background: var(--fw-tint, var(--color-dark));
+    color: var(--fw-on-tint, #fff);
+  }
+  .fw-drawer-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+  .fw-drawer-crumb {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .fw-drawer-close {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    font: inherit;
+    font-size: var(--text-xl);
+    line-height: 1;
+    color: inherit;
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.85;
+  }
+  .fw-drawer-close:hover { opacity: 1; }
+  .fw-drawer-head h2 {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-2xl);
+    color: inherit;
+  }
+  .fw-drawer-body { flex: 1; padding: var(--space-6); overflow-y: auto; }
+  .fw-drawer-desc {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--line-relaxed);
+    color: var(--color-text-secondary);
+  }
+  .fw-drawer-toggle { width: 100%; margin-top: var(--space-5); }
+  .fw-drawer-toggle[aria-pressed="true"] {
+    background: var(--c-accent-200);
+    color: var(--color-text);
+    border-color: var(--c-accent-400);
+    box-shadow: none;
+  }
+  .fw-drawer-ex {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .fw-drawer-ex .fw-example-list { margin-top: var(--space-4); }
+  .fw-drawer-none {
+    margin: var(--space-4) 0 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+  @media (max-width: 47.99rem) {
+    .fw-drawer {
+      inset: auto 0 0 0;
+      width: 100%;
+      height: auto;
+      max-height: 88dvh;
+      border-inline-start: 0;
+      border-top: 1px solid var(--color-border);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+  }
+
+  /* ── Print: the play sheet only ───────────────────────────────────── */
+  @media print {
+    .fw [data-print-hide],
+    .fw [data-fw-view]:not([data-fw-view="play"]) { display: none !important; }
+    .fw [data-fw-view="play"] { display: block !important; }
+    .fw-coverage, .fw-sheet, .fw-play-row, .fw-play-group { break-inside: avoid; }
+    .fw-cov.is-on, .fw-sheet-table thead th, .fw-sheet-table tfoot th, .fw-sheet-table tfoot td, .fw-sheet-dot span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+
+<script>
+  // Framework viewer, full variant. State: the selected view (from the URL
+  // hash), the focused category, the play sheet (persisted), a play filter,
+  // and for a value map the current branch and picked cell. All DOM is
+  // pre-rendered except play rows, the map after an interaction, and the
+  // plays-by-value-line table.
+  interface ValueNode { code: string; name: string; children?: ValueNode[] }
+  interface FwData {
+    slug: string;
+    labels: Record<string, string>;
+    tactics: Record<string, { y: string; a?: string[] }>;
+    types: Record<string, { t: string; c: string; s: string; n: string }>;
+    typeOrder: string[];
+    starter: string[];
+    map: { tree: ValueNode[]; rootCrumb: string; sheetCols: Array<{ code: string; name: string; root: string }> } | null;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-fw][data-fw-variant="full"]').forEach((root) => {
+    const dataEl = root.querySelector<HTMLScriptElement>('[data-fw-data]');
+    if (!dataEl) return;
+    const data: FwData = JSON.parse(dataEl.textContent || '{}');
+    const L = data.labels;
+    const STORAGE_KEY = `tnx:framework:${data.slug}:play`;
+    const $ = <T extends Element>(sel: string) => root.querySelector<T>(sel);
+    const $$ = <T extends Element>(sel: string) => Array.from(root.querySelectorAll<T>(sel));
+    const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
+      const node = document.createElement(tag);
+      if (cls) node.className = cls;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    };
+
+    const views = $$<HTMLElement>('[data-fw-view]');
+    const board = $<HTMLElement>('[data-fw-board]');
+    const dialog = $<HTMLDialogElement>('[data-fw-dialog]');
+    const status = $<HTMLElement>('[data-fw-status]');
+    const rowTemplate = $<HTMLTemplateElement>('template[data-fw-row]');
+
+    let play: string[] = [];
+    let filter: string | null = null;
+    let drawerId: string | null = null;
+
+    // Titles and descriptions live in the cards already on the page.
+    const textOf = (id: string) => {
+      const card = document.getElementById(`tactic-${id}`);
+      return {
+        t: card?.querySelector('.fw-tactic-title')?.textContent?.trim() ?? id,
+        d: card?.querySelector('.fw-tactic-desc')?.textContent?.trim() ?? '',
+      };
+    };
+    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+    const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+    const under = (code: string, ancestor: string) => code === ancestor || code.startsWith(`${ancestor}.`);
+
+    // ── Persistence ─────────────────────────────────────────────────
+    const readStored = (): string[] => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string' && data.tactics[id]) : [];
+      } catch {
+        return [];
+      }
+    };
+    const store = () => {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(play));
+      } catch {
+        // Private mode or quota: the sheet still works for the session.
+      }
+    };
+
+    // ── Rendering ───────────────────────────────────────────────────
+    const inPlayByType = () => {
+      const counts: Record<string, number> = {};
+      play.forEach((id) => {
+        const y = data.tactics[id].y;
+        counts[y] = (counts[y] ?? 0) + 1;
+      });
+      return counts;
+    };
+
+    const setToggleState = (btn: Element, on: boolean, onLabel: string, offLabel: string) => {
+      btn.setAttribute('aria-pressed', String(on));
+      const label = btn.querySelector('[data-fw-toggle-label]');
+      if (label) label.textContent = on ? onLabel : offLabel;
+    };
+
+    const renderSheet = () => {
+      const sheet = $<HTMLElement>('[data-fw-sheet]');
+      const host = $<HTMLElement>('[data-fw-sheet-table]');
+      if (!sheet || !host || !data.map) return;
+      sheet.hidden = play.length === 0;
+      host.replaceChildren();
+      if (play.length === 0) return;
+      const cols = data.map.sheetCols;
+      const rootName = (code: string) => data.map!.tree.find((r) => r.code === code)?.name ?? code;
+      const table = el('table', 'fw-sheet-table');
+      const thead = el('thead');
+      const rootRow = el('tr');
+      rootRow.appendChild(el('th', '', ''));
+      rootRow.appendChild(el('th', '', ''));
+      data.map.tree.forEach((r) => {
+        const span = cols.filter((c) => c.root === r.code).length;
+        const th = el('th', 'fw-sheet-root', r.name);
+        th.colSpan = span;
+        rootRow.appendChild(th);
+      });
+      const colRow = el('tr');
+      colRow.appendChild(el('th', '', cap(L.type)));
+      colRow.appendChild(el('th', '', 'Play on the sheet'));
+      cols.forEach((c) => colRow.appendChild(el('th', 'fw-sheet-col', c.name)));
+      thead.append(rootRow, colRow);
+      const tbody = el('tbody');
+      const totals = cols.map(() => 0);
+      data.typeOrder.forEach((typeId) => {
+        const items = play.filter((k) => data.tactics[k].y === typeId);
+        items.forEach((k, i) => {
+          const tr = el('tr');
+          tr.setAttribute('data-fw-type', typeId);
+          const area = el('th', 'fw-sheet-area', i === 0 ? data.types[typeId].t : '');
+          tr.appendChild(area);
+          tr.appendChild(el('td', 'fw-sheet-play', textOf(k).t));
+          cols.forEach((c, ci) => {
+            const on = (data.tactics[k].a ?? []).some((code) => under(code, c.code));
+            if (on) totals[ci]++;
+            const td = el('td', 'fw-sheet-dot');
+            if (on) {
+              const dot = el('span');
+              dot.setAttribute('title', `${rootName(c.root)} · ${c.name}`);
+              td.appendChild(dot);
+            }
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      });
+      const tfoot = el('tfoot');
+      const tr = el('tr');
+      const th = el('th', '', `Plays touching each line`);
+      th.colSpan = 2;
+      tr.appendChild(th);
+      totals.forEach((n) => {
+        const td = el('td', n === 0 ? 'is-zero' : '', n === 0 ? '·' : String(n));
+        tr.appendChild(td);
+      });
+      tfoot.appendChild(tr);
+      table.append(thead, tbody, tfoot);
+      host.appendChild(table);
+    };
+
+    const render = () => {
+      const counts = inPlayByType();
+      const touched = Object.keys(counts).length;
+      const typeIds = data.typeOrder;
+
+      $$<HTMLElement>('[data-fw-play-count]').forEach((n) => { n.textContent = String(play.length); });
+      $$<HTMLElement>('[data-fw-on]').forEach((node) => {
+        const on = play.includes(node.dataset.fwOn || '');
+        if (node instanceof HTMLButtonElement) node.setAttribute('aria-pressed', String(on));
+        node.classList.toggle('is-on', on);
+      });
+      $$<HTMLButtonElement>('[data-fw-toggle]').forEach((btn) => setToggleState(btn, play.includes(btn.dataset.fwToggle || ''), 'On sheet', 'Add'));
+      $$<HTMLButtonElement>('[data-fw-map-toggle]').forEach((btn) => {
+        const id = btn.dataset.fwMapToggle || '';
+        setToggleState(btn, play.includes(id), 'On sheet', 'Add');
+        btn.closest('.fw-map-item')?.classList.toggle('is-on', play.includes(id));
+      });
+      $$<HTMLElement>('[data-fw-inplay]').forEach((node) => {
+        const n = counts[node.dataset.fwInplay || ''] ?? 0;
+        node.hidden = n === 0;
+        node.textContent = `${n} in play`;
+      });
+
+      // Play sheet: summary, coverage, groups.
+      const summary = $<HTMLElement>('[data-fw-play-summary]');
+      if (summary) {
+        summary.textContent = touched === 0
+          ? `Empty. ${cap(L.tacticPlural)} you add from any ${L.type} land here, grouped by ${L.type}, ready to print or share.`
+          : `${plural(play.length, L.tactic, L.tacticPlural)} across ${plural(touched, L.type, L.typePlural)}. ${typeIds.length - touched} ${L.typePlural} untouched.`;
+      }
+      $$<HTMLButtonElement>('[data-fw-cov]').forEach((btn) => {
+        const id = btn.dataset.fwCov || '';
+        const n = counts[id] ?? 0;
+        btn.disabled = n === 0;
+        btn.classList.toggle('is-on', n > 0);
+        btn.setAttribute('aria-pressed', String(filter === id));
+        const meta = btn.querySelector('[data-fw-cov-meta]');
+        if (meta) meta.textContent = n ? `${n} selected` : 'untouched';
+      });
+      const filterOn = $<HTMLElement>('[data-fw-filter-on]');
+      const filterNote = $<HTMLElement>('[data-fw-filter-note]');
+      if (filterOn && filterNote) {
+        filterOn.hidden = !filter;
+        filterNote.hidden = !!filter || touched === 0;
+        const name = filterOn.querySelector('[data-fw-filter-name]');
+        if (name && filter) name.textContent = data.types[filter].t;
+      }
+      const empty = $<HTMLElement>('[data-fw-play-empty]');
+      if (empty) empty.hidden = play.length > 0;
+
+      $$<HTMLElement>('[data-fw-play-group]').forEach((group) => {
+        const id = group.dataset.fwPlayGroup || '';
+        const items = play.filter((k) => data.tactics[k].y === id);
+        const show = items.length > 0 && (!filter || filter === id);
+        group.hidden = !show;
+        const list = group.querySelector<HTMLElement>('[data-fw-play-list]');
+        if (!list || !rowTemplate) return;
+        list.replaceChildren();
+        if (!show) return;
+        items.forEach((k) => {
+          const row = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+          const text = textOf(k);
+          row.querySelector('.fw-play-title')!.textContent = text.t;
+          row.querySelector('.fw-play-desc')!.textContent = text.d;
+          const remove = row.querySelector<HTMLButtonElement>('[data-fw-remove]')!;
+          remove.setAttribute('aria-label', `Remove ${text.t}`);
+          remove.addEventListener('click', () => toggle(k));
+          list.appendChild(row);
+        });
+      });
+      renderSheet();
+
+      // Drawer button, if open.
+      const drawerToggle = $<HTMLButtonElement>('[data-fw-drawer-toggle]');
+      if (drawerToggle && drawerId) setToggleState(drawerToggle, play.includes(drawerId), 'Remove from play sheet', 'Add to play sheet');
+    };
+
+    const say = (text: string) => { if (status) status.textContent = text; };
+
+    const toggle = (id: string) => {
+      if (!data.tactics[id]) return;
+      const was = play.includes(id);
+      play = was ? play.filter((k) => k !== id) : play.concat(id);
+      store();
+      render();
+      say(`${textOf(id).t} ${was ? 'removed from' : 'added to'} the play sheet. ${plural(play.length, L.tactic, L.tacticPlural)} on it.`);
+    };
+
+    // ── Views (URL hash) ────────────────────────────────────────────
+    const showView = (view: string, typeId?: string) => {
+      views.forEach((v) => {
+        const kind = v.dataset.fwView;
+        v.hidden = !(kind === view && (kind !== 'detail' || v.dataset.fwDetail === typeId));
+      });
+      $$<HTMLAnchorElement>('[data-fw-tab]').forEach((tab) => {
+        const current = tab.dataset.fwTab === (view === 'detail' ? 'board' : view);
+        if (current) tab.setAttribute('aria-current', 'page');
+        else tab.removeAttribute('aria-current');
+      });
+    };
+
+    const route = () => {
+      const hash = decodeURIComponent(location.hash.slice(1));
+      if (hash === 'play-sheet') {
+        showView('play');
+        root.scrollIntoView({ block: 'start' });
+        return;
+      }
+      if (hash === 'value-map' && data.map) {
+        showView('map');
+        root.scrollIntoView({ block: 'start' });
+        return;
+      }
+      if (hash.startsWith('type-') && data.types[hash.slice(5)]) {
+        showView('detail', hash.slice(5));
+        root.scrollIntoView({ block: 'start' });
+        return;
+      }
+      if (hash.startsWith('tactic-') && data.tactics[hash.slice(7)]) {
+        const id = hash.slice(7);
+        showView('detail', data.tactics[id].y);
+        const card = document.getElementById(`tactic-${id}`);
+        (card ?? root).scrollIntoView({ block: card ? 'center' : 'start' });
+        return;
+      }
+      showView('board');
+      if (hash === 'framework') root.scrollIntoView({ block: 'start' });
+    };
+
+    // ── Category focus ──────────────────────────────────────────────
+    const setFocus = (index: string | null) => {
+      if (!board) return;
+      if (index === null) board.removeAttribute('data-fw-focus');
+      else board.setAttribute('data-fw-focus', index);
+      $$<HTMLElement>('.fw-col').forEach((col) => {
+        const on = index !== null && col.dataset.fwCat === index;
+        if (on) col.setAttribute('data-fw-focused', '');
+        else col.removeAttribute('data-fw-focused');
+        const head = col.querySelector('[data-fw-focus]');
+        if (head) head.setAttribute('aria-pressed', String(on));
+        col.querySelectorAll<HTMLElement>('[data-fw-chips]').forEach((chips) => { chips.hidden = !on; });
+      });
+      const note = $<HTMLElement>('[data-fw-focus-note]');
+      if (note) {
+        note.hidden = index === null;
+        const name = note.querySelector('[data-fw-focus-name]');
+        const head = index !== null ? board.querySelector(`[data-fw-cat="${index}"] .fw-col-label`) : null;
+        if (name && head) name.textContent = head.textContent;
+      }
+    };
+    $$<HTMLButtonElement>('[data-fw-focus]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.fwFocus ?? null;
+        setFocus(board?.getAttribute('data-fw-focus') === idx ? null : idx);
+      });
+    });
+    $<HTMLButtonElement>('[data-fw-focus-clear]')?.addEventListener('click', () => setFocus(null));
+
+    // ── Drawer ──────────────────────────────────────────────────────
+    const openDrawer = (id: string) => {
+      if (!dialog || !data.tactics[id]) return;
+      const tactic = data.tactics[id];
+      const type = data.types[tactic.y];
+      const text = textOf(id);
+      drawerId = id;
+      $<HTMLElement>('[data-fw-drawer-head]')?.setAttribute('data-fw-type', tactic.y);
+      const crumb = $<HTMLElement>('[data-fw-drawer-crumb]');
+      if (crumb) crumb.textContent = `${type.c} · ${type.t}`;
+      const title = $<HTMLElement>('[data-fw-drawer-title]');
+      if (title) title.textContent = text.t;
+      const desc = $<HTMLElement>('[data-fw-drawer-desc]');
+      if (desc) desc.textContent = text.d;
+      const examples = $<HTMLElement>('[data-fw-drawer-examples]');
+      const none = $<HTMLElement>('[data-fw-drawer-none]');
+      const source = document.getElementById(`tactic-${id}`)?.querySelector('[data-fw-examples]');
+      if (examples) examples.replaceChildren(...(source ? [source.firstElementChild!.cloneNode(true)] : []));
+      if (none) none.hidden = !!source;
+      render();
+      dialog.showModal();
+    };
+    const closeDrawer = () => { dialog?.close(); };
+    $$<HTMLButtonElement>('[data-fw-drawer]').forEach((btn) => {
+      btn.addEventListener('click', () => openDrawer(btn.dataset.fwDrawer || ''));
+    });
+    $<HTMLButtonElement>('[data-fw-drawer-close]')?.addEventListener('click', closeDrawer);
+    $<HTMLButtonElement>('[data-fw-drawer-toggle]')?.addEventListener('click', () => { if (drawerId) toggle(drawerId); });
+    dialog?.addEventListener('click', (event) => {
+      // A click on the backdrop lands on the dialog element itself.
+      if (event.target === dialog) closeDrawer();
+    });
+    dialog?.addEventListener('close', () => { drawerId = null; });
+
+    // ── Value map ───────────────────────────────────────────────────
+    if (data.map) {
+      const map = data.map;
+      const grid = $<HTMLElement>('[data-fw-map-grid]');
+      const crumbsHost = $<HTMLElement>('[data-fw-map-crumbs]');
+      const listHost = $<HTMLElement>('[data-fw-map-list]');
+      const itemTemplate = $<HTMLTemplateElement>('template[data-fw-map-item]');
+      const CAP = 60;
+      let code: string | null = null;
+      let cell: { type: string | null; code: string } | null = null;
+
+      const nodeAt = (c: string | null): ValueNode | null => {
+        if (!c) return null;
+        let list: ValueNode[] | undefined = map.tree;
+        let found: ValueNode | null = null;
+        const parts = c.split('.');
+        for (let i = 0; i < parts.length; i++) {
+          const want = parts.slice(0, i + 1).join('.');
+          const hit: ValueNode | undefined = (list ?? []).find((n) => n.code === want);
+          if (!hit) return null;
+          found = hit;
+          list = hit.children;
+        }
+        return found;
+      };
+      const countIn = (typeId: string, c: string) =>
+        Object.entries(data.tactics).filter(([, v]) => v.y === typeId && (v.a ?? []).some((x) => under(x, c))).length;
+      const pickedIds = () => {
+        const filterCode = cell ? cell.code : code;
+        return Object.entries(data.tactics)
+          .filter(([, v]) => (!cell || !cell.type || v.y === cell.type) && (!filterCode || (v.a ?? []).some((x) => under(x, filterCode))))
+          .map(([id]) => id);
+      };
+      const orderedPicked = () => {
+        const ids = new Set(pickedIds());
+        const out: string[] = [];
+        data.typeOrder.forEach((typeId) => {
+          $$<HTMLElement>(`[data-fw-detail="${typeId}"] [data-fw-tactic]`).forEach((card) => {
+            const id = card.dataset.fwTactic || '';
+            if (ids.has(id)) out.push(id);
+          });
+        });
+        return out;
+      };
+      const pathName = (id: string) =>
+        (data.tactics[id].a ?? []).map((c) => c.split('.').map((_, i, arr) => nodeAt(arr.slice(0, i + 1).join('.'))?.name ?? '').filter(Boolean).join(' · ')).join(' / ');
+
+      const renderMap = () => {
+        if (!grid || !crumbsHost) return;
+        const cur = nodeAt(code);
+        const cols = cur ? cur.children ?? [cur] : map.tree;
+        const leafLevel = !!cur && !cur.children;
+
+        // Crumbs
+        crumbsHost.replaceChildren();
+        const crumb = (name: string, target: string | null, current: boolean) => {
+          const b = el('button', 'fw-crumb', name);
+          b.type = 'button';
+          if (current) b.setAttribute('aria-current', 'page');
+          b.addEventListener('click', () => { code = target; cell = null; renderMap(); });
+          crumbsHost.appendChild(b);
+        };
+        crumb(map.rootCrumb, null, !code);
+        (code ?? '').split('.').filter(Boolean).forEach((_, i, arr) => {
+          const c = arr.slice(0, i + 1).join('.');
+          crumb(nodeAt(c)?.name ?? c, c, i === arr.length - 1);
+        });
+        const note = $<HTMLElement>('[data-fw-map-cell-note]');
+        if (note) {
+          note.hidden = !cell;
+          const name = note.querySelector('[data-fw-map-cell-name]');
+          if (name && cell) name.textContent = `${nodeAt(cell.code)?.name ?? map.rootCrumb}${cell.type ? ` × ${data.types[cell.type].t}` : ' × all'}`;
+        }
+
+        // Grid
+        grid.setAttribute('data-fw-map-cols', String(cols.length));
+        const counts = data.typeOrder.map((t) => cols.map((c) => countIn(t, c.code)));
+        const max = Math.max(1, ...counts.flat());
+        const heat = (n: number) => (n === 0 ? 0 : 1 + Math.min(4, Math.floor((n / max) * 4)));
+        const frag = document.createDocumentFragment();
+        const corner = grid.querySelector('.fw-map-corner')!.cloneNode(true);
+        frag.appendChild(corner);
+        cols.forEach((c) => {
+          const b = el('button', 'fw-map-col');
+          b.type = 'button';
+          const sel = !!cell && !cell.type && cell.code === c.code;
+          b.classList.toggle('is-sel', sel);
+          b.appendChild(el('span', 'fw-map-col-hint', c.children ? 'Drill in' : 'Filter to line'));
+          b.appendChild(el('span', 'fw-map-col-name', c.name));
+          const total = data.typeOrder.reduce((n, t) => n + countIn(t, c.code), 0);
+          b.appendChild(el('span', 'fw-map-col-total', `${total} ${L.tacticPlural}`));
+          b.addEventListener('click', () => {
+            if (c.children) { code = c.code; cell = null; }
+            else cell = sel ? null : { type: null, code: c.code };
+            renderMap();
+          });
+          frag.appendChild(b);
+        });
+        data.typeOrder.forEach((typeId, ti) => {
+          const rowSel = !!cell && cell.type === typeId && cell.code === (code ?? '') && !cols.some((c) => c.code === cell!.code);
+          const row = el('div', 'fw-map-row');
+          row.setAttribute('data-fw-type', typeId);
+          row.classList.toggle('is-sel', rowSel);
+          const pick = el('button', 'fw-map-row-pick');
+          pick.type = 'button';
+          pick.appendChild(el('span', 'fw-map-row-dim', data.types[typeId].s));
+          pick.appendChild(el('span', 'fw-map-row-title', data.types[typeId].t));
+          pick.addEventListener('click', () => { cell = rowSel ? null : { type: typeId, code: code ?? '' }; renderMap(); });
+          row.appendChild(pick);
+          const open = el('a', 'fw-map-row-open', `Open ${L.type}`);
+          open.href = `#type-${typeId}`;
+          row.appendChild(open);
+          frag.appendChild(row);
+          cols.forEach((c, ci) => {
+            const n = counts[ti][ci];
+            const b = el('button', 'fw-map-cell', n === 0 ? '—' : String(n));
+            b.type = 'button';
+            b.setAttribute('data-fw-heat', String(heat(n)));
+            b.disabled = n === 0;
+            const sel = !!cell && cell.type === typeId && cell.code === c.code;
+            b.classList.toggle('is-sel', sel);
+            b.addEventListener('click', () => { cell = sel ? null : { type: typeId, code: c.code }; renderMap(); });
+            frag.appendChild(b);
+          });
+        });
+        grid.replaceChildren(frag);
+
+        // List
+        if (!listHost || !itemTemplate) return;
+        const picked = orderedPicked();
+        const show = !!cell || leafLevel;
+        listHost.hidden = !show;
+        if (!show) return;
+        const label = listHost.querySelector('[data-fw-map-list-label]');
+        const sub = listHost.querySelector('[data-fw-map-list-sub]');
+        const nodeName = (c: string | null) => nodeAt(c)?.name ?? map.rootCrumb;
+        if (label) label.textContent = cell ? `${cap(L.tacticPlural)} in this cell` : `${cap(L.tacticPlural)} under ${nodeName(code)}`;
+        if (sub) sub.textContent = picked.length === 0
+          ? `Nothing at this intersection. That part of the tree is not addressed by this ${L.type}.`
+          : cell && cell.type
+            ? `${nodeName(cell.code)} × ${data.types[cell.type].t}.`
+            : `${nodeName(cell ? cell.code : code)} across every ${L.type}. Pick a cell above to cut it to one.`;
+        const addAll = listHost.querySelector<HTMLButtonElement>('[data-fw-map-add-all]');
+        if (addAll) {
+          const n = Math.min(picked.length, CAP);
+          addAll.hidden = n === 0;
+          addAll.textContent = `Add ${n} to play sheet`;
+          addAll.onclick = () => {
+            const fresh = picked.slice(0, CAP).filter((id) => !play.includes(id));
+            play = play.concat(fresh);
+            store();
+            render();
+            say(`Added ${plural(fresh.length, L.tactic, L.tacticPlural)}.`);
+          };
+        }
+        const items = listHost.querySelector<HTMLElement>('[data-fw-map-items]')!;
+        items.replaceChildren();
+        picked.slice(0, CAP).forEach((id) => {
+          const li = itemTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+          li.setAttribute('data-fw-type', data.tactics[id].y);
+          li.querySelector('.fw-map-item-area')!.textContent = data.types[data.tactics[id].y].t;
+          const openBtn = li.querySelector<HTMLButtonElement>('[data-fw-map-open]')!;
+          openBtn.textContent = textOf(id).t;
+          openBtn.addEventListener('click', () => openDrawer(id));
+          li.querySelector('.fw-map-item-path')!.textContent = pathName(id);
+          const tg = li.querySelector<HTMLButtonElement>('[data-fw-map-toggle]')!;
+          tg.setAttribute('data-fw-map-toggle', id);
+          tg.addEventListener('click', () => toggle(id));
+          items.appendChild(li);
+        });
+        const truncated = listHost.querySelector<HTMLElement>('[data-fw-map-truncated]');
+        if (truncated) {
+          truncated.hidden = picked.length <= CAP;
+          truncated.textContent = `Showing the first ${CAP} of ${picked.length} ${L.tacticPlural}. Drill further into the tree, or pick a single cell, to narrow it.`;
+        }
+        render();
+      };
+
+      $<HTMLButtonElement>('[data-fw-map-cell-clear]')?.addEventListener('click', () => { cell = null; renderMap(); });
+      // The server-rendered root grid becomes live on first interaction;
+      // wiring the static buttons through one re-render keeps one code path.
+      grid?.addEventListener('click', (event) => {
+        const target = (event.target as HTMLElement).closest<HTMLElement>('[data-fw-map-col], [data-fw-map-cell], [data-fw-map-row]');
+        if (!target || !grid.contains(target)) return;
+        event.preventDefault();
+        if (target.dataset.fwMapCol !== undefined) {
+          const c = target.dataset.fwMapCol!;
+          if (target.dataset.fwMapBranch === 'true') { code = c; cell = null; }
+          else cell = { type: null, code: c };
+        } else if (target.dataset.fwMapCell !== undefined) {
+          const [type, c] = target.dataset.fwMapCell!.split('|');
+          cell = { type, code: c };
+        } else if (target.dataset.fwMapRow !== undefined) {
+          cell = { type: target.dataset.fwMapRow!, code: '' };
+        }
+        renderMap();
+      }, { once: true });
+    }
+
+    // ── Play-sheet controls ─────────────────────────────────────────
+    $$<HTMLButtonElement>('[data-fw-toggle]').forEach((btn) => {
+      btn.addEventListener('click', () => toggle(btn.dataset.fwToggle || ''));
+    });
+    $$<HTMLButtonElement>('[data-fw-cov]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.fwCov || '';
+        filter = filter === id ? null : id;
+        render();
+      });
+    });
+    $<HTMLButtonElement>('[data-fw-filter-clear]')?.addEventListener('click', () => { filter = null; render(); });
+    $<HTMLButtonElement>('[data-fw-starter]')?.addEventListener('click', () => {
+      play = data.starter.filter((id) => data.tactics[id]);
+      store();
+      render();
+      say(`Loaded ${plural(play.length, L.tactic, L.tacticPlural)}.`);
+    });
+    $<HTMLButtonElement>('[data-fw-clear]')?.addEventListener('click', () => {
+      if (play.length === 0) return;
+      play = [];
+      filter = null;
+      store();
+      render();
+      say('Play sheet cleared.');
+    });
+    $<HTMLButtonElement>('[data-fw-print]')?.addEventListener('click', () => {
+      showView('play');
+      window.print();
+    });
+    $<HTMLButtonElement>('[data-fw-share]')?.addEventListener('click', async () => {
+      if (play.length === 0) {
+        say('Add something to the sheet first.');
+        return;
+      }
+      const url = new URL(location.href);
+      url.search = '';
+      url.searchParams.set('play', play.join(','));
+      url.hash = 'play-sheet';
+      const link = url.toString();
+      try {
+        await navigator.clipboard.writeText(link);
+        say('Link copied. Anyone who opens it sees this sheet and can add to their own.');
+      } catch {
+        say(`Copy this link: ${link}`);
+      }
+    });
+
+    // ── Init ────────────────────────────────────────────────────────
+    play = readStored();
+    const shared = new URLSearchParams(location.search).get('play');
+    if (shared) {
+      const incoming = shared.split(',').filter((id) => data.tactics[id] && !play.includes(id));
+      if (incoming.length) {
+        play = play.concat(incoming);
+        store();
+      }
+    }
+    render();
+    route();
+    window.addEventListener('hashchange', route);
+  });
+</script>

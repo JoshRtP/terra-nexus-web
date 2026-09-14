@@ -40,6 +40,7 @@ import MechanismSelector from '../../components/MechanismSelector.astro';
 import { stages } from '../../data/lifecycle';
 import { marketMechanisms } from '../../data/market-mechanisms';
 import { capabilityFamilies, CAPABILITY_SLUGS, stageDetails, capabilityHref, offeringAnchor } from '../../data/capabilities';
+import { frameworks, frameworkHref } from '../../data/frameworks';
 
 const mode = getBuildMode();
 
@@ -166,6 +167,12 @@ const ctaLinks = [
                   <li><a href={`${capabilityHref(family.slug)}#${offeringAnchor(offering.name)}`} class="hub-offering-link">{offering.name}</a></li>
                 ))}
               </ul>
+              {family.tool && frameworks[family.tool.framework] && (
+                <p class="hub-family-tool">
+                  <span class="field-label hub-field">Interactive tool</span>
+                  <a href={frameworkHref(family.tool.framework)} class="hub-offering-link">{frameworks[family.tool.framework].name}</a>
+                </p>
+              )}
               <p class="hub-family-cta">
                 <a href={capabilityHref(family.slug)} class="btn btn-secondary">Explore {family.name}</a>
               </p>
@@ -210,4 +217,14 @@ const ctaLinks = [
   .hub-offering-link:hover { color: var(--c-sky-700); border-bottom-color: var(--c-sky-600); }
   .hub-offering-link:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
   .hub-family-cta { margin: var(--space-6) 0 0; }
+  .hub-family-tool {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: var(--space-6) 0 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .hub-family-tool .hub-field { margin: 0; }
 </style>
