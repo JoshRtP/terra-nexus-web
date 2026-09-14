@@ -26,6 +26,16 @@ export interface Props {
   members: Array<{
     id: string;
     name: string;
+    // Optional heading for the open panel's identity block when it should
+    // differ from the closed tile's name (e.g. the Expert Network tile is
+    // labelled by the network, but its open panel is headed by what the
+    // group actually is). Closed tile, close/LinkedIn/email aria labels
+    // all keep using `name`.
+    panelName?: string;
+    // Visually hide the closed tile's name label (kept in the DOM as
+    // `.sr-only` so the tile button still has an accessible name). For a
+    // single-member group whose heading already says the same thing.
+    hideTileName?: boolean;
     role: string;
     initials: string;
     variant?: 'person' | 'network';
@@ -118,7 +128,7 @@ const { heading, members } = Astro.props;
               )}
             </span>
             <span class="roster-tile-meta">
-              <span class="roster-tile-name">{member.name}</span>
+              <span class:list={["roster-tile-name", { "sr-only": member.hideTileName }]}>{member.name}</span>
               {member.role && <span class="roster-tile-role">{member.role}</span>}
             </span>
           </button>
@@ -193,7 +203,7 @@ const { heading, members } = Astro.props;
         </button>
 
         <div class="roster-identity">
-          <h5 class="roster-identity-name">{member.name}</h5>
+          <h5 class="roster-identity-name">{member.panelName ?? member.name}</h5>
           {(member.title || member.role) && <p class="roster-identity-title">{member.title || member.role}</p>}
           {member.titleDetail && <p class="roster-identity-detail">{member.titleDetail}</p>}
         </div>

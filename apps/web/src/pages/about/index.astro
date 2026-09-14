@@ -123,6 +123,9 @@ const rosterGroups: Array<{
   members: Array<{
     id: string;
     name: string;
+    // Open-panel heading override — see ProfileRoster.astro's Props doc.
+    panelName?: string;
+    hideTileName?: boolean;
     role: string;
     initials: string;
     variant?: 'person' | 'network';
@@ -267,6 +270,13 @@ const rosterGroups: Array<{
       {
         id: 'expert-network',
         name: 'Terra Nexus Expert Network',
+        // Owner request 2026-09-14: the open panel is headed by what the
+        // group is, while the closed tile keeps the network name.
+        panelName: 'Extended Advisory & Expert Delivery Team',
+        // Owner request 2026-09-14: the group heading above the tile already
+        // reads "Terra Nexus Expert Network", so the tile's own label was
+        // duplicative. Visually hidden, still announced to screen readers.
+        hideTileName: true,
         role: '',
         initials: 'TN',
         variant: 'network',
@@ -282,15 +292,18 @@ const rosterGroups: Array<{
         bio: [
           "More than 30 industry executives have worked on Terra Nexus engagements, each with deep knowledge of one of our core expertise areas or delivery capabilities. They remain a working part of how we reach trusted talent and operators. They know the situation on the ground, understand the real dynamics at play, and have the context needed to create change.",
           "The network brings together partners, contractors, and climate specialists, including data scientists, product designers, supply chain professionals, Lean Six Sigma operators, traders, and merchants.",
-          "Members join engagements in fractional roles. At the executive level that means Chief Strategy Officer, Chief Operating Officer, Chief Sustainability Officer, or Chief Revenue Officer. At the functional level it means Head of Carbon Policy, Carbon Operations, Decarbonization, Responsible Sourcing, or Environmental Markets. As operating partners and principals, members lead verification, research, advisory, and solutions development.",
+          // Roles paragraph is the owner's own wording, verbatim (2026-09-14).
+          "Members join engagements in fractional support roles. At the executive level that means Chief Strategy Officer, Chief Operating Officer, Chief Sustainability Officer, or Chief Revenue Officer. They often serve as the interim Head of Carbon Policy, Carbon Operations, Decarbonization, Responsible Sourcing, or Environmental Markets. For continuity it's common for our experts to continue work as operating partners / principals, and lead research, advisory, verification readiness, or solutions development to ensure programs continuously produce outsized returns.",
           "Every member of the extended team works from the same accelerators and methods used across all Terra Nexus programs, so each engagement is tailored to the customer's needs and ready to operate from day one. We treat every engagement as an investment. If the conditions aren't right because we lack the relevant resources, capacity, or expertise, we'll refer you to a partner who can deliver.",
         ],
+        // Same order as the Capabilities offerings (capabilityAreas in
+        // data/lifecycle.ts), owner request 2026-09-14.
         tags: [
           { label: 'Strategy & Innovation', href: '/capabilities/strategy-and-innovation/' },
+          { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
           { label: 'Sustainable Supply Chain & Operations', href: '/capabilities/sustainable-supply-chain-and-operations/' },
           { label: 'Corporate Sustainability', href: '/capabilities/corporate-sustainability/' },
           { label: 'Carbon & Ecosystem Services', href: '/capabilities/carbon-and-ecosystem-services/' },
-          { label: 'Financial Investments & New Venture Development', href: '/capabilities/financial-investments-and-new-venture-development/' },
         ],
         // The five capability areas the network covers ("deep knowledge in
         // our core expertise areas and delivery capabilities", owner blurb
