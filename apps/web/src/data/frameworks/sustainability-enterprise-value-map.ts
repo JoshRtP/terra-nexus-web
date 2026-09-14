@@ -31,7 +31,8 @@ export const sustainabilityEnterpriseValueMap: Framework = {
   shortName: 'Value Map',
   eyebrow: 'Sustainability Framework',
   title: 'Sustainability Enterprise Value Map',
-  lead: 'Two value hierarchies crossed: where shareholder value comes from, and the nine improvement areas where sustainability work happens. 893 actions sit at the intersections. Cross them in the value map, add actions to a play sheet, and see where the plays land.',
+  // Owner-approved wording, 2026-09-14.
+  lead: 'Most sustainability programs can name their initiatives but not the shareholder value each one protects or creates. The Value Map is how Terra Nexus makes that connection visible in a session, so a program can be defended in the language finance uses.',
   metaTitle: 'Sustainability Enterprise Value Map Tool | Terra Nexus',
   metaDescription: 'Interactive Sustainability Enterprise Value Map: shareholder value crossed with nine improvement areas, 893 actions, and a printable play sheet.',
   intro: 'Two value hierarchies crossed: shareholder value from driver down to forty value lines, stakeholder value across nine improvement areas in four business dimensions. 893 actions sit at the intersections.',

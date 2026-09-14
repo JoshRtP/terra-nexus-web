@@ -31,7 +31,8 @@ export const tenTypesOfInnovation: Framework = {
   shortName: 'Ten Types',
   eyebrow: 'Innovation Framework',
   title: 'Ten Types of Innovation',
-  lead: 'A working reference for the ten ways a business can innovate. Open a type to read its tactics and the companies that show them, then build a play sheet you can print or share.',
+  // Written 2026-09-14 in the shape of the owner-approved Value Map lead; NEEDS OWNER REVIEW.
+  lead: 'Most innovation efforts go straight to the product and stop there. The Ten Types is how Terra Nexus widens that view in a session, so a team sees the moves competitors find hardest to copy: how the business is configured, how it earns, and how customers experience it.',
   metaTitle: 'Ten Types of Innovation Framework Tool | Terra Nexus',
   metaDescription: 'An interactive reference to the Ten Types of Innovation: ten types, 112 tactics and real-company examples, with a play sheet you can print or share.',
   intro: 'Ten types across three categories. Pick a category to focus it, open a type for its tactics, and add tactics to a play sheet as you work through the session.',
