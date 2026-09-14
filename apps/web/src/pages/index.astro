@@ -13,6 +13,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import ClosingCta from '../components/ClosingCta.astro';
 import MechanismSelector from '../components/MechanismSelector.astro';
+import TrackRecord from '../components/TrackRecord.astro';
 import { marketMechanisms } from '../data/market-mechanisms';
 import { stages, capabilityAreas } from '../data/lifecycle';
 import { SITE_DESCRIPTION, organization, webSite } from '../lib/structured-data';
@@ -20,17 +21,6 @@ import { focusObjects, focusViews } from '../data/how-we-work';
 import { marketRoles, segments } from '../data/who-we-work-with';
 
 const mode = getBuildMode();
-
-// Portfolio-wide stats for the "Our Track Record" section below. Same figures
-// as the current homepage (approved 2026-08-10).
-const portfolioStats = [
-  { value: '$3B+', label: 'Cumulative commercial value created for clients since Terra Nexus started' },
-  { value: '25+', label: 'Global Projects Across Countries' },
-  { value: '15+', label: 'Commodities worked with' },
-  { value: '20+', label: 'Sustainable Food Systems Certifications' },
-  { value: '10+', label: 'Carbon Registries Focused on Food, Agriculture, Land Management, Energy, & Fuels' },
-  { value: '5M+', label: 'Acres of regenerative ecosystems' },
-];
 
 const expertiseAreas = [
   { title: 'Regenerative Agriculture', slug: 'regenerative-agriculture', description: 'Connect better crop-production systems with producer economics, supply-chain requirements, credible evidence, and market value.', heroImage: 'https://images.pexels.com/photos/38514489/pexels-photo-38514489.jpeg?auto=compress&cs=tinysrgb&w=1200' },
@@ -432,33 +422,10 @@ const approachSteps = stages.map((stage) => ({
     </div>
   </section>
 
-  <!-- Our Proven Track Record -->
-  <section class="section section-alt" aria-labelledby="track-record-heading">
-    <div class="container">
-      <header class="section-header split-header">
-        <span class="eyebrow split-header-eyebrow">Our Track Record</span>
-        <div class="split-header-title">
-          <h2 id="track-record-heading">Proven Portfolio of Successful Impact</h2>
-        </div>
-        <div class="split-header-lead">
-          <p class="section-lead">There is absolutely no legitimate reason that creating a better planet should be so damn complicated, especially when it means the world to so many.</p>
-        </div>
-      </header>
-
-      <div class="stat-strip">
-        {portfolioStats.map((stat) => (
-          <div class="stat-item">
-            <p class="stat-value stat-value-md">{stat.value}</p>
-            <p class="stat-label">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <div class="section-cta">
-        <a href="/about/" class="btn btn-primary">Learn More About Us</a>
-      </div>
-    </div>
-  </section>
+  <!-- Our Track Record — components/TrackRecord.astro (data/track-record.ts).
+       Rebuilt 2026-09-14 from the design lab on design/track-record-options;
+       the previous flat six-stat strip lived inline here. -->
+  <TrackRecord />
 
   <!-- Final CTA -->
   <ClosingCta
@@ -1225,37 +1192,6 @@ const approachSteps = stages.map((stage) => ({
   .wwt-activity[open] .wwt-activity-mark { transform: rotate(45deg); }
   .wwt-activity-desc { margin: 0; padding: 0 var(--space-4) var(--space-4); font-size: var(--text-xs); line-height: 1.65; color: #a9b6d6; }
   @media (prefers-reduced-motion: reduce) { .wwt-activity-mark { transition: none; } }
-
-  /* ── Track record stat strip ──────────────────────────
-     Boxed cards (the previous version) put six labels of very different
-     lengths inside equal-width cards, and the short one-line labels sat
-     tight against the card edge while the two-line ones stretched theirs
-     — same card grid, visibly uneven bottoms. Dropping the card chrome
-     altogether sidesteps that: a plain rule above each number (echoing
-     the small eyebrow-dash mark used throughout the page) instead of a
-     box means labels are free to run one or two lines without any
-     container edge to look uneven against. */
-  .stat-strip {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--space-10);
-    row-gap: var(--space-10);
-  }
-  @media (max-width: 56rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
-  .stat-item {
-    padding-top: var(--space-4);
-    border-top: 3px solid var(--color-eyebrow);
-  }
-  /* .stat-value-md (design-system.css) supplies the font-size; margin-top
-     here is this layout's own spacing, not a typography override. */
-  .stat-item .stat-value { margin-top: var(--space-3); }
-  .stat-item .stat-label {
-    margin-top: var(--space-2);
-    max-width: 26rem;
-    color: var(--color-text-secondary);
-    line-height: var(--line-relaxed);
-  }
 
   /* Second "How We Work" paragraph — moved here from the split-header lead
      (owner request, 2026-08-18): now sits below the approach diagram and
