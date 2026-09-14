@@ -33,15 +33,13 @@ pre-launch plan with me.
 
 ## Where things stand
 
-- `main` is at the merge of **PR #20** (Who We Work With consolidation,
-  Capabilities rebuild, Tier 1 SEO; 31 commits).
-- **PR #21** (`feature/pre-launch-batch`): 404 page, asset cleanup, self-hosted
-  fonts, WebP wordmarks, homepage image fixes, site-wide link test, and the
-  docs closing the two `CLAUDE.md` known issues. CI green, **not merged** — I
-  have not said to merge it. Check its state before assuming.
-- Branch **`plans/pre-launch`** holds `plans/pre-launch-plan.md` and this
-  prompt. Also unmerged. Merge or cherry-pick it into whatever branch you work
-  on so the plan travels with the code.
+- `main` is at the merge of **PR #21** (`feature/pre-launch-batch`: 404 page,
+  asset cleanup, self-hosted fonts, WebP wordmarks, homepage image fixes,
+  site-wide link test, and the docs closing the two `CLAUDE.md` known
+  issues), merged 2026-09-13 at my word on top of **PR #20** (Who We Work
+  With consolidation, Capabilities rebuild, Tier 1 SEO; 31 commits).
+- Branch **`plans/pre-launch`** (this plan and this prompt) was merged to
+  `main` right after. Nothing is left on a side branch; start from `main`.
 - Full gate at the tip of PR #21: build clean, typecheck 0 errors 0 warnings,
   290 tests, `npm run check` exit 0. Lighthouse mobile after the batch: hub 95,
   homepage 74, Regenerative Agriculture 74; hub, C&ES and Who We Work With at

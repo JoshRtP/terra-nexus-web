@@ -110,7 +110,7 @@ after B2 so the connectors are real on day one.
 - A production-mode build served by Wrangler locally, checked for
   `robots.txt`, sitemap, canonicals and the absence of the preview banner.
 
-**Status 2026-09-13, evening.** Step 1 is done on `feature/pre-launch-batch`
+**Status 2026-09-13, evening.** Step 1 is done and merged to `main` (PR #21)
 (A3, A6, D1, D4, the D3 quick wins, B7 verified, and the §E link test); see
 `log.md`. Steps 2–5 stand.
 
