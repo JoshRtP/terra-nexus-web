@@ -344,3 +344,109 @@ Chessboard and the Value Map were asked for next.
   Value Map play sheet's opportunity/risk dot marking. The WWF 2050
   Criteria and Sustainability Fusion remain in the zip.
 
+---
+
+## 9. Where this stops (2026-09-13) and what remains
+
+**Status.** Parked by owner decision after the third framework. Everything
+is on `feature/framework-viewer`, pushed to GitHub, not merged, not deployed
+to production. Full gate green at the stop (313 tests, typecheck clean,
+validators and pytest passing; browser QA at 1440 / 1024 / 768 / 390 in
+`artifacts/qa/2026-09-13-*`). The owner expects to come back for
+formatting, label and copy work before this goes live.
+
+**How to resume.** The branch is checked out as a git worktree at
+`D:\2. Mirror Dev\Dev Projects\TNex-Web-framework-viewer` (sibling of the
+main checkout), because the main checkout held the uncommitted pre-launch
+batch at the time. From that folder: `npm install`, then
+`npm run web:dev -- --port 4399`; the gate is `npm run web:build`,
+`npm run web:typecheck`, `npm run web:test`, and `npm run check` with
+`TNX_PYTHON` pointed at the main checkout's `.venv\Scripts\python.exe`.
+Read §8 for what landed and how a framework is added.
+
+### 9.1 Decisions (owner)
+
+1. **Attribution wording**, one paragraph per framework, rendered under
+   "About this framework" on each tool page. Current text is placeholder
+   wording for review, not a legal position:
+   - `apps/web/src/data/frameworks/ten-types-of-innovation.ts` (`attribution`)
+   - `apps/web/src/data/frameworks/sustainability-chessboard.ts` (`attribution`)
+   - `apps/web/src/data/frameworks/sustainability-enterprise-value-map.ts`
+     (`attribution`; Deloitte provided the map to Terra Nexus as a
+     contractor, per the owner, so say that however Deloitte would want it
+     said). There is no copyright text anywhere in the repo.
+2. **Which capability family carries the Chessboard and the Value Map** as
+   a compact board, if any. Both fit Corporate Sustainability; a family
+   record carries one `tool` today (see 9.2 if two are wanted). Until
+   decided, both are reachable only from `/tools/`, the footer and by URL.
+3. **Whether the Ten Types stays on Strategy & Innovation** in its current
+   position (directly under the core question), and whether the tool is
+   kept at all. Removing it is deleting the `tool` block in
+   `strategy-and-innovation.ts`; the hub picks that up.
+4. **Fusion and WWF 2050.** Both remain in the handover zip. Fusion is a
+   data-only add (plus a scoring panel the prototype had and this viewer
+   does not). WWF needs its own view. Neither is planned.
+5. **Navigation.** No top-level nav item (owner decision). Whether
+   `/tools/` deserves a Capabilities mega-menu entry is open.
+6. **Company examples** on the Ten Types quote figures (Blue River, LUSH,
+   Danone). Spot-check before they carry the Terra Nexus name.
+
+### 9.2 Integration (developer)
+
+- **Family page wiring.** `CapabilityFamilyRecord.tool` is a single object.
+  If a family should carry two frameworks, change it to `tools?:
+  ToolSection[]` in `data/capabilities/types.ts`, loop in
+  `CapabilityPage.astro`'s tool section (ids `tool`, `tool-2`, or
+  `tool-<slug>`), update the hub's "Interactive tool" line, the
+  `sectionOrder` and the two tests that assert it
+  (`capability-pages.test.ts`, `framework-viewer.test.ts`).
+- **Merging with the pre-launch batch.** Both branches touch
+  `Footer.astro` (this one adds a "Framework Tools" link) and the pre-launch
+  branch adds `test/site-links.test.ts`, which walks every built href and
+  fragment. Expect a one-line footer conflict; after the merge, run that
+  test: every `#type-<id>`, `#tactic-<id>`, `#play-sheet`, `#value-map`
+  and `#framework` fragment resolves to an id on its page, and `#tool` on
+  Strategy & Innovation.
+- **Page weight.** The Value Map page ships 893 actions as HTML plus a
+  JSON blob of type and value-line codes (deliberate: crawlable, works
+  before JS). Run Lighthouse on it before cutover; a DOM-size warning is
+  expected, a performance score below the hub's 90s is not, and if it
+  falls there the remedy is lazy-rendering the detail panels, not dropping
+  the actions.
+- **Sitemap and SEO.** The four `/tools/` routes are in the sitemap by
+  default. Meta titles and descriptions are within the 70 / 155 limits the
+  suite enforces; the copy itself needs the proofing in 9.3.
+- **Redirects.** None needed; all routes are new.
+- **Preview.** Pushing the branch triggers a Cloudflare Workers Builds
+  preview version (unpromoted); nothing reaches production without a merge
+  to `main`.
+
+### 9.3 Formatting, labels and copy (owner + developer)
+
+Owner's note at the stop: the pages read as inventories ("9 improvement
+areas, 893 actions") rather than as descriptions of what each framework is
+for. Places where copy is count-driven today, all in the records or the
+two pages, none hard-wired in the component:
+
+- Each record's `lead` (tool-page hero), `intro` (above the board) and
+  `metaDescription`, and the `/tools/` index card text (which reuses
+  `lead`) and card footer (counts).
+- The "About this framework" heading on the tool page is built from
+  counts (`pages/tools/[framework]/index.astro`).
+- The toolbar's stat strip (types, tactics, in play) and the "N tactics"
+  line under every type on the board (`FrameworkViewer.astro`). These are
+  the component's own labels; if they go, they go for every framework.
+- Labels the owner may want removed or renamed: the "focus / unfocus" hint
+  in each column header, "Open one for detail. Use Add to build the play
+  sheet.", "No examples yet", the path line under each Value Map action,
+  the `Drill in / Filter to line` hints on the value map's column headers,
+  and the "Open improvement area" links on its rows.
+- The Value Map's per-area `description` is one short sentence from the
+  prototype ("What you buy and who you buy it from."); the Chessboard's
+  are fuller. Neither has been proofed as site copy.
+- The Strategy & Innovation `tool` section lead (new copy, flagged in the
+  record) and every `starter.note`.
+
+Proof these as a set once the decisions above are made; the records are
+plain TypeScript and every string is in one place.
+

@@ -1115,4 +1115,12 @@ neutral provenance comment plus an editable `attribution` paragraph).
 * **Not wired to a family page**: which family carries the Chessboard and
   the Value Map is an owner call. Not ported: Fusion's scoring panel, the
   Value Map sheet's opportunity/risk marks.
+* **Parked here** by owner decision. Where it stops, how to resume, the
+  open decisions (attribution wording per framework, which family carries
+  the Chessboard and the Value Map, Fusion/WWF, nav), the integration
+  notes (one `tool` per family today, the footer conflict with the
+  pre-launch batch, page weight of the Value Map, the site-links test) and
+  the formatting and copy pass the owner wants (count-driven leads and
+  headings, labels to remove) are in `plans/framework-viewer-plan.md` §9.
+  Branch pushed to GitHub; not merged, not deployed.
 
