@@ -764,15 +764,6 @@ a.tag:hover {
      from its card whenever the card top was near the viewport top. */
   .card-entry-head { align-self: start; }
 }
-.card-entry-index {
-  display: block;
-  margin-bottom: var(--space-2);
-  font-size: var(--text-2xl);
-  /* sky-600, not sky-500: at 24px the large-text floor is 3:1 and sky-500
-     measured 2.9:1 on white (Lighthouse, 2026-09-13). */
-  color: var(--c-sky-600);
-  letter-spacing: 0.02em;
-}
 .card-entry-head h3 {
   font-size: var(--text-2xl);
   margin: 0 0 var(--space-2);
