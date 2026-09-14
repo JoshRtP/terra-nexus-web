@@ -41,7 +41,6 @@ import {
   segments,
   enablers,
   expertiseLinks,
-  EXAMPLES_DISCLAIMER,
 } from '../../data/who-we-work-with';
 
 const mode = getBuildMode();
@@ -75,10 +74,6 @@ const railSections = railEntries.map((e, i) => ({
   n: String(i + 1).padStart(2, '0'),
 }));
 
-// Each entry carries the same numeral the rail gives it, so the two read as one
-// system and a 16,000px scroll has a sense of position rather than being
-// fourteen interchangeable cards.
-const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
 ---
 
 <SiteLayout
@@ -165,7 +160,7 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
             </div>
             <div class="wwt-entry-body">
               <div class="wwt-opportunity">
-                <span class="field-label">The Opportunity</span>
+                <span class="field-label">Opportunity</span>
                 <p>{role.opportunity}</p>
               </div>
 
@@ -219,12 +214,11 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
         {segments.map((seg) => (
           <article class="card card-static card-entry" id={seg.slug}>
             <div class="card-entry-head">
-              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(seg.slug)}</span>
               <h3>{seg.name}</h3>
               <p class="wwt-node">{seg.node}</p>
               {seg.examples.length > 0 && (
                 <div class="wwt-examples">
-                  <span class="field-label">Organizations Like</span>
+                  <span class="field-label">Organizations</span>
                   <p class="wwt-examples-list">{seg.examples.join(' · ')}</p>
                 </div>
               )}
@@ -239,7 +233,7 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
             </div>
             <div class="wwt-entry-body">
               <div class="wwt-opportunity">
-                <span class="field-label">The Opportunity</span>
+                <span class="field-label">Opportunity</span>
                 <p>{seg.opportunity}</p>
               </div>
 
@@ -256,7 +250,7 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
                 ))}
               </div>
 
-              <h4 class="field-label wwt-sub">Decisions We Help Resolve</h4>
+              <h4 class="field-label wwt-sub">Decisions to Resolve</h4>
               <ul class="dot-list" role="list">
                 {seg.decisions.map((d) => <li>{d}</li>)}
               </ul>
@@ -266,7 +260,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
         ))}
       </div>
 
-      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
     </div>
   </section>
 
@@ -291,19 +284,18 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
         {enablers.map((en) => (
           <article class="card card-static card-entry" id={en.slug}>
             <div class="card-entry-head">
-              <span class="numbered-index card-entry-index" aria-hidden="true">{indexFor(en.slug)}</span>
               <h3>{en.name}</h3>
               <p class="wwt-node">{en.node}</p>
               {en.examples.length > 0 && (
                 <div class="wwt-examples">
-                  <span class="field-label">Organizations Like</span>
+                  <span class="field-label">Organizations</span>
                   <p class="wwt-examples-list">{en.examples.join(' · ')}</p>
                 </div>
               )}
             </div>
             <div class="wwt-entry-body">
               <div class="wwt-opportunity">
-                <span class="field-label">The Opportunity</span>
+                <span class="field-label">Opportunity</span>
                 <p>{en.opportunity}</p>
               </div>
 
@@ -324,8 +316,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
           </article>
         ))}
       </div>
-
-      <p class="wwt-footnote">{EXAMPLES_DISCLAIMER}</p>
     </div>
   </section>
 
@@ -334,9 +324,8 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     <div class="container">
       <h2 id="principle-heading" class="wwt-statement-label">The Principle Behind the Work</h2>
       <p class="wwt-statement-text">
-        The objective is not to maximize value for one node by shifting cost or risk to another. It
-        is to build a workable path that rewards the participants whose actions make the outcome
-        possible.
+        The objective is to incentivize investments that reward the actions that make the entire
+        system stronger.
       </p>
     </div>
   </section>
@@ -396,20 +385,6 @@ const indexFor = (id: string) => railSections.find((r) => r.id === id)?.n ?? '';
     /* 4.76:1 — not --color-text-muted, which fails AA at 2.56:1. */
     color: var(--c-secondary-500);
   }
-  /* Said once per section rather than once per entry. Eleven repetitions of the
-     same sentence is what made it read as boilerplate pasted in. */
-  .wwt-footnote {
-    margin: var(--space-8) 0 0;
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border);
-    font-size: var(--text-sm);
-    line-height: var(--line-relaxed);
-    /* text-secondary, not secondary-500: the footnote sits on the tinted
-       section, where secondary-500 measures 4.45:1 (Lighthouse, 2026-09-13). */
-    color: var(--color-text-secondary);
-    max-width: var(--max-width-text);
-  }
-
   /* The homepage puts this same paragraph in a gold-tinted inset card with a
      gold label. On a light surface the equivalent is the cream accent step with
      a maroon label — same idea, same hierarchy, legible ground. */
