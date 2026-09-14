@@ -1,76 +1,71 @@
 ---
-// DESIGN LAB — Our Track Record, Option C refined (branch
-// design/track-record-options, 2026-09-14).
+// DESIGN LAB — Our Track Record, Option C2 refined (branch
+// design/track-record-options, 2026-09-14, round 3).
 //
-// Round 1 showed four treatments (A ledger, B navy register, C headline
-// figure, D icon rail — see commit 0a03254 for that page). Owner chose C
-// ("makes the story cleaner") and supplied new figures and categories:
+// Round 1 (commit 0a03254): four treatments, owner chose C (headline figure
+// beside a ledger). Round 2 (commit 3efcde4): C with the owner's new figures,
+// grouped (C1) and flat (C2); owner chose the flat ledger — "clearer for a
+// portfolio" — and tightened every label. This round keeps C2 and the
+// owner's wording verbatim and varies one thing at a time:
 //
-//   Enterprise value $2.65B · Countries 25+ · Value chains 15+ global
-//   commodities · Acres 8M+ · Oceans 20+ fisheries · Operations 2000+
-//   facilities · Carbon markets 10+ · Certifications 20+
+//   V1  the flat ledger with the new text (the baseline)
+//   V2  the headline side in its own colour: the navy panel the homepage
+//       already uses, with $2.65B in gold
+//   V2b the same idea at its quietest: only the numeral changes colour,
+//       to the brand maroon the rule and eyebrow already use (added as a
+//       cheap comparison for V2, not requested)
+//   V3  a line icon ahead of each figure in the flat rows
 //
-// and the sentence the figures should add up to: value created by working
-// with clients in 25+ countries across 15 value chains, changing 8M+ acres,
-// 20+ fisheries and 2,000+ facilities, verified through 10+ carbon
-// registries/regulated markets and 20+ certifications.
-//
-// That sentence has three beats — where the work happens, what changed,
-// how it is verified — so the ledger is offered grouped under those three
-// labels (C1) and flat (C2). Same figures, same order, in both.
-//
-// Still not for merge as-is: the chosen variant is promoted into the
+// Still not for merge as-is: the chosen version is promoted into the
 // homepage and the shared .stat-* primitives, and this route is deleted.
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 
-type Stat = { value: string; count: number; prefix?: string; suffix: string; decimals?: number; label: string };
-type Group = { label: string; items: Stat[] };
+type Stat = { value: string; count: number; prefix?: string; suffix: string; decimals?: number; label: string; icon: string };
 
-const headline: Stat = { value: '$2.65B', count: 2.65, prefix: '$', suffix: 'B', decimals: 2, label: 'Enterprise value created for clients' };
+const headline: Stat = { value: '$2.65B', count: 2.65, prefix: '$', suffix: 'B', decimals: 2, label: 'Enterprise value created for clients', icon: 'value' };
 
-const groups: Group[] = [
-  {
-    label: 'Where we work',
-    items: [
-      { value: '25+', count: 25, suffix: '+', label: 'Countries where we work with clients' },
-      { value: '15+', count: 15, suffix: '+', label: 'Global commodity value chains' },
-    ],
-  },
-  {
-    label: 'What changed',
-    items: [
-      { value: '8M+', count: 8, suffix: 'M+', label: 'Acres of regenerative farmland' },
-      { value: '20+', count: 20, suffix: '+', label: 'Sustainable fisheries' },
-      { value: '2,000+', count: 2000, suffix: '+', label: 'Facilities with operational improvements' },
-    ],
-  },
-  {
-    label: 'How it’s verified',
-    items: [
-      { value: '10+', count: 10, suffix: '+', label: 'Carbon registries and regulated carbon markets' },
-      { value: '20+', count: 20, suffix: '+', label: 'Sustainable commodity certifications' },
-    ],
-  },
+// Owner wording, 2026-09-14, verbatim (case normalised to sentence case to
+// match the rest of the site's labels).
+const stats: Stat[] = [
+  { value: '25+', count: 25, suffix: '+', label: 'Countries with verified impact', icon: 'globe' },
+  { value: '15+', count: 15, suffix: '+', label: 'Commodity value chains', icon: 'commodity' },
+  { value: '8M+', count: 8, suffix: 'M+', label: 'Regenerative acres', icon: 'acres' },
+  { value: '20+', count: 20, suffix: '+', label: 'Sustainable fisheries', icon: 'fish' },
+  { value: '2,000+', count: 2000, suffix: '+', label: 'Resource efficient facilities', icon: 'facility' },
+  { value: '10+', count: 10, suffix: '+', label: 'Carbon registries & regulated markets', icon: 'registry' },
+  { value: '20+', count: 20, suffix: '+', label: 'Sustainable commodity & EACs', icon: 'certificate' },
 ];
-const flat = groups.flatMap((g) => g.items);
 
 const variants = [
-  { id: 'c1', name: 'Headline figure, grouped ledger', note: 'The seven supporting figures sit under three small labels that follow the story: where the work happens, what changed, how it is verified. The labels are the same small uppercase mark the site uses for stat types elsewhere.' },
-  { id: 'c2', name: 'Headline figure, flat ledger', note: 'Same figures and order, no group labels. Quieter; the reader has to infer the arc from the order alone.' },
+  { id: 'v1', name: 'Flat ledger, new text', note: 'The round-2 flat ledger with the owner’s tightened labels. Baseline for the other three.' },
+  { id: 'v2', name: 'Headline in colour: navy panel', note: 'The $2.65B side becomes the navy gradient panel the homepage already uses for How We Work and Who We Work With, with the figure in gold. The ledger stays on the light surface.' },
+  { id: 'v2b', name: 'Headline in colour: maroon numeral', note: 'Not requested, added for comparison. The quietest reading of “a different colour on that side”: only the numeral changes, to the brand maroon the rule and eyebrow already use.' },
+  { id: 'v3', name: 'Icons in the rows', note: 'A 1.5px line icon in a sky disc ahead of each figure. Placeholder drawings at the weight of the site’s existing inline marks; a chosen icon version gets a proper pass.' },
 ];
+
+// 24×24 stroke icons, 1.5px, round caps. Placeholder drawings.
+const icons: Record<string, string> = {
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/>',
+  commodity: '<path d="M12 22V9"/><path d="M12 13c-3.2 0-5.2-2-5.2-5.2 3.2 0 5.2 2 5.2 5.2zM12 13c3.2 0 5.2-2 5.2-5.2-3.2 0-5.2 2-5.2 5.2zM12 18c-3.2 0-5.2-2-5.2-5.2 3.2 0 5.2 2 5.2 5.2zM12 18c3.2 0 5.2-2 5.2-5.2-3.2 0-5.2 2-5.2 5.2z"/>',
+  acres: '<path d="M2.5 19h19"/><path d="M2.5 15.5c3-3.2 5.5-3.2 8.5 0 3 3.2 5.5 3.2 8.5 0"/><path d="M4 12c2.5-2.6 4.5-2.6 7 0"/><circle cx="17.5" cy="7" r="2.25"/>',
+  fish: '<path d="M2.75 12c2.5-4 6-6 9.5-6 3 0 5.5 2 7.25 6-1.75 4-4.25 6-7.25 6-3.5 0-7-2-9.5-6z"/><path d="M19.5 12l2.75-3.25v6.5L19.5 12"/><circle cx="8.25" cy="11" r="0.6" fill="currentColor" stroke="none"/>',
+  facility: '<path d="M3 21V9.5l5 3.25V9.5l5 3.25V9.5l5 3.25V21H3z"/><path d="M15.5 9.5V3.5h3v7.5"/><path d="M7 21v-4h3v4"/>',
+  registry: '<path d="M5 3.5h10.5A3.5 3.5 0 0 1 19 7v13.5H8.5A3.5 3.5 0 0 1 5 17V3.5z"/><path d="M5 17a3.5 3.5 0 0 1 3.5-3.5H19M9 7.5h6M9 10.5h6"/>',
+  certificate: '<path d="M12 2.75l7.25 2.9v5.6c0 4.9-3.1 8.4-7.25 10-4.15-1.6-7.25-5.1-7.25-10v-5.6L12 2.75z"/><path d="M8.75 12l2.25 2.25L15.5 9.75"/>',
+};
 ---
 
 <SiteLayout
   title="Track Record Options | Design Lab"
-  description="Internal design lab: Option C of the homepage Our Track Record section, refined."
+  description="Internal design lab: Option C2 of the homepage Our Track Record section, four versions."
   preview={true}
 >
   <div class="lab-intro">
     <div class="container">
-      <p class="lab-kicker">Design lab · not linked, not indexed · round 2</p>
-      <h1 class="lab-title">Our Track Record: Option C with the new figures</h1>
-      <p class="lab-text">Owner-supplied figures and categories, ordered to read as one story. Two variants of the ledger beside the headline figure. Jump:</p>
-      <nav class="lab-nav" aria-label="Variants">
+      <p class="lab-kicker">Design lab · not linked, not indexed · round 3</p>
+      <h1 class="lab-title">Our Track Record: the flat ledger, four ways</h1>
+      <p class="lab-text">Owner’s tightened labels throughout. One thing changes per version. Jump:</p>
+      <nav class="lab-nav" aria-label="Versions">
         {variants.map((v) => <a href={`#option-${v.id}`}>{v.id.toUpperCase()} · {v.name}</a>)}
       </nav>
     </div>
@@ -80,7 +75,7 @@ const variants = [
     <Fragment>
       <div class="lab-marker" id={`option-${v.id}`}>
         <div class="container">
-          <p class="lab-marker-name">Option {v.id.toUpperCase()} — {v.name}</p>
+          <p class="lab-marker-name">{v.id.toUpperCase()} — {v.name}</p>
           <p class="lab-marker-note">{v.note}</p>
         </div>
       </div>
@@ -98,35 +93,24 @@ const variants = [
           </header>
 
           <div class="tr-headline" data-tr-stats>
-            <div class="tr-headline-lead">
+            <div class={v.id === 'v2' ? 'tr-headline-lead tr-headline-lead-panel' : 'tr-headline-lead'}>
               <p class="stat-value tr-num tr-num-hero" data-count={headline.count} data-prefix={headline.prefix} data-suffix={headline.suffix} data-decimals={headline.decimals}>{headline.value}</p>
               <p class="stat-label tr-label tr-label-hero">{headline.label}</p>
             </div>
 
-            {v.id === 'c1' ? (
-              <div class="tr-headline-list">
-                {groups.map((g) => (
-                  <div class="tr-group">
-                    <p class="stat-type tr-group-label">{g.label}</p>
-                    {g.items.map((s) => (
-                      <div class="tr-headline-item">
-                        <p class="stat-value tr-num tr-num-sm" data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>{s.value}</p>
-                        <p class="stat-label tr-label">{s.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div class="tr-headline-list tr-headline-list-flat">
-                {flat.map((s) => (
-                  <div class="tr-headline-item">
-                    <p class="stat-value tr-num tr-num-sm" data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>{s.value}</p>
-                    <p class="stat-label tr-label">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div class="tr-headline-list">
+              {stats.map((s) => (
+                <div class="tr-headline-item">
+                  {v.id === 'v3' && (
+                    <span class="tr-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={icons[s.icon]} />
+                    </span>
+                  )}
+                  <p class="stat-value tr-num tr-num-sm" data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>{s.value}</p>
+                  <p class="stat-label tr-label">{s.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div class="section-cta">
@@ -152,12 +136,12 @@ const variants = [
   .lab-marker-note { margin: var(--space-1) 0 0; font-size: var(--text-sm); color: var(--color-text-secondary); max-width: var(--max-width-text); }
 
   /* ── Shared ───────────────────────────────────────────────────────── */
-  /* .stat-value / .stat-label / .stat-type supply family, weight, colour
-     and tracking (design-system.css). This block only sets size and layout. */
+  /* .stat-value / .stat-label supply family, weight, colour and tracking
+     (design-system.css). This block only sets size and layout. */
   .tr-num { font-variant-numeric: lining-nums tabular-nums; }
   .tr-label { margin: 0; font-size: var(--text-base); line-height: var(--line-relaxed); color: var(--color-text-secondary); }
 
-  /* ── C · Headline figure ──────────────────────────────────────────── */
+  /* ── C2 · Headline figure beside a flat ledger ────────────────────── */
   /* Same column template as .split-header, so the headline figure sits
      under the heading and the ledger under the lead paragraph. */
   .tr-headline {
@@ -168,8 +152,6 @@ const variants = [
     align-items: start;
   }
   .tr-headline-lead { padding-top: var(--space-5); border-top: 3px solid var(--color-eyebrow); }
-  /* "$2.65B" is six glyphs against last round's four, so the hero size steps
-     down to stay inside the 25rem title column. */
   .tr-num-hero { font-size: clamp(3.75rem, 6.2vw, 5.5rem); letter-spacing: -0.03em; }
   .tr-label-hero { margin-top: var(--space-4); font-size: var(--text-lg); max-width: 20rem; }
 
@@ -181,30 +163,62 @@ const variants = [
     padding: var(--space-3) 0;
     border-top: 1px solid var(--c-secondary-300);
   }
-  .tr-headline-list-flat .tr-headline-item:last-child,
-  .tr-group:last-child .tr-headline-item:last-child { border-bottom: 1px solid var(--c-secondary-300); }
+  .tr-headline-item:last-child { border-bottom: 1px solid var(--c-secondary-300); }
   .tr-num-sm { font-size: clamp(1.875rem, 2.2vw, 2.25rem); }
-  /* Numeral column sized for the widest figure ("2,000+", six glyphs) so
-     every label starts on the same line; ch scales with the font-size. */
+  /* Numeral column sized for the widest figure ("2,000+") so every label
+     starts on the same line; ch scales with the font-size. */
   .tr-headline-item .tr-num { flex: 0 0 auto; min-width: 6.4ch; }
-
-  /* Group labels: the site's .stat-type mark, placed as a row heading. The
-     first group's label sits flush with the top of the headline figure's
-     rule; later groups get a little air above. */
-  .tr-group-label { margin: 0 0 var(--space-2); }
-  .tr-group + .tr-group { margin-top: var(--space-6); }
 
   @media (max-width: 56rem) {
     .tr-headline { grid-template-columns: 1fr; row-gap: var(--space-8); }
     .tr-num-hero { font-size: clamp(3.5rem, 12vw, 4.5rem); }
   }
+
+  /* ── V2 · headline side as the navy panel ─────────────────────────── */
+  /* Same recipe as the homepage's .approach-card; the maroon rule goes,
+     the panel edge does that job. Figure in gold, label in sky. */
+  .tr-headline-lead-panel {
+    position: relative; overflow: hidden;
+    padding: var(--space-8);
+    border-top: 0;
+    background: var(--gradient-dark);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+  }
+  .tr-headline-lead-panel::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 65% at 100% 100%, rgba(168, 208, 219, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .tr-headline-lead-panel > * { position: relative; z-index: 1; }
+  .tr-headline-lead-panel .tr-num-hero { color: var(--c-accent-400); }
+  .tr-headline-lead-panel .tr-label-hero { color: var(--c-sky-300); }
+  @media (max-width: 56rem) { .tr-headline-lead-panel { padding: var(--space-6); } }
+
+  /* ── V2b · maroon numeral only ────────────────────────────────────── */
+  .tr-v2b .tr-num-hero { color: var(--color-accent); }
+
+  /* ── V3 · icon ahead of each figure ───────────────────────────────── */
+  .tr-icon {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.75rem; height: 2.75rem;
+    border-radius: var(--radius-full);
+    background: var(--c-sky-100);
+    color: var(--c-sky-700);
+  }
+  .tr-v3 .tr-headline-item { gap: var(--space-5); }
+  @media (max-width: 34rem) {
+    .tr-v3 .tr-headline-item { gap: var(--space-4); }
+    .tr-v3 .tr-icon { width: 2.25rem; height: 2.25rem; }
+    .tr-v3 .tr-icon svg { width: 18px; height: 18px; }
+  }
 </style>
 
 <script>
   // Count-up, lifted from about/index.astro (same easing), triggered per
-  // group by an IntersectionObserver. Adds decimals (data-decimals, for
-  // $2.65B) and thousands separators (2,000+) and caps the duration so the
-  // 2,000 figure does not run for twenty seconds. Skipped under reduced
+  // group by an IntersectionObserver. Decimals (data-decimals, for $2.65B),
+  // thousands separators (2,000+), duration capped. Skipped under reduced
   // motion: the SSR text stays.
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-tr-stats]'));
