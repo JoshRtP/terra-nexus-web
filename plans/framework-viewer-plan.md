@@ -366,9 +366,11 @@ Read §8 for what landed and how a framework is added.
 
 ### 9.1 Decisions (owner)
 
-1. **Attribution wording**, one paragraph per framework, rendered under
-   "About this framework" on each tool page. Current text is placeholder
-   wording for review, not a legal position:
+1. **Attribution wording and placement.** The "About this framework"
+   section was removed 2026-09-13 (owner: the hero already describes the
+   framework), so no attribution renders anywhere today. Each record still
+   holds an `attribution` paragraph (placeholder wording, not a legal
+   position) for when the owner decides where it should appear:
    - `apps/web/src/data/frameworks/ten-types-of-innovation.ts` (`attribution`)
    - `apps/web/src/data/frameworks/sustainability-chessboard.ts` (`attribution`)
    - `apps/web/src/data/frameworks/sustainability-enterprise-value-map.ts`
@@ -431,8 +433,6 @@ two pages, none hard-wired in the component:
 - Each record's `lead` (tool-page hero), `intro` (above the board) and
   `metaDescription`, and the `/tools/` index card text (which reuses
   `lead`) and card footer (counts).
-- The "About this framework" heading on the tool page is built from
-  counts (`pages/tools/[framework]/index.astro`).
 - The toolbar's stat strip (types, tactics, in play) and the "N tactics"
   line under every type on the board (`FrameworkViewer.astro`). These are
   the component's own labels; if they go, they go for every framework.

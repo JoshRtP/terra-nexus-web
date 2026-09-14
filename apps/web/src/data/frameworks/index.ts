@@ -64,7 +64,6 @@ export function validateFramework(fw: Framework): void {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(fw.slug)) throw new Error(`${where}: slug must be a lowercase hyphenated slug`);
   if (fw.categories.length === 0) throw new Error(`${where}: has no categories`);
   if (fw.types.length === 0) throw new Error(`${where}: has no types`);
-  if (fw.attribution.length === 0) throw new Error(`${where}: needs at least one attribution paragraph`);
 
   const categoryNames = new Set<string>();
   const cells = new Set<string>();

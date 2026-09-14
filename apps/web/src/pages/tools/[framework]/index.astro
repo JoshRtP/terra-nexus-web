@@ -6,12 +6,17 @@
 // Breadcrumbs run through the capability family that carries the framework
 // as its `tool` section, when one does, so the page sits inside
 // Capabilities rather than floating.
+//
+// No "About this framework" section: the owner removed it 2026-09-13 (the
+// hero already describes the framework). Each record's `attribution`
+// paragraphs are kept in the data, unrendered, until the owner decides
+// where and how attribution should appear.
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import ClosingCta from '../../../components/ClosingCta.astro';
 import FrameworkViewer from '../../../components/FrameworkViewer.astro';
 import { getBuildMode } from '../../../lib/build-mode.js';
-import { frameworks, FRAMEWORK_SLUGS, frameworkHref, tacticCount } from '../../../data/frameworks';
+import { frameworks, FRAMEWORK_SLUGS, frameworkHref } from '../../../data/frameworks';
 import { capabilityFamilies, CAPABILITY_SLUGS, capabilityHref } from '../../../data/capabilities';
 
 export function getStaticPaths() {
@@ -60,23 +65,6 @@ const ctaLinks = [
     </div>
   </section>
 
-  <section class="section section-alt" id="about" aria-labelledby="about-h">
-    <div class="container">
-      <header class="section-header split-header">
-        <span class="eyebrow split-header-eyebrow">About this framework</span>
-        <div class="split-header-title">
-          <h2 id="about-h">{fw.name}: {fw.types.length} {fw.labels.typePlural}, {tacticCount(fw)} {fw.labels.tacticPlural}</h2>
-        </div>
-        <div class="split-header-lead">
-          {fw.attribution.map((para) => <p class="section-lead">{para}</p>)}
-          {family && (
-            <p class="section-lead">Terra Nexus uses it in <a href={capabilityHref(family.slug)}>{family.name}</a> work.</p>
-          )}
-        </div>
-      </header>
-    </div>
-  </section>
-
   <ClosingCta
     heading="Bring the framework into a session"
     description="Tell us what you are trying to build, change, or take to market."
@@ -93,7 +81,6 @@ const ctaLinks = [
     .site-header,
     .site-footer,
     [data-page-hero],
-    .section-dark,
-    #about { display: none !important; }
+    .section-dark { display: none !important; }
   }
 </style>

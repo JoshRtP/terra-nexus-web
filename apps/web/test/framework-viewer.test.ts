@@ -209,8 +209,9 @@ describe('built pages', () => {
       expect(page()).toContain('<dialog class="fw-drawer"');
     });
 
-    it('carries the attribution, the meta, an absolute canonical and a breadcrumb through Capabilities', () => {
-      for (const para of fw().attribution) expect(page()).toContain(encode(para));
+    it('carries the meta, an absolute canonical and a breadcrumb through Capabilities, and no About section', () => {
+      expect(page()).not.toContain('id="about"');
+      expect(page()).not.toContain('About this framework');
       expect(page()).toContain(`<link rel="canonical" href="${SITE}${frameworkHref(slug)}">`);
       expect(page()).toContain(`<meta name="description" content="${encode(fw().metaDescription)}">`);
       const ld = page().match(/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s);

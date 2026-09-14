@@ -139,9 +139,10 @@ export interface Framework {
   /** One or two sentences above the board itself. */
   intro: string;
   labels: FrameworkLabels;
-  /** Paragraphs rendered verbatim in the tool's attribution block. Owner
-   * wording; see the record's provenance comment. */
-  attribution: string[];
+  /** Attribution paragraphs, owner wording. Not rendered since 2026-09-13
+   * (the owner removed the tool page's About section); kept in the data
+   * for when and where attribution is wanted. */
+  attribution?: string[];
   /** `columns` (default): one column per category. `matrix`: categories
    * placed by `cell` on a grid with `matrix` axis labels. */
   layout?: 'columns' | 'matrix';
