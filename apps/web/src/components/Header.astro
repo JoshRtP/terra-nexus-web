@@ -140,11 +140,11 @@ function isActive(href: string): boolean {
               <div class="panel-columns">
                 <div class="panel-col">
                   <span class="panel-col-heading">By Market Role</span>
-                  <ul class="panel-roles" role="list">
+                  <ul class="panel-links" role="list">
                     {industriesMenu.map((role) => (
                       <li>
-                        <a href={role.href} class={`panel-role-card panel-role-${role.key}`}>
-                          <span class="panel-role-title">{role.title}</span>
+                        <a href={role.href} class="panel-link">
+                          <span class="panel-link-title">{role.title}</span>
                         </a>
                       </li>
                     ))}
@@ -349,32 +349,6 @@ function isActive(href: string): boolean {
   }
   .panel-view-all:hover { color: var(--color-accent); text-decoration: underline; }
 
-  .panel-roles {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; grid-template-columns: 1fr; gap: var(--space-2);
-    width: 16rem;
-  }
-  .panel-role-card {
-    display: block;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    border-inline-start: 3px solid var(--c-sky-300);
-    text-decoration: none;
-    background: var(--color-surface);
-    transition: border-color var(--transition-fast), transform var(--transition-fast);
-  }
-  .panel-role-card:hover,
-  .panel-role-card:focus-visible {
-    border-inline-start-color: var(--color-accent);
-    transform: translateY(-2px);
-  }
-  .panel-role-card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .panel-role-title {
-    font-size: var(--text-sm); font-weight: var(--font-semibold);
-    color: var(--color-text);
-  }
-
   @media (max-width: 64rem) {
     .nav-toggle { display: flex; }
     .primary-nav {
@@ -402,8 +376,7 @@ function isActive(href: string): boolean {
       margin: 0 var(--space-2) var(--space-2);
     }
     .panel-inner { padding: var(--space-2) var(--space-2) var(--space-3); }
-    .panel-links,
-    .panel-roles { width: auto; }
+    .panel-links { width: auto; }
     /* Two-column groups stack to one column in the mobile drawer — there's
        no room for Producers/Buyers/Enablers or Our Approach beside their
        second column at 360px. */
@@ -411,8 +384,6 @@ function isActive(href: string): boolean {
     .panel-col-heading { color: rgba(255, 255, 255, 0.5); }
     .panel-link-title { color: #fff; }
     .panel-link:hover, .panel-link:focus-visible { background: rgba(255, 255, 255, 0.08); }
-    .panel-role-card { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
-    .panel-role-title { color: #fff; }
     .panel-view-all { color: var(--c-accent-300); }
   }
 </style>
@@ -516,7 +487,7 @@ function isActive(href: string): boolean {
 
     // Close the mobile drawer on a full-page-link click (leaf links only —
     // menu triggers toggle their own panel and shouldn't close the drawer).
-    nav.querySelectorAll('a.nav-link, a.panel-link, a.panel-role-card, a.panel-view-all').forEach((link) => {
+    nav.querySelectorAll('a.nav-link, a.panel-link, a.panel-view-all').forEach((link) => {
       link.addEventListener('click', () => {
         if (nav.getAttribute('data-open') === 'true') {
           nav.setAttribute('data-open', 'false');
