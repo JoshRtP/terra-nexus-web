@@ -841,10 +841,39 @@ publish is listed in each data module's header comment.
   line table). The map's root level is server-rendered; drills re-render
   from a JSON blob that carries only each tactic's type and value-line
   codes, titles being read back from the cards in the DOM.
+- **The embed drills down in place (2026-09-16).** Clicking a type on a
+  capability page opens that type's panel inside the host page rather than
+  navigating to the tool. The compact variant now ships the same detail
+  panels and tactic drawer as the full one, minus the play sheet, the add
+  buttons and the value map; tactics render as dense rows there whatever
+  their count. It deliberately does not route through the URL hash — the
+  host page owns its own anchors — and it neither reads nor writes the full
+  tool's stored play sheet. Every control is still a real link to
+  `/tools/<slug>/#type-<id>`, so with no JS, or on a modified click, the
+  reader lands on the full tool.
+- **Rows line up across the columns (2026-09-16).** Each column is a
+  subgrid of the board's rows, so the first type in every category shares
+  one row height whatever length its description runs to. The rules are
+  generated in `lib/framework-board-css.ts`; a category with fewer types
+  leaves its trailing tracks empty. Without subgrid support the columns
+  fall back to their own heights, which is the previous behaviour.
+- **`lib/framework-board-css.ts` holds the generated rules** (category and
+  type colours, focused-column widths, the row subgrid) rather than the
+  component's frontmatter. It is a pure function of the record, so the
+  tests call it directly — and a long run of nested template literals in an
+  `.astro` frontmatter is the shape that trips Astro's frontmatter scan
+  when the component also has a `<script>` tag, the same class of bug
+  `StrategyFrameworkDVF.astro` carries a note about. Here it surfaced as
+  the compiler emitting `export interface Props` twice, once inside the
+  component function, which esbuild rejects with a bare `Unexpected
+  "export"` pointing at an unrelated line. Keep generated-string work in a
+  module.
 - Gotchas found by measurement: `overflow: hidden` on the board made it
   the scrollport for the sticky column headers below 64rem (`overflow:
   clip` instead); a scoped `@media print` rule cannot reach other
-  components' elements, so the tool page's print rules are `is:global`.
+  components' elements, so the tool page's print rules are `is:global`;
+  grid items keep `min-width: auto`, which overflowed the detail view at
+  390px until the children were given `min-width: 0`.
 
 ## 6. Cloudflare direction
 

@@ -437,6 +437,11 @@ two pages, none hard-wired in the component:
 - The toolbar's stat strip (types, tactics, in play) and the "N tactics"
   line under every type on the board (`FrameworkViewer.astro`). These are
   the component's own labels; if they go, they go for every framework.
+- Done 2026-09-16: the Ten Types' "WHY ONLY TWO" category note is gone
+  (its point is in the hero lead, and on the board it broke the row
+  alignment), and the embed's footer line no longer counts tactics and
+  types. The Value Map still carries a "WHY IT IS THE BIGGEST" note, which
+  is untouched and may want the same treatment.
 - Labels the owner may want removed or renamed: the "focus / unfocus" hint
   in each column header, "Open one for detail. Use Add to build the play
   sheet.", "No examples yet", the path line under each Value Map action,
