@@ -9,6 +9,7 @@
 // actually thinks about what they did not understand.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import { caseStudiesArePublished } from '../../lib/content-availability.js';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
 import { glossary, glossaryCategories } from '../../data/glossary';
@@ -93,7 +94,7 @@ const grouped = glossaryCategories.map((category) => ({
     links={[
       { label: 'Areas of expertise', href: '/expertise/' },
       { label: 'Our approach & capabilities', href: '/capabilities/' },
-      { label: 'Case studies', href: '/case-studies/' },
+      ...(caseStudiesArePublished(mode) ? [{ label: 'Case studies', href: '/case-studies/' }] : []),
     ]}
   />
 </SiteLayout>

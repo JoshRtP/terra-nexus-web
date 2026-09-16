@@ -2,6 +2,7 @@
 import CaseStudyArticle from '../../components/CaseStudyArticle.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import { caseStudiesArePublished } from '../../lib/content-availability.js';
 import { compileForBuild } from '../../lib/okf/build.js';
 import { renderCaseStudyMarkdown } from '../../lib/okf/case-study-markdown.js';
 import { selectCaseStudyPages, type CaseStudyPageModel } from '../../lib/okf/case-study-pages.js';
@@ -9,7 +10,12 @@ import { selectCaseStudyPages, type CaseStudyPageModel } from '../../lib/okf/cas
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const compilation = await compileForBuild(getBuildMode());
+  const mode = getBuildMode();
+  // Not-yet-live sections generate no detail routes, so the one approved
+  // case study is unreachable by URL as well as unlisted. See
+  // src/lib/content-availability.ts.
+  if (!caseStudiesArePublished(mode)) return [];
+  const compilation = await compileForBuild(mode);
   return selectCaseStudyPages(compilation).map((page) => ({
     params: { slug: page.slug },
     props: { page },

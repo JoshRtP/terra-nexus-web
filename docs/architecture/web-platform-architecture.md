@@ -91,6 +91,24 @@ form's submission endpoint.
   2026-08-16 — see the review-stop note below and CLAUDE.md §5)
 - `/capabilities`, `/capabilities/{5 offering slugs}`
 - `/case-studies`, `/case-studies/[slug]` (dynamic, `getStaticPaths()` from OKF graph, `prerender = true`)
+  — **not yet live in production** (owner decision, 2026-09-16): with a
+  single approved engagement in `knowledge/`, `/case-studies` renders the
+  same not-yet-live band `/insights/research` uses (`ComingSoon.astro`:
+  no hero, no explanatory paragraph, its heading is the page's `<h1>`, a
+  full-bleed brand scene from `data/brand-scenes.ts` under a navy scrim, and
+  the closing CTA carries `comingSoonOnwardLinks` in place of the navigation
+  the hero used to provide) and `getStaticPaths()` returns no detail routes,
+  so `/case-studies/[slug]` 404s on a production build. Scene assignments
+  (owner, 2026-09-16): `group-bright` here, `man` on `/insights/research`,
+  `woman` on the 404's `PageHero variant="media"`. Compare the set at
+  `/design-lab/coming-soon/`. Contextual links into the section (the
+  capability pages' Relevant Proof band, the expertise/glossary/audience
+  closing-CTA link rows) are suppressed with it; header and footer keep
+  their Case Studies entry, as they do for Research. Preview builds
+  (non-production branches, `noindex` behind a disallowing robots.txt)
+  still publish the case study, which is where
+  `test/astro-foundation.test.ts` keeps its anonymization assertions.
+  One switch: `src/lib/content-availability.ts`.
 - `/expertise`, `/expertise/{9 topic slugs}`
 - `/who-we-work-with`, `/who-we-work-with/{2 segment slugs}`
 - `/digital-solutions` — placeholder product page (reconciled onto main

@@ -1,0 +1,12 @@
+---
+import Lab from '../_Lab.astro';
+import { labOptions } from '../_options';
+
+export function getStaticPaths() {
+  return labOptions.map((o) => ({ params: { option: o.id }, props: { option: o.id } }));
+}
+
+const { option } = Astro.props;
+---
+
+<Lab option={option} />

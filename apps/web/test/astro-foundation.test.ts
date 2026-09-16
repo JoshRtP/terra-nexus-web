@@ -71,7 +71,6 @@ describe('Astro static foundation', () => {
     const productionIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
     const productionRobots = await readFile(resolve(dist, 'robots.txt'), 'utf8');
     const productionCaseStudies = await readFile(resolve(dist, 'case-studies/index.html'), 'utf8');
-    const productionDetail = await readFile(resolve(dist, `case-studies/${pilotRoute}/index.html`), 'utf8');
 
     expect(productionIndex).toContain('Terra Nexus');
     expect(productionIndex).toContain('Impact at the Intersection of Food');
@@ -85,25 +84,20 @@ describe('Astro static foundation', () => {
     expect(existsSync(resolve(dist, 'sitemap-index.xml'))).toBe(true);
 
     expect(existsSync(resolve(dist, 'case-studies/index.html'))).toBe(true);
-    expect(existsSync(resolve(dist, `case-studies/${pilotRoute}/index.html`))).toBe(true);
+    // Case Studies is not yet live in production (owner decision, 2026-09-16,
+    // src/lib/content-availability.ts): the index renders a placeholder and
+    // the one approved case study gets no route at all, so it is unreachable
+    // by URL rather than merely unlisted. Preview builds still publish it,
+    // which is where the anonymization assertions below run.
+    expect(existsSync(resolve(dist, `case-studies/${pilotRoute}/index.html`))).toBe(false);
     expect(existsSync(resolve(dist, 'expertise/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, 'capabilities/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, 'who-we-work-with/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, 'about/index.html'))).toBe(true);
     expect(existsSync(resolve(dist, 'contact/index.html'))).toBe(true);
 
-    expect(productionCaseStudies).toContain(`href="/case-studies/${pilotRoute}"`);
-    expect(productionDetail).toContain('Evaluating Commercial Pathways for Lower-Emissions Beef from Optimized Diets');
-    expect(productionDetail).toContain('$12.5 million');
-    expect(productionDetail).toContain('8.25%');
-    expect(productionDetail).toContain('<table>');
-    expect(productionDetail.match(/<h1(?:\s[^>]*)?>/g) ?? []).toHaveLength(1);
-    for (const confidentialIdentifier of [
-      ['Car', 'gill'].join(''),
-      ['Beef', 'Max'].join(''),
-    ]) {
-      expect(productionDetail).not.toContain(confidentialIdentifier);
-    }
+    expect(productionCaseStudies).not.toContain(`href="/case-studies/${pilotRoute}"`);
+    expect(productionCaseStudies).toContain('Case Studies Are Within View');
 
     build('preview');
     const previewIndex = await readFile(resolve(dist, 'index.html'), 'utf8');
@@ -118,6 +112,18 @@ describe('Astro static foundation', () => {
     expect(previewIndex).toContain('noindex, nofollow');
     expect(previewCaseStudies).toContain('noindex, nofollow');
     expect(previewDetail).toContain('noindex, nofollow');
+    expect(previewCaseStudies).toContain(`href="/case-studies/${pilotRoute}"`);
+    expect(previewDetail).toContain('Evaluating Commercial Pathways for Lower-Emissions Beef from Optimized Diets');
+    expect(previewDetail).toContain('$12.5 million');
+    expect(previewDetail).toContain('8.25%');
+    expect(previewDetail).toContain('<table>');
+    expect(previewDetail.match(/<h1(?:\s[^>]*)?>/g) ?? []).toHaveLength(1);
+    for (const confidentialIdentifier of [
+      ['Car', 'gill'].join(''),
+      ['Beef', 'Max'].join(''),
+    ]) {
+      expect(previewDetail).not.toContain(confidentialIdentifier);
+    }
     expect(previewRobots).toBe('User-agent: *\nDisallow: /\n');
     // No sitemap in a preview build: the whole site is noindex there, and
     // shipping one would invite exactly the crawl the noindex prevents.

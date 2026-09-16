@@ -36,6 +36,7 @@ import ClosingCta from './ClosingCta.astro';
 import MechanismSelector from './MechanismSelector.astro';
 import FrameworkViewer from './FrameworkViewer.astro';
 import { getBuildMode } from '../lib/build-mode.js';
+import { caseStudiesArePublished } from '../lib/content-availability.js';
 import { stages } from '../data/lifecycle';
 import { marketMechanisms } from '../data/market-mechanisms';
 import { segmentsForCapability } from '../data/who-we-work-with';
@@ -338,7 +339,10 @@ const serviceSchema = service(Astro.site, {
   )}
 
   {/* ── Proof ────────────────────────────────────────────────────────── */}
-  {family.proofNote && (
+  {/* Every family's proofNote describes the one approved case study and its
+      CTA links into the section, so the whole band stands down while Case
+      Studies is not yet live. See src/lib/content-availability.ts. */}
+  {family.proofNote && caseStudiesArePublished(mode) && (
     <section class={tone('proof')} id="proof" aria-labelledby="proof-h">
       <div class="container">
         <header class="section-header">

@@ -17,6 +17,7 @@ import { marketMechanisms } from '../src/data/market-mechanisms';
 import { capabilityFamilies, CAPABILITY_SLUGS, expertiseForCapability, stageDetails, offeringAnchor } from '../src/data/capabilities';
 import { approachMenu, claimsMenu, capabilitiesMenu } from '../src/data/nav-data';
 import { segmentsForCapability } from '../src/data/who-we-work-with';
+import { caseStudiesArePublished } from '../src/lib/content-availability.js';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -121,7 +122,11 @@ describe.each(CAPABILITY_SLUGS)('capability page: %s', (slug) => {
       ...(f.lifecycle ? ['lifecycle'] : []),
       'offerings',
       ...((expertiseForCapability[slug]?.length ?? 0) > 0 || (segmentsForCapability[slug]?.length ?? 0) > 0 ? ['expertise'] : []),
-      ...(f.proofNote ? ['proof'] : []),
+      // The proof band renders only while Case Studies publishes: every
+      // family's proofNote describes the one approved case study and its CTA
+      // links into the section. This fixture builds production, where the
+      // section is not yet live (src/lib/content-availability.ts).
+      ...(f.proofNote && caseStudiesArePublished('production') ? ['proof'] : []),
     ];
     expect(sectionIds(html[slug])).toEqual(expected);
   });

@@ -16,6 +16,12 @@ interface Props {
    * width — without this a single 1600w file upscales on wide displays. */
   heroImageSrcSet?: string;
   heroImageAlt?: string;
+  /** 'media' variant only. Which side of the frame the copy column sits on.
+   * Default 'start' is the left-aligned treatment every expertise topic uses.
+   * 'end' pushes it to the right half, for a photograph whose subject stands
+   * on the left and would otherwise sit behind the type — the 404's seated
+   * stargazer (added 2026-09-16). */
+  mediaAlign?: 'start' | 'end';
 }
 
 const {
@@ -28,6 +34,7 @@ const {
   heroImage,
   heroImageSrcSet,
   heroImageAlt,
+  mediaAlign = 'start',
 } = Astro.props;
 ---
 
@@ -103,15 +110,20 @@ const {
     />
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="container hero-content">
-      {eyebrow && <span class="eyebrow eyebrow-light">{eyebrow}</span>}
-      <h1 id="hero-heading">{title}</h1>
-      {lead && <p class="hero-lead">{lead}</p>}
-      {(primaryCta || secondaryCta) && (
-        <div class="hero-actions">
-          {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
-          {secondaryCta && <a href={secondaryCta.href} class="btn btn-ghost">{secondaryCta.label}</a>}
-        </div>
-      )}
+      {/* Copy column. Wrapping exists so `mediaAlign` can move the whole block
+          across the frame; at the default 'start' it is a no-op wrapper and
+          the rendered result is unchanged from before it existed. */}
+      <div class:list={['hero-copy', { 'hero-copy-end': mediaAlign === 'end' }]}>
+        {eyebrow && <span class="eyebrow eyebrow-light">{eyebrow}</span>}
+        <h1 id="hero-heading">{title}</h1>
+        {lead && <p class="hero-lead">{lead}</p>}
+        {(primaryCta || secondaryCta) && (
+          <div class="hero-actions">
+            {primaryCta && <a href={primaryCta.href} class="btn btn-primary">{primaryCta.label}</a>}
+            {secondaryCta && <a href={secondaryCta.href} class="btn btn-ghost">{secondaryCta.label}</a>}
+          </div>
+        )}
+      </div>
     </div>
   </section>
 ) : (
@@ -189,6 +201,12 @@ const {
     position: relative;
     padding-block: var(--space-16) var(--space-20);
     z-index: 1;
+  }
+  .hero-copy { max-width: 40rem; }
+  /* Right half of the frame. Only below the phone breakpoint does it go back
+     to full width — at 390px there is no "other side" to move out of. */
+  @media (min-width: 48rem) {
+    .hero-copy-end { margin-left: auto; }
   }
   .hero-content h1 {
     color: var(--color-text-inverse);
