@@ -40,6 +40,7 @@ import { getBuildMode } from '../../lib/build-mode.js';
 import ClosingCta from '../../components/ClosingCta.astro';
 import ProfileRoster from '../../components/ProfileRoster.astro';
 import { trackRecordHeadline, trackRecordStats as trackRecordPortfolio } from '../../data/track-record';
+import { trackRecordIcons } from '../../data/track-record-icons';
 
 const mode = getBuildMode();
 
@@ -111,7 +112,12 @@ const originChapters = [
   {
     label: 'The proof',
     title: 'Today: programs in the ground, value on the books.',
-    body: 'Work spanning the value chain from farm to brand, an integrated carbon and ecosystem developer inside the studio, and a food loss & waste credit program we developed and operate ourselves.',
+    // Owner request 2026-09-16: the descriptive sentence that sat under
+    // this heading is replaced by the portfolio figures themselves (the
+    // shared record the homepage renders), and the separate white "Our
+    // Track Record" section that followed the story is gone. The proof
+    // chapter *is* the track record now.
+    proofStats: true,
   },
 ];
 
@@ -402,6 +408,63 @@ const rosterGroups: Array<{
               {chapter.body && <p>{chapter.body}</p>}
               {chapter.pullQuote && <p class="origin-pull-quote">{chapter.pullQuote}</p>}
               {chapter.closingLine && <p class="origin-closing-line">{chapter.closingLine}</p>}
+              {chapter.proofStats && (
+                <div class="proof-stats">
+                  {/* PROTOTYPE (design/about-proof-stats, 2026-09-16): three
+                      candidate treatments of the same eight figures. The
+                      page script keeps the one named by ?proof=a|b|c
+                      (default a) and removes the other two. When one is
+                      chosen, delete the others and the switch. */}
+
+                  {/* A: counter grid, the retired white strip's 4x2 grid
+                      recoloured for the navy surface. */}
+                  <div class="proof-variant proof-grid" data-proof-variant="a" data-stat-strip>
+                    {trackRecordStats.map((stat) => (
+                      <div class="proof-stat">
+                        <p class="stat-value stat-value-md proof-num" data-count={stat.count} data-prefix={stat.prefix} data-suffix={stat.suffix} data-decimals={stat.decimals}>{stat.value}</p>
+                        <p class="stat-label proof-label">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* B: headline + ledger, the homepage Track Record's
+                      hierarchy (one hero figure, then a ledger of seven
+                      with its line icons) on the dark surface. */}
+                  <div class="proof-variant proof-ledger-wrap" data-proof-variant="b" data-stat-strip hidden>
+                    <div class="proof-hero">
+                      <p class="stat-value proof-num proof-hero-num" data-count={trackRecordHeadline.count} data-prefix={trackRecordHeadline.prefix} data-suffix={trackRecordHeadline.suffix} data-decimals={trackRecordHeadline.decimals}>{trackRecordHeadline.value}</p>
+                      <p class="stat-label proof-label proof-hero-label">{trackRecordHeadline.label}</p>
+                    </div>
+                    <div class="proof-ledger">
+                      {trackRecordPortfolio.map((stat) => (
+                        <div class="proof-row">
+                          <span class="proof-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={trackRecordIcons[stat.icon]} />
+                          </span>
+                          <p class="stat-value proof-num proof-row-num" data-count={stat.count} data-prefix={stat.prefix} data-suffix={stat.suffix}>{stat.value}</p>
+                          <p class="stat-label proof-label">{stat.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* C: tiles, the Resilient / Sustainable / Prosperous
+                      tile recipe from the chapter above, the headline
+                      figure on the gold-tinted outcome panel. */}
+                  <div class="proof-variant proof-tiles" data-proof-variant="c" data-stat-strip hidden>
+                    <div class="proof-tile proof-tile-hero">
+                      <p class="stat-value proof-num proof-tile-hero-num" data-count={trackRecordHeadline.count} data-prefix={trackRecordHeadline.prefix} data-suffix={trackRecordHeadline.suffix} data-decimals={trackRecordHeadline.decimals}>{trackRecordHeadline.value}</p>
+                      <p class="stat-label proof-label">{trackRecordHeadline.label}</p>
+                    </div>
+                    {trackRecordPortfolio.map((stat) => (
+                      <div class="proof-tile">
+                        <p class="stat-value stat-value-md proof-num" data-count={stat.count} data-prefix={stat.prefix} data-suffix={stat.suffix}>{stat.value}</p>
+                        <p class="stat-label proof-label">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {chapter.levers && (
                 <div class="origin-levers">
                   {chapter.levers.map((lever) => (
@@ -441,31 +504,6 @@ const rosterGroups: Array<{
     </div>
   </section>
 
-  <!-- Our Track Record — reuses index.astro's exact .stat-strip pattern and
-       figures rather than a new count-up widget (see header comment). -->
-  <section class="section" aria-labelledby="track-record-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow" data-reveal>Our Track Record</span>
-        <h2 id="track-record-heading" data-reveal>Proven portfolio of successful impact</h2>
-      </header>
-
-      <div class="stat-strip" data-stat-strip>
-        {trackRecordStats.map((stat, i) => (
-          <div class="stat-item" data-reveal style={`--reveal-i: ${i}`}>
-            <p
-              class="stat-value stat-value-md"
-              data-count={stat.count}
-              data-prefix={stat.prefix}
-              data-suffix={stat.suffix}
-              data-decimals={stat.decimals}
-            >{stat.value}</p>
-            <p class="stat-label">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <!-- Leadership — Executive Profile Roster (unchanged from existing
        roster wiring on this branch). -->
@@ -744,20 +782,44 @@ const rosterGroups: Array<{
     .origin-rail-list { flex-direction: row; flex-wrap: wrap; margin-top: 0; padding-left: var(--space-4); }
   }
 
-  /* ── Our Track Record — the strip the homepage used until 2026-09-14,
-     kept here in the page's own reveal rhythm. Four columns: the shared
-     record is eight figures with short labels, so two rows of four. ── */
-  .stat-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: var(--space-8);
-    row-gap: var(--space-10);
+  /* ── The proof: portfolio figures inside the dark chapter ──
+     Three candidate treatments (design/about-proof-stats, 2026-09-16), all
+     on the shared .stat-value/.stat-label primitives recoloured for the
+     navy surface: numerals in the chapter's gold (--c-accent-400, the same
+     colour as the lever numerals and outcome tiles above), labels in the
+     chapter's body grey (--c-secondary-300). */
+  .proof-stats { margin-top: var(--space-8); }
+  .proof-num { color: var(--c-accent-400); font-variant-numeric: lining-nums tabular-nums; }
+  .proof-label { margin-top: var(--space-2); font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--c-secondary-300); }
+
+  /* A: counter grid */
+  .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-8) var(--space-6); }
+  .proof-grid .proof-stat { padding-top: var(--space-4); border-top: 2px solid var(--c-accent-400); }
+  @media (max-width: 40rem) { .proof-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-6) var(--space-5); } }
+
+  /* B: headline + ledger */
+  .proof-hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-5); padding-bottom: var(--space-5); border-bottom: 1px solid var(--c-accent-400); }
+  .proof-hero-num { font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing: -0.03em; }
+  .proof-hero-label { margin: 0; font-size: var(--text-lg); color: var(--c-sky-300); }
+  .proof-ledger { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-8); }
+  .proof-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-dark-border); }
+  .proof-icon { flex: 0 0 auto; display: inline-flex; width: 1.75rem; color: var(--c-accent-400); }
+  .proof-row-num { flex: 0 0 auto; min-width: 5.2ch; font-size: var(--text-3xl); }
+  .proof-row .proof-label { margin: 0; }
+  @media (max-width: 40rem) { .proof-ledger { grid-template-columns: 1fr; } }
+
+  /* C: tiles. Three columns so the double-width headline tile plus seven
+     figures fill three even rows; two columns on phones, with the last
+     tile stretched so no row is left half empty. */
+  .proof-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  .proof-tile { padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid var(--color-dark-border); }
+  .proof-tile-hero { grid-column: span 2; background: rgba(231, 215, 127, 0.1); border-color: rgba(231, 215, 127, 0.35); }
+  .proof-tile-hero-num { font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -0.03em; }
+  .proof-tiles .proof-label { font-size: var(--text-xs); font-style: italic; color: var(--c-secondary-400); }
+  @media (max-width: 40rem) {
+    .proof-tiles { grid-template-columns: repeat(2, 1fr); }
+    .proof-tile:last-child { grid-column: span 2; }
   }
-  @media (max-width: 64rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
-  .stat-item { padding-top: var(--space-4); border-top: 3px solid var(--color-eyebrow); }
-  .stat-item .stat-value { margin-top: var(--space-3); }
-  .stat-item .stat-label { margin-top: var(--space-2); max-width: 26rem; color: var(--color-text-secondary); }
 
   /* ── Scroll progress bar — identical to
        expertise/regenerative-agriculture/index.astro's implementation. ── */
@@ -913,6 +975,15 @@ const rosterGroups: Array<{
   // eased (1-(1-t)^3) over ~1.1–1.4s depending on magnitude. Skipped under
   // reduced motion — the SSR/no-JS plain-text value (e.g. "$3B+") already
   // renders in the markup and is left untouched in that case.
+  // PROTOTYPE ONLY (design/about-proof-stats): ?proof=a|b|c picks which of
+  // the three proof-chapter stat treatments stays in the DOM; the other two
+  // are removed before the counters below are collected. Delete this block
+  // and the two unchosen variants when one is promoted.
+  const proofPick = new URLSearchParams(location.search).get('proof') || 'a';
+  document.querySelectorAll<HTMLElement>('[data-proof-variant]').forEach((el) => {
+    if (el.dataset.proofVariant === proofPick) el.hidden = false; else el.remove();
+  });
+
   const counters = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
   let countedIn = false;
   // Decimals ($2.65B) and thousands separators (2,000+) as in
