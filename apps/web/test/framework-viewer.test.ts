@@ -30,6 +30,7 @@ import {
   type Framework,
 } from '../src/data/frameworks';
 import { capabilityFamilies } from '../src/data/capabilities';
+import { boardCss, boardRowCount, boardMatrixRows, onTint } from '../src/lib/framework-board-css';
 
 const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(TEST_DIRECTORY, '..');
@@ -232,21 +233,83 @@ describe('built pages', () => {
     });
   });
 
-  it('Strategy & Innovation carries the compact board under the core question, each type linking into the tool', () => {
+  it('Strategy & Innovation embeds a board that drills down in place and still links into the tool', () => {
     const fw = frameworks[capabilityFamilies['strategy-and-innovation'].tool!.framework];
     const href = frameworkHref(fw.slug);
     expect(html.strategy).toContain('data-fw-variant="compact"');
     expect(html.strategy).toContain('id="tool"');
+    // Every type link is a real link to the full tool (what happens with no
+    // JS) and the script drills down in place instead.
     for (const t of fw.types) expect(html.strategy).toContain(`href="${href}#type-${t.id}"`);
     expect(html.strategy).toContain(`href="${href}" class="btn btn-secondary"`);
-    // Compact means the board only: no detail panels, no play sheet, no script data.
-    expect(html.strategy).not.toContain('data-fw-view="detail"');
-    expect(html.strategy).not.toContain('data-fw-data');
+    // One detail panel per type, plus the drawer and the data the script needs.
+    expect(count(html.strategy, /data-fw-view="detail"/g)).toBe(fw.types.length);
+    for (const t of fw.types) expect(html.strategy).toContain(`id="type-${t.id}"`);
+    for (const x of flatTactics(fw)) expect(html.strategy).toContain(`id="tactic-${x.id}"`);
+    expect(html.strategy).toContain('data-fw-data');
+    // No play sheet in the embed: no add buttons, no sheet, no toolbar.
+    expect(html.strategy).not.toContain('data-fw-view="play"');
+    expect(html.strategy).not.toContain('class="fw-add"');
+    expect(html.strategy).not.toContain('data-fw-toggle=');
+    // Headings sit under the host section's h2.
+    expect(html.strategy).toMatch(new RegExp(`<h3[^>]*id="type-${fw.types[0].id}-h"`));
     expect(count(html.strategy, /\sstyle="/g)).toBe(0);
-    // Section order: the tool sits directly after the core question, before the offerings.
-    const ids = Array.from(html.strategy.matchAll(/<section[^>]*\sid="([a-z-]+)"/g)).map((m) => m[1]);
+    // Section order: the tool sits directly after the core question, before
+    // the offerings. Page sections only — the viewer's own panels are not
+    // `.section` elements.
+    const ids = Array.from(html.strategy.matchAll(/<section class="section[^"]*" id="([a-z-]+)"/g)).map((m) => m[1]);
     expect(ids.indexOf('tool')).toBe(ids.indexOf('decisions') + 1);
     expect(ids.indexOf('offerings')).toBeGreaterThan(ids.indexOf('tool'));
+  });
+
+  it('every board column subgrids onto one set of rows, so the types line up', () => {
+    for (const slug of FRAMEWORK_SLUGS) {
+      const fw = frameworks[slug];
+      // Header + the longest category's types + a note row, times the matrix
+      // rows. Every column spans them, so row N lines up across the board.
+      const tracks = boardRowCount(fw) * boardMatrixRows(fw);
+      expect(boardRowCount(fw)).toBe(1 + Math.max(...fw.categories.map((c) => fw.types.filter((t) => t.category === c.name).length)) + (fw.categories.some((c) => c.note) ? 1 : 0));
+      expect(html[slug]).toContain('@supports (grid-template-rows:subgrid)');
+      expect(html[slug]).toContain(`.fw-board{grid-template-rows:repeat(${tracks},auto)}`);
+      expect(html[slug]).toContain('.fw-board>.fw-col{display:grid;grid-template-rows:subgrid}');
+    }
+  });
+
+  it('board colours come from the record and only ever reach the page as a style element', () => {
+    const css = boardCss(tenTypesOfInnovation);
+    for (const t of tenTypesOfInnovation.types) expect(css).toContain(`[data-fw-type="${t.id}"]{--fw-tint:${t.color}`);
+    // The lightest tint takes navy text, the darkest white.
+    expect(onTint('#9AA89B')).toBe('#131f48');
+    expect(onTint('#131F48')).toBe('#ffffff');
+  });
+
+  it('the embed carries no examples at all, so a reader starts from scratch', () => {
+    const fw = frameworks[capabilityFamilies['strategy-and-innovation'].tool!.framework];
+    // Not one company illustration, at type level or tactic level.
+    for (const t of fw.types) {
+      for (const e of t.examples ?? []) expect(html.strategy, e.who).not.toContain(encode(e.what));
+    }
+    for (const x of flatTactics(fw)) {
+      for (const e of x.tactic.examples ?? []) expect(html.strategy, e.who).not.toContain(encode(e.what));
+    }
+    expect(html.strategy).not.toContain('How this type shows up');
+    expect(html.strategy).not.toContain('In the field');
+    expect(html.strategy).not.toContain('data-fw-examples');
+    expect(html.strategy).not.toMatch(/No examples yet|\d+ examples?</);
+    // With nothing to reveal there is no drawer, and a tactic title is text.
+    expect(html.strategy).not.toContain('<dialog class="fw-drawer"');
+    expect(html.strategy).not.toContain('data-fw-drawer=');
+    expect(html.strategy).not.toContain('fw-tactic-open');
+    // The full tool still carries every one of them.
+    const tool = html[fw.slug];
+    for (const t of fw.types) for (const e of t.examples ?? []) expect(tool).toContain(encode(e.what));
+    expect(tool).toContain('<dialog class="fw-drawer"');
+  });
+
+  it('the Ten Types board carries no category note', () => {
+    expect(tenTypesOfInnovation.categories.every((c) => !c.note)).toBe(true);
+    expect(html['ten-types-of-innovation']).not.toContain('WHY ONLY TWO');
+    expect(html.strategy).not.toContain('WHY ONLY TWO');
   });
 
   it('the hub links to the Strategy tool and the footer links to the tools index', () => {

@@ -1156,3 +1156,56 @@ neutral provenance comment plus an editable `attribution` paragraph).
   headings, labels to remove) are in `plans/framework-viewer-plan.md` §9.
   Branch pushed to GitHub; not merged, not deployed.
 
+## 2026-09-16 — Framework viewer: the embed drills down, rows line up
+
+Branch `feature/framework-viewer-embed` off `main`. Three owner requests on
+the Ten Types board embedded in the Strategy & Innovation page.
+
+* **Interactive embed.** Clicking a type used to leave the page for the
+  full tool, which the button below the board already does. The compact
+  variant now ships the same detail panels and tactic drawer as the full
+  one — minus the play sheet, the add buttons and the value map — and opens
+  them in place. Tactics render as dense rows in the embed whatever their
+  count: 21 cards inside a host section is more page than the drill-down is
+  worth. It does not route through the URL hash, so it never competes with
+  the host page's anchors, and it neither reads nor writes the full tool's
+  stored sheet (both verified in the browser). Every control is still a
+  real link to `/tools/<slug>/#type-<id>`, so a modified click or no JS at
+  all lands on the full tool, and each panel carries its own link there.
+* **Row alignment.** Each column is now a subgrid of the board's rows.
+  Measured at 1440 and 1024: the four row tops are identical across all
+  three columns (509 / 659 / 810 / 960) where Profit Model's one-line
+  description used to sit 24px short of Product Performance's two. Below
+  64rem the board is one column and there is nothing to align.
+* **"WHY ONLY TWO" removed** from the Ten Types record. The Offering column
+  ends after Product System with clean empty tracks.
+* **`lib/framework-board-css.ts`.** The generated rules moved out of the
+  component's frontmatter. The trigger was a build failure — `Unexpected
+  "export"` at an unrelated line — which turned out to be Astro's
+  frontmatter scan emitting `export interface Props` twice, once inside the
+  component function, when the frontmatter carries a long run of nested
+  template literals and the component also has a `<script>` tag. Same class
+  of bug as the note on `StrategyFrameworkDVF.astro`. Bisecting was
+  misleading (each change passed alone, combinations failed); the answer
+  came from running the Astro compiler and esbuild by hand and reading the
+  compiled output. The module is a pure function of the record, so the
+  tests call it directly.
+* **No examples in the embed** (owner, same day, after seeing it work):
+  the reader should start from scratch rather than be handed Doblin's
+  canonical illustrations. `hasExamples` is false whenever `compact`, which
+  switches off the per-tactic counts, the drawer's "in the field" block and
+  the hint pointing at them; the type-level example block and the per-tactic
+  payload are gated on `compact` directly. With nothing left to reveal the
+  tactic drawer goes too — it would only repeat the title and description
+  the dense row already shows — so a tactic title is plain text in the
+  embed. Measured on the page: zero example blocks, zero payloads, zero
+  counts, no dialog, and the Target illustration absent. The full tool still
+  has all ten type-level blocks, 112 tactic counts, the drawer and the play
+  sheet. The Strategy & Innovation section lead was corrected in the same
+  pass: it had promised "public company examples" the embed no longer shows.
+* **Validation.** Full gate green; browser QA at 1440 / 1024 / 768 / 390
+  through board, drill-down, sibling switch, drawer and back, screenshots
+  in `artifacts/qa/2026-09-16-*`. No console errors. The full tool page is
+  unchanged in behaviour: hash routing, 112 add buttons and the play sheet
+  all still there.
+

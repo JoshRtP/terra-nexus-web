@@ -13,8 +13,14 @@
 //    shares by URL and prints. With a value map: a third view that crosses
 //    the types with the value tree, and a "where these plays land" strip on
 //    the play sheet.
-//  * `compact` (a capability family page): the board only, with each type
-//    linking into the full tool. No script; a plain set of links.
+//  * `compact` (a capability family page): the board and its detail panels,
+//    drilling down in place so the embed is usable without leaving the host
+//    page. No play sheet, no value map, no add buttons — building a sheet is
+//    what the full tool is for. It also carries no company examples, so a
+//    reader meets the framework cold rather than being handed the canonical
+//    answers, and no tactic drawer, which would only repeat the title and
+//    description the row already shows. Every link still points at the full
+//    tool, so the embed degrades to navigation without JS.
 //
 // Architecture, following StrategyFrameworkDVF and MechanismSelector rather
 // than a client-side framework (CLAUDE.md rule 1):
@@ -28,9 +34,11 @@
 //    the cards already in the DOM, so the JSON the script carries is only
 //    each tactic's type and value-line codes.
 //  * View state lives in the URL hash (#type-<id>, #play-sheet, #value-map,
-//    #tactic-<id>), so a type or a tactic is linkable, Back works, and the
-//    compact variant can deep-link straight into the tool. The play sheet
-//    persists to localStorage and travels in a `?play=` query for sharing.
+//    #tactic-<id>) in the full variant, so a type or a tactic is linkable and
+//    Back works. The compact variant deliberately does NOT route through the
+//    hash: it drills down in place, so it never competes with the host page's
+//    own section anchors. The play sheet persists to localStorage and travels
+//    in a `?play=` query for sharing.
 //  * Every control is a real <button> or <a>. The drawer is a <dialog>, so
 //    focus trapping and Escape come from the platform.
 //  * Colours are data (each type and category carries its own hex), so they
@@ -38,10 +46,15 @@
 //    keyed by data attributes. No inline `style=""` attributes anywhere:
 //    the capability page tests assert there are none.
 //  * Scale: a type with 25 or more tactics renders them as dense rows rather
-//    than cards, and a type with more than 30 gets no chips on the board.
-//    The Value Map's 893 actions still ship as HTML (measured in the log).
+//    than cards (compact always does), and a type with more than 30 gets no
+//    chips on the board. The Value Map's 893 actions still ship as HTML.
+//  * Row alignment: each column is a subgrid of the board's rows, so the
+//    first type in every category shares one row height whatever length its
+//    description runs to. Without subgrid support the columns fall back to
+//    their own heights, which is the previous behaviour, not a broken one.
 import type { Framework } from '../data/frameworks';
 import { tacticId, tacticCount, frameworkHref, codeUnder } from '../data/frameworks';
+import { boardCss } from '../lib/framework-board-css';
 
 export interface Props {
   framework: Framework;
@@ -63,22 +76,6 @@ const firstSentence = (s: string) => {
 };
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-// Relative luminance decides whether a tint takes light or dark text; the
-// palette's lightest type (sage-light, #9AA89B) needs navy text to pass.
-const luminance = (hex: string) => {
-  const n = parseInt(hex.slice(1), 16);
-  return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
-};
-const onTint = (hex: string) => (luminance(hex) > 0.5 ? '#131f48' : '#ffffff');
-// Hover colour for a category header: the tint pulled 35% toward the
-// brand's deep navy, as the prototype did.
-const deepen = (hex: string) => {
-  const v = parseInt(hex.slice(1), 16);
-  const target = [6, 25, 39];
-  const ch = [(v >> 16) & 255, (v >> 8) & 255, v & 255].map((c, i) => Math.round(c + (target[i] - c) * 0.35));
-  return '#' + ch.map((c) => c.toString(16).padStart(2, '0')).join('');
-};
-
 const types = fw.types.map((t, i) => ({ ...t, n: pad(i + 1), index: i + 1 }));
 const columns = fw.categories.map((c, i) => ({
   ...c,
@@ -87,15 +84,21 @@ const columns = fw.categories.map((c, i) => ({
   types: types.filter((t) => t.category === c.name),
 }));
 const total = tacticCount(fw);
-const hasExamples = types.some((t) => (t.examples?.length ?? 0) > 0 || t.tactics.some((k) => (k.examples?.length ?? 0) > 0));
+// Per-framework colour, column-width and row-subgrid rules (see the module).
+const colourCss = boardCss(fw);
+// Owner, 2026-09-16: the embed shows no examples, so the reader starts from
+// scratch. This one flag switches off the per-tactic counts, the drawer's
+// "in the field" block and the hint that points at them; the two blocks that
+// render examples directly are gated on `compact` below.
+const hasExamples = !compact && types.some((t) => (t.examples?.length ?? 0) > 0 || t.tactics.some((k) => (k.examples?.length ?? 0) > 0));
 
 // Matrix layout: categories placed by cell, rendered row-major.
 const isMatrix = fw.layout === 'matrix' && !!fw.matrix;
 const matrixRows = isMatrix ? Math.max(...columns.map((c) => c.cell![0])) + 1 : 1;
-const matrixCols = isMatrix ? Math.max(...columns.map((c) => c.cell![1])) + 1 : columns.length;
 const boardColumns = isMatrix
   ? [...columns].sort((a, b) => a.cell![0] - b.cell![0] || a.cell![1] - b.cell![1])
   : columns;
+
 
 // Value map: root-level counts, server-rendered; the script recomputes on drill.
 const vm = compact ? undefined : fw.valueMap;
@@ -108,57 +111,28 @@ const heat = (n: number, max: number) => (n === 0 ? 0 : 1 + Math.min(4, Math.flo
 // children stands for itself).
 const sheetCols = vm ? vm.tree.flatMap((r) => (r.children ?? [r]).map((c) => ({ ...c, root: r.code }))) : [];
 
-// Per-framework colour and layout rules. Emitted as a <style> element (not
-// attributes) and scoped by data-fw so two frameworks on one page cannot
-// collide.
-const scope = `[data-fw="${fw.slug}"]`;
-const wide = (rules: string) => `@media (min-width:64rem){${rules}}`;
-const colourCss = [
-  ...columns.map((c) =>
-    `${scope} [data-fw-cat="${c.index}"]{--fw-cat:${c.color};--fw-cat-hover:${deepen(c.color)};--fw-on-cat:${onTint(c.color)};--fw-cat-eyebrow:${luminance(c.color) > 0.5 ? '#131f48' : '#e7d77f'}}`,
-  ),
-  ...types.map((t) => `${scope} [data-fw-type="${t.id}"]{--fw-tint:${t.color};--fw-on-tint:${onTint(t.color)}}`),
-  isMatrix
-    ? wide(
-        `${scope} .fw-board{grid-template-columns:repeat(${matrixCols},minmax(0,1fr))}` +
-          columns
-            .map(
-              (c) =>
-                `${scope} .fw-board[data-fw-focus="${c.index}"]{grid-template-columns:${Array.from({ length: matrixCols }, (_, j) => (j === c.cell![1] ? '1.6fr' : '.8fr')).join(' ')}}`,
-            )
-            .join(''),
-      )
-    : wide(
-        `${scope} .fw-board{grid-template-columns:repeat(${columns.length},minmax(0,1fr))}` +
-          columns
-            .map(
-              (c) =>
-                `${scope} .fw-board[data-fw-focus="${c.index}"]{grid-template-columns:${columns.map((o) => (o.index === c.index ? '1.7fr' : '.65fr')).join(' ')}}`,
-            )
-            .join(''),
-      ),
-].join('\n');
-
 // What the script needs beyond the DOM: each tactic's type (and value
 // lines), type names for the drawer breadcrumb, the tree, the starter set.
-const clientData = compact
-  ? null
-  : JSON.stringify({
-      slug: fw.slug,
-      labels: L,
-      tactics: Object.fromEntries(
-        types.flatMap((t) => t.tactics.map((k) => [tacticId(t, k), k.at ? { y: t.id, a: k.at } : { y: t.id }])),
-      ),
-      types: Object.fromEntries(types.map((t) => [t.id, { t: t.title, c: t.category, s: columns.find((c) => c.name === t.category)!.label, n: t.n }])),
-      typeOrder: types.map((t) => t.id),
-      starter: fw.starter?.tactics ?? [],
-      map: vm ? { tree: vm.tree, rootCrumb: vm.rootCrumb, sheetCols: sheetCols.map((c) => ({ code: c.code, name: c.name, root: c.root })) } : null,
-    }).replace(/</g, '\\u003c');
+// Both variants carry it; the compact one has no play sheet or map to feed.
+const clientData = JSON.stringify({
+  slug: fw.slug,
+  labels: L,
+  tactics: Object.fromEntries(
+    types.flatMap((t) => t.tactics.map((k) => [tacticId(t, k), k.at && !compact ? { y: t.id, a: k.at } : { y: t.id }])),
+  ),
+  types: Object.fromEntries(types.map((t) => [t.id, { t: t.title, c: t.category, s: columns.find((c) => c.name === t.category)!.label, n: t.n }])),
+  typeOrder: types.map((t) => t.id),
+  starter: compact ? [] : (fw.starter?.tactics ?? []),
+  map: vm ? { tree: vm.tree, rootCrumb: vm.rootCrumb, sheetCols: sheetCols.map((c) => ({ code: c.code, name: c.name, root: c.root })) } : null,
+}).replace(/</g, '\\u003c');
 
 // Heading levels follow the page: the tool page has its own h1, so the board
 // starts at h2; on a capability page the board sits under the section's h2.
 const CatH = compact ? 'h3' : 'h2';
 const TypeH = compact ? 'h4' : 'h3';
+// The detail panel sits under the host section's h2 when embedded.
+const DetailH = compact ? 'h3' : 'h2';
+const TacticH = compact ? 'h4' : 'h3';
 const uid = `fw-${fw.slug}`;
 ---
 
@@ -267,25 +241,26 @@ const uid = `fw-${fw.slug}`;
     )}
 
     {compact && (
-      <p class="fw-compact-foot">{total} {L.tacticPlural} across {types.length} {L.typePlural}. Each {L.type} opens in the full tool.</p>
+      <p class="fw-compact-foot">Open a {L.type} to read its {L.tacticPlural}.</p>
     )}
   </section>
 
   {/* ── One detail panel per type ─────────────────────────────────────── */}
-  {!compact &&
-    types.map((t) => {
+  {types.map((t) => {
       const col = columns.find((c) => c.name === t.category)!;
       const siblings = col.types;
-      const dense = t.tactics.length >= DENSE_MIN;
+      // The embed always uses dense rows: 21 tactic cards inside a host page
+      // section is more page than the drill-down is worth.
+      const dense = compact || t.tactics.length >= DENSE_MIN;
       return (
         <section class="fw-view fw-detail" id={`type-${t.id}`} data-fw-view="detail" data-fw-detail={t.id} data-fw-type={t.id} aria-labelledby={`type-${t.id}-h`} hidden>
           <aside class="fw-rail" data-print-hide data-fw-cat={col.index}>
             <span class="fw-rail-cat">{col.name}</span>
-            <a href="#framework" class="fw-back">Back to all {types.length} {L.typePlural}</a>
+            <a href={compact ? toolHref : '#framework'} class="fw-back" data-fw-back>Back to all {types.length} {L.typePlural}</a>
             <ul class="fw-rail-list" role="list">
               {siblings.map((s) => (
                 <li>
-                  <a href={`#type-${s.id}`} data-fw-type={s.id} aria-current={s.id === t.id ? 'page' : undefined}>
+                  <a href={compact ? `${toolHref}#type-${s.id}` : `#type-${s.id}`} data-fw-type={s.id} data-fw-open={s.id} aria-current={s.id === t.id ? 'page' : undefined}>
                     <span class="fw-rail-n">{s.n}</span>
                     {s.title}
                   </a>
@@ -302,7 +277,7 @@ const uid = `fw-${fw.slug}`;
                   <span class="fw-pill" aria-hidden="true">{t.n}</span>
                   <span class="field-label">{col.label} · {cap(L.type)} {t.index} of {types.length}</span>
                 </p>
-                <h2 id={`type-${t.id}-h`}>{t.title}</h2>
+                <DetailH id={`type-${t.id}-h`} class="fw-detail-title">{t.title}</DetailH>
                 <p class="fw-detail-desc">{t.description}</p>
                 {t.themes && t.themes.length > 0 && (
                   <p class="fw-detail-themes"><span class="field-label">Themes</span> {t.themes.join(' · ')}</p>
@@ -311,7 +286,13 @@ const uid = `fw-${fw.slug}`;
               <p class="fw-detail-stat"><b>{t.tactics.length}</b><span>{L.tacticPlural} in this {L.type}</span></p>
             </header>
 
-            {t.examples && t.examples.length > 0 && (
+            {compact && (
+              <p class="fw-detail-open">
+                <a href={`${toolHref}#type-${t.id}`}>Open {t.title} in the full tool, where you can build a play sheet</a>
+              </p>
+            )}
+
+            {!compact && t.examples && t.examples.length > 0 && (
               <div class="fw-examples">
                 <span class="field-label">How this {L.type} shows up</span>
                 <ul class="fw-example-list" role="list">
@@ -324,7 +305,9 @@ const uid = `fw-${fw.slug}`;
 
             <div class="fw-tactics-head">
               <span class="field-label">{L.tacticPlural}</span>
-              <span class="fw-hint" data-print-hide>{hasExamples ? 'Open one for examples. Use Add to build the play sheet.' : 'Open one for detail. Use Add to build the play sheet.'}</span>
+              {!compact && (
+                <span class="fw-hint" data-print-hide>{hasExamples ? 'Open one for examples. Use Add to build the play sheet.' : 'Open one for detail. Use Add to build the play sheet.'}</span>
+              )}
             </div>
             <ul class:list={['fw-tactics', { 'fw-tactics-dense': dense }]} role="list">
               {t.tactics.map((k) => {
@@ -333,18 +316,20 @@ const uid = `fw-${fw.slug}`;
                 return (
                   <li class="fw-tactic" id={`tactic-${id}`} data-fw-tactic={id} data-fw-on={id}>
                     <div class="fw-tactic-body">
-                      <h3 class="fw-tactic-title">
-                        <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>
-                      </h3>
+                      <TacticH class="fw-tactic-title">
+                        {compact ? k.title : <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>}
+                      </TacticH>
                       <p class="fw-tactic-desc">{k.description}</p>
                     </div>
-                    <div class="fw-tactic-foot">
+                    <div class="fw-tactic-foot" hidden={compact && !hasExamples}>
                       {hasExamples && (
                         <span class:list={['fw-tactic-ex', { 'fw-tactic-ex-none': n === 0 }]}>{n === 0 ? 'No examples yet' : `${n} ${n === 1 ? 'example' : 'examples'}`}</span>
                       )}
-                      <button type="button" class="fw-add" data-fw-toggle={id} aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
+                      {!compact && (
+                        <button type="button" class="fw-add" data-fw-toggle={id} aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
+                      )}
                     </div>
-                    {n > 0 && (
+                    {!compact && n > 0 && (
                       <div class="fw-tactic-examples" data-fw-examples hidden>
                         <ul class="fw-example-list" role="list">
                           {k.examples!.map((e) => (
@@ -524,33 +509,35 @@ const uid = `fw-${fw.slug}`;
     </section>
   )}
 
-  {/* ── Tactic drawer ─────────────────────────────────────────────────── */}
+  {/* ── Tactic drawer (full variant only) ─────────────────────────────── */}
   {!compact && (
     <dialog class="fw-drawer" data-fw-dialog aria-labelledby="fw-drawer-h">
-      <div class="fw-drawer-inner">
-        <div class="fw-drawer-head" data-fw-drawer-head>
-          <div class="fw-drawer-top">
-            <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
-            <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
-          </div>
-          <h2 id="fw-drawer-h" data-fw-drawer-title></h2>
-        </div>
-        <div class="fw-drawer-body">
-          <p class="fw-drawer-desc" data-fw-drawer-desc></p>
-          <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
-          {hasExamples && (
-            <div class="fw-drawer-ex">
-              <span class="field-label">In the field</span>
-              <div data-fw-drawer-examples></div>
-              <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+        <div class="fw-drawer-inner">
+          <div class="fw-drawer-head" data-fw-drawer-head>
+            <div class="fw-drawer-top">
+              <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
+              <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
             </div>
-          )}
+            <DetailH id="fw-drawer-h" data-fw-drawer-title></DetailH>
+          </div>
+          <div class="fw-drawer-body">
+            <p class="fw-drawer-desc" data-fw-drawer-desc></p>
+            {!compact && (
+              <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
+            )}
+            {hasExamples && (
+              <div class="fw-drawer-ex">
+                <span class="field-label">In the field</span>
+                <div data-fw-drawer-examples></div>
+                <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
     </dialog>
   )}
 
-  {clientData && <script is:inline type="application/json" data-fw-data set:html={clientData}></script>}
+  <script is:inline type="application/json" data-fw-data set:html={clientData}></script>
 </div>
 
 <style is:global>
@@ -1190,7 +1177,12 @@ const uid = `fw-${fw.slug}`;
   }
   .fw-detail-head > div { max-width: var(--max-width-text); }
   .fw-detail-crumb { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-4); }
-  .fw-detail-head h2 { margin: 0; }
+  .fw-detail-title { margin: 0; }
+  .fw-compact .fw-detail-title { font-size: var(--text-2xl); }
+  .fw-detail-open {
+    margin: var(--space-5) 0 0;
+    font-size: var(--text-sm);
+  }
   .fw-detail-desc {
     margin: var(--space-4) 0 0;
     font-size: var(--text-lg);
@@ -1584,10 +1576,13 @@ const uid = `fw-${fw.slug}`;
     map: { tree: ValueNode[]; rootCrumb: string; sheetCols: Array<{ code: string; name: string; root: string }> } | null;
   }
 
-  document.querySelectorAll<HTMLElement>('[data-fw][data-fw-variant="full"]').forEach((root) => {
+  document.querySelectorAll<HTMLElement>('[data-fw]').forEach((root) => {
     const dataEl = root.querySelector<HTMLScriptElement>('[data-fw-data]');
     if (!dataEl) return;
     const data: FwData = JSON.parse(dataEl.textContent || '{}');
+    // The embed drills down and opens the drawer; it has no play sheet, so
+    // it neither reads nor writes the full tool's stored sheet.
+    const compact = root.dataset.fwVariant === 'compact';
     const L = data.labels;
     const STORAGE_KEY = `tnx:framework:${data.slug}:play`;
     const $ = <T extends Element>(sel: string) => root.querySelector<T>(sel);
@@ -1623,6 +1618,7 @@ const uid = `fw-${fw.slug}`;
 
     // ── Persistence ─────────────────────────────────────────────────
     const readStored = (): string[] => {
+      if (compact) return [];
       try {
         const raw = window.localStorage.getItem(STORAGE_KEY);
         const parsed = raw ? JSON.parse(raw) : [];
@@ -1632,6 +1628,7 @@ const uid = `fw-${fw.slug}`;
       }
     };
     const store = () => {
+      if (compact) return;
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(play));
       } catch {
@@ -2159,7 +2156,7 @@ const uid = `fw-${fw.slug}`;
 
     // ── Init ────────────────────────────────────────────────────────
     play = readStored();
-    const shared = new URLSearchParams(location.search).get('play');
+    const shared = compact ? null : new URLSearchParams(location.search).get('play');
     if (shared) {
       const incoming = shared.split(',').filter((id) => data.tactics[id] && !play.includes(id));
       if (incoming.length) {
@@ -2168,7 +2165,34 @@ const uid = `fw-${fw.slug}`;
       }
     }
     render();
-    route();
-    window.addEventListener('hashchange', route);
+
+    if (compact) {
+      // In place, never through the URL: the host page owns its own hash.
+      // Modified clicks fall through so the links still open the full tool
+      // in a new tab, which is also what happens with no JS at all.
+      const plain = (event: MouseEvent) => !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey);
+      const go = (view: string, typeId?: string) => {
+        showView(view, typeId);
+        root.scrollIntoView({ block: 'start' });
+      };
+      $$<HTMLAnchorElement>('[data-fw-open]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          if (!plain(event)) return;
+          event.preventDefault();
+          go('detail', link.dataset.fwOpen);
+        });
+      });
+      $$<HTMLAnchorElement>('[data-fw-back]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          if (!plain(event)) return;
+          event.preventDefault();
+          go('board');
+        });
+      });
+      showView('board');
+    } else {
+      route();
+      window.addEventListener('hashchange', route);
+    }
   });
 </script>
