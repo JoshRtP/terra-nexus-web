@@ -16,8 +16,11 @@
 //  * `compact` (a capability family page): the board and its detail panels,
 //    drilling down in place so the embed is usable without leaving the host
 //    page. No play sheet, no value map, no add buttons — building a sheet is
-//    what the full tool is for. Every link still points at the full tool, so
-//    the embed degrades to navigation without JS.
+//    what the full tool is for. It also carries no company examples, so a
+//    reader meets the framework cold rather than being handed the canonical
+//    answers, and no tactic drawer, which would only repeat the title and
+//    description the row already shows. Every link still points at the full
+//    tool, so the embed degrades to navigation without JS.
 //
 // Architecture, following StrategyFrameworkDVF and MechanismSelector rather
 // than a client-side framework (CLAUDE.md rule 1):
@@ -83,7 +86,11 @@ const columns = fw.categories.map((c, i) => ({
 const total = tacticCount(fw);
 // Per-framework colour, column-width and row-subgrid rules (see the module).
 const colourCss = boardCss(fw);
-const hasExamples = types.some((t) => (t.examples?.length ?? 0) > 0 || t.tactics.some((k) => (k.examples?.length ?? 0) > 0));
+// Owner, 2026-09-16: the embed shows no examples, so the reader starts from
+// scratch. This one flag switches off the per-tactic counts, the drawer's
+// "in the field" block and the hint that points at them; the two blocks that
+// render examples directly are gated on `compact` below.
+const hasExamples = !compact && types.some((t) => (t.examples?.length ?? 0) > 0 || t.tactics.some((k) => (k.examples?.length ?? 0) > 0));
 
 // Matrix layout: categories placed by cell, rendered row-major.
 const isMatrix = fw.layout === 'matrix' && !!fw.matrix;
@@ -234,7 +241,7 @@ const uid = `fw-${fw.slug}`;
     )}
 
     {compact && (
-      <p class="fw-compact-foot">Open a {L.type} to read its {L.tacticPlural} and the companies that show them.</p>
+      <p class="fw-compact-foot">Open a {L.type} to read its {L.tacticPlural}.</p>
     )}
   </section>
 
@@ -285,7 +292,7 @@ const uid = `fw-${fw.slug}`;
               </p>
             )}
 
-            {t.examples && t.examples.length > 0 && (
+            {!compact && t.examples && t.examples.length > 0 && (
               <div class="fw-examples">
                 <span class="field-label">How this {L.type} shows up</span>
                 <ul class="fw-example-list" role="list">
@@ -298,7 +305,9 @@ const uid = `fw-${fw.slug}`;
 
             <div class="fw-tactics-head">
               <span class="field-label">{L.tacticPlural}</span>
-              <span class="fw-hint" data-print-hide>{compact ? (hasExamples ? 'Open one for examples.' : 'Open one for detail.') : hasExamples ? 'Open one for examples. Use Add to build the play sheet.' : 'Open one for detail. Use Add to build the play sheet.'}</span>
+              {!compact && (
+                <span class="fw-hint" data-print-hide>{hasExamples ? 'Open one for examples. Use Add to build the play sheet.' : 'Open one for detail. Use Add to build the play sheet.'}</span>
+              )}
             </div>
             <ul class:list={['fw-tactics', { 'fw-tactics-dense': dense }]} role="list">
               {t.tactics.map((k) => {
@@ -308,7 +317,7 @@ const uid = `fw-${fw.slug}`;
                   <li class="fw-tactic" id={`tactic-${id}`} data-fw-tactic={id} data-fw-on={id}>
                     <div class="fw-tactic-body">
                       <TacticH class="fw-tactic-title">
-                        <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>
+                        {compact ? k.title : <button type="button" class="fw-tactic-open" data-fw-drawer={id} aria-haspopup="dialog">{k.title}</button>}
                       </TacticH>
                       <p class="fw-tactic-desc">{k.description}</p>
                     </div>
@@ -320,7 +329,7 @@ const uid = `fw-${fw.slug}`;
                         <button type="button" class="fw-add" data-fw-toggle={id} aria-pressed="false"><span data-fw-toggle-label>Add</span></button>
                       )}
                     </div>
-                    {n > 0 && (
+                    {!compact && n > 0 && (
                       <div class="fw-tactic-examples" data-fw-examples hidden>
                         <ul class="fw-example-list" role="list">
                           {k.examples!.map((e) => (
@@ -500,31 +509,33 @@ const uid = `fw-${fw.slug}`;
     </section>
   )}
 
-  {/* ── Tactic drawer ─────────────────────────────────────────────────── */}
-  <dialog class="fw-drawer" data-fw-dialog aria-labelledby="fw-drawer-h">
-      <div class="fw-drawer-inner">
-        <div class="fw-drawer-head" data-fw-drawer-head>
-          <div class="fw-drawer-top">
-            <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
-            <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
-          </div>
-          <DetailH id="fw-drawer-h" data-fw-drawer-title></DetailH>
-        </div>
-        <div class="fw-drawer-body">
-          <p class="fw-drawer-desc" data-fw-drawer-desc></p>
-          {!compact && (
-            <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
-          )}
-          {hasExamples && (
-            <div class="fw-drawer-ex">
-              <span class="field-label">In the field</span>
-              <div data-fw-drawer-examples></div>
-              <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+  {/* ── Tactic drawer (full variant only) ─────────────────────────────── */}
+  {!compact && (
+    <dialog class="fw-drawer" data-fw-dialog aria-labelledby="fw-drawer-h">
+        <div class="fw-drawer-inner">
+          <div class="fw-drawer-head" data-fw-drawer-head>
+            <div class="fw-drawer-top">
+              <span class="fw-drawer-crumb" data-fw-drawer-crumb></span>
+              <button type="button" class="fw-drawer-close" data-fw-drawer-close aria-label="Close">×</button>
             </div>
-          )}
+            <DetailH id="fw-drawer-h" data-fw-drawer-title></DetailH>
+          </div>
+          <div class="fw-drawer-body">
+            <p class="fw-drawer-desc" data-fw-drawer-desc></p>
+            {!compact && (
+              <button type="button" class="btn btn-primary fw-drawer-toggle" data-fw-drawer-toggle aria-pressed="false"><span data-fw-toggle-label>Add to play sheet</span></button>
+            )}
+            {hasExamples && (
+              <div class="fw-drawer-ex">
+                <span class="field-label">In the field</span>
+                <div data-fw-drawer-examples></div>
+                <p class="fw-drawer-none" data-fw-drawer-none hidden>No examples logged for this {L.tactic} yet.</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-  </dialog>
+    </dialog>
+  )}
 
   <script is:inline type="application/json" data-fw-data set:html={clientData}></script>
 </div>

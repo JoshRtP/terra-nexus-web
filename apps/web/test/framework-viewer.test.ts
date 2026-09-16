@@ -247,7 +247,6 @@ describe('built pages', () => {
     for (const t of fw.types) expect(html.strategy).toContain(`id="type-${t.id}"`);
     for (const x of flatTactics(fw)) expect(html.strategy).toContain(`id="tactic-${x.id}"`);
     expect(html.strategy).toContain('data-fw-data');
-    expect(html.strategy).toContain('<dialog class="fw-drawer"');
     // No play sheet in the embed: no add buttons, no sheet, no toolbar.
     expect(html.strategy).not.toContain('data-fw-view="play"');
     expect(html.strategy).not.toContain('class="fw-add"');
@@ -282,6 +281,29 @@ describe('built pages', () => {
     // The lightest tint takes navy text, the darkest white.
     expect(onTint('#9AA89B')).toBe('#131f48');
     expect(onTint('#131F48')).toBe('#ffffff');
+  });
+
+  it('the embed carries no examples at all, so a reader starts from scratch', () => {
+    const fw = frameworks[capabilityFamilies['strategy-and-innovation'].tool!.framework];
+    // Not one company illustration, at type level or tactic level.
+    for (const t of fw.types) {
+      for (const e of t.examples ?? []) expect(html.strategy, e.who).not.toContain(encode(e.what));
+    }
+    for (const x of flatTactics(fw)) {
+      for (const e of x.tactic.examples ?? []) expect(html.strategy, e.who).not.toContain(encode(e.what));
+    }
+    expect(html.strategy).not.toContain('How this type shows up');
+    expect(html.strategy).not.toContain('In the field');
+    expect(html.strategy).not.toContain('data-fw-examples');
+    expect(html.strategy).not.toMatch(/No examples yet|\d+ examples?</);
+    // With nothing to reveal there is no drawer, and a tactic title is text.
+    expect(html.strategy).not.toContain('<dialog class="fw-drawer"');
+    expect(html.strategy).not.toContain('data-fw-drawer=');
+    expect(html.strategy).not.toContain('fw-tactic-open');
+    // The full tool still carries every one of them.
+    const tool = html[fw.slug];
+    for (const t of fw.types) for (const e of t.examples ?? []) expect(tool).toContain(encode(e.what));
+    expect(tool).toContain('<dialog class="fw-drawer"');
   });
 
   it('the Ten Types board carries no category note', () => {
