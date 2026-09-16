@@ -2,43 +2,58 @@
 import CaseStudyCard from '../../components/CaseStudyCard.astro';
 import PageHero from '../../components/PageHero.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
+import ComingSoon from '../../components/ComingSoon.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import { caseStudiesArePublished } from '../../lib/content-availability.js';
+import { comingSoonOnwardLinks } from '../../data/onward-links';
 import { compileForBuild } from '../../lib/okf/build.js';
 import { selectCaseStudyPages } from '../../lib/okf/case-study-pages.js';
 
 const mode = getBuildMode();
-const compilation = await compileForBuild(mode);
-const pages = selectCaseStudyPages(compilation);
+const published = caseStudiesArePublished(mode);
+// Compile only when the section publishes — an unpublished build has nothing
+// to list, and the OKF compile is the expensive part of rendering this page.
+const pages = published ? selectCaseStudyPages(await compileForBuild(mode)) : [];
 ---
 
 <SiteLayout
   title="Case Studies | Terra Nexus"
-  description="Evidence of commercial and environmental value from Terra Nexus engagements."
+  description={published
+    ? 'Evidence of commercial and environmental value from Terra Nexus engagements.'
+    : 'Terra Nexus case studies are not yet published. New case studies are within view.'}
   preview={mode === 'preview'}
 >
-  <PageHero
-    eyebrow="Case Studies"
-    title="Evidence of Commercial and Environmental Value"
-    lead="Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements."
-  />
-
-  <section class="section" aria-label="Case studies">
-    <div class="container">
-      {pages.length ? (
-        <div class="case-study-grid">
-          {pages.map((page) => <CaseStudyCard page={page} />)}
+  {published ? (
+    <>
+      <PageHero
+        eyebrow="Case Studies"
+        title="Evidence of Commercial and Environmental Value"
+        lead="Terra Nexus case studies show how strategy, technical evidence, value-chain operations, market mechanisms, and commercialization come together in real engagements."
+      />
+      <section class="section" aria-label="Case studies">
+        <div class="container">
+          {pages.length ? (
+            <div class="case-study-grid">
+              {pages.map((page) => <CaseStudyCard page={page} />)}
+            </div>
+          ) : (
+            <p class="empty-state">No approved case studies are available in this build.</p>
+          )}
         </div>
-      ) : (
-        <p class="empty-state">No approved case studies are available in this build.</p>
-      )}
-    </div>
-  </section>
+      </section>
+    </>
+  ) : (
+    /* No hero while the section is not live (owner, 2026-09-16) — see
+       ComingSoon.astro. Its heading is this page's <h1>. */
+    <ComingSoon heading="Case Studies Are Within View" treatment="photo" photo="group-bright" />
+  )}
 
   <ClosingCta
     heading="Have a Similar Challenge?"
     description="Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit."
     primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    links={published ? undefined : [...comingSoonOnwardLinks]}
   />
 </SiteLayout>
 

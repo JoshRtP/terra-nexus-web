@@ -33,6 +33,7 @@
 // hub needed all four. Values unchanged; only the class names moved.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getBuildMode } from '../../lib/build-mode.js';
+import { caseStudiesArePublished } from '../../lib/content-availability.js';
 import PageHero from '../../components/PageHero.astro';
 import SectionRail from '../../components/SectionRail.astro';
 import ClosingCta from '../../components/ClosingCta.astro';
@@ -339,7 +340,7 @@ const railSections = railEntries.map((e, i) => ({
       { label: 'Areas of expertise', href: '/expertise/' },
       { label: 'Our approach & capabilities', href: '/capabilities/' },
       { label: 'Digital solutions', href: '/digital-solutions/' },
-      { label: 'Case studies', href: '/case-studies/' },
+      ...(caseStudiesArePublished(mode) ? [{ label: 'Case studies', href: '/case-studies/' }] : []),
       { label: 'Glossary', href: '/glossary/' },
     ]}
   />

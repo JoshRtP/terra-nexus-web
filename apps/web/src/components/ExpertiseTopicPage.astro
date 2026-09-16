@@ -52,6 +52,7 @@ import ClosingCta from './ClosingCta.astro';
 import StrategyFrameworkDVF from './StrategyFrameworkDVF.astro';
 import MechanismSelector, { type MechanismDetailBlock } from './MechanismSelector.astro';
 import { getBuildMode } from '../lib/build-mode.js';
+import { caseStudiesArePublished } from '../lib/content-availability.js';
 import type { MarketMechanism } from '../data/market-mechanisms';
 import type { ExpertiseTopic } from '../data/expertise/types';
 import { expertiseTools } from '../data/expertise/tools';
@@ -155,7 +156,9 @@ const ctaLinks = [
   topic.links.whoWeWorkWith,
   topic.links.capabilities,
   topic.links.digital,
-  topic.links.caseStudies,
+  // Dropped while Case Studies is not yet live, rather than sending the
+  // reader to a placeholder. See src/lib/content-availability.ts.
+  ...(caseStudiesArePublished(mode) ? [topic.links.caseStudies] : []),
   // Not per-topic data: the glossary is one page and the same for all nine.
   { label: 'Glossary', href: '/glossary/' },
 ];

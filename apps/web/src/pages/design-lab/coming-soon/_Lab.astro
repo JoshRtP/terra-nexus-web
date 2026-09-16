@@ -1,0 +1,106 @@
+---
+// DESIGN LAB — the not-yet-live band for /insights/research and /case-studies
+// (2026-09-16). The live pages ship `plain`; these routes put the same page
+// under each treatment and each brand scene so the owner can compare them
+// against the real header, closing CTA and onward links rather than a swatch.
+//
+// Same conventions as design-lab/digital-tools/: `preview={true}` so
+// SiteLayout emits noindex and the prototype banner; no canonical, no
+// breadcrumbs; not linked from the site; excluded from the sitemap by the
+// '/design-lab/' filter term in astro.config.ts. Delete this folder — and the
+// unused branches of ComingSoon.astro's `treatment` — once one is chosen.
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import ComingSoon from '../../../components/ComingSoon.astro';
+import ClosingCta from '../../../components/ClosingCta.astro';
+import { comingSoonOnwardLinks } from '../../../data/onward-links';
+import { labOptions, labOption } from './_options';
+
+interface Props {
+  option: string;
+}
+
+const current = labOption(Astro.props.option);
+---
+
+<SiteLayout
+  title={`Coming Soon — ${current.name} | Design Lab`}
+  description="Design lab: treatments and brand scenes for the not-yet-live Research and Case Studies band."
+  preview={true}
+>
+  <div class="lab-strip">
+    <div class="container lab-strip-inner">
+      <p class="lab-kicker">Design lab · Coming Soon band · {current.name}</p>
+      <nav class="lab-nav" aria-label="Coming Soon options">
+        <span class="lab-nav-label">Option</span>
+        {labOptions.map((o) => (
+          <a href={`/design-lab/coming-soon/${o.id}/`} aria-current={o.id === current.id ? 'page' : undefined}>
+            {o.name}
+          </a>
+        ))}
+      </nav>
+      <p class="lab-note">{current.note}</p>
+    </div>
+  </div>
+
+  <ComingSoon
+    heading="Case Studies Are Within View"
+    treatment={current.treatment}
+    photo={current.photo}
+  />
+
+  <ClosingCta
+    heading="Have a Similar Challenge?"
+    description="Tell us what you are evaluating, building, or trying to improve. Terra Nexus will identify the expertise and capabilities that fit."
+    primaryCta={{ label: 'Discuss Your Challenge', href: '/contact/' }}
+    links={[...comingSoonOnwardLinks]}
+  />
+</SiteLayout>
+
+<style>
+  /* Lab chrome, copied from design-lab/digital-tools/_Shell.astro so the two
+     labs read the same. Not part of the design system. */
+  .lab-strip {
+    background: var(--c-secondary-900);
+    color: var(--c-secondary-200);
+    padding-block: var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .lab-strip-inner { display: grid; gap: var(--space-2); }
+  .lab-kicker {
+    margin: 0;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-accent-300);
+  }
+  .lab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-5);
+  }
+  .lab-nav-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-secondary-400);
+    min-width: 4rem;
+  }
+  .lab-nav a {
+    color: var(--c-secondary-300);
+    text-decoration: none;
+    font-weight: var(--font-medium);
+    border-bottom: 1px solid transparent;
+  }
+  .lab-nav a:hover { color: #fff; border-bottom-color: currentColor; }
+  .lab-nav a[aria-current='page'] { color: #fff; border-bottom-color: var(--c-accent-300); }
+  .lab-nav a:focus-visible { outline: 2px solid var(--c-accent-300); outline-offset: 2px; }
+  .lab-note {
+    margin: 0;
+    max-width: var(--max-width-text);
+    color: var(--c-secondary-300);
+    line-height: var(--line-relaxed);
+  }
+</style>

@@ -13,8 +13,17 @@ import PageHero from '../components/PageHero.astro';
 import { getBuildMode } from '../lib/build-mode.js';
 import { capabilityAreas } from '../data/lifecycle';
 import { expertiseMenu } from '../data/nav-data';
+import { brandSceneImage } from '../data/brand-scenes';
 
 const mode = getBuildMode();
+
+// The seated-stargazer (woman) brand scene, owner's pick 2026-09-16 —
+// compare the set at /design-lab/coming-soon/. PageHero's existing 'media'
+// variant does the work: same full-bleed photo + scrim + reversed copy the
+// expertise topics use, so the 404 keeps its lead and both CTAs rather than
+// trading them for a picture. `mediaAlign="end"` moves the copy to the right
+// half so it stops sitting on top of her (owner, 2026-09-16).
+const heroScene = brandSceneImage('woman');
 
 const sections = [
   { name: 'Areas of Expertise', href: '/expertise/', note: 'Nine production systems, supply chains and value chains, each with the full development lifecycle.' },
@@ -28,12 +37,16 @@ const sections = [
 
 <SiteLayout
   title="Page Not Found | Terra Nexus"
-  description="That page is not here. Everything on the Terra Nexus site is one click away from this map."
+  description="That page is somewhere else. Everything on the Terra Nexus site is one click away from this map."
   preview={mode === 'preview'}
 >
   <PageHero
+    variant="media"
+    heroImage={heroScene.src}
+    heroImageSrcSet={heroScene.srcset}
+    mediaAlign="end"
     eyebrow="404"
-    title="That page is not here"
+    title="That Page Is Somewhere Else"
     lead="The address may have changed when the site moved, or it may have been mistyped. Everything on the site is one click from the list below."
     primaryCta={{ label: 'Go to the homepage', href: '/' }}
     secondaryCta={{ label: 'Contact Terra Nexus', href: '/contact/' }}

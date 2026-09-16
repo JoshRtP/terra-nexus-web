@@ -1,0 +1,152 @@
+---
+// The band a section that exists but does not publish yet leads with —
+// /insights/research and /case-studies today (see src/lib/content-availability.ts).
+//
+// These pages carry no PageHero (owner, 2026-09-16): with the hero and its
+// lead removed, this band is the whole page above the closing CTA, so its
+// heading is the page's <h1>, not an <h2>. Everything else is the site's own
+// vocabulary — `.section`, `.container`, `.eyebrow`/`.eyebrow-light`,
+// `.text-center` — so only the photo treatments are local.
+//
+// `treatment` exists because the photo variants are under owner review at
+// /design-lab/coming-soon/; the live pages ship `plain`. Drop the unused
+// branches once one is chosen.
+import { brandScene, brandSceneImage, DEFAULT_BRAND_SCENE } from '../data/brand-scenes';
+
+interface Props {
+  heading: string;
+  /** 'plain' is the flat light band the live pages use. 'watermark' fades the
+   * photograph in behind it. 'photo' runs the photograph full-bleed under a
+   * navy scrim with the copy reversed out. */
+  treatment?: 'plain' | 'watermark' | 'photo';
+  /** Which photograph the two image treatments use — an id from
+   * src/data/brand-scenes.ts. Research and Case Studies carry different ones. */
+  photo?: string;
+  eyebrow?: string;
+  headingId?: string;
+}
+
+const {
+  heading,
+  treatment = 'plain',
+  photo = DEFAULT_BRAND_SCENE,
+  eyebrow = 'Coming Soon',
+  headingId = 'coming-soon-heading',
+} = Astro.props;
+
+const image = treatment === 'plain' ? undefined : brandScene(photo);
+const file = image ? brandSceneImage(photo) : undefined;
+---
+
+<section class:list={['section', 'coming-soon', `coming-soon-${treatment}`]} aria-labelledby={headingId}>
+  {image && (
+    <>
+      {/* Decorative: the heading beside it carries the meaning, so alt="" —
+          the same call PageHero's media variant makes. A real <img> rather
+          than a CSS background so the preload scanner can find it. */}
+      <img
+        class="coming-soon-bg"
+        src={file!.src}
+        srcset={file!.srcset}
+        sizes="100vw"
+        alt=""
+        width={image.width}
+        height={image.height}
+        style={`object-position: ${image.objectPosition}`}
+        loading="eager"
+        decoding="async"
+      />
+      <div class:list={['coming-soon-scrim', `coming-soon-scrim-${image.scrim ?? 'standard'}`]} aria-hidden="true"></div>
+    </>
+  )}
+  <div class="container narrow-container text-center coming-soon-content">
+    <span class:list={['eyebrow', { 'eyebrow-light': treatment === 'photo' }]}>{eyebrow}</span>
+    <h1 id={headingId}>{heading}</h1>
+  </div>
+</section>
+
+<style>
+  .coming-soon { position: relative; overflow: hidden; }
+  .coming-soon-content { position: relative; z-index: 1; }
+  .coming-soon-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The crop anchor is an inline style on the <img> above, not a rule here:
+       the band is far wider than the 16:9 frame so `cover` always crops
+       vertically, and each scene puts its subject and its stretch of Milky Way
+       at a different height (see data/brand-scenes.ts). Passing it as a
+       CSS custom property with a fallback did NOT work — the production CSS
+       pipeline resolves `var(--x, fallback)` to the literal fallback when the
+       variable is not declared in a stylesheet, so every scene silently
+       rendered at the same anchor. */
+  }
+  .coming-soon-scrim { position: absolute; inset: 0; }
+
+  /* Both photo treatments need real height, or the crop above has nothing to
+     work with. */
+  .coming-soon-watermark,
+  .coming-soon-photo {
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── watermark — the photograph under the page's own light ground ── */
+  .coming-soon-watermark {
+    background: var(--color-bg);
+    min-height: clamp(19rem, 40vh, 27rem);
+  }
+  .coming-soon-watermark .coming-soon-bg {
+    opacity: 0.22;
+    /* Greyscale so it reads as texture rather than as a photograph competing
+       with the heading: at low opacity the orange pack and the sodium valley
+       lights were the only things that carried, which drew the eye off the
+       copy. */
+    filter: grayscale(1);
+  }
+  /* Feathered top and bottom so the band has no hard seam against the
+     sections either side of it. */
+  .coming-soon-watermark .coming-soon-scrim {
+    background: linear-gradient(
+      to bottom,
+      var(--color-bg) 0%,
+      rgba(255, 255, 255, 0) 38%,
+      rgba(255, 255, 255, 0) 62%,
+      var(--color-bg) 100%
+    );
+  }
+
+  /* ── photo — full-bleed, copy reversed, same scrim logic as the media
+     hero in PageHero.astro, retoned to brand navy ── */
+  .coming-soon-photo {
+    background: var(--color-dark);
+    min-height: clamp(24rem, 52vh, 34rem);
+  }
+  .coming-soon-photo .coming-soon-bg { opacity: 0.85; }
+  /* A scene dark enough to need the light scrim needs the full image too. */
+  .coming-soon-photo:has(.coming-soon-scrim-light) .coming-soon-bg { opacity: 1; }
+  .coming-soon-photo .coming-soon-scrim-standard {
+    background: linear-gradient(
+      to top,
+      rgba(19, 31, 72, 0.9) 0%,
+      rgba(19, 31, 72, 0.6) 55%,
+      rgba(19, 31, 72, 0.75) 100%
+    );
+  }
+  /* For an already-dark grade: barely any veil, just enough behind the copy
+     to hold contrast where the heading sits. */
+  .coming-soon-photo .coming-soon-scrim-light {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(19, 31, 72, 0.55) 0%,
+      rgba(19, 31, 72, 0.25) 55%,
+      rgba(19, 31, 72, 0.1) 100%
+    );
+  }
+  .coming-soon-photo h1 {
+    color: var(--color-text-inverse);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+</style>
