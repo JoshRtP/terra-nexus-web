@@ -110,8 +110,14 @@ const originChapters = [
   },
   {
     label: 'The proof',
-    title: 'Today: programs in the ground, value on the books.',
-    body: 'Work spanning the value chain from farm to brand, an integrated carbon and ecosystem developer inside the studio, and a food loss & waste credit program we developed and operate ourselves.',
+    // Owner copy 2026-09-16 (was "Today: programs in the ground, value on
+    // the books."). The descriptive sentence that sat under the heading is
+    // replaced by the portfolio figures themselves (the shared record the
+    // homepage renders), and the separate white "Our Track Record" section
+    // that followed the story is gone. The proof chapter *is* the track
+    // record now. Owner pick: option A of three (design/about-proof-stats).
+    title: 'Programs that perform',
+    proofStats: true,
   },
 ];
 
@@ -402,6 +408,16 @@ const rosterGroups: Array<{
               {chapter.body && <p>{chapter.body}</p>}
               {chapter.pullQuote && <p class="origin-pull-quote">{chapter.pullQuote}</p>}
               {chapter.closingLine && <p class="origin-closing-line">{chapter.closingLine}</p>}
+              {chapter.proofStats && (
+                <div class="proof-stats" data-stat-strip>
+                  {trackRecordStats.map((stat) => (
+                    <div class="proof-stat">
+                      <p class="stat-value stat-value-md proof-num" data-count={stat.count} data-prefix={stat.prefix} data-suffix={stat.suffix} data-decimals={stat.decimals}>{stat.value}</p>
+                      <p class="stat-label proof-label">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               {chapter.levers && (
                 <div class="origin-levers">
                   {chapter.levers.map((lever) => (
@@ -441,31 +457,6 @@ const rosterGroups: Array<{
     </div>
   </section>
 
-  <!-- Our Track Record — reuses index.astro's exact .stat-strip pattern and
-       figures rather than a new count-up widget (see header comment). -->
-  <section class="section" aria-labelledby="track-record-heading">
-    <div class="container">
-      <header class="section-header">
-        <span class="eyebrow" data-reveal>Our Track Record</span>
-        <h2 id="track-record-heading" data-reveal>Proven portfolio of successful impact</h2>
-      </header>
-
-      <div class="stat-strip" data-stat-strip>
-        {trackRecordStats.map((stat, i) => (
-          <div class="stat-item" data-reveal style={`--reveal-i: ${i}`}>
-            <p
-              class="stat-value stat-value-md"
-              data-count={stat.count}
-              data-prefix={stat.prefix}
-              data-suffix={stat.suffix}
-              data-decimals={stat.decimals}
-            >{stat.value}</p>
-            <p class="stat-label">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <!-- Leadership — Executive Profile Roster (unchanged from existing
        roster wiring on this branch). -->
@@ -744,20 +735,22 @@ const rosterGroups: Array<{
     .origin-rail-list { flex-direction: row; flex-wrap: wrap; margin-top: 0; padding-left: var(--space-4); }
   }
 
-  /* ── Our Track Record — the strip the homepage used until 2026-09-14,
-     kept here in the page's own reveal rhythm. Four columns: the shared
-     record is eight figures with short labels, so two rows of four. ── */
-  .stat-strip {
+  /* ── The proof: the portfolio figures inside the dark chapter ──
+     The 4×2 grid the white "Our Track Record" strip used, on the shared
+     .stat-value/.stat-label primitives recoloured for the navy surface:
+     numerals and rules in the chapter's gold (--c-accent-400, the same
+     colour as the lever numerals and outcome tiles above), labels in the
+     chapter's body grey (--c-secondary-300). Two columns on phones. */
+  .proof-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    column-gap: var(--space-8);
-    row-gap: var(--space-10);
+    gap: var(--space-8) var(--space-6);
+    margin-top: var(--space-8);
   }
-  @media (max-width: 64rem) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 30rem) { .stat-strip { grid-template-columns: 1fr; } }
-  .stat-item { padding-top: var(--space-4); border-top: 3px solid var(--color-eyebrow); }
-  .stat-item .stat-value { margin-top: var(--space-3); }
-  .stat-item .stat-label { margin-top: var(--space-2); max-width: 26rem; color: var(--color-text-secondary); }
+  .proof-stat { padding-top: var(--space-4); border-top: 2px solid var(--c-accent-400); }
+  .proof-num { color: var(--c-accent-400); font-variant-numeric: lining-nums tabular-nums; }
+  .proof-label { margin-top: var(--space-2); font-size: var(--text-sm); line-height: var(--line-relaxed); color: var(--c-secondary-300); }
+  @media (max-width: 40rem) { .proof-stats { grid-template-columns: repeat(2, 1fr); gap: var(--space-6) var(--space-5); } }
 
   /* ── Scroll progress bar — identical to
        expertise/regenerative-agriculture/index.astro's implementation. ── */
