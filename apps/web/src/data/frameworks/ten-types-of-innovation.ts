@@ -43,7 +43,9 @@ export const tenTypesOfInnovation: Framework = {
   ],
   categories: [
     { name: 'Configuration', focus: 'The internals of the business', blurb: 'Backstage. The types furthest from the customer — how the business is financed, partnered, organised and run.', color: '#131F48' },
-    { name: 'Offering', focus: 'The core product', blurb: 'The product itself and the system of products around it. The easiest ground for competitors to copy.', color: '#6A1B32', note: { label: 'WHY ONLY TWO', text: 'Offering carries the fewest types and the most attention. Most programs over-invest here before looking at configuration.' } },
+    // The "WHY ONLY TWO" note was removed 2026-09-16 (owner). The point it
+    // made is in the hero lead; on the board it broke the row alignment.
+    { name: 'Offering', focus: 'The core product', blurb: 'The product itself and the system of products around it. The easiest ground for competitors to copy.', color: '#6A1B32' },
     { name: 'Experience', focus: 'Customer-facing elements', blurb: 'Onstage. The types customers see and feel — service, delivery, brand and the interactions you foster.', color: '#5B6C5D' },
   ],
   types: [
