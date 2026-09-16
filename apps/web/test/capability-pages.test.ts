@@ -47,8 +47,10 @@ beforeAll(async () => {
 const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
 const encode = (s: string) => s.replace(/&/g, '&amp;');
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Page-level sections only. The framework viewer embedded on a family page
+// renders its own `<section id="type-…">` panels, which are not page sections.
 const sectionIds = (source: string) =>
-  Array.from(source.matchAll(/<section[^>]*\sid="([a-z-]+)"/g)).map((m) => m[1]);
+  Array.from(source.matchAll(/<section class="section[^"]*" id="([a-z-]+)"/g)).map((m) => m[1]);
 const h3s = (source: string) =>
   Array.from(source.matchAll(/<h3[^>]*>(.*?)<\/h3>/gs)).map((m) => decode(m[1].replace(/<[^>]+>/g, '').trim()));
 const count = (source: string, pattern: RegExp) => (source.match(pattern) ?? []).length;
