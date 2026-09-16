@@ -1190,6 +1190,19 @@ the Ten Types board embedded in the Strategy & Innovation page.
   came from running the Astro compiler and esbuild by hand and reading the
   compiled output. The module is a pure function of the record, so the
   tests call it directly.
+* **No examples in the embed** (owner, same day, after seeing it work):
+  the reader should start from scratch rather than be handed Doblin's
+  canonical illustrations. `hasExamples` is false whenever `compact`, which
+  switches off the per-tactic counts, the drawer's "in the field" block and
+  the hint pointing at them; the type-level example block and the per-tactic
+  payload are gated on `compact` directly. With nothing left to reveal the
+  tactic drawer goes too — it would only repeat the title and description
+  the dense row already shows — so a tactic title is plain text in the
+  embed. Measured on the page: zero example blocks, zero payloads, zero
+  counts, no dialog, and the Target illustration absent. The full tool still
+  has all ten type-level blocks, 112 tactic counts, the drawer and the play
+  sheet. The Strategy & Innovation section lead was corrected in the same
+  pass: it had promised "public company examples" the embed no longer shows.
 * **Validation.** Full gate green; browser QA at 1440 / 1024 / 768 / 390
   through board, drill-down, sibling switch, drawer and back, screenshots
   in `artifacts/qa/2026-09-16-*`. No console errors. The full tool page is

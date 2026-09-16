@@ -843,10 +843,16 @@ publish is listed in each data module's header comment.
   codes, titles being read back from the cards in the DOM.
 - **The embed drills down in place (2026-09-16).** Clicking a type on a
   capability page opens that type's panel inside the host page rather than
-  navigating to the tool. The compact variant now ships the same detail
-  panels and tactic drawer as the full one, minus the play sheet, the add
-  buttons and the value map; tactics render as dense rows there whatever
-  their count. It deliberately does not route through the URL hash — the
+  navigating to the tool. The compact variant ships the same detail panels
+  as the full one, minus the play sheet, the add buttons and the value map;
+  tactics render as dense rows there whatever their count. It also carries
+  **no company examples and no tactic drawer** (owner, same day): the
+  reader meets the framework cold rather than being handed the canonical
+  answers, and with the examples gone a drawer would only repeat the title
+  and description the row already shows. One flag — `hasExamples`, false
+  whenever `compact` — switches off the counts, the drawer block and the
+  hint; the two blocks that render examples directly are gated on `compact`.
+  The examples all remain in the full tool. It deliberately does not route through the URL hash — the
   host page owns its own anchors — and it neither reads nor writes the full
   tool's stored play sheet. Every control is still a real link to
   `/tools/<slug>/#type-<id>`, so with no JS, or on a modified click, the

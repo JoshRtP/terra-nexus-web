@@ -437,6 +437,9 @@ two pages, none hard-wired in the component:
 - The toolbar's stat strip (types, tactics, in play) and the "N tactics"
   line under every type on the board (`FrameworkViewer.astro`). These are
   the component's own labels; if they go, they go for every framework.
+- Done 2026-09-16: the embed carries no company examples at all, so the
+  Strategy & Innovation `tool.lead` no longer promises them and points at
+  the full tool instead. That lead is new copy and wants an owner read.
 - Done 2026-09-16: the Ten Types' "WHY ONLY TWO" category note is gone
   (its point is in the hero lead, and on the board it broke the row
   alignment), and the embed's footer line no longer counts tactics and
